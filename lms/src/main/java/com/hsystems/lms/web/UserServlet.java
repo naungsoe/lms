@@ -31,6 +31,7 @@ public final class UserServlet extends HttpServlet {
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     User user = userRepository.findBy("1");
     response.getOutputStream().print("Guice awesome! Welcome "
         + user.getUserCredentials().getId());

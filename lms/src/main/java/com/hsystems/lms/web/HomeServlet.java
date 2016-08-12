@@ -22,12 +22,13 @@ public final class HomeServlet extends HttpServlet {
 
   private static final long serialVersionUID = 3995669475828674385L;
 
-  private static final String page = "/index.jsp";
+  private static final String page = "/home/index.jsp";
 
   @Override
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
     RequestDispatcher dispatcher = request.getRequestDispatcher(page);
     dispatcher.forward(request, response);
   }

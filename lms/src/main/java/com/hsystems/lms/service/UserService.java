@@ -1,5 +1,7 @@
 package com.hsystems.lms.service;
 
+import com.google.inject.Inject;
+
 import com.hsystems.lms.domain.model.User;
 import com.hsystems.lms.domain.repository.UserRepository;
 
@@ -12,6 +14,7 @@ public final class UserService {
  
   private final UserRepository userRepository;
 
+  @Inject
   public UserService(UserRepository userRepository) {
     this.userRepository = userRepository;
   }

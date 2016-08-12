@@ -9,6 +9,7 @@ import com.hsystems.lms.domain.repository.UserRepository;
 import com.hsystems.lms.domain.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.rest.UserController;
 import com.hsystems.lms.service.SearchService;
+import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.solr.SolrSearchService;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -27,10 +28,14 @@ public class ServletConfig extends GuiceServletContextListener {
 
         bind(SearchService.class).to(SolrSearchService.class);
         bind(UserRepository.class).to(HBaseUserRepository.class);
+        bind(UserService.class);
         bind(UserController.class);
 
-        serve("/*").with(HomeServlet.class);
-        serve("/users*").with(UserServlet.class);
+        filter("/*").through(AuthenticationFilter.class);
+        serve("/login", "/login/").with(LoginServlet.class);
+        serve("/home", "/home/").with(HomeServlet.class);
+        serve("/users", "/users/").with(UserServlet.class);
+        serve("/error", "/error/").with(UserServlet.class);
         serve("/webapi/*").with(GuiceContainer.class);
       }
     });

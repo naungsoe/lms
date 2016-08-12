@@ -10,6 +10,7 @@ import java.io.IOException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -28,13 +29,15 @@ public final class UserController {
   public UserController(
       SearchService searchService,
       UserService userService) {
+
     this.searchService = searchService;
     this.userService = userService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public String get(String key) throws IOException {
+  @Path("/{key}")
+  public String get(@PathParam("key") String key) throws IOException {
     return userService.findBy(key).toString();
   }
 

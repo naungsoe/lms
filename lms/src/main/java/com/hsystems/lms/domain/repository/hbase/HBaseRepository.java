@@ -1,6 +1,6 @@
 package com.hsystems.lms.domain.repository.hbase;
 
-import com.hsystems.lms.domain.model.hbase.ResultEmpty;
+import com.hsystems.lms.domain.model.hbase.NullResult;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -33,8 +33,8 @@ public class HBaseRepository {
   public ResultScanner scanResults(Scan scan) throws IOException {
     Connection connection = getConnection();
     Table table = connection.getTable(TableName.valueOf(tableName));
-
     ResultScanner results;
+
     try {
       results = table.getScanner(scan);
     } finally {
@@ -47,8 +47,8 @@ public class HBaseRepository {
   public Result getResult(Get get) throws IOException {
     Connection connection = getConnection();
     Table table = connection.getTable(TableName.valueOf(tableName));
-
     Result result;
+
     try {
       result = table.get(get);
     } finally {
@@ -57,7 +57,7 @@ public class HBaseRepository {
     }
 
     if (result == null) {
-      result = new ResultEmpty();
+      result = new NullResult();
     }
     return result;
   }
@@ -66,7 +66,6 @@ public class HBaseRepository {
     Configuration config = HBaseConfiguration.create();
     config.set("hbase.zookeeper.quorum", "vagrant-ubuntu-trusty-64");
     config.set("hbase.zookeeper.property.clientPort", "2181");
-
     return ConnectionFactory.createConnection(config);
   }
 }

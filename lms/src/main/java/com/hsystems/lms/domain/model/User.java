@@ -10,11 +10,13 @@ public class User {
   private final UserParticulars userParticulars;
 
   protected User() {
-    this(null, null);
+    this(new UserCredentials("", ""),
+        new UserParticulars("", ""));
   }
 
   public User(UserCredentials userCredentials, 
       UserParticulars userParticulars) {
+
     this.userCredentials = userCredentials;
     this.userParticulars = userParticulars;
   }
