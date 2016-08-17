@@ -5,20 +5,29 @@ package com.hsystems.lms.domain.model;
  */
 public class User {
 
+  private final String identity;
+
   private final UserCredentials userCredentials;
 
   private final UserParticulars userParticulars;
 
   protected User() {
-    this(new UserCredentials("", ""),
+    this("", new UserCredentials("", ""),
         new UserParticulars("", ""));
   }
 
-  public User(UserCredentials userCredentials, 
+  public User(
+      String identity,
+      UserCredentials userCredentials,
       UserParticulars userParticulars) {
 
+    this.identity = identity;
     this.userCredentials = userCredentials;
     this.userParticulars = userParticulars;
+  }
+
+  public String getIdentity() {
+    return identity;
   }
 
   public UserCredentials getUserCredentials() {

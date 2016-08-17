@@ -15,42 +15,35 @@ import javax.servlet.http.HttpSession;
  * Created by administrator on 8/8/16.
  */
 @Singleton
-public final class LoginServlet extends HttpServlet {
+public final class LoginServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
-  private static final String page = "/login/index.jsp";
-
   @Override
-  protected void doGet(
-      HttpServletRequest request, HttpServletResponse response)
+  protected void doGet()
       throws ServletException, IOException {
 
-    RequestDispatcher dispatcher = request.getRequestDispatcher(page);
-    dispatcher.forward(request, response);
+    sendRedirect("/login");
   }
 
-  protected void doPost(
-      HttpServletRequest request, HttpServletResponse response)
+  @Override
+  protected void doPost()
       throws ServletException, IOException {
 
-    String id = request.getParameter("id");
-    String password = request.getParameter("password");
-    RequestDispatcher dispatcher;
+    String id = getRequest().getParameter("id");
+    String password = getRequest().getParameter("password");
 
-    if ("".equals(id) && "".equals(password)) {
-      HttpSession session = request.getSession();
-      session.setAttribute("id", "id");
+    if ("admin".equals(id) && "admin".equals(password)) {
+      HttpSession session = getRequest().getSession();
+      session.setAttribute("id", id);
       session.setMaxInactiveInterval(30 * 60);
 
       Cookie userName = new Cookie("id", id);
       userName.setMaxAge(30 * 60);
-      response.addCookie(userName);
-
-      dispatcher = request.getRequestDispatcher("/home");
+      getResponse().addCookie(userName);
+      sendRedirect("/home");
     } else {
-      dispatcher = request.getRequestDispatcher(page);
+      sendRedirect("/login");
     }
-    dispatcher.forward(request, response);
   }
 }

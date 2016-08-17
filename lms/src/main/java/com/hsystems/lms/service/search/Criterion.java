@@ -3,7 +3,7 @@ package com.hsystems.lms.service.search;
 /**
  * Created by administrator on 10/8/16.
  */
-public class Criterion {
+public final class Criterion {
 
   private final Operator operator;
 

@@ -1,5 +1,8 @@
 package com.hsystems.lms.web;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
+
 import java.io.IOException;
 
 import javax.inject.Singleton;
@@ -18,40 +21,38 @@ import javax.servlet.http.HttpSession;
  * Created by administrator on 11/8/16.
  */
 @Singleton
-public final class AuthenticationFilter implements Filter {
+public final class AuthenticationFilter extends BaseFilter {
 
-  private ServletContext context;
-
-  public void init(FilterConfig filterConfig)
-      throws ServletException {
-
-    this.context = filterConfig.getServletContext();
-    this.context.log("AuthenticationFilter initialized");
+  public void init() throws ServletException {
+    getContext().log("AuthenticationFilter initialized");
   }
 
-  public void doFilter(
-      ServletRequest servletRequest, ServletResponse servletResponse,
-      FilterChain filterChain) throws IOException, ServletException {
+  public void doFilter()
+      throws IOException, ServletException {
 
-    HttpServletRequest request = (HttpServletRequest)servletRequest;
-    HttpServletResponse response = (HttpServletResponse)servletResponse;
-
-    if (isAuthenticatedAccess(request)) {
-      filterChain.doFilter(servletRequest, servletResponse);
+    if (isAuthenticatedAccess()) {
+      getFilterChain().doFilter(getRequest(), getResponse());
     } else {
-      this.context.log("Unauthorized access request");
-      request.getRequestDispatcher("/login")
-          .forward(request, response);
+      getContext().log("unauthenticated access request url: "
+          + getRequest().getRequestURI());
+      forwardRequest("/login");
     }
   }
 
-  private boolean isAuthenticatedAccess(HttpServletRequest request) {
-    HttpSession session = request.getSession(false);
-    String uri = request.getRequestURI();
-    return (uri.startsWith("/login") || (session != null));
-  }
+  protected boolean isAuthenticatedAccess() {
+    HttpSession session = getRequest().getSession(false);
+    String uri = getRequest().getRequestURI();
 
-  public void destroy() {
+    if (uri.startsWith("/login") || uri.startsWith("/static")) {
+      return true;
+    }
 
+    if (session == null) {
+      String id = ServletUtils.getCookieValue(getRequest(), "id");
+      return !StringUtils.isEmpty(id);
+    } else {
+      Object id = session.getAttribute("id");
+      return (id != null);
+    }
   }
 }

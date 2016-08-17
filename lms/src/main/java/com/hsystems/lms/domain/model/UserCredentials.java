@@ -9,6 +9,10 @@ public class UserCredentials {
 
   private final String password;
 
+  protected UserCredentials() {
+    this("", "");
+  }
+
   public UserCredentials(String id, String password) {
     this.id = id;
     this.password = password;

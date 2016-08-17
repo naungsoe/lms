@@ -2,6 +2,7 @@ package com.hsystems.lms.rest;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.exception.RepositoryException;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.search.Query;
@@ -12,7 +13,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 /**
@@ -37,7 +37,9 @@ public final class UserController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{key}")
-  public String get(@PathParam("key") String key) throws IOException {
+  public String get(@PathParam("key") String key)
+      throws RepositoryException {
+
     return userService.findBy(key).toString();
   }
 

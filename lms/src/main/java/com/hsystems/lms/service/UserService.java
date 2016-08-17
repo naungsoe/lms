@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.domain.model.User;
 import com.hsystems.lms.domain.repository.UserRepository;
+import com.hsystems.lms.exception.RepositoryException;
 
 import java.io.IOException;
 
@@ -19,7 +20,7 @@ public final class UserService {
     this.userRepository = userRepository;
   }
 
-  public User findBy(String key) throws IOException {
+  public User findBy(String key) throws RepositoryException {
     return userRepository.findBy(key);
   }
 }

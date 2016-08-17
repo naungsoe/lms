@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.domain.model.User;
 import com.hsystems.lms.domain.repository.UserRepository;
+import com.hsystems.lms.exception.RepositoryException;
 
 import java.io.IOException;
 
@@ -29,11 +30,24 @@ public final class UserServlet extends HttpServlet {
   }
 
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response)
+  protected void doGet(
+      HttpServletRequest request,
+      HttpServletResponse response)
       throws ServletException, IOException {
 
-    User user = userRepository.findBy("1");
-    response.getOutputStream().print("Guice awesome! Welcome "
+    String uri = request.getRequestURI();
+    String key = "1";
+    User user;
+
+    try {
+      user = userRepository.findBy(key);
+    } catch (Exception e) {
+      throw new ServletException(
+          "unable to find user by key: " + key, e);
+    }
+
+    response.getOutputStream().print(
+        "Guice awesome! Welcome "
         + user.getUserCredentials().getId());
   }
 }

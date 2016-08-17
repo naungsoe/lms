@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * Created by administrator on 10/8/16.
  */
-public class Query {
+public final class Query {
 
   private final String docType;
 

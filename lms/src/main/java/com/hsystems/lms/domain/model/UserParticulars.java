@@ -9,6 +9,10 @@ public class UserParticulars {
 
   private final String lastName;
 
+  protected UserParticulars() {
+    this("", "");
+  }
+
   public UserParticulars(String firstName, String lastName) {
     this.firstName = firstName;
     this.lastName = lastName;
