@@ -1,0 +1,109 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<dom-module id="lms-signin">
+
+  <template strip-whitespace>
+    <style>
+      :host {
+        align-items: center;
+        display: flex;
+        height: 100vh;
+        justify-content: center;
+        width: 100vw;
+      }
+
+      [login] {
+        align-self: center;
+      }
+
+      [login] paper-card {
+        width: 320px;
+
+        --paper-card-header-text: {
+          color: #fff;
+          background-color: #00897b;
+        };
+      }
+
+      [login] paper-input {
+        margin: 0 0 8px 0;
+
+        --paper-input-container-label: {
+          font-size: 14px
+        };
+        --paper-input-container-input: {
+          font-size: 14px;
+        };
+        --paper-input-container-underline: {
+          background-color: #00897b;
+        };
+        --paper-input-container-underline-focus: {
+          background-color: #00897b;
+        };
+      }
+
+      [login] .card-actions {
+        border: 0 !important;
+        margin: 0 0 16px 0;
+      }
+    </style>
+
+    <form id="formLogin" method="post" action="{{actionUrl}}" login>
+      <paper-card heading="{{localize('titleSignInCard')}}" alt="{{localize('titleSignInCard')}}">
+        <div class="card-content">
+          <paper-input name="id" label="{{localize('labelSignInId')}}" on-keydown="handleKeydown" autofocus no-label-float></paper-input>
+          <paper-input name="password" label="{{localize('labelSignInPassword')}}" on-keydown="handleKeydown" no-label-float></paper-input>
+        </div>
+        <div class="card-actions">
+          <paper-button on-tap="handleSubmit" raised>{{localize('buttonSignIn')}}</paper-button>
+          <paper-button>{{localize('buttonForgotPassword')}}</paper-button>
+        </div>
+      </paper-card>
+    </form>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-signin',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      
+      properties: {
+        actionUrl: {
+          type: String,
+          notify: true
+        },
+        language: {
+          type: String,
+          notify: true
+        },
+        localeUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        var url = this.resolveUrl(this.localeUrl);
+        this.loadResources(url);
+      },
+
+      handleKeydown: function(event) {
+        if (event.keyCode === 13) {
+          this.$.formLogin.submit();
+        }
+      },
+
+      handleSubmit: function(event) {
+        this.$.formLogin.submit();
+      }
+    });
+  </script>
+  
+</dom-module>

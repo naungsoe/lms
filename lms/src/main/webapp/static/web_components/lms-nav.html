@@ -1,0 +1,63 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<dom-module id="lms-nav">
+
+  <template strip-whitespace>
+    <style>
+      [menu] {
+        height: 100%;
+        overflow: auto;
+      }
+
+      [menu] paper-menu paper-item a {
+        color: #212121;
+        display: block;
+        text-decoration: none;
+      }
+    </style>
+
+    <div menu>
+      <paper-menu selected="0" on-iron-select="handleSelect">
+        <paper-item action="/home">{{localize('menuItemHome')}}</paper-item>
+        <paper-item action="/signout">{{localize('menuItemSignOut')}}</paper-item>
+      </paper-menu>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-nav',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+
+      properties: {
+        language: {
+          type: String,
+          notify: true
+        },
+        localeUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        var url = this.resolveUrl(this.localeUrl);
+        this.loadResources(url);
+      },
+
+      handleSelect: function(event) {
+        var url = event.target.selectedItem.getAttribute("action");
+        if (window.location.pathname.indexOf(url) === -1) {
+          window.location = url;
+        }
+      }
+    });
+  </script>
+  
+</dom-module>

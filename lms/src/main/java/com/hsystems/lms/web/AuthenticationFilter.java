@@ -1,5 +1,9 @@
 package com.hsystems.lms.web;
 
+import com.google.inject.Inject;
+
+import com.hsystems.lms.service.AuthenticationService;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -23,6 +27,13 @@ import javax.servlet.http.HttpSession;
 @Singleton
 public final class AuthenticationFilter extends BaseFilter {
 
+  private final AuthenticationService service;
+
+  @Inject
+  public AuthenticationFilter(AuthenticationService service) {
+    this.service = service;
+  }
+
   public void init() throws ServletException {
     getContext().log("AuthenticationFilter initialized");
   }
@@ -30,29 +41,12 @@ public final class AuthenticationFilter extends BaseFilter {
   public void doFilter()
       throws IOException, ServletException {
 
-    if (isAuthenticatedAccess()) {
+    if (service.isAuthenticated(getRequest())) {
       getFilterChain().doFilter(getRequest(), getResponse());
     } else {
       getContext().log("unauthenticated access request url: "
           + getRequest().getRequestURI());
-      forwardRequest("/login");
-    }
-  }
-
-  protected boolean isAuthenticatedAccess() {
-    HttpSession session = getRequest().getSession(false);
-    String uri = getRequest().getRequestURI();
-
-    if (uri.startsWith("/login") || uri.startsWith("/static")) {
-      return true;
-    }
-
-    if (session == null) {
-      String id = ServletUtils.getCookieValue(getRequest(), "id");
-      return !StringUtils.isEmpty(id);
-    } else {
-      Object id = session.getAttribute("id");
-      return (id != null);
+      forwardRequest("/signin");
     }
   }
 }

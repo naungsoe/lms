@@ -10,6 +10,7 @@ import com.hsystems.lms.domain.repository.hbase.HBaseUserMapper;
 import com.hsystems.lms.domain.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.domain.repository.mapping.DataMap;
 import com.hsystems.lms.rest.UserController;
+import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.solr.SolrSearchService;
@@ -22,7 +23,6 @@ public class ServletConfig extends GuiceServletContextListener {
 
   @Override
   protected Injector getInjector() {
-
     return Guice.createInjector(new ServletModule() {
       @Override
       protected void configureServlets() {
@@ -31,11 +31,15 @@ public class ServletConfig extends GuiceServletContextListener {
         bind(SearchService.class).to(SolrSearchService.class);
         bind(UserRepository.class).to(HBaseUserRepository.class);
         bind(HBaseUserMapper.class);
+        bind(AuthenticationService.class);
         bind(UserService.class);
         bind(UserController.class);
 
-        filter("/*").through(AuthenticationFilter.class);
-        serve("/login", "/login/").with(LoginServlet.class);
+        filter("/home", "/home/", "/users", "/users/",
+            "/resources", "/resources/", "/webapi/*")
+            .through(AuthenticationFilter.class);
+        serve("/signin", "/signin/").with(SignInServlet.class);
+        serve("/signout", "/signout/").with(SignOutServlet.class);
         serve("/home", "/home/").with(HomeServlet.class);
         serve("/users", "/users/").with(UserServlet.class);
         serve("/error", "/error/").with(UserServlet.class);

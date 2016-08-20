@@ -5,12 +5,12 @@ package com.hsystems.lms.domain.model;
  */
 public class UserCredentials {
 
-  private final String id;
+  protected String id;
 
-  private final String password;
+  protected String password;
 
   protected UserCredentials() {
-    this("", "");
+
   }
 
   public UserCredentials(String id, String password) {

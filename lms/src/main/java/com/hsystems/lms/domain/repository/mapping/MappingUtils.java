@@ -16,6 +16,7 @@ public final class MappingUtils {
     throws IllegalAccessException, NoSuchFieldException {
 
     Field field = object.getClass().getDeclaredField(fieldName);
+    field.setAccessible(true);
     field.set(object, value);
   }
 
@@ -24,6 +25,7 @@ public final class MappingUtils {
       InvocationTargetException, ApplicationException {
 
     Constructor constructor = getParameterLessConstructor(fieldClass);
+    constructor.setAccessible(true);
     return constructor.newInstance(initargs);
   }
 

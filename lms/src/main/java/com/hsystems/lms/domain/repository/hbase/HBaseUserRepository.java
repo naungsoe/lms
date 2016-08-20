@@ -26,6 +26,5 @@ public final class HBaseUserRepository
       throw new RepositoryException(
           "unable to find user by key: " + key, e);
     }
-
   }
 }

@@ -78,9 +78,9 @@ public class HBaseMapper {
       Object columnValue = HBaseUtils.getString(result,
           columnMap.getColumnFamilyName(), columnMap.getColumnName());
       if (columnMap.getFieldName().indexOf('.') > 0) {
-        columnMap.setFieldPath(result, columnValue);
+        columnMap.setFieldPath(user, columnValue);
       } else {
-        columnMap.setField(result, columnValue);
+        columnMap.setField(user, columnValue);
       }
     }
   }

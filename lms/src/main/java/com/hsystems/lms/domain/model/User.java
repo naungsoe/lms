@@ -5,11 +5,11 @@ package com.hsystems.lms.domain.model;
  */
 public class User {
 
-  private final String identity;
+  protected String identity;
 
-  private final UserCredentials userCredentials;
+  protected UserCredentials userCredentials;
 
-  private final UserParticulars userParticulars;
+  protected UserParticulars userParticulars;
 
   protected User() {
     this("", new UserCredentials("", ""),

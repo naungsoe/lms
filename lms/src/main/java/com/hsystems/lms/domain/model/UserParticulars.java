@@ -5,12 +5,12 @@ package com.hsystems.lms.domain.model;
  */
 public class UserParticulars {
 
-  private final String firstName;
+  protected String firstName;
 
-  private final String lastName;
+  protected String lastName;
 
   protected UserParticulars() {
-    this("", "");
+
   }
 
   public UserParticulars(String firstName, String lastName) {

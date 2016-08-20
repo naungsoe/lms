@@ -1,0 +1,11 @@
+{
+  "en_US": {
+    "titleSignInCard": "HSystems",
+    "labelSignInId": "Enter your login id",
+    "labelSignInPassword": "Enter your password",
+    "buttonSignIn": "Sign in",
+    "buttonForgotPassword": "Forgot password?",
+    "menuItemHome": "Home",
+    "menuItemSignOut": "Sign out"
+  }
+}

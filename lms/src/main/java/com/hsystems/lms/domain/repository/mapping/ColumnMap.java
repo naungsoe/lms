@@ -2,6 +2,8 @@ package com.hsystems.lms.domain.repository.mapping;
 
 import com.hsystems.lms.exception.ApplicationException;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.regex.Pattern;
@@ -26,6 +28,11 @@ public class ColumnMap {
       String fieldName, DataMap dataMap)
       throws ApplicationException {
 
+    if (StringUtils.countMatches(fieldName, ".") > 2) {
+      throw new ApplicationException(
+          "unable to set up nested field: " + fieldName);
+    }
+
     this.columnFamilyName = columnFamilyName;
     this.columnName = columnName;
     this.fieldName = fieldName;
@@ -34,37 +41,17 @@ public class ColumnMap {
     try {
       if (fieldName.indexOf('.') > 0) {
         String[] fieldPaths = fieldName.split(Pattern.quote("."));
-        Class[] fieldClasses = getFieldOwningClasses(fieldPaths, fieldName);
-        String fieldPath =fieldPaths[fieldPaths.length - 1];
-        Class fieldClass = fieldClasses[fieldClasses.length - 1];
-        this.field = fieldClass.getDeclaredField(fieldPath);
+        Class fieldClass = this.dataMap.getDomainClass()
+            .getDeclaredField(fieldPaths[0]).getType();
+        this.field = fieldClass.getDeclaredField(fieldPaths[1]);
       } else {
         this.field = dataMap.getDomainClass()
             .getDeclaredField(fieldName);
       }
-      this.field.setAccessible(true);
     } catch (Exception e) {
       throw new ApplicationException(
           "unable to set up field: " + fieldName, e);
     }
-  }
-
-  private Class[] getFieldOwningClasses(
-      String[] fieldPaths, String fieldName)
-      throws NoSuchFieldException {
-
-    Class[] fieldClasses = new Class[(fieldPaths.length - 1)];
-
-    for (int i = 0; (i + 1) < fieldPaths.length; i++) {
-      if (i == 0) {
-        fieldClasses[i] = dataMap.getDomainClass()
-            .getDeclaredField(fieldPaths[i]).getType();
-      } else {
-        fieldClasses[i] = fieldClasses[i - 1]
-            .getDeclaredField(fieldPaths[i]).getType();
-      }
-    }
-    return fieldClasses;
   }
 
   public String getColumnFamilyName() {
@@ -83,6 +70,7 @@ public class ColumnMap {
       throws ApplicationException {
 
     try {
+      field.setAccessible(true);
       field.set(object, columnValue);
     } catch (Exception e) {
       throw new ApplicationException(
@@ -95,20 +83,20 @@ public class ColumnMap {
 
     try {
       String[] fieldPaths = fieldName.split(Pattern.quote("."));
-      Class[] fieldClasses = getFieldOwningClasses(fieldPaths, fieldName);
-      Object fieldInstance = null;
+      Class fieldClass = this.dataMap.getDomainClass()
+          .getDeclaredField(fieldPaths[0]).getType();
+      Field classField = dataMap.getDomainClass()
+          .getDeclaredField(fieldPaths[0]);
+      classField.setAccessible(true);
 
-      for (int i = 0; i < fieldClasses.length; i++) {
-        Object instance = MappingUtils.getInstance(fieldClasses[i]);
+      Object classInstance = classField.get(object);
 
-        if (i == 0) {
-          MappingUtils.setField(object, fieldPaths[i], instance);
-        } else {
-          MappingUtils.setField(fieldInstance, fieldPaths[i], instance);
-        }
-        fieldInstance = instance;
+      if (classInstance == null) {
+        classInstance = MappingUtils.getInstance(classField.getType());
+        MappingUtils.setField(object, fieldPaths[0], classInstance);
       }
-      field.set(fieldInstance, columnValue);
+      field.setAccessible(true);
+      field.set(classInstance, columnValue);
     } catch (Exception e) {
       throw new ApplicationException(
           "error in setting " + fieldName, e);
