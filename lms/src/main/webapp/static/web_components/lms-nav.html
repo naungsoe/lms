@@ -12,17 +12,16 @@
         overflow: auto;
       }
 
-      [menu] paper-menu paper-item a {
-        color: #212121;
-        display: block;
-        text-decoration: none;
+      [menu] paper-menu paper-item [text] {
+        margin: 0 16px;
       }
     </style>
 
     <div menu>
       <paper-menu selected="0" on-iron-select="handleSelect">
-        <paper-item action="/home">{{localize('menuItemHome')}}</paper-item>
-        <paper-item action="/signout">{{localize('menuItemSignOut')}}</paper-item>
+        <paper-item action="/home"><iron-icon icon="home"></iron-icon><div text>{{localize('menuItemHome')}}</div></paper-item>
+        <paper-item action="/resources"><iron-icon icon="folder"></iron-icon><div text>{{localize('menuItemResources')}}</div></paper-item>
+        <paper-item action="/signout"><iron-icon icon="exit-to-app"></iron-icon><div text>{{localize('menuItemSignOut')}}</div></paper-item>
       </paper-menu>
     </div>
   </template>
@@ -52,8 +51,10 @@
       },
 
       handleSelect: function(event) {
-        var url = event.target.selectedItem.getAttribute("action");
-        if (window.location.pathname.indexOf(url) === -1) {
+        var item = event.target.selectedItem;
+        var url = item.getAttribute("action");
+
+        if (location.pathname.indexOf(url) === -1) {
           window.location = url;
         }
       }

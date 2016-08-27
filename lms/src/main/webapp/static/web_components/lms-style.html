@@ -1,0 +1,51 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
+
+<dom-module id="lms-style">
+
+  <template>
+    <style>
+      :host {
+        background-color: var(--paper-grey-50);
+        font-family: 'Roboto', 'Noto', sans-serif;
+        font-size: 14px;
+        padding: 0;
+        margin: 0;
+      }
+
+      paper-card {
+        --paper-card-header-text: {
+          color: var(--paper-grey-50);
+          background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-input {
+        --paper-input-container-label: {
+          font-size: 14px;
+        };
+        --paper-input-container-input: {
+          font-size: 14px;
+        };
+        --paper-input-container-underline: {
+          background-color: var(--paper-teal-500);
+        };
+        --paper-input-container-underline-focus: {
+          background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-button {
+        font-size: 14px;
+      }
+
+      paper-button.link {
+        color: var(--paper-blue-500);
+      }
+    </style>
+  </template>
+
+</dom-module>

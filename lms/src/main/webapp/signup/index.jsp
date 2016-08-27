@@ -11,6 +11,6 @@
   <title><c:out value="${titlePage}"/></title>
 </head>
 <body>
-  <lms-signin sign-in-url="<c:url value="/signin"/>" sign-up-url="<c:url value="/signup"/>" language="<c:url value="${locale}"/>" locale-url="<c:url value="${localeUrl}"/>" id="<c:out value="${param.id}"/>" error="<c:out value="${error}"/>"></lms-signin>
+  <lms-signin sign-in-url="<c:url value="/signin"/>" sign-up-url="<c:url value="/signup"/>" language="<c:url value="${locale}"/>" locale-url="<c:url value="${localeUrl}" id="<c:url value="${param.id}" password="<c:url value="${param.password}" error="<c:url value="${error}"/>"></lms-signin>
 </body>
 </html>

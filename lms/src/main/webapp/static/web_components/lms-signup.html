@@ -38,9 +38,8 @@
     <form id="formLogin" method="post" action="{{signinUrl}}">
       <paper-card heading="{{localize('titleCard')}}" alt="{{localize('titleCard')}}">
         <div class="card-content">
-          <paper-input name="id" label="{{localize('labelId')}}" value="{{id}}" on-keydown="handleKeydown" autofocus no-label-float required error-message="{{localize('labelIdRequired')}}"></paper-input>
-          <paper-input name="password" label="{{localize('labelPassword')}}" type="password" on-keydown="handleKeydown" no-label-float required error-message="{{localize('labelPasswordRequired')}}"></paper-input>
-          <div class="credential-error">{{localize('errorCredential')}}</div>
+          <paper-input name="id" label="{{localize('labelId')}}" on-keydown="handleKeydown" autofocus no-label-float required error-message="{{localize('labelIdRequired')}}"></paper-input>
+          <paper-input name="password" label="{{localize('labelPassword')}}" on-keydown="handleKeydown" no-label-float required error-message="{{localize('labelPasswordRequired')}}"></paper-input>
         </div>
         <div class="card-actions">
           <paper-button on-tap="handleSignIn" raised>{{localize('buttonSignIn')}}</paper-button>
@@ -63,14 +62,6 @@
       ],
       
       properties: {
-        id: {
-          type: String,
-          notify: true
-        },
-        error: {
-          type: String,
-          notify: true
-        },
         signInUrl: {
           type: String,
           notify: true

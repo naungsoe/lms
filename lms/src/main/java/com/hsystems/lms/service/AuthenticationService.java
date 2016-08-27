@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -18,14 +19,21 @@ import javax.servlet.http.HttpSession;
  */
 public final class AuthenticationService {
 
-  public void signIn(HttpServletRequest request) {
+  public void signIn(
+      HttpServletRequest request, HttpServletResponse response) {
+
     String id = request.getParameter("id");
     String password = request.getParameter("password");
 
     if ("admin".equals(id) && "admin".equals(password)) {
+      String token = id;
       HttpSession session = request.getSession();
-      session.setAttribute("token", id);
+      session.setAttribute("token", token);
       session.setMaxInactiveInterval(30 * 60);
+
+      Cookie cookie = new Cookie("token", token);
+      cookie.setMaxAge(30 * 60);
+      response.addCookie(cookie);
     }
   }
 
@@ -38,19 +46,11 @@ public final class AuthenticationService {
     HttpSession session = request.getSession(false);
 
     if (session == null) {
-      String token = ServletUtils.getCookieValue(request, "token");
+      String token = ServletUtils.getCookie(request, "token");
       return !StringUtils.isEmpty(token);
     } else {
       Object token = session.getAttribute("token");
       return (token != null);
     }
-  }
-
-  public Cookie createTokenCookie(HttpServletRequest request) {
-    HttpSession session = request.getSession(false);
-    String token = (String) session.getAttribute("token");
-    Cookie cookie = new Cookie("token", token);
-    cookie.setMaxAge(30 * 60);
-    return cookie;
   }
 }

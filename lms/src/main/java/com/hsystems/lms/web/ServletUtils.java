@@ -1,5 +1,6 @@
 package com.hsystems.lms.web;
 
+import javax.json.Json;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -8,19 +9,21 @@ import javax.servlet.http.HttpServletRequest;
  */
 public final class ServletUtils {
 
-  public static String getCookieValue(
+  public static String getCookie(
       HttpServletRequest request, String name) {
 
     Cookie[] cookies = request.getCookies();
+    String value = "";
+
     if (cookies == null) {
-      return "";
+      return value;
     }
 
     for (Cookie cookie : cookies) {
       if (cookie.getName().equals(name)) {
-        return cookie.getValue();
+        value = cookie.getValue();
       }
     }
-    return "";
+    return value;
   }
 }
