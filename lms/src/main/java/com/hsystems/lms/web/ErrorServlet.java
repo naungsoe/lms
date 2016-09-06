@@ -11,13 +11,13 @@ import javax.servlet.ServletException;
 @Singleton
 public final class ErrorServlet extends BaseServlet {
 
-  private static final long serialVersionUID = 7659946056076086061L;
+  private static final long serialVersionUID = -1943733219860896344L;
 
   @Override
   protected void doGet()
       throws ServletException, IOException {
 
-    forwardRequest("/error/index.jsp");
+    forwardRequest("/web/error/index.jsp");
   }
 
   @Override

@@ -15,7 +15,7 @@ import javax.servlet.http.Cookie;
  * Created by administrator on 8/8/16.
  */
 @Singleton
-@WebServlet(value = "/signin", loadOnStartup = 1)
+@WebServlet(value = "/web/signin", loadOnStartup = 1)
 public final class SignInServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
@@ -28,11 +28,12 @@ public final class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     if (service.isAuthenticated(getRequest())) {
-      sendRedirect("/home");
+      sendRedirect("/web/home");
     } else {
       loadLocale("signin");
       loadAttribute("titlePage");
-      forwardRequest("/signin/index.jsp");
+      setAttribute("id", getCookie("id"));
+      forwardRequest("/web/signin/index.jsp");
     }
   }
 
@@ -43,12 +44,12 @@ public final class SignInServlet extends BaseServlet {
     service.signIn(getRequest(), getResponse());
 
     if (service.isAuthenticated(getRequest())) {
-      sendRedirect("/home");
+      sendRedirect("/web/home");
     } else {
       loadLocale("signin");
       loadAttribute("titlePage");
       setAttribute("error", "errorCredential");
-      forwardRequest("/signin/index.jsp");
+      forwardRequest("/web/signin/index.jsp");
     }
   }
 }

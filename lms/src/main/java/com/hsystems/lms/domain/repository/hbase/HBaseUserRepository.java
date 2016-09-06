@@ -27,4 +27,8 @@ public final class HBaseUserRepository
           "unable to find user by key: " + key, e);
     }
   }
+
+  public void save(User user) {
+
+  }
 }

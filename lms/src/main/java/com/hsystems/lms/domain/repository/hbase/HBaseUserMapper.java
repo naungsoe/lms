@@ -2,9 +2,6 @@ package com.hsystems.lms.domain.repository.hbase;
 
 import com.hsystems.lms.domain.model.NullUser;
 import com.hsystems.lms.domain.model.User;
-import com.hsystems.lms.domain.model.UserCredentials;
-import com.hsystems.lms.domain.model.UserParticulars;
-import com.hsystems.lms.domain.repository.mapping.ColumnMap;
 import com.hsystems.lms.domain.repository.mapping.MappingUtils;
 import com.hsystems.lms.exception.ApplicationException;
 
@@ -26,10 +23,16 @@ public final class HBaseUserMapper extends HBaseMapper {
   }
 
   public void loadDataMap() throws ApplicationException {
-    dataMap.addColumn("c", "id", "userCredentials.id");
-    dataMap.addColumn("c", "password", "userCredentials.password");
-    dataMap.addColumn("p", "fname", "userParticulars.firstName");
-    dataMap.addColumn("p", "lname", "userParticulars.lastName");
+    dataMap.addColumn("a", "id", "id");
+    dataMap.addColumn("a", "password", "password");
+    dataMap.addColumn("a", "fname", "firstName");
+    dataMap.addColumn("a", "lname", "lastName");
+    dataMap.addColumn("a", "birthday", "birthday");
+    dataMap.addColumn("a", "gender", "gender");
+    dataMap.addColumn("a", "mobile", "mobile");
+    dataMap.addColumn("a", "email", "email");
+    dataMap.addColumn("a", "sid", "school.id");
+    dataMap.addColumn("a", "sname", "school.name");
   }
 
   public User findBy(String key)
@@ -46,7 +49,7 @@ public final class HBaseUserMapper extends HBaseMapper {
     return loadUser(key, result);
   }
 
-  public User loadUser(String key, Result result)
+  protected User loadUser(String key, Result result)
       throws InstantiationException, InvocationTargetException,
       IllegalAccessException, NoSuchFieldException,
       ApplicationException {
@@ -55,5 +58,10 @@ public final class HBaseUserMapper extends HBaseMapper {
     MappingUtils.setField(user, "identity", key);
     loadFields(user, result);
     return user;
+  }
+
+  public void save(User user) {
+    //lockRow()
+    //Put put = new Put
   }
 }

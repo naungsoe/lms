@@ -42,15 +42,20 @@ public final class AuthenticationService {
     session.removeAttribute("token");
   }
 
+  public boolean isPublicResource(HttpServletRequest request) {
+    String url = request.getRequestURI();
+    return url.startsWith("/web/signin")
+        || url.startsWith("/web/signup");
+  }
+
   public boolean isAuthenticated(HttpServletRequest request) {
     HttpSession session = request.getSession(false);
 
     if (session == null) {
-      String token = ServletUtils.getCookie(request, "token");
-      return !StringUtils.isEmpty(token);
-    } else {
-      Object token = session.getAttribute("token");
-      return (token != null);
+      return false;
     }
+
+    Object token = session.getAttribute("token");
+    return (token != null);
   }
 }

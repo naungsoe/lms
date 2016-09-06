@@ -5,7 +5,7 @@ import com.google.inject.AbstractModule;
 import com.hsystems.lms.domain.repository.UserRepository;
 import com.hsystems.lms.domain.repository.hbase.HBaseUserMapper;
 import com.hsystems.lms.domain.repository.hbase.HBaseUserRepository;
-import com.hsystems.lms.rest.UserController;
+import com.hsystems.lms.webapi.UserController;
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;

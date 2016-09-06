@@ -20,7 +20,6 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by administrator on 11/8/16.
  */
-@Singleton
 public abstract class BaseFilter implements Filter {
 
   private ServletContext context;

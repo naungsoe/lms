@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
@@ -32,8 +33,7 @@ public class HBaseMapper {
 
   public ResultScanner scanResults(Scan scan) throws IOException {
     Connection connection = getConnection();
-    Table table = connection.getTable(TableName.valueOf(
-        dataMap.getTableName()));
+    Table table = getTable(connection);
     ResultScanner results;
 
     try {
@@ -47,8 +47,7 @@ public class HBaseMapper {
 
   public Result getResult(Get get) throws IOException {
     Connection connection = getConnection();
-    Table table = connection.getTable(TableName.valueOf(
-        dataMap.getTableName()));
+    Table table = getTable(connection);
     Result result;
 
     try {
@@ -64,6 +63,18 @@ public class HBaseMapper {
     return result;
   }
 
+  public void putRecord(Put put) throws IOException {
+    Connection connection = getConnection();
+    Table table = getTable(connection);
+
+    try {
+      table.put(put);
+    } finally {
+      table.close();
+      connection.close();
+    }
+  }
+
   protected Connection getConnection() throws IOException {
     Configuration config = HBaseConfiguration.create();
     config.set("hbase.zookeeper.quorum", "vagrant-ubuntu-trusty-64");
@@ -71,17 +82,20 @@ public class HBaseMapper {
     return ConnectionFactory.createConnection(config);
   }
 
-  protected void loadFields(User user, Result result)
+  protected Table getTable(Connection connection)
+      throws IOException {
+
+    TableName tableName = TableName.valueOf(dataMap.getTableName());
+    return connection.getTable(tableName);
+  }
+
+  protected void loadFields(Object object, Result result)
       throws ApplicationException {
 
     for (ColumnMap columnMap : dataMap.getColumnMaps()) {
       Object columnValue = HBaseUtils.getString(result,
           columnMap.getColumnFamilyName(), columnMap.getColumnName());
-      if (columnMap.getFieldName().indexOf('.') > 0) {
-        columnMap.setFieldPath(user, columnValue);
-      } else {
-        columnMap.setField(user, columnValue);
-      }
+      columnMap.setField(object, columnValue);
     }
   }
 }

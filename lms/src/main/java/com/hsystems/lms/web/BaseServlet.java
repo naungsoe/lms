@@ -96,7 +96,7 @@ public abstract class BaseServlet extends HttpServlet {
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     request.setAttribute("locale", locale);
 
-    String localeUrl = "/locales/" + page + "-" + locale + ".json";
+    String localeUrl = "/locales/" + page + "/" + locale + ".json";
     request.setAttribute("localeUrl", localeUrl);
 
     ServletContext context = request.getServletContext();

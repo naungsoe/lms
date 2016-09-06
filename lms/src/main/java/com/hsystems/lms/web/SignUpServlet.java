@@ -15,10 +15,10 @@ import javax.servlet.http.Cookie;
  * Created by administrator on 8/8/16.
  */
 @Singleton
-@WebServlet(value = "/signup", loadOnStartup = 1)
+@WebServlet(value = "/web/signup", loadOnStartup = 1)
 public final class SignUpServlet extends BaseServlet {
 
-  private static final long serialVersionUID = -8924763326103812045L;
+  private static final long serialVersionUID = -528977780154917729L;
 
   @Inject
   private AuthenticationService service;
@@ -28,7 +28,9 @@ public final class SignUpServlet extends BaseServlet {
       throws ServletException, IOException {
 
     loadLocale("signup");
-    forwardRequest("/signup/index.jsp");
+    loadAttribute("titlePage");
+    loadAttribute("datePattern");
+    forwardRequest("/web/signup/index.jsp");
   }
 
   @Override

@@ -11,6 +11,9 @@
     "iron-form": "PolymerElements/iron-form#^1.0.10",
     "paper-menu": "PolymerElements/paper-menu#^1.0.7",
     "paper-item": "PolymerElements/paper-item#^1.0.7",
-    "app-localize-behavior": "PolymerElements/app-localize-behavior#^0.9.0"
+    "app-localize-behavior": "PolymerElements/app-localize-behavior#^0.9.0",
+    "paper-dropdown-menu": "PolymerElements/paper-dropdown-menu#^1.0.10",
+    "paper-listbox": "polymerelements/paper-listbox#^1.0.10",
+    "paper-date-picker": "polymer-paper-date-picker#^1.1.5"
   }
 }

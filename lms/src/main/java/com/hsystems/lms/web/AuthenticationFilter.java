@@ -17,6 +17,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -27,12 +28,8 @@ import javax.servlet.http.HttpSession;
 @Singleton
 public final class AuthenticationFilter extends BaseFilter {
 
-  private final AuthenticationService service;
-
   @Inject
-  public AuthenticationFilter(AuthenticationService service) {
-    this.service = service;
-  }
+  private AuthenticationService service;
 
   public void init() throws ServletException {
     getContext().log("AuthenticationFilter initialized");
@@ -41,12 +38,14 @@ public final class AuthenticationFilter extends BaseFilter {
   public void doFilter()
       throws IOException, ServletException {
 
-    if (service.isAuthenticated(getRequest())) {
+    if (service.isPublicResource(getRequest())
+        || service.isAuthenticated(getRequest())) {
+
       getFilterChain().doFilter(getRequest(), getResponse());
     } else {
       getContext().log("unauthenticated access request url: "
           + getRequest().getRequestURI());
-      forwardRequest("/signin");
+      forwardRequest("/web/signin");
     }
   }
 }

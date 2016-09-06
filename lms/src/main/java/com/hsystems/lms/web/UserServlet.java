@@ -47,7 +47,6 @@ public final class UserServlet extends HttpServlet {
     }
 
     response.getOutputStream().print(
-        "Guice awesome! Welcome "
-        + user.getUserCredentials().getId());
+        "Guice awesome! Welcome " + user.getId());
   }
 }

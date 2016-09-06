@@ -14,7 +14,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by administrator on 8/8/16.
  */
 @Singleton
-@WebServlet(value = "/signout", loadOnStartup = 1)
+@WebServlet(value = "/web/signout", loadOnStartup = 1)
 public final class SignOutServlet extends BaseServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
@@ -27,7 +27,7 @@ public final class SignOutServlet extends BaseServlet {
       throws ServletException, IOException {
 
     service.signOut(getRequest());
-    sendRedirect("/signin");
+    sendRedirect("/web/signin");
   }
 
   @Override
@@ -35,6 +35,6 @@ public final class SignOutServlet extends BaseServlet {
       throws ServletException, IOException {
 
     service.signOut(getRequest());
-    sendRedirect("/signin");
+    sendRedirect("/web/signin");
   }
 }

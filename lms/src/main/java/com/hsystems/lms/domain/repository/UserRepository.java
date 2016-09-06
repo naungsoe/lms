@@ -8,6 +8,7 @@ import com.hsystems.lms.exception.RepositoryException;
  */
 public interface UserRepository {
 
-  User findBy(String key)
-      throws RepositoryException;
+  User findBy(String key) throws RepositoryException;
+
+  void save(User user) throws RepositoryException;
 }

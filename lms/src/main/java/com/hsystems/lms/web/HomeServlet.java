@@ -11,7 +11,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by administrator on 8/8/16.
  */
 @Singleton
-@WebServlet(value = "/home", loadOnStartup = 1)
+@WebServlet(value = "/web/home", loadOnStartup = 1)
 public final class HomeServlet extends BaseServlet {
 
   private static final long serialVersionUID = 3995669475828674385L;
@@ -20,7 +20,9 @@ public final class HomeServlet extends BaseServlet {
   protected void doGet()
       throws ServletException, IOException {
 
-    forwardRequest("/home/index.jsp");
+    loadLocale("home");
+    loadAttribute("titlePage");
+    forwardRequest("/web/home/index.jsp");
   }
 
   @Override

@@ -23,4 +23,8 @@ public final class UserService {
   public User findBy(String key) throws RepositoryException {
     return userRepository.findBy(key);
   }
+
+  public void save(User user) throws RepositoryException {
+    userRepository.save(user);
+  }
 }
