@@ -10,6 +10,7 @@
   <title>${titlePage}</title>
 </head>
 <body>
-  <lms-home language="<c:url value="${locale}"/>" locale-url="<c:url value="${localeUrl}"/>"></lms-home>
+  <lms-home language="<c:url value="${locale}"/>"
+            locale-url="<c:url value="${localeUrl}"/>"></lms-home>
 </body>
 </html>

@@ -9,6 +9,6 @@
     "errorCredential": "Don't recognize your id and password.",
     "buttonSignIn": "Sign in",
     "buttonSignUp": "Don't have an account?",
-    "buttonForgotPassword": "Forgot password?"
+    "buttonAccountHelp": "Need help?"
   }
 }

@@ -13,6 +13,10 @@
 
   <template strip-whitespace>
     <style include="lms-style">
+      app-toolbar [main-title] {
+        padding: 0;
+      }
+
       .credentials {
         max-width: 300px;
       }
@@ -49,7 +53,7 @@
       <form id="formSignUp" method="post" action="{{signUpUrl}}" flex-vertical>
         <div class="form-content" flex-horizontal>
           <section class="credentials" flex-auto>
-            <h4 title>Sign in details</h4>
+            <h4 title>{{localize('titleSignInDetails')}}</h4>
             <paper-input name="id" label="{{localize('labelId')}}" value="{{id}}"
                          on-keydown="handleKeydown" on-change="handleChange" autofocus required
                          error-message="{{localize('labelIdRequired')}}"></paper-input>
@@ -61,7 +65,7 @@
                          error-message="{{localize('labelConfirmPasswordRequired')}}"></paper-input>
           </section>
           <section class="particulars" flex-auto>
-            <h4 title>Particulars</h4>
+            <h4 title>{{localize('titleParticulars')}}</h4>
             <div flex-horizontal>
               <paper-input name="firstName" label="{{localize('labelFirstName')}}" value="{{firstName}}"
                            on-keydown="handleKeydown" on-change="handleChange" required

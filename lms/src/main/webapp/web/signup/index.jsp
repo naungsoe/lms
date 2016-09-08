@@ -11,8 +11,10 @@
   <title><c:out value="${titlePage}"/></title>
 </head>
 <body>
-  <lms-signup sign-in-url="<c:url value="/web/signin"/>" sign-up-url="<c:url value="/web/signup"/>"
-              language="<c:out value="${locale}"/>" locale-url="<c:url value="${localeUrl}"/>"
+  <lms-signup sign-in-url="<c:url value="/web/signin"/>"
+              sign-up-url="<c:url value="/web/signup"/>"
+              language="<c:out value="${locale}"/>"
+              locale-url="<c:url value="${localeUrl}"/>"
               date-pattern="<c:out value="${datePattern}"/>"></lms-signup>
 </body>
 </html>

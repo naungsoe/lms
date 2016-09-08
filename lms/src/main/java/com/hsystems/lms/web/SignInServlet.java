@@ -48,6 +48,7 @@ public final class SignInServlet extends BaseServlet {
     } else {
       loadLocale("signin");
       loadAttribute("titlePage");
+      setAttribute("id", getParameter("id"));
       setAttribute("error", "errorCredential");
       forwardRequest("/web/signin/index.jsp");
     }

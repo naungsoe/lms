@@ -45,6 +45,7 @@ public final class AuthenticationService {
   public boolean isPublicResource(HttpServletRequest request) {
     String url = request.getRequestURI();
     return url.startsWith("/web/signin")
+        || url.startsWith("/web/accounthelp")
         || url.startsWith("/web/signup");
   }
 
