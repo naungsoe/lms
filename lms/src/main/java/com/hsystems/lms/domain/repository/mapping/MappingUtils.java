@@ -40,6 +40,6 @@ public final class MappingUtils {
     }
     
     throw new ApplicationException(
-      "unable to construct object: " + fieldClass.getClass());
+      "unable to construct object : " + fieldClass.getClass());
   }
 }

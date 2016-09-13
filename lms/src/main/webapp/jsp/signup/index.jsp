@@ -12,7 +12,7 @@
 </head>
 <body>
   <lms-signup sign-in-url="<c:url value="/web/signin"/>"
-              sign-up-url="<c:url value="/web/signup"/>"
+              sign-up-url="<c:url value="/webapi/account"/>"
               language="<c:out value="${locale}"/>"
               locale-url="<c:url value="${localeUrl}"/>"
               date-pattern="<c:out value="${datePattern}"/>"></lms-signup>

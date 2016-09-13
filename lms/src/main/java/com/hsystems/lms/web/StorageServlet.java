@@ -22,7 +22,7 @@ public final class StorageServlet extends BaseServlet {
 
     loadLocale("storage");
     loadAttribute("titlePage");
-    forwardRequest("/web/storage/index.jsp");
+    forwardRequest("/jsp/storage/index.jsp");
   }
 
   @Override

@@ -22,7 +22,7 @@ public final class HomeServlet extends BaseServlet {
 
     loadLocale("home");
     loadAttribute("titlePage");
-    forwardRequest("/web/home/index.jsp");
+    forwardRequest("/jsp/home/index.jsp");
   }
 
   @Override

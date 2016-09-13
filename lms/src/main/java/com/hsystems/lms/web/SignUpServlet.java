@@ -30,7 +30,7 @@ public final class SignUpServlet extends BaseServlet {
     loadLocale("signup");
     loadAttribute("titlePage");
     loadAttribute("datePattern");
-    forwardRequest("/web/signup/index.jsp");
+    forwardRequest("/jsp/signup/index.jsp");
   }
 
   @Override

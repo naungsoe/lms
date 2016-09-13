@@ -1,5 +1,7 @@
 package com.hsystems.lms.web;
 
+import com.google.inject.servlet.GuiceFilter;
+
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.webapi.UserController;
 import com.sun.jersey.api.core.PackagesResourceConfig;

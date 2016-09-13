@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.regex.Pattern;
 
 /**
@@ -56,7 +57,7 @@ public class ColumnMap {
       }
     } catch (Exception e) {
       throw new ApplicationException(
-          "unable to set up field: " + fieldName, e);
+          "unable to set up field : " + fieldName, e);
     }
   }
 
@@ -71,6 +72,8 @@ public class ColumnMap {
   public String getFieldName() {
     return fieldName;
   }
+
+  public Field getField(){ return field; }
 
   public void setField(Object object, Object columnValue)
       throws ApplicationException {

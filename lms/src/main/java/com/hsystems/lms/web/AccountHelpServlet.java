@@ -28,7 +28,7 @@ public final class AccountHelpServlet extends BaseServlet {
 
     loadLocale("accounthelp");
     loadAttribute("titlePage");
-    forwardRequest("/web/accounthelp/index.jsp");
+    forwardRequest("/jsp/accounthelp/index.jsp");
   }
 
   @Override

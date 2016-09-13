@@ -1,7 +1,5 @@
 package com.hsystems.lms.domain.repository.hbase;
 
-import com.hsystems.lms.domain.model.User;
-import com.hsystems.lms.domain.model.hbase.NullResult;
 import com.hsystems.lms.domain.repository.mapping.ColumnMap;
 import com.hsystems.lms.domain.repository.mapping.DataMap;
 import com.hsystems.lms.exception.ApplicationException;
@@ -19,6 +17,8 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Optional;
 
 /**
  * Created by administrator on 8/8/16.
@@ -45,7 +45,7 @@ public class HBaseMapper {
     return results;
   }
 
-  public Result getResult(Get get) throws IOException {
+  public Optional<Result> getResult(Get get) throws IOException {
     Connection connection = getConnection();
     Table table = getTable(connection);
     Result result;
@@ -58,9 +58,9 @@ public class HBaseMapper {
     }
 
     if (result == null) {
-      result = new NullResult();
+      return Optional.empty();
     }
-    return result;
+    return Optional.of(result);
   }
 
   public void putRecord(Put put) throws IOException {
@@ -93,8 +93,17 @@ public class HBaseMapper {
       throws ApplicationException {
 
     for (ColumnMap columnMap : dataMap.getColumnMaps()) {
-      Object columnValue = HBaseUtils.getString(result,
-          columnMap.getColumnFamilyName(), columnMap.getColumnName());
+      String columnFamily = columnMap.getColumnFamilyName();
+      String identifier = columnMap.getColumnName();
+      Object columnValue;
+
+      if (columnMap.getField().getType() == LocalDate.class) {
+        columnValue= HBaseUtils.getLocalDate(
+            result, columnFamily, identifier);
+      } else {
+        columnValue= HBaseUtils.getString(
+            result, columnFamily, identifier);
+      }
       columnMap.setField(object, columnValue);
     }
   }

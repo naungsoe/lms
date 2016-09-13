@@ -26,15 +26,18 @@ public final class SignOutServlet extends BaseServlet {
   protected void doGet()
       throws ServletException, IOException {
 
-    service.signOut(getRequest());
-    sendRedirect("/web/signin");
+    signOut();
   }
 
   @Override
   protected void doPost()
       throws ServletException, IOException {
 
-    service.signOut(getRequest());
+    signOut();
+  }
+
+  private void signOut() throws IOException {
+    service.signOut(getRequest(), getResponse());
     sendRedirect("/web/signin");
   }
 }

@@ -1,23 +1,23 @@
 package com.hsystems.lms.domain.model;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 /**
  * Created by administrator on 8/8/16.
  */
 public class User {
 
-  protected String identity;
-
   protected String id;
 
   protected String password;
+
+  protected String salt;
 
   protected String firstName;
 
   protected String lastName;
 
-  protected LocalDateTime birthday;
+  protected LocalDate birthday;
 
   protected String gender;
 
@@ -25,38 +25,30 @@ public class User {
 
   protected String email;
 
-  protected School school;
-
   protected User() {
 
   }
 
   public User(
-      String identity,
       String id,
       String password,
+      String salt,
       String firstName,
       String lastName,
-      LocalDateTime birthday,
+      LocalDate birthday,
       String gender,
       String mobile,
-      String email,
-      School school) {
+      String email) {
 
-    this.identity = identity;
     this.id = id;
     this.password = password;
+    this.salt = salt;
     this.firstName = firstName;
     this.lastName = lastName;
     this.birthday = birthday;
     this.gender = gender;
     this.mobile = mobile;
     this.email = email;
-    this.school = school;
-  }
-
-  public String getIdentity() {
-    return identity;
   }
 
   public String getId() {
@@ -67,6 +59,8 @@ public class User {
     return password;
   }
 
+  public String getSalt() { return salt; }
+
   public String getFirstName() {
     return firstName;
   }
@@ -75,7 +69,7 @@ public class User {
     return lastName;
   }
 
-  public LocalDateTime getBirthday() {
+  public LocalDate getBirthday() {
     return birthday;
   }
 
@@ -89,9 +83,5 @@ public class User {
 
   public String getEmail() {
     return email;
-  }
-
-  public School getSchool() {
-    return school;
   }
 }

@@ -1,6 +1,5 @@
 package com.hsystems.lms.domain.repository.hbase;
 
-import com.hsystems.lms.domain.model.NullUser;
 import com.hsystems.lms.domain.model.User;
 import com.hsystems.lms.domain.repository.mapping.MappingUtils;
 import com.hsystems.lms.exception.ApplicationException;
@@ -11,6 +10,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Optional;
 
 /**
  * Created by administrator on 13/8/16.
@@ -22,8 +22,7 @@ public final class HBaseUserMapper extends HBaseMapper {
     loadDataMap();
   }
 
-  public void loadDataMap() throws ApplicationException {
-    dataMap.addColumn("a", "id", "id");
+  private void loadDataMap() throws ApplicationException {
     dataMap.addColumn("a", "password", "password");
     dataMap.addColumn("a", "fname", "firstName");
     dataMap.addColumn("a", "lname", "lastName");
@@ -31,31 +30,30 @@ public final class HBaseUserMapper extends HBaseMapper {
     dataMap.addColumn("a", "gender", "gender");
     dataMap.addColumn("a", "mobile", "mobile");
     dataMap.addColumn("a", "email", "email");
-    dataMap.addColumn("a", "sid", "school.id");
-    dataMap.addColumn("a", "sname", "school.name");
   }
 
-  public User findBy(String key)
+  public Optional<User> findBy(String key)
       throws IOException, InstantiationException,
       InvocationTargetException, IllegalAccessException,
       NoSuchFieldException, ApplicationException {
 
     Get get = new Get(Bytes.toBytes(key));
-    Result result = getResult(get);
+    Optional<Result> result = getResult(get);
 
-    if (result.isEmpty()) {
-      return new NullUser();
+    if (result.isPresent()) {
+      User user = loadUser(result.get());
+      return Optional.of(user);
     }
-    return loadUser(key, result);
+    return Optional.empty();
   }
 
-  protected User loadUser(String key, Result result)
+  protected User loadUser(Result result)
       throws InstantiationException, InvocationTargetException,
       IllegalAccessException, NoSuchFieldException,
       ApplicationException {
 
     User user = (User) MappingUtils.getInstance(dataMap.getDomainClass());
-    MappingUtils.setField(user, "identity", key);
+    MappingUtils.setField(user, "id", Bytes.toString(result.getRow()));
     loadFields(user, result);
     return user;
   }
@@ -63,5 +61,6 @@ public final class HBaseUserMapper extends HBaseMapper {
   public void save(User user) {
     //lockRow()
     //Put put = new Put
+    //Objects.hashCode(user.getId());
   }
 }

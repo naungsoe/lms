@@ -1,12 +1,24 @@
 package com.hsystems.lms.domain.repository.hbase;
 
+import com.hsystems.lms.DateTimeUtils;
+
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by administrator on 9/8/16.
  */
 public final class HBaseUtils {
+
+  public static LocalDate getLocalDate(
+      Result result, String columnFamily, String identifier) {
+
+    String value = getString(result, columnFamily, identifier);
+    return DateTimeUtils.getDate(value);
+  }
 
   public static String getString(
       Result result, String columnFamily, String identifier) {

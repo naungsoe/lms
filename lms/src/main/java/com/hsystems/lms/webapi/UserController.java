@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.servlet.RequestScoped;
 
 import com.hsystems.lms.exception.RepositoryException;
+import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.search.Query;
@@ -33,7 +34,7 @@ public class UserController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{key}")
   public String get(@PathParam("key") String key)
-      throws RepositoryException {
+      throws ServiceException {
 
     return userService.findBy(key).toString();
   }

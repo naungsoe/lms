@@ -7,13 +7,16 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <script src="<c:url value="/static/bower_components/webcomponentsjs/webcomponents-lite.js"/>"></script>
-  <link rel="import" href="<c:url value="/static/web_components/lms-accounthelp.html"/>">
+  <link rel="import" href="<c:url value="/static/web_components/lms-signin.html"/>">
   <title><c:out value="${titlePage}"/></title>
 </head>
 <body>
-  <lms-accounthelp sign-in-url="<c:url value="/web/signin"/>"
+  <lms-signin sign-in-url="<c:url value="/web/signin"/>"
               account-help-url="<c:url value="/web/accounthelp"/>"
+              sign-up-url="<c:url value="/web/signup"/>"
               language="<c:out value="${locale}"/>"
-              locale-url="<c:url value="${localeUrl}"/>"></lms-accounthelp>
+              locale-url="<c:url value="${localeUrl}"/>"
+              id="<c:out value="${id}"/>"
+              error="<c:out value="${error}"/>"></lms-signin>
 </body>
 </html>

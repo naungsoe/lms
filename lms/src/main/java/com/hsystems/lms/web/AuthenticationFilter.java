@@ -13,6 +13,7 @@ import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -38,14 +39,20 @@ public final class AuthenticationFilter extends BaseFilter {
   public void doFilter()
       throws IOException, ServletException {
 
-    if (service.isPublicResource(getRequest())
-        || service.isAuthenticated(getRequest())) {
-
+    if (isPublicResourceRequest() || service.isAuthenticated(getRequest())) {
       getFilterChain().doFilter(getRequest(), getResponse());
     } else {
-      getContext().log("unauthenticated access request url: "
+      getContext().log("unauthenticated access request url : "
           + getRequest().getRequestURI());
       forwardRequest("/web/signin");
     }
+  }
+
+  public boolean isPublicResourceRequest() {
+    String url = getRequest().getRequestURI();
+    return url.startsWith("/web/signin")
+        || url.startsWith("/web/accounthelp")
+        || url.startsWith("/web/signup")
+        || url.startsWith("/web/error");
   }
 }
