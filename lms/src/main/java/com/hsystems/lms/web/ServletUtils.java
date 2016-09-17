@@ -1,6 +1,13 @@
 package com.hsystems.lms.web;
 
-import javax.json.Json;
+import com.hsystems.lms.MappingUtils;
+
+import org.apache.commons.lang.StringUtils;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,5 +32,27 @@ public final class ServletUtils {
       }
     }
     return value;
+  }
+  
+  public static <T> T getEntity(
+      HttpServletRequest request, Class<T> type)
+      throws ServletException {
+
+    try {
+      T instance = (T) MappingUtils.getInstance(type);
+      Field[] fields = type.getDeclaredFields();
+      for (Field field : fields) {
+        String value = request.getParameter(field.getName());
+        if (StringUtils.isNotEmpty(value)) {
+          MappingUtils.setField(instance, field.getName(), value);
+        }
+      }
+      return instance;
+    } catch (InstantiationException | IllegalAccessException
+        | InvocationTargetException | NoSuchFieldException e) {
+
+      throw new ServletException(
+          "error getting entity", e);
+    }
   }
 }

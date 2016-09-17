@@ -1,7 +1,5 @@
 package com.hsystems.lms.domain.repository.mapping;
 
-import com.hsystems.lms.exception.ApplicationException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,7 +12,7 @@ public final class DataMap {
 
   private final String tableName;
 
-  private List<ColumnMap> columnMaps;
+  private final List<ColumnMap> columnMaps;
 
   public DataMap(Class domainClass, String tableName) {
     this.domainClass = domainClass;
@@ -35,7 +33,7 @@ public final class DataMap {
   public void addColumn(
       String columnFamilyName, String columnName,
       String fieldName)
-      throws ApplicationException {
+      throws NoSuchFieldException {
 
     columnMaps.add(new ColumnMap(
         columnFamilyName,

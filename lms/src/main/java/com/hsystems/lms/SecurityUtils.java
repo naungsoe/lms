@@ -1,6 +1,7 @@
 package com.hsystems.lms;
 
-import java.nio.charset.Charset;
+import org.apache.hadoop.hbase.util.Bytes;
+
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -14,17 +15,15 @@ import javax.crypto.spec.PBEKeySpec;
  */
 public final class SecurityUtils {
 
-  private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
-
   private static final int iterations = 1000;
 
   private static final int keyLength = 256;
 
   public static String getSalt() throws NoSuchAlgorithmException {
-    SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
     byte[] salt = new byte[16];
+    SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
     secureRandom.nextBytes(salt);
-    return new String(salt, UTF8_CHARSET);
+    return Bytes.toHex(salt);
   }
 
   public static String getMD5Hash(String input, String salt) {
@@ -41,8 +40,8 @@ public final class SecurityUtils {
     MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
     messageDigest.update(salt.getBytes());
 
-    byte[] bytes = messageDigest.digest(input.getBytes());
-    return new String(bytes, UTF8_CHARSET);
+    byte[] hash = messageDigest.digest(input.getBytes());
+    return Bytes.toHex(hash);
   }
 
   public static String getPasswordHash(String input, String salt)
@@ -53,6 +52,6 @@ public final class SecurityUtils {
     SecretKeyFactory keyFactory = SecretKeyFactory
         .getInstance("PBKDF2WithHmacSHA1");
     byte[] key = keyFactory.generateSecret(keySpec).getEncoded();
-    return new String(key, UTF8_CHARSET);
+    return Bytes.toHex(key);
   }
 }

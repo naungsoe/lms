@@ -1,5 +1,6 @@
 package com.hsystems.lms.service;
 
+import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.search.Query;
 
 /**
@@ -7,5 +8,6 @@ import com.hsystems.lms.service.search.Query;
  */
 public interface SearchService {
 
-  String query(Query searchQuery);
+  String query(Query searchQuery)
+      throws ServiceException;
 }

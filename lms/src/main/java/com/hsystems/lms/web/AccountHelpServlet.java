@@ -1,7 +1,6 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.service.AuthenticationService;
 
@@ -13,7 +12,6 @@ import javax.servlet.annotation.WebServlet;
 /**
  * Created by administrator on 8/8/16.
  */
-@Singleton
 @WebServlet(value = "/web/accounthelp", loadOnStartup = 1)
 public final class AccountHelpServlet extends BaseServlet {
 

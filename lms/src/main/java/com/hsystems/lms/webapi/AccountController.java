@@ -1,7 +1,6 @@
 package com.hsystems.lms.webapi;
 
 import com.google.inject.Inject;
-import com.google.inject.servlet.RequestScoped;
 
 import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.UserService;
@@ -20,7 +19,6 @@ import javax.ws.rs.core.Response.Status;
  * Created by administrator on 10/9/16.
  */
 @Path("account")
-@RequestScoped
 public class AccountController {
 
   @Inject
@@ -28,7 +26,7 @@ public class AccountController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public String getAccount() {
+  public String getAccount(String key) {
     return "Get request";
   }
 
@@ -38,8 +36,7 @@ public class AccountController {
       throws IllegalArgumentException, ServiceException {
 
     userService.signUp(entity);
-
-    String result = "account created : " + entity.getId();
-    return Response.status(Status.CREATED).entity(result).build();
+    return Response.status(Status.CREATED)
+        .entity("account created").build();
   }
 }

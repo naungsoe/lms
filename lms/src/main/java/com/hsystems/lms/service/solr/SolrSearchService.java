@@ -1,5 +1,7 @@
 package com.hsystems.lms.service.solr;
 
+import com.hsystems.lms.annotation.Log;
+import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.search.Query;
 
@@ -8,11 +10,14 @@ import com.hsystems.lms.service.search.Query;
  */
 public final class SolrSearchService implements SearchService {
 
-  public SolrSearchService() {
+  SolrSearchService() {
 
   }
 
-  public String query(Query searchQuery) {
+  @Log
+  public String query(Query searchQuery)
+      throws ServiceException {
+
     return "";
   }
 }

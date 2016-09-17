@@ -4,6 +4,7 @@ import com.google.inject.Injector;
 
 import com.hsystems.lms.FileUtils;
 import com.hsystems.lms.JsonUtils;
+import com.hsystems.lms.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -41,7 +42,9 @@ public abstract class BaseServlet extends HttpServlet {
   }
 
   @Override
-  public void init(ServletConfig config) throws ServletException {
+  public void init(ServletConfig config)
+      throws ServletException {
+
     String className = Injector.class.getName();
     ServletContext context = config.getServletContext();
     Injector injector = (Injector) context.getAttribute(className);
@@ -84,9 +87,7 @@ public abstract class BaseServlet extends HttpServlet {
     dispatcher.forward(request, response);
   }
 
-  protected void sendRedirect(String url)
-      throws IOException {
-
+  protected void sendRedirect(String url) throws IOException {
     response.sendRedirect(url);
   }
 

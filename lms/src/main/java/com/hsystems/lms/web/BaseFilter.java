@@ -53,8 +53,10 @@ public abstract class BaseFilter implements Filter {
     init();
   }
 
-  public void doFilter(ServletRequest request, ServletResponse response,
-      FilterChain filterChain) throws IOException, ServletException {
+  public void doFilter(
+      ServletRequest request, ServletResponse response,
+      FilterChain filterChain)
+      throws IOException, ServletException {
 
     this.request = (HttpServletRequest) request;
     this.response = (HttpServletResponse) response;
@@ -73,7 +75,9 @@ public abstract class BaseFilter implements Filter {
     dispatcher.forward(request, response);
   }
 
-  public abstract void init() throws ServletException;
+  public abstract void init()
+      throws ServletException;
 
-  public abstract void doFilter() throws IOException, ServletException;
+  public abstract void doFilter()
+      throws IOException, ServletException;
 }

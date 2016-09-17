@@ -6,6 +6,8 @@ import com.hsystems.lms.domain.model.User;
 import com.hsystems.lms.domain.repository.UserRepository;
 import com.hsystems.lms.exception.RepositoryException;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Optional;
 
 /**
@@ -14,15 +16,24 @@ import java.util.Optional;
 public final class HBaseUserRepository
     implements UserRepository {
 
-  @Inject
-  private HBaseUserMapper userMapper;
+  private final HBaseUserMapper userMapper;
 
-  public Optional<User> findBy(String key) throws RepositoryException {
+  @Inject
+  public HBaseUserRepository(HBaseUserMapper userMapper) {
+    this.userMapper = userMapper;
+  }
+
+  public Optional<User> findBy(String key)
+      throws RepositoryException {
+
     try {
       return userMapper.findBy(key);
-    } catch (Exception e) {
+    } catch (IOException | InstantiationException
+        | InvocationTargetException | IllegalAccessException
+        | NoSuchFieldException e) {
+
       throw new RepositoryException(
-          "unable to find user by key : " + key, e);
+          "error retrieving user", e);
     }
   }
 

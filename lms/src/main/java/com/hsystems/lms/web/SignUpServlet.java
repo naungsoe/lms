@@ -1,7 +1,6 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.service.AuthenticationService;
 
@@ -9,12 +8,10 @@ import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.Cookie;
 
 /**
  * Created by administrator on 8/8/16.
  */
-@Singleton
 @WebServlet(value = "/web/signup", loadOnStartup = 1)
 public final class SignUpServlet extends BaseServlet {
 

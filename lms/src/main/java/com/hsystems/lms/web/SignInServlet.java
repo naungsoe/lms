@@ -1,42 +1,45 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-import com.hsystems.lms.exception.ApplicationException;
 import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.entity.SignInEntity;
+import com.hsystems.lms.service.entity.UserEntity;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by administrator on 8/8/16.
  */
-@Singleton
 @WebServlet(value = "/web/signin", loadOnStartup = 1)
 public final class SignInServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
   @Inject
-  private AuthenticationService service;
+  private AuthenticationService authenticationService;
 
   @Override
   protected void doGet()
       throws ServletException, IOException {
 
-    if (service.isAuthenticated(getRequest())) {
-      sendRedirect("/web/home");
-    } else {
-      loadLocale("signin");
-      loadAttribute("titlePage");
-      setAttribute("id", getCookie("id"));
-      forwardRequest("/jsp/signin/index.jsp");
-    }
+    setAttribute("id", getCookie("id"));
+    loadSignIn();
+  }
+
+  private void loadSignIn()
+      throws ServletException, IOException {
+
+    loadLocale("signin");
+    loadAttribute("titlePage");
+    forwardRequest("/jsp/signin/index.jsp");
   }
 
   @Override
@@ -44,19 +47,32 @@ public final class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      service.signIn(getRequest(), getResponse());
-    } catch (ServiceException e) {
-      sendRedirect("/web/error");
-    }
+      SignInEntity signInEntity
+          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
+      Optional<UserEntity> userEntity
+          = authenticationService.signIn(signInEntity);
 
-    if (service.isAuthenticated(getRequest())) {
-      sendRedirect("/web/home");
-    } else {
-      loadLocale("signin");
-      loadAttribute("titlePage");
-      setAttribute("id", getParameter("id"));
-      setAttribute("error", "errorCredential");
-      forwardRequest("/jsp/signin/index.jsp");
+      if (userEntity.isPresent()) {
+        createSessionAndCookies(userEntity.get());
+        sendRedirect("/web/home");
+      } else {
+        setAttribute("id", getParameter("id"));
+        setAttribute("error", "errorCredential");
+        loadSignIn();
+      }
+    } catch (ServiceException e) {
+      throw new ServletException(
+          "error signing in", e);
     }
+  }
+
+  private void createSessionAndCookies(UserEntity userEntity) {
+    HttpSession session = getRequest().getSession(true);
+    session.setAttribute("subject", userEntity);
+    session.setMaxInactiveInterval(30 * 60);
+
+    Cookie cookie = new Cookie("id", userEntity.getId());
+    cookie.setMaxAge(30 * 60);
+    getResponse().addCookie(cookie);
   }
 }

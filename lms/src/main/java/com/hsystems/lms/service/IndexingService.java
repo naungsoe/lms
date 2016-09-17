@@ -7,5 +7,6 @@ import com.hsystems.lms.exception.ServiceException;
  */
 public interface IndexingService {
 
-  void index(Object entity) throws ServiceException;
+  <T> void index(T entity)
+      throws ServiceException;
 }

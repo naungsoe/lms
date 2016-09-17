@@ -2,7 +2,6 @@ package com.hsystems.lms.domain.repository.hbase;
 
 import com.hsystems.lms.domain.repository.mapping.ColumnMap;
 import com.hsystems.lms.domain.repository.mapping.DataMap;
-import com.hsystems.lms.exception.ApplicationException;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
@@ -17,6 +16,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -31,7 +31,9 @@ public class HBaseMapper {
     this.dataMap = new DataMap(domainClass, tableName);
   }
 
-  public ResultScanner scanResults(Scan scan) throws IOException {
+  public ResultScanner scanResults(Scan scan)
+      throws IOException {
+
     Connection connection = getConnection();
     Table table = getTable(connection);
     ResultScanner results;
@@ -45,7 +47,9 @@ public class HBaseMapper {
     return results;
   }
 
-  public Optional<Result> getResult(Get get) throws IOException {
+  public Optional<Result> getResult(Get get)
+      throws IOException {
+
     Connection connection = getConnection();
     Table table = getTable(connection);
     Result result;
@@ -63,7 +67,9 @@ public class HBaseMapper {
     return Optional.of(result);
   }
 
-  public void putRecord(Put put) throws IOException {
+  public void putRecord(Put put)
+      throws IOException {
+
     Connection connection = getConnection();
     Table table = getTable(connection);
 
@@ -75,7 +81,9 @@ public class HBaseMapper {
     }
   }
 
-  protected Connection getConnection() throws IOException {
+  protected Connection getConnection()
+      throws IOException {
+
     Configuration config = HBaseConfiguration.create();
     config.set("hbase.zookeeper.quorum", "vagrant-ubuntu-trusty-64");
     config.set("hbase.zookeeper.property.clientPort", "2181");
@@ -89,22 +97,23 @@ public class HBaseMapper {
     return connection.getTable(tableName);
   }
 
-  protected void loadFields(Object object, Result result)
-      throws ApplicationException {
+  protected <T> void loadFields(T object, Result result)
+      throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
 
     for (ColumnMap columnMap : dataMap.getColumnMaps()) {
       String columnFamily = columnMap.getColumnFamilyName();
       String identifier = columnMap.getColumnName();
-      Object columnValue;
 
       if (columnMap.getField().getType() == LocalDate.class) {
-        columnValue= HBaseUtils.getLocalDate(
+        LocalDate columnValue = HBaseUtils.getLocalDate(
             result, columnFamily, identifier);
+        columnMap.setField(object, columnValue);
       } else {
-        columnValue= HBaseUtils.getString(
+        String columnValue= HBaseUtils.getString(
             result, columnFamily, identifier);
+        columnMap.setField(object, columnValue);
       }
-      columnMap.setField(object, columnValue);
     }
   }
 }

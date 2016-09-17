@@ -1,64 +1,60 @@
 package com.hsystems.lms.domain.repository.mapping;
 
-import com.hsystems.lms.exception.ApplicationException;
+import com.hsystems.lms.MappingUtils;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
+import java.lang.reflect.InvocationTargetException;
+import java.util.NoSuchElementException;
 import java.util.regex.Pattern;
 
 /**
  * Created by administrator on 13/8/16.
  */
-public class ColumnMap {
+public final class ColumnMap {
 
-  private String columnFamilyName;
+  private final String columnFamilyName;
 
-  private String columnName;
+  private final String columnName;
 
-  private String fieldName;
+  private final String fieldName;
 
-  private Field field;
+  private final DataMap dataMap;
 
-  private DataMap dataMap;
+  private final Field field;
 
   public ColumnMap(
       String columnFamilyName, String columnName,
       String fieldName, DataMap dataMap)
-      throws ApplicationException {
+      throws NoSuchFieldException {
 
     this.columnFamilyName = columnFamilyName;
     this.columnName = columnName;
     this.fieldName = fieldName;
     this.dataMap = dataMap;
-    initField();
+    this.field = getClassField();
   }
 
-  protected void initField() throws ApplicationException {
-    try {
-      if (fieldName.indexOf('.') > 0) {
-        String[] fieldPaths = fieldName.split(Pattern.quote("."));
-        Class fieldClass = this.dataMap.getDomainClass()
-            .getDeclaredField(fieldPaths[0]).getType();
+  protected Field getClassField()
+      throws NoSuchFieldException {
 
-        for (int i = 1; i < fieldPaths.length; i++) {
-          if ((i + 1) < fieldPaths.length) {
-            fieldClass = fieldClass.getDeclaredField(fieldPaths[i]).getType();
-          } else {
-            this.field = fieldClass.getDeclaredField(fieldPaths[i]);
-            break;
-          }
+    if (fieldName.indexOf('.') > 0) {
+      String[] fieldPaths = fieldName.split(Pattern.quote("."));
+      Class fieldClass = dataMap.getDomainClass()
+          .getDeclaredField(fieldPaths[0]).getType();
+
+      for (int i = 1; i < fieldPaths.length; i++) {
+        if ((i + 1) < fieldPaths.length) {
+          fieldClass = fieldClass.getDeclaredField(fieldPaths[i]).getType();
+        } else {
+          return fieldClass.getDeclaredField(fieldPaths[i]);
         }
-      } else {
-        this.field = this.dataMap.getDomainClass()
-            .getDeclaredField(fieldName);
       }
-    } catch (Exception e) {
-      throw new ApplicationException(
-          "unable to set up field : " + fieldName, e);
+    } else {
+      return dataMap.getDomainClass().getDeclaredField(fieldName);
     }
+
+    throw new NoSuchElementException(
+        "error setting up field");
   }
 
   public String getColumnFamilyName() {
@@ -75,37 +71,33 @@ public class ColumnMap {
 
   public Field getField(){ return field; }
 
-  public void setField(Object object, Object columnValue)
-      throws ApplicationException {
+  public <T,V> void setField(T object, V columnValue)
+      throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
 
-    try {
-      if (fieldName.indexOf('.') > 0) {
-        String[] fieldPaths = fieldName.split(Pattern.quote("."));
-        Field classField = dataMap.getDomainClass()
-            .getDeclaredField(fieldPaths[0]);
-        Object classInstance = classField.get(object);
+    if (fieldName.indexOf('.') > 0) {
+      String[] fieldPaths = fieldName.split(Pattern.quote("."));
+      Field classField = dataMap.getDomainClass()
+          .getDeclaredField(fieldPaths[0]);
+      Object classInstance = classField.get(object);
 
-        for (int i = 0; i < fieldPaths.length; i++) {
-          if ((i + 1) < fieldPaths.length) {
-            if (classInstance == null) {
-              classInstance = MappingUtils.getInstance(classField.getType());
-              MappingUtils.setField(object, fieldPaths[i], classInstance);
-            }
-            classField = classInstance.getClass()
-                .getDeclaredField(fieldPaths[i + 1]);
-            classInstance = classField.get(classInstance);
-          } else {
-            field.setAccessible(true);
-            field.set(classInstance, columnValue);
+      for (int i = 0; i < fieldPaths.length; i++) {
+        if ((i + 1) < fieldPaths.length) {
+          if (classInstance == null) {
+            classInstance = MappingUtils.getInstance(classField.getType());
+            MappingUtils.setField(object, fieldPaths[i], classInstance);
           }
+          classField = classInstance.getClass()
+              .getDeclaredField(fieldPaths[i + 1]);
+          classInstance = classField.get(classInstance);
+        } else {
+          field.setAccessible(true);
+          field.set(classInstance, columnValue);
         }
-      } else {
-        field.setAccessible(true);
-        field.set(object, columnValue);
       }
-    } catch (Exception e) {
-      throw new ApplicationException(
-          "error in setting " + fieldName, e);
+    } else {
+      field.setAccessible(true);
+      field.set(object, columnValue);
     }
   }
 }

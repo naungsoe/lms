@@ -1,7 +1,7 @@
 package com.hsystems.lms.domain.repository.hbase;
 
+import com.hsystems.lms.MappingUtils;
 import com.hsystems.lms.domain.model.User;
-import com.hsystems.lms.domain.repository.mapping.MappingUtils;
 import com.hsystems.lms.exception.ApplicationException;
 
 import org.apache.hadoop.hbase.client.Get;
@@ -17,12 +17,16 @@ import java.util.Optional;
  */
 public final class HBaseUserMapper extends HBaseMapper {
 
-  public HBaseUserMapper() throws ApplicationException {
+  public HBaseUserMapper()
+      throws NoSuchFieldException {
+
     super(User.class, "users");
     loadDataMap();
   }
 
-  private void loadDataMap() throws ApplicationException {
+  private void loadDataMap()
+      throws NoSuchFieldException {
+
     dataMap.addColumn("a", "password", "password");
     dataMap.addColumn("a", "fname", "firstName");
     dataMap.addColumn("a", "lname", "lastName");
@@ -35,7 +39,7 @@ public final class HBaseUserMapper extends HBaseMapper {
   public Optional<User> findBy(String key)
       throws IOException, InstantiationException,
       InvocationTargetException, IllegalAccessException,
-      NoSuchFieldException, ApplicationException {
+      NoSuchFieldException {
 
     Get get = new Get(Bytes.toBytes(key));
     Optional<Result> result = getResult(get);
@@ -49,8 +53,7 @@ public final class HBaseUserMapper extends HBaseMapper {
 
   protected User loadUser(Result result)
       throws InstantiationException, InvocationTargetException,
-      IllegalAccessException, NoSuchFieldException,
-      ApplicationException {
+      IllegalAccessException, NoSuchFieldException {
 
     User user = (User) MappingUtils.getInstance(dataMap.getDomainClass());
     MappingUtils.setField(user, "id", Bytes.toString(result.getRow()));
