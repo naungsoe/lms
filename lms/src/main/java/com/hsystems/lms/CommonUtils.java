@@ -13,13 +13,4 @@ public class CommonUtils {
       throw new IllegalArgumentException(errorMessage);
     }
   }
-
-  public static <T> void checkNotNull(
-      T value, String errorMessage)
-      throws IllegalArgumentException {
-
-    if (value == null) {
-      throw new IllegalArgumentException(errorMessage);
-    }
-  }
 }

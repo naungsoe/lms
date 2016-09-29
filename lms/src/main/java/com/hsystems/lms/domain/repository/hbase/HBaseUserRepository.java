@@ -19,7 +19,7 @@ public final class HBaseUserRepository
   private final HBaseUserMapper userMapper;
 
   @Inject
-  public HBaseUserRepository(HBaseUserMapper userMapper) {
+  HBaseUserRepository(HBaseUserMapper userMapper) {
     this.userMapper = userMapper;
   }
 

@@ -1,6 +1,7 @@
 package com.hsystems.lms.webapi;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.UserService;
@@ -19,6 +20,7 @@ import javax.ws.rs.core.Response.Status;
  * Created by administrator on 10/9/16.
  */
 @Path("account")
+@Singleton
 public class AccountController {
 
   @Inject

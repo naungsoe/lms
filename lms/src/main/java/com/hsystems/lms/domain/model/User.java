@@ -1,6 +1,8 @@
 package com.hsystems.lms.domain.model;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by administrator on 8/8/16.
@@ -25,7 +27,9 @@ public class User {
 
   protected String email;
 
-  protected User() {
+  protected List<String> permissions;
+
+  User() {
 
   }
 
@@ -38,7 +42,8 @@ public class User {
       LocalDate birthday,
       String gender,
       String mobile,
-      String email) {
+      String email,
+      List<String> permissions) {
 
     this.id = id;
     this.password = password;
@@ -49,6 +54,7 @@ public class User {
     this.gender = gender;
     this.mobile = mobile;
     this.email = email;
+    this.permissions = permissions;
   }
 
   public String getId() {
@@ -84,4 +90,6 @@ public class User {
   public String getEmail() {
     return email;
   }
+
+  public List<String> getPermissions() { return permissions; }
 }

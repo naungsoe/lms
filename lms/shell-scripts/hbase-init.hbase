@@ -1,0 +1,23 @@
+disable 'permissions'
+drop 'permissions'
+create 'permissions', {NAME => 'p', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'permissions', 'VIEW_HOME', 'p:name', 'View Home'
+put 'permissions', 'VIEW_ASSIGNMENTS', 'p:name', 'View Assignments'
+put 'permissions', 'VIEW_QUESTION', 'p:name', 'View Question'
+put 'permissions', 'EDIT_QUESTION', 'p:name', 'Edit Question'
+
+disable 'users'
+drop 'users'
+create 'users', {NAME => 'a', VERSIONS => 3, BLOOMFILTER => 'ROW'}, {NAME => 'p', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'users', 'admin', 'a:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af078e8da57b4fe16bbf189'
+put 'users', 'admin', 'a:salt', 'c3c704f0a67f469086e8ff50a056b3d5'
+put 'users', 'admin', 'a:fname', 'Admin'
+put 'users', 'admin', 'a:lname', 'User'
+put 'users', 'admin', 'a:birthday', '1990-01-01'
+put 'users', 'admin', 'a:gender', 'Male'
+put 'users', 'admin', 'a:mobile', '987654321'
+put 'users', 'admin', 'a:email', 'admin@google.com'
+put 'users', 'admin', 'p:1', 'VIEW_HOME'
+put 'users', 'admin', 'p:2', 'VIEW_ASSIGNMENTS'
+put 'users', 'admin', 'p:3', 'VIEW_QUESTION'
+put 'users', 'admin', 'p:4', 'EDIT_QUESTION'

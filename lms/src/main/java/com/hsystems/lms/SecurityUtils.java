@@ -44,7 +44,7 @@ public final class SecurityUtils {
     return Bytes.toHex(hash);
   }
 
-  public static String getPasswordHash(String input, String salt)
+  public static String getPassword(String input, String salt)
       throws NoSuchAlgorithmException, InvalidKeySpecException {
 
     PBEKeySpec keySpec = new PBEKeySpec(

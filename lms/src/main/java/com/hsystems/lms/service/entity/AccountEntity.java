@@ -1,9 +1,13 @@
 package com.hsystems.lms.service.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by administrator on 10/9/16.
  */
-public class AccountEntity extends UserEntity {
+public class AccountEntity extends UserEntity implements Serializable {
+
+  private static final long serialVersionUID = -6318683344722781066L;
 
   protected String password;
 
@@ -13,7 +17,7 @@ public class AccountEntity extends UserEntity {
 
   protected String salt;
 
-  protected AccountEntity() {
+  AccountEntity() {
 
   }
 

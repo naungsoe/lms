@@ -68,7 +68,7 @@ public final class SignInServlet extends BaseServlet {
 
   private void createSessionAndCookies(UserEntity userEntity) {
     HttpSession session = getRequest().getSession(true);
-    session.setAttribute("subject", userEntity);
+    session.setAttribute("userEntity", userEntity);
     session.setMaxInactiveInterval(30 * 60);
 
     Cookie cookie = new Cookie("id", userEntity.getId());

@@ -1,4 +1,4 @@
-package com.hsystems.lms.service.search;
+package com.hsystems.lms.service.query;
 
 /**
  * Created by administrator on 10/8/16.

@@ -1,28 +1,44 @@
 package com.hsystems.lms.service.entity;
 
 import com.hsystems.lms.DateTimeUtils;
+import com.hsystems.lms.annotation.Field;
 import com.hsystems.lms.domain.model.User;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * Created by administrator on 8/8/16.
  */
-public class UserEntity {
+public class UserEntity implements Serializable {
 
+  private static final long serialVersionUID = 4608346504487806702L;
+
+  @Field
   protected String id;
 
+  @Field
   protected String firstName;
 
+  @Field
   protected String lastName;
 
+  @Field
   protected String birthday;
 
+  @Field
   protected String gender;
 
+  @Field
   protected String mobile;
 
+  @Field
   protected String email;
 
-  protected UserEntity() {
+  @Field
+  protected List<String> permissions;
+
+  UserEntity() {
 
   }
 
@@ -34,6 +50,7 @@ public class UserEntity {
     this.gender = user.getGender();
     this.mobile = user.getMobile();
     this.email = user.getEmail();
+    this.permissions = user.getPermissions();
   }
 
   public String getId() {
@@ -63,4 +80,6 @@ public class UserEntity {
   public String getEmail() {
     return email;
   }
+
+  public List<String> getPermissions() { return permissions; }
 }

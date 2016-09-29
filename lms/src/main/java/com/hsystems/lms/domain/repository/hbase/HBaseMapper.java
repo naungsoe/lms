@@ -1,5 +1,8 @@
 package com.hsystems.lms.domain.repository.hbase;
 
+import com.google.inject.Provider;
+
+import com.hsystems.lms.MappingUtils;
 import com.hsystems.lms.domain.repository.mapping.ColumnMap;
 import com.hsystems.lms.domain.repository.mapping.DataMap;
 
@@ -14,106 +17,72 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.client.Table;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NavigableMap;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by administrator on 8/8/16.
  */
-public class HBaseMapper {
+public abstract class HBaseMapper {
 
-  protected final DataMap dataMap;
-
-  public HBaseMapper(Class domainClass, String tableName) {
-    this.dataMap = new DataMap(domainClass, tableName);
-  }
-
-  public ResultScanner scanResults(Scan scan)
-      throws IOException {
-
-    Connection connection = getConnection();
-    Table table = getTable(connection);
-    ResultScanner results;
-
-    try {
-      results = table.getScanner(scan);
-    } finally {
-      table.close();
-      connection.close();
-    }
-    return results;
-  }
-
-  public Optional<Result> getResult(Get get)
-      throws IOException {
-
-    Connection connection = getConnection();
-    Table table = getTable(connection);
-    Result result;
-
-    try {
-      result = table.get(get);
-    } finally {
-      table.close();
-      connection.close();
-    }
-
-    if (result == null) {
-      return Optional.empty();
-    }
-    return Optional.of(result);
-  }
-
-  public void putRecord(Put put)
-      throws IOException {
-
-    Connection connection = getConnection();
-    Table table = getTable(connection);
-
-    try {
-      table.put(put);
-    } finally {
-      table.close();
-      connection.close();
-    }
-  }
-
-  protected Connection getConnection()
-      throws IOException {
-
-    Configuration config = HBaseConfiguration.create();
-    config.set("hbase.zookeeper.quorum", "vagrant-ubuntu-trusty-64");
-    config.set("hbase.zookeeper.property.clientPort", "2181");
-    return ConnectionFactory.createConnection(config);
-  }
-
-  protected Table getTable(Connection connection)
-      throws IOException {
-
-    TableName tableName = TableName.valueOf(dataMap.getTableName());
-    return connection.getTable(tableName);
-  }
-
-  protected <T> void loadFields(T object, Result result)
+  protected <T> void loadFields(T instance, Result result, DataMap dataMap)
       throws NoSuchFieldException, IllegalAccessException,
       InstantiationException, InvocationTargetException {
 
     for (ColumnMap columnMap : dataMap.getColumnMaps()) {
-      String columnFamily = columnMap.getColumnFamilyName();
-      String identifier = columnMap.getColumnName();
-
-      if (columnMap.getField().getType() == LocalDate.class) {
-        LocalDate columnValue = HBaseUtils.getLocalDate(
-            result, columnFamily, identifier);
-        columnMap.setField(object, columnValue);
+      if (columnMap.getField().getType() == List.class) {
+        loadListField(instance, columnMap, result);
       } else {
-        String columnValue= HBaseUtils.getString(
-            result, columnFamily, identifier);
-        columnMap.setField(object, columnValue);
+        loadItemField(instance, columnMap, result);
       }
     }
+  }
+
+  protected <T> void loadListField(
+      T instance, ColumnMap columnMap, Result result)
+      throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
+
+    String columnFamily = columnMap.getColumnFamilyName();
+    NavigableMap<byte[], byte[]> familyMap
+        = result.getFamilyMap(Bytes.toBytes(columnFamily));
+    Collection<byte[]> familyValues = familyMap.values();
+
+    List<String> fieldValue = new ArrayList();
+    for (byte[] familyValue : familyValues) {
+      fieldValue.add(Bytes.toString(familyValue));
+    }
+    columnMap.setField(instance, fieldValue);
+  }
+
+  protected <T> void loadItemField(
+      T instance, ColumnMap columnMap, Result result)
+      throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
+
+    String columnFamily = columnMap.getColumnFamilyName();
+    String identifier = columnMap.getColumnName();
+    Object fieldValue;
+
+    if (columnMap.getField().getType() == LocalDate.class) {
+      fieldValue = HBaseUtils.getLocalDate(
+          result, columnFamily, identifier);
+    } else {
+      fieldValue = HBaseUtils.getString(
+          result, columnFamily, identifier);
+    }
+    columnMap.setField(instance, fieldValue);
   }
 }

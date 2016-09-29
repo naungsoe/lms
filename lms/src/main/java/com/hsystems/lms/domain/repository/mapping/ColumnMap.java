@@ -22,7 +22,7 @@ public final class ColumnMap {
 
   private final Field field;
 
-  public ColumnMap(
+  ColumnMap(
       String columnFamilyName, String columnName,
       String fieldName, DataMap dataMap)
       throws NoSuchFieldException {
@@ -71,7 +71,7 @@ public final class ColumnMap {
 
   public Field getField(){ return field; }
 
-  public <T,V> void setField(T object, V columnValue)
+  public <T,S> void setField(T object, S columnValue)
       throws NoSuchFieldException, IllegalAccessException,
       InstantiationException, InvocationTargetException {
 

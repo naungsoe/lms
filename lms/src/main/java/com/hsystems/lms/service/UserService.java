@@ -22,6 +22,7 @@ import java.util.Optional;
 /**
  * Created by administrator on 8/8/16.
  */
+@Singleton
 public class UserService {
 
   private UserRepository userRepository;
@@ -92,7 +93,7 @@ public class UserService {
 
     return new User(
         entity.getId(),
-        SecurityUtils.getPasswordHash(
+        SecurityUtils.getPassword(
             entity.getPassword(), entity.getSalt()),
         entity.getSalt(),
         entity.getFirstName(),
@@ -100,7 +101,8 @@ public class UserService {
         DateTimeUtils.getDate(entity.getBirthday()),
         entity.getGender(),
         entity.getMobile(),
-        entity.getEmail()
+        entity.getEmail(),
+        entity.getPermissions()
     );
   }
 }

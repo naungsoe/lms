@@ -1,11 +1,12 @@
 package com.hsystems.lms.webapi;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import com.hsystems.lms.exception.ServiceException;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.search.Query;
+import com.hsystems.lms.service.query.Query;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -17,6 +18,7 @@ import javax.ws.rs.core.MediaType;
  * Root resource (exposed at "users" path)
  */
 @Path("users")
+@Singleton
 public class UserController {
 
   @Inject

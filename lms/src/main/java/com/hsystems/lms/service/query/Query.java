@@ -1,4 +1,4 @@
-package com.hsystems.lms.service.search;
+package com.hsystems.lms.service.query;
 
 import java.util.ArrayList;
 import java.util.List;

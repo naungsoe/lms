@@ -1,4 +1,4 @@
-package com.hsystems.lms.service.security;
+package com.hsystems.lms.service.enums;
 
 /**
  * Created by administrator on 17/9/16.
