@@ -1,6 +1,6 @@
 package com.hsystems.lms.web;
 
-import com.hsystems.lms.annotation.Log;
+import com.hsystems.lms.service.annotation.Log;
 
 import org.apache.log4j.Logger;
 

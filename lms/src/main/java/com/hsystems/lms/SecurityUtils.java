@@ -19,7 +19,7 @@ public final class SecurityUtils {
 
   private static final int keyLength = 256;
 
-  public static String getSalt() throws NoSuchAlgorithmException {
+  public static String getRandomSalt() throws NoSuchAlgorithmException {
     byte[] salt = new byte[16];
     SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
     secureRandom.nextBytes(salt);

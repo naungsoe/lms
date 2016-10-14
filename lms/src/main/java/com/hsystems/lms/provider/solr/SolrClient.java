@@ -2,16 +2,21 @@ package com.hsystems.lms.provider.solr;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.MappingUtils;
+import com.hsystems.lms.ReflectionUtils;
 
+import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
-import org.apache.solr.common.SolrInputField;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.util.Optional;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -29,32 +34,78 @@ public final class SolrClient {
     this.propertiesProvider = propertiesProvider;
   }
 
-  public <T> Optional<T> query() {
-    return Optional.empty();
+  public <T> List<T> query(SolrQuery query, Class<T> type)
+    throws SolrServerException, IOException,
+    InstantiationException, IllegalAccessException,
+    InvocationTargetException {
+
+    CloudSolrClient client = getClient();
+    QueryResponse response = client.query(query);
+    SolrDocumentList documents = response.getResults();
+    return getModels(documents, type);
   }
 
-  public <T> void index(T entity)
+  protected <T> List<T> getModels(
+      SolrDocumentList documents, Class<T> type)
+      throws InstantiationException, IllegalAccessException,
+      InvocationTargetException {
+
+    List<T> models = new ArrayList<T>();
+
+    for (SolrDocument document : documents) {
+      T model = (T) ReflectionUtils.getInstance(type);
+      populateModel(model, document);
+      models.add(model);
+    }
+
+    return models;
+  }
+
+  protected <T> void populateModel(T model, SolrDocument document) {
+    Field[] fields = model.getClass().getDeclaredFields();
+
+    for (Field field : fields) {
+      if (field.getType() == List.class) {
+        populateList(model, field, document);
+      } else {
+        populateItem(model, field, document);
+      }
+    }
+  }
+
+  protected <T> void populateList(
+      T model, Field field, SolrDocument document) {
+
+  }
+
+  protected <T> void populateItem(
+      T model, Field field, SolrDocument document) {
+
+  }
+
+  public <T> void index(T model)
       throws SolrServerException, IOException,
       NoSuchFieldException, IllegalAccessException {
 
     SolrInputDocument document = new SolrInputDocument();
-    Field[] fields = entity.getClass().getDeclaredFields();
-    populateDocument(entity, fields, document);
+    populateDocument(document, model);
 
-    CloudSolrClient client = getClient();
-    client.add(document);
-    client.commit();
+    CloudSolrClient cloudSolrClient = getClient();
+    cloudSolrClient.add(document);
+    cloudSolrClient.commit();
   }
 
   protected <T> void populateDocument(
-      T entity, Field[] fields, SolrInputDocument document)
+      SolrInputDocument document, T model)
       throws SolrServerException, IOException,
       NoSuchFieldException, IllegalAccessException {
+
+    Field[] fields = model.getClass().getDeclaredFields();
 
     for (Field field : fields) {
       field.setAccessible(true);
       document.addField(field.getName(),
-          MappingUtils.getStringField(entity, field.getName()));
+          ReflectionUtils.getString(model, field.getName()));
     }
   }
 

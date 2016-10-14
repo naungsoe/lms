@@ -4,9 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.exception.ServiceException;
+import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.entity.UserEntity;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -14,7 +13,6 @@ import java.io.IOException;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -27,7 +25,7 @@ public class AuthenticationFilter extends BaseFilter {
   private AuthenticationService authenticationService;
 
   @Inject
-  private Provider<UserEntity> userEntityProvider;
+  private Provider<SignedInUser> userEntityProvider;
 
   public void init()
       throws ServletException {
@@ -63,7 +61,7 @@ public class AuthenticationFilter extends BaseFilter {
     }
 
     try {
-      Optional<UserEntity> userEntity = authenticationService
+      Optional<SignedInUser> userEntity = authenticationService
           .findSignedInUserBy(id);
 
       if (userEntity.isPresent()) {
@@ -87,7 +85,7 @@ public class AuthenticationFilter extends BaseFilter {
     return (userEntityProvider.get() != null);
   }
 
-  private void createSession(UserEntity userEntity) {
+  private void createSession(SignedInUser userEntity) {
     HttpSession session = getRequest().getSession(true);
     session.setAttribute("userEntity", userEntity);
     session.setMaxInactiveInterval(30 * 60);

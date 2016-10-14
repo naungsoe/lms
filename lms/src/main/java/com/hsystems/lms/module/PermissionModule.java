@@ -3,8 +3,8 @@ package com.hsystems.lms.module;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 
-import com.hsystems.lms.annotation.Requires;
-import com.hsystems.lms.annotation.RequiresInterceptor;
+import com.hsystems.lms.service.annotation.Requires;
+import com.hsystems.lms.service.interceptor.RequiresInterceptor;
 
 /**
  * Created by administrator on 17/9/16.

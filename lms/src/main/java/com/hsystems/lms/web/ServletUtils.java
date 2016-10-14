@@ -1,6 +1,6 @@
 package com.hsystems.lms.web;
 
-import com.hsystems.lms.MappingUtils;
+import com.hsystems.lms.ReflectionUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -39,12 +39,12 @@ public final class ServletUtils {
       throws ServletException {
 
     try {
-      T instance = (T) MappingUtils.getInstance(type);
+      T instance = (T) ReflectionUtils.getInstance(type);
       Field[] fields = type.getDeclaredFields();
       for (Field field : fields) {
         String value = request.getParameter(field.getName());
         if (StringUtils.isNotEmpty(value)) {
-          MappingUtils.setField(instance, field.getName(), value);
+          ReflectionUtils.setValue(instance, field.getName(), value);
         }
       }
       return instance;

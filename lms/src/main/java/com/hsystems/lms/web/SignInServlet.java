@@ -2,10 +2,9 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.exception.ServiceException;
+import com.hsystems.lms.model.SignInDetails;
+import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.entity.SignInEntity;
-import com.hsystems.lms.service.entity.UserEntity;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -47,10 +46,10 @@ public final class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      SignInEntity signInEntity
-          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
-      Optional<UserEntity> userEntity
-          = authenticationService.signIn(signInEntity);
+      SignInDetails signInDetails
+          = ServletUtils.getEntity(getRequest(), SignInDetails.class);
+      Optional<SignedInUser> userEntity
+          = authenticationService.signIn(signInDetails);
 
       if (userEntity.isPresent()) {
         createSessionAndCookies(userEntity.get());
@@ -66,7 +65,7 @@ public final class SignInServlet extends BaseServlet {
     }
   }
 
-  private void createSessionAndCookies(UserEntity userEntity) {
+  private void createSessionAndCookies(SignedInUser userEntity) {
     HttpSession session = getRequest().getSession(true);
     session.setAttribute("userEntity", userEntity);
     session.setMaxInactiveInterval(30 * 60);

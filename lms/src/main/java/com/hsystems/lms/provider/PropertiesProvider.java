@@ -2,7 +2,7 @@ package com.hsystems.lms.provider;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.annotation.LogInterceptor;
+import com.hsystems.lms.service.interceptor.LogInterceptor;
 
 import org.apache.log4j.Logger;
 

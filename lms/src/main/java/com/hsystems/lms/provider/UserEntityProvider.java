@@ -3,16 +3,12 @@ package com.hsystems.lms.provider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.service.entity.UserEntity;
-
-import java.util.Optional;
-
 import javax.servlet.http.HttpSession;
 
 /**
  * Created by administrator on 17/9/16.
  */
-public class UserEntityProvider implements Provider<UserEntity> {
+public class UserEntityProvider implements Provider<SignedInUser> {
 
   private HttpSession httpSession;
 
@@ -21,7 +17,7 @@ public class UserEntityProvider implements Provider<UserEntity> {
     this.httpSession = httpSession;
   }
 
-  public UserEntity get() {
-    return (UserEntity)httpSession.getAttribute("userEntity");
+  public SignedInUser get() {
+    return (SignedInUser)httpSession.getAttribute("userEntity");
   }
 }

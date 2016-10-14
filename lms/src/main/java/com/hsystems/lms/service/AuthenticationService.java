@@ -5,15 +5,14 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.CommonUtils;
-import com.hsystems.lms.MappingUtils;
+import com.hsystems.lms.ReflectionUtils;
 import com.hsystems.lms.SecurityUtils;
-import com.hsystems.lms.annotation.Log;
-import com.hsystems.lms.domain.model.User;
-import com.hsystems.lms.domain.repository.UserRepository;
-import com.hsystems.lms.exception.RepositoryException;
-import com.hsystems.lms.exception.ServiceException;
-import com.hsystems.lms.service.entity.SignInEntity;
-import com.hsystems.lms.service.entity.UserEntity;
+import com.hsystems.lms.model.SignInDetails;
+import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.model.User;
+import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -31,14 +30,14 @@ public class AuthenticationService {
 
   private final UserRepository userRepository;
 
-  private final Provider<UserEntity> userEntityProvider;
+  private final Provider<SignedInUser> userEntityProvider;
 
   private final Provider<Properties> propertiesProvider;
 
   @Inject
   AuthenticationService(
       UserRepository userRepository,
-      Provider<UserEntity> userEntityProvider,
+      Provider<SignedInUser> userEntityProvider,
       Provider<Properties> propertiesProvider) {
 
     this.userRepository = userRepository;
@@ -47,22 +46,22 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<UserEntity> signIn(SignInEntity signInEntity)
+  public Optional<SignedInUser> signIn(SignInDetails signInDetails)
       throws ServiceException {
 
-    checkPreconditions(signInEntity);
+    checkPreconditions(signInDetails);
 
     try {
-      Optional<User> user = userRepository.findBy(signInEntity.getId());
+      Optional<User> user = userRepository.findBy(signInDetails.getId());
 
       if (user.isPresent()) {
         String hashedPassword = SecurityUtils.getPassword(
-            signInEntity.getPassword(), user.get().getSalt());
+            signInDetails.getPassword(), user.get().getSalt());
 
-        if (user.get().getId().equals(signInEntity.getId())
+        if (user.get().getId().equals(signInDetails.getId())
             && user.get().getPassword().equals(hashedPassword)) {
-          UserEntity userEntity = MappingUtils.convert(
-              user.get(), UserEntity.class);
+          SignedInUser userEntity = ReflectionUtils.convert(
+              user.get(), SignedInUser.class);
           return Optional.of(userEntity);
         }
       }
@@ -76,7 +75,7 @@ public class AuthenticationService {
     return Optional.empty();
   }
 
-  private void checkPreconditions(SignInEntity signInEntity) {
+  private void checkPreconditions(SignInDetails signInDetails) {
     Properties properties = propertiesProvider.get();
     int maxIdLength = Integer.parseInt(
         properties.getProperty("field.user.id.max.length"));
@@ -84,36 +83,36 @@ public class AuthenticationService {
         properties.getProperty("field.user.password.max.length"));
 
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInEntity.getId()),
+        StringUtils.isNotEmpty(signInDetails.getId()),
         "id is missing");
     CommonUtils.checkArgument(
-        (signInEntity.getId().length() <= maxIdLength),
+        (signInDetails.getId().length() <= maxIdLength),
         "id length should not exceed");
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInEntity.getPassword()),
+        StringUtils.isNotEmpty(signInDetails.getPassword()),
         "password is missing");
     CommonUtils.checkArgument(
-        (signInEntity.getPassword().length() <= maxPasswordLength),
+        (signInDetails.getPassword().length() <= maxPasswordLength),
         "password length should not exceed");
   }
 
   @Log
-  public void signOut(SignInEntity signInEntity)
+  public void signOut(SignInDetails signInDetails)
       throws ServiceException {
 
     // clear sign in
   }
 
   @Log
-  public Optional<UserEntity> findSignedInUserBy(String key)
+  public Optional<SignedInUser> findSignedInUserBy(String key)
       throws ServiceException {
 
     try {
       Optional<User> user = userRepository.findBy(key);
 
       if (user.isPresent()) {
-        UserEntity userEntity = MappingUtils.convert(
-            user.get(), UserEntity.class);
+        SignedInUser userEntity = ReflectionUtils.convert(
+            user.get(), SignedInUser.class);
         return Optional.of(userEntity);
       }
     } catch (RepositoryException | InstantiationException

@@ -1,13 +1,15 @@
 package com.hsystems.lms.service;
 
-import com.hsystems.lms.exception.ServiceException;
-import com.hsystems.lms.service.query.Query;
+import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.query.Criterion;
+
+import java.util.List;
 
 /**
  * Created by administrator on 10/8/16.
  */
 public interface SearchService {
 
-  String query(Query searchQuery)
+  <T> List<T> query(List<Criterion> criteria, Class<T> type)
       throws ServiceException;
 }

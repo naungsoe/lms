@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.annotation.Log;
-import com.hsystems.lms.exception.ServiceException;
+import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.provider.solr.SolrClient;
 import com.hsystems.lms.service.IndexingService;
 
@@ -24,8 +24,9 @@ public class SolrIndexingService implements IndexingService {
 
   @Log
   @Override
-  public <T> void index(T entity)
+  public <T> void index(T model)
       throws ServiceException {
+
 
   }
 }

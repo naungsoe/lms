@@ -38,15 +38,16 @@ public final class HBaseClient {
 
     Connection connection = getConnection();
     Table table = getTable(connection, tableName);
-    ResultScanner results;
+    ResultScanner scanner;
 
     try {
-      results = table.getScanner(scan);
+      scanner = table.getScanner(scan);
     } finally {
       table.close();
       connection.close();
     }
-    return results;
+
+    return scanner;
   }
 
   public Optional<Result> getResult(Get get, String tableName)
@@ -86,15 +87,15 @@ public final class HBaseClient {
   protected Connection getConnection()
       throws IOException {
 
-    Configuration config = HBaseConfiguration.create();
+    Configuration configuration = HBaseConfiguration.create();
     Properties properties = propertiesProvider.get();
-    config.set("hbase.zookeeper.quorum",
+    configuration.set("hbase.zookeeper.quorum",
         properties.getProperty("app.zookeeper.quorum"));
-    config.set("hbase.zookeeper.property.clientPort",
+    configuration.set("hbase.zookeeper.property.clientPort",
         properties.getProperty("app.zookeeper.client.port"));
-    config.set("zookeeper.znode.parent",
+    configuration.set("zookeeper.znode.parent",
         properties.getProperty("app.zookeeper.znode.hbase"));
-    return ConnectionFactory.createConnection(config);
+    return ConnectionFactory.createConnection(configuration);
   }
 
   protected Table getTable(Connection connection, String name)
