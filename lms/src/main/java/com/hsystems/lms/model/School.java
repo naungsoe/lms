@@ -4,9 +4,12 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlRootElement;
+
 /**
- * Created by administrator on 7/10/16.
+ * Created by naungsoe on 7/10/16.
  */
+@XmlRootElement
 public class School implements Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
@@ -26,11 +29,13 @@ public class School implements Serializable {
   public School(
       String id,
       String name,
-      String locale) {
+      String locale,
+      List<Permission> permissions) {
 
     this.id = id;
     this.name = name;
     this.locale = locale;
+    this.permissions = permissions;
   }
 
   public String getId() {

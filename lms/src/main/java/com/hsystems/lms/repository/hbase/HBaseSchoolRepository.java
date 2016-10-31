@@ -1,60 +1,50 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
 import com.hsystems.lms.ReflectionUtils;
 import com.hsystems.lms.model.Constants;
 import com.hsystems.lms.model.Permission;
 import com.hsystems.lms.model.School;
-import com.hsystems.lms.provider.hbase.HBaseClient;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.ResultScanner;
-import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.filter.CompareFilter;
-import org.apache.hadoop.hbase.filter.RegexStringComparator;
-import org.apache.hadoop.hbase.filter.RowFilter;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by administrator on 12/10/16.
+ * Created by naungsoe on 12/10/16.
  */
 public class HBaseSchoolRepository
     extends HBaseRepository implements SchoolRepository {
 
-  private Provider<HBaseClient> hBaseClientProvider;
-
-  @Inject
-  HBaseSchoolRepository(Provider<HBaseClient> hBaseClientProvider) {
-    this.hBaseClientProvider = hBaseClientProvider;
-  }
-
-  public Optional<School> findBy(String key)
+  public Optional<School> findBy(String id)
       throws RepositoryException {
 
-    HBaseClient client = hBaseClientProvider.get();
-    Get get = new Get(Bytes.toBytes(key));
+    Configuration configuration = HBaseConfiguration.create();
+    Get get = new Get(Bytes.toBytes(id));
 
-    try {
-      Optional<Result> result = client.getResult(get, Constants.TABLE_SCHOOLS);
+    try (Connection connection
+             = ConnectionFactory.createConnection(configuration)) {
 
-      if (result.isPresent()) {
+      TableName tableName = TableName.valueOf(Constants.TABLE_SCHOOLS);
+      Table table = connection.getTable(tableName);
+      Result result = table.get(get);
+
+      if (!result.isEmpty()) {
         School school = (School) ReflectionUtils.getInstance(School.class);
         ReflectionUtils.setValue(
-            school, Constants.FIELD_ID, Bytes.toString(result.get().getRow()));
-        populateSchoolFields(school, result.get());
+            school, Constants.FIELD_ID, Bytes.toString(result.getRow()));
+        populateSchoolFields(school, result);
         return Optional.of(school);
       }
       return Optional.empty();
@@ -77,7 +67,7 @@ public class HBaseSchoolRepository
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_LOCALE));
     ReflectionUtils.setValue(school, Constants.FIELD_PERMISSIONS,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_PERMISSIONS));
+        getEnumList(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_PERMISSIONS, Permission.class));
   }
 }

@@ -10,7 +10,7 @@ import com.hsystems.lms.provider.solr.SolrClient;
 import com.hsystems.lms.service.IndexingService;
 
 /**
- * Created by administrator on 10/8/16.
+ * Created by naungsoe on 10/8/16.
  */
 @Singleton
 public class SolrIndexingService implements IndexingService {

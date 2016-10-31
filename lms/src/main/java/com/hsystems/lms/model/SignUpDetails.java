@@ -1,11 +1,9 @@
 package com.hsystems.lms.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
- * Created by administrator on 10/9/16.
+ * Created by naungsoe on 10/9/16.
  */
 public class SignUpDetails extends SignInDetails implements Serializable {
 

@@ -3,7 +3,7 @@ package com.hsystems.lms.model;
 import java.io.Serializable;
 
 /**
- * Created by administrator on 10/9/16.
+ * Created by naungsoe on 10/9/16.
  */
 public class SignInDetails implements Serializable {
 

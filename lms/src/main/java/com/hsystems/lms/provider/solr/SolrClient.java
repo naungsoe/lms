@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by administrator on 25/9/16.
+ * Created by naungsoe on 25/9/16.
  */
 public final class SolrClient {
 

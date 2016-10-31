@@ -6,11 +6,11 @@ import com.hsystems.lms.repository.exception.RepositoryException;
 import java.util.Optional;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 public interface UserRepository {
 
-  Optional<User> findBy(String key) throws RepositoryException;
+  Optional<User> findBy(String id) throws RepositoryException;
 
   void save(User user) throws RepositoryException;
 }

@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 @Singleton
 public class UserService {
@@ -59,11 +59,11 @@ public class UserService {
   }
 
   @Log
-  public Optional<User> findBy(String key)
+  public Optional<User> findBy(String id)
       throws ServiceException {
 
     try {
-      return userRepository.findBy(key);
+      return userRepository.findBy(id);
     } catch (RepositoryException e) {
       throw new ServiceException(
           "error retrieving user", e);
@@ -114,9 +114,9 @@ public class UserService {
 
     Properties properties = propertiesProvider.get();
     Optional<School> school = schoolRepository.findBy(
-        properties.getProperty("app.default.school.key"));
+        properties.getProperty("app.default.school.id"));
     Optional<Group> group = groupRepository.findBy(
-        properties.getProperty("app.default.group.key"));
+        properties.getProperty("app.default.group.id"));
     String randomSalt = SecurityUtils.getRandomSalt();
 
     return new User(

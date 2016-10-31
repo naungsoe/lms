@@ -5,16 +5,13 @@ import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 
 import com.hsystems.lms.module.AppModule;
-import com.hsystems.lms.module.PermissionModule;
-import com.hsystems.lms.module.ServletModule;
 import com.hsystems.lms.module.LogModule;
-
-import javax.servlet.annotation.WebListener;
+import com.hsystems.lms.module.PermissionModule;
+import com.hsystems.lms.module.WebModule;
 
 /**
- * Created by administrator on 9/8/16.
+ * Created by naungsoe on 9/8/16.
  */
-@WebListener
 public class AppContextListener extends GuiceServletContextListener {
 
   @Override
@@ -23,6 +20,6 @@ public class AppContextListener extends GuiceServletContextListener {
         new AppModule(),
         new LogModule(),
         new PermissionModule(),
-        new ServletModule());
+        new WebModule());
   }
 }

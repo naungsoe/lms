@@ -6,9 +6,9 @@ import com.hsystems.lms.repository.exception.RepositoryException;
 import java.util.Optional;
 
 /**
- * Created by administrator on 14/10/16.
+ * Created by naungsoe on 14/10/16.
  */
 public interface GroupRepository {
 
-  Optional<Group> findBy(String key) throws RepositoryException;
+  Optional<Group> findBy(String id) throws RepositoryException;
 }

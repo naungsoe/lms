@@ -23,52 +23,49 @@ import java.util.Optional;
 import java.util.Properties;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 @Singleton
 public class AuthenticationService {
 
-  private final UserRepository userRepository;
-
-  private final Provider<SignedInUser> userEntityProvider;
-
   private final Provider<Properties> propertiesProvider;
+
+  private final Provider<User> userProvider;
+
+  private final UserRepository userRepository;
 
   @Inject
   AuthenticationService(
-      UserRepository userRepository,
-      Provider<SignedInUser> userEntityProvider,
-      Provider<Properties> propertiesProvider) {
+      Provider<Properties> propertiesProvider,
+      Provider<User> userProvider,
+      UserRepository userRepository) {
 
-    this.userRepository = userRepository;
-    this.userEntityProvider = userEntityProvider;
     this.propertiesProvider = propertiesProvider;
+    this.userProvider = userProvider;
+    this.userRepository = userRepository;
   }
 
   @Log
-  public Optional<SignedInUser> signIn(SignInDetails signInDetails)
+  public Optional<User> signIn(SignInDetails signInDetails)
       throws ServiceException {
 
     checkPreconditions(signInDetails);
 
     try {
-      Optional<User> user = userRepository.findBy(signInDetails.getId());
+      Optional<User> userOptional
+          = userRepository.findBy(signInDetails.getId());
 
-      if (user.isPresent()) {
+      if (userOptional.isPresent()) {
         String hashedPassword = SecurityUtils.getPassword(
-            signInDetails.getPassword(), user.get().getSalt());
+            signInDetails.getPassword(), userOptional.get().getSalt());
 
-        if (user.get().getId().equals(signInDetails.getId())
-            && user.get().getPassword().equals(hashedPassword)) {
-          SignedInUser userEntity = ReflectionUtils.convert(
-              user.get(), SignedInUser.class);
-          return Optional.of(userEntity);
+        if (userOptional.get().getId().equals(signInDetails.getId())
+            && userOptional.get().getPassword().equals(hashedPassword)) {
+          return userOptional;
         }
       }
     } catch (RepositoryException | NoSuchAlgorithmException
-        | InvalidKeySpecException | InstantiationException
-        | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
+        | InvalidKeySpecException e) {
 
       throw new ServiceException("error signing in", e);
     }
@@ -104,23 +101,14 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<SignedInUser> findSignedInUserBy(String key)
+  public Optional<User> findSignedInUserBy(String id)
       throws ServiceException {
 
     try {
-      Optional<User> user = userRepository.findBy(key);
-
-      if (user.isPresent()) {
-        SignedInUser userEntity = ReflectionUtils.convert(
-            user.get(), SignedInUser.class);
-        return Optional.of(userEntity);
-      }
-    } catch (RepositoryException | InstantiationException
-        | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
+      return userRepository.findBy(id);
+    } catch (RepositoryException e) {
       throw new ServiceException(
           "error retrieving signed in user", e);
     }
-    return Optional.empty();
   }
 }

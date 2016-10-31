@@ -1,22 +1,23 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.google.inject.Inject;
-import com.google.inject.Provider;
-
-import com.hsystems.lms.DateUtils;
 import com.hsystems.lms.ReflectionUtils;
 import com.hsystems.lms.model.Constants;
 import com.hsystems.lms.model.Group;
 import com.hsystems.lms.model.Permission;
 import com.hsystems.lms.model.School;
 import com.hsystems.lms.model.User;
-import com.hsystems.lms.provider.hbase.HBaseClient;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Connection;
+import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.ResultScanner;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
@@ -30,32 +31,27 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 public final class HBaseUserRepository
     extends HBaseRepository implements UserRepository {
 
-  private final Provider<HBaseClient> hBaseClientProvider;
-
-  @Inject
-  HBaseUserRepository(Provider<HBaseClient> hBaseClientProvider) {
-    this.hBaseClientProvider = hBaseClientProvider;
-  }
-
-  public Optional<User> findBy(String key)
+  public Optional<User> findBy(String id)
       throws RepositoryException {
 
-    HBaseClient client = hBaseClientProvider.get();
-    Scan scan = new Scan(Bytes.toBytes(key));
-    RegexStringComparator comparator
-        = new RegexStringComparator("^" + key + "_*$");
-    RowFilter filter = new RowFilter(
-        CompareFilter.CompareOp.EQUAL, comparator);
+    Configuration configuration = HBaseConfiguration.create();
+    String keyRegex = String.format("^%s[_0-9a-zA-Z]*$", id);
+    Scan scan = new Scan(Bytes.toBytes(id));
+    RegexStringComparator comparator = new RegexStringComparator(keyRegex);
+    RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, comparator);
     scan.setFilter(filter);
 
-    try {
-      ResultScanner scanner = client.scanResults(
-          scan, Constants.TABLE_USERS);
+    try (Connection connection
+             = ConnectionFactory.createConnection(configuration)) {
+
+      TableName tableName = TableName.valueOf(Constants.TABLE_USERS);
+      Table table = connection.getTable(tableName);
+      ResultScanner scanner = table.getScanner(scan);
       return getUser(scanner);
     } catch (IOException | InstantiationException
         | IllegalAccessException | InvocationTargetException
@@ -101,8 +97,8 @@ public final class HBaseUserRepository
       InvocationTargetException, NoSuchFieldException {
 
     School school = (School) ReflectionUtils.getInstance(School.class);
-    String key = rowKey.split(Constants.SEPARATOR_SCHOOL)[1];
-    ReflectionUtils.setValue(school, Constants.FIELD_ID, key);
+    String id = rowKey.split(Constants.SEPARATOR_SCHOOL)[1];
+    ReflectionUtils.setValue(school, Constants.FIELD_ID, id);
 
     ReflectionUtils.setValue(school, Constants.FIELD_NAME,
         getString(result, Constants.FAMILY_DATA,
@@ -118,8 +114,8 @@ public final class HBaseUserRepository
       InvocationTargetException, NoSuchFieldException {
 
     Group group = (Group) ReflectionUtils.getInstance(Group.class);
-    String key = rowKey.split(Constants.SEPARATOR_GROUP)[1];
-    ReflectionUtils.setValue(group, Constants.FIELD_ID, key);
+    String id = rowKey.split(Constants.SEPARATOR_GROUP)[1];
+    ReflectionUtils.setValue(group, Constants.FIELD_ID, id);
 
     ReflectionUtils.setValue(group, Constants.FIELD_NAME,
         getString(result, Constants.FAMILY_DATA,
@@ -134,6 +130,9 @@ public final class HBaseUserRepository
     ReflectionUtils.setValue(user, Constants.FIELD_PASSWORD,
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_PASSWORD));
+    ReflectionUtils.setValue(user, Constants.FIELD_SALT,
+        getString(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_SALT));
     ReflectionUtils.setValue(user, Constants.FIELD_FIRST_NAME,
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_FIRST_NAME));
@@ -143,15 +142,21 @@ public final class HBaseUserRepository
     ReflectionUtils.setValue(user, Constants.FIELD_DATE_OF_BIRTH,
         getLocalDate(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_DATE_OF_BIRTH));
+    ReflectionUtils.setValue(user, Constants.FIELD_GENDER,
+        getString(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_GENDER));
+    ReflectionUtils.setValue(user, Constants.FIELD_MOBILE,
+        getString(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_MOBILE));
+    ReflectionUtils.setValue(user, Constants.FIELD_EMAIL,
+        getString(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_EMAIL));
     ReflectionUtils.setValue(user, Constants.FIELD_LOCALE,
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_LOCALE));
     ReflectionUtils.setValue(user, Constants.FIELD_PERMISSIONS,
         getEnumList(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_PERMISSIONS, Permission.class));
-    ReflectionUtils.setValue(user, Constants.FIELD_GENDER,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_GENDER));
   }
 
   public void save(User user) {

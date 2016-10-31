@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 public class User implements Serializable {
 

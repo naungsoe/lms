@@ -1,7 +1,7 @@
 package com.hsystems.lms.exception;
 
 /**
- * Created by administrator on 13/8/16.
+ * Created by naungsoe on 13/8/16.
  */
 public class ApplicationException extends Exception {
 

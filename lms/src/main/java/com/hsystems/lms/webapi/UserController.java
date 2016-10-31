@@ -3,9 +3,10 @@ package com.hsystems.lms.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.model.User;
 import com.hsystems.lms.service.SearchService;
 import com.hsystems.lms.service.UserService;
+import com.hsystems.lms.service.exception.ServiceException;
 
 import java.util.List;
 
@@ -34,17 +35,16 @@ public class UserController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/{key}")
-  public SignedInUser getUser(@PathParam("key") String key)
+  @Path("/{id}")
+  public User getUser(@PathParam("id") String id)
       throws ServiceException {
 
-
-    return null;
+    return userService.findBy(id).get();
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<SignedInUser> getUsers() throws ServiceException {
+  public List<User> getUsers() throws ServiceException {
 
     return null;
   }

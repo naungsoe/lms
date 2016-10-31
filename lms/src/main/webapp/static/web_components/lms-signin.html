@@ -35,7 +35,7 @@
     </style>
 
     <form id="formSignIn" method="post" action="{{signInUrl}}">
-      <paper-card heading="{{localize('titleCard')}}" alt="{{localize('titleCard')}}">
+      <paper-card heading="{{localize('titleCard')}}" alt="{{localize('titleCard')}}" signin>
         <div class="card-content">
           <paper-input name="id" label="{{localize('labelId')}}" value="{{id}}" on-keydown="handleKeydown"
                        autofocus no-label-float required type="text" autocomplete="off"

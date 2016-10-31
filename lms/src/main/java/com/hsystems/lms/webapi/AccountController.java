@@ -17,7 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 /**
- * Created by administrator on 10/9/16.
+ * Created by naungsoe on 10/9/16.
  */
 @Path("account")
 @Singleton
@@ -28,7 +28,7 @@ public class AccountController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public String getAccount(String key) {
+  public String getAccount(String id) {
     return "Get request";
   }
 

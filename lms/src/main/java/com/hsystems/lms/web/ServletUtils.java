@@ -12,7 +12,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Created by administrator on 13/8/16.
+ * Created by naungsoe on 13/8/16.
  */
 public final class ServletUtils {
 

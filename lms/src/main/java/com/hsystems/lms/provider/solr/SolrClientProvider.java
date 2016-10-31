@@ -6,7 +6,7 @@ import com.google.inject.Provider;
 import java.util.Properties;
 
 /**
- * Created by administrator on 19/9/16.
+ * Created by naungsoe on 19/9/16.
  */
 public class SolrClientProvider implements Provider<SolrClient> {
 

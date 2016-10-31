@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by administrator on 13/10/16.
+ * Created by naungsoe on 13/10/16.
  */
 public abstract class HBaseRepository {
 

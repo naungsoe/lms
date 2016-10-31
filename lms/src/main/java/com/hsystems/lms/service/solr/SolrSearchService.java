@@ -18,7 +18,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 /**
- * Created by administrator on 10/8/16.
+ * Created by naungsoe on 10/8/16.
  */
 @Singleton
 public class SolrSearchService implements SearchService {

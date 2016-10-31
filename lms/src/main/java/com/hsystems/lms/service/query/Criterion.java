@@ -1,7 +1,7 @@
 package com.hsystems.lms.service.query;
 
 /**
- * Created by administrator on 10/8/16.
+ * Created by naungsoe on 10/8/16.
  */
 public final class Criterion {
 

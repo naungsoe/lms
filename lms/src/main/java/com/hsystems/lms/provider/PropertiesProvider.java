@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Created by administrator on 19/9/16.
+ * Created by naungsoe on 19/9/16.
  */
 public class PropertiesProvider implements Provider<Properties> {
 

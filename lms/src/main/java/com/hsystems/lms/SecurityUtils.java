@@ -11,7 +11,7 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 /**
- * Created by administrator on 25/8/16.
+ * Created by naungsoe on 25/8/16.
  */
 public final class SecurityUtils {
 

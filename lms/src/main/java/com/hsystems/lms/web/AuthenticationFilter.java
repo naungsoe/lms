@@ -1,11 +1,11 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.model.User;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -16,16 +16,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by administrator on 11/8/16.
+ * Created by naungsoe on 11/8/16.
  */
 @Singleton
 public class AuthenticationFilter extends BaseFilter {
 
   @Inject
   private AuthenticationService authenticationService;
-
-  @Inject
-  private Provider<SignedInUser> userEntityProvider;
 
   public void init()
       throws ServletException {
@@ -61,11 +58,11 @@ public class AuthenticationFilter extends BaseFilter {
     }
 
     try {
-      Optional<SignedInUser> userEntity = authenticationService
+      Optional<User> userOptional = authenticationService
           .findSignedInUserBy(id);
 
-      if (userEntity.isPresent()) {
-        createSession(userEntity.get());
+      if (userOptional.isPresent()) {
+        createSession(userOptional.get());
       }
     } catch (ServiceException e) {
       throw new ServletException(
@@ -82,12 +79,13 @@ public class AuthenticationFilter extends BaseFilter {
   }
 
   private boolean isAuthenticated() {
-    return (userEntityProvider.get() != null);
+    HttpSession session = getSession(false);
+    return (session.getAttribute("user") != null);
   }
 
-  private void createSession(SignedInUser userEntity) {
-    HttpSession session = getRequest().getSession(true);
-    session.setAttribute("userEntity", userEntity);
+  private void createSession(User user) {
+    HttpSession session = getSession(true);
+    session.setAttribute("user", user);
     session.setMaxInactiveInterval(30 * 60);
   }
 }

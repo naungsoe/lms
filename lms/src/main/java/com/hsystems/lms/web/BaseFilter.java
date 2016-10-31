@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by administrator on 11/8/16.
+ * Created by naungsoe on 11/8/16.
  */
 public abstract class BaseFilter implements Filter {
 
@@ -40,6 +40,10 @@ public abstract class BaseFilter implements Filter {
 
   protected HttpServletResponse getResponse() {
     return response;
+  }
+
+  protected HttpSession getSession(boolean create) {
+    return request.getSession(create);
   }
 
   protected FilterChain getFilterChain() {

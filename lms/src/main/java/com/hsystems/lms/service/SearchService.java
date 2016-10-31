@@ -6,7 +6,7 @@ import com.hsystems.lms.service.query.Criterion;
 import java.util.List;
 
 /**
- * Created by administrator on 10/8/16.
+ * Created by naungsoe on 10/8/16.
  */
 public interface SearchService {
 

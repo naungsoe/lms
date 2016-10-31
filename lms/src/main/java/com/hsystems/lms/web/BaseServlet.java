@@ -2,6 +2,7 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Injector;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.hsystems.lms.JsonUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -9,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import java.io.IOException;
 import java.io.InputStream;
 
-import javax.json.JsonObject;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 public abstract class BaseServlet extends HttpServlet {
 
@@ -27,7 +27,7 @@ public abstract class BaseServlet extends HttpServlet {
 
   private HttpServletResponse response;
 
-  private JsonObject localObject;
+  private JsonNode localObject;
 
   protected HttpServletRequest getRequest() {
     return request;
@@ -87,7 +87,7 @@ public abstract class BaseServlet extends HttpServlet {
     response.sendRedirect(url);
   }
 
-  protected void loadLocale(String page) {
+  protected void loadLocale(String page) throws IOException {
     String defaultLocale = "en_US";
     String locale = ServletUtils.getCookie(request, "locale");
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
@@ -98,7 +98,7 @@ public abstract class BaseServlet extends HttpServlet {
 
     ServletContext context = request.getServletContext();
     InputStream stream = context.getResourceAsStream(localeUrl);
-    localObject = JsonUtils.parseJson(stream).getJsonObject(locale);
+    localObject = JsonUtils.parseJson(stream).get(locale);
   }
 
   protected void loadAttribute(String name) {
@@ -107,8 +107,8 @@ public abstract class BaseServlet extends HttpServlet {
 
   protected void loadAttributes(String[] names) {
     for (String name : names) {
-      String value = localObject.getString(name);
-      this.setAttribute(name, value);
+      JsonNode node = localObject.get(name);
+      this.setAttribute(name, node.textValue());
     }
   }
 

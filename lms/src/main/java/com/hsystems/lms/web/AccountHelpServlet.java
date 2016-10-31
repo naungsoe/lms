@@ -10,7 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/accounthelp", loadOnStartup = 1)
 public final class AccountHelpServlet extends BaseServlet {

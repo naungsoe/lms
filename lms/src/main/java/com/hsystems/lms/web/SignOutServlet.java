@@ -14,7 +14,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 /**
- * Created by administrator on 8/8/16.
+ * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/signout", loadOnStartup = 1)
 public final class SignOutServlet extends BaseServlet {
