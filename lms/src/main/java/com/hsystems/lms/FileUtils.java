@@ -13,7 +13,9 @@ public final class FileUtils {
 
   private static final String UTF8_CHARSET = "UTF-8";
 
-  public static String readContent(String path) throws IOException {
+  public static String readContent(String path)
+      throws IOException {
+
     String content = "";
     File file = new File(path);
     FileInputStream fileInputStream = null;
@@ -21,6 +23,7 @@ public final class FileUtils {
     try {
       fileInputStream = new FileInputStream(file);
       content = readContent(fileInputStream);
+
     } finally {
       if (fileInputStream != null) {
         fileInputStream.close();
@@ -46,6 +49,7 @@ public final class FileUtils {
         bufferedReader.close();
       }
     }
+
     return stringBuilder.toString();
   }
 }

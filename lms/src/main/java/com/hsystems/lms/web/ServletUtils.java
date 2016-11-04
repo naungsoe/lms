@@ -31,6 +31,7 @@ public final class ServletUtils {
         value = cookie.getValue();
       }
     }
+
     return value;
   }
   
@@ -41,18 +42,20 @@ public final class ServletUtils {
     try {
       T instance = (T) ReflectionUtils.getInstance(type);
       Field[] fields = type.getDeclaredFields();
+
       for (Field field : fields) {
         String value = request.getParameter(field.getName());
+
         if (StringUtils.isNotEmpty(value)) {
           ReflectionUtils.setValue(instance, field.getName(), value);
         }
       }
       return instance;
+
     } catch (InstantiationException | IllegalAccessException
         | InvocationTargetException | NoSuchFieldException e) {
 
-      throw new ServletException(
-          "error getting entity", e);
+      throw new ServletException("error getting entity", e);
     }
   }
 }

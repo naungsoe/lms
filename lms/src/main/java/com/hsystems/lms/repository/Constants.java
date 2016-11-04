@@ -1,4 +1,4 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository;
 
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -21,9 +21,17 @@ public class Constants {
   public static final String FIELD_PERMISSIONS = "permissions";
   public static final String FIELD_SCHOOL = "school";
   public static final String FIELD_GROUPS = "groups";
+  public static final String FIELD_OWNER = "owner";
+  public static final String FIELD_USER = "user";
+
+  public static final String FIELD_TYPE = "type";
+  public static final String FIELD_BODY = "body";
+  public static final String FIELD_ACTION = "action";
 
   public static final String TABLE_SCHOOLS = "schools";
+  public static final String TABLE_GROUPS = "groups";
   public static final String TABLE_USERS = "users";
+  public static final String TABLE_QUESTIONS = "questions";
 
   public static final byte[] FAMILY_DATA = Bytes.toBytes("d");
 
@@ -38,6 +46,12 @@ public class Constants {
   public static final byte[] IDENTIFIER_EMAIL = Bytes.toBytes(FIELD_EMAIL);
   public static final byte[] IDENTIFIER_LOCALE = Bytes.toBytes(FIELD_LOCALE);
   public static final byte[] IDENTIFIER_PERMISSIONS = Bytes.toBytes(FIELD_PERMISSIONS);
+  public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes(FIELD_TYPE);
+  public static final byte[] IDENTIFIER_BODY = Bytes.toBytes(FIELD_BODY);
+
   public static final String SEPARATOR_SCHOOL = "_sch_";
   public static final String SEPARATOR_GROUP = "_grp_";
+  public static final String SEPARATOR_USER = "_usr_";
+  public static final String SEPARATOR_CREATED_BY = "_cre_";
+  public static final String SEPARATOR_MODIFIED_BY = "_mod_";
 }

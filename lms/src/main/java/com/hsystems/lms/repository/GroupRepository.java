@@ -10,5 +10,6 @@ import java.util.Optional;
  */
 public interface GroupRepository {
 
-  Optional<Group> findBy(String id) throws RepositoryException;
+  Optional<Group> findBy(String id)
+      throws RepositoryException;
 }

@@ -48,6 +48,7 @@ public abstract class BaseServlet extends HttpServlet {
     if (injector == null) {
       throw new ServletException("guice Injector not found");
     }
+
     injector.injectMembers(this);
   }
 
@@ -76,18 +77,22 @@ public abstract class BaseServlet extends HttpServlet {
     doPost();
   }
 
-  protected void forwardRequest(String url) 
+  protected void forwardRequest(String url)
       throws ServletException, IOException {
 
     RequestDispatcher dispatcher = request.getRequestDispatcher(url);
     dispatcher.forward(request, response);
   }
 
-  protected void sendRedirect(String url) throws IOException {
+  protected void sendRedirect(String url)
+      throws IOException {
+
     response.sendRedirect(url);
   }
 
-  protected void loadLocale(String page) throws IOException {
+  protected void loadLocale(String page)
+      throws IOException {
+
     String defaultLocale = "en_US";
     String locale = ServletUtils.getCookie(request, "locale");
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;

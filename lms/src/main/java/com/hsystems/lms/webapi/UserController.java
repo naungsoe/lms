@@ -44,7 +44,8 @@ public class UserController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<User> getUsers() throws ServiceException {
+  public List<User> getUsers()
+      throws ServiceException {
 
     return null;
   }

@@ -10,7 +10,9 @@ import java.util.Optional;
  */
 public interface UserRepository {
 
-  Optional<User> findBy(String id) throws RepositoryException;
+  Optional<User> findBy(String id)
+      throws RepositoryException;
 
-  void save(User user) throws RepositoryException;
+  void save(User user)
+      throws RepositoryException;
 }

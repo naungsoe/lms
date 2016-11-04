@@ -1,0 +1,91 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="lms-style.html">
+<link rel="import" href="lms-nav.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-drawer/app-drawer.html">
+
+<dom-module id="lms-questions">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      [main-content] {
+        padding-top: 112px;
+      }
+    </style>
+
+    <app-header nav condenses fixed effects="waterfall">
+      <app-toolbar>
+        <paper-icon-button icon="menu" on-tap="handleMenu"></paper-icon-button>
+        <h3 main-title>{{localize('titlePage')}}</h3>
+        <paper-icon-button icon="search"></paper-icon-button>
+      </app-toolbar>
+
+      <paper-tabs selected="0" sticky>
+        <paper-tab>{{localize('tabMyQuestions')}}</paper-tab>
+        <paper-tab>{{localize('tabSharedWithMe')}}</paper-tab>
+      </paper-tabs>
+    </app-header>
+
+    <div main-content>
+      <p>1. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>2. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>3. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>4. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>5. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>6. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>7. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>8. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>9. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>10. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>11. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>12. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>13. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>14. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+      <p>15. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec qu</p>
+    </div>
+
+    <app-drawer id="drawerMain" swipe-open>
+      <lms-nav language="{{language}}" locale-url="{{localeUrl}}"></lms-nav>
+    </app-drawer>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-questions',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      
+      properties: {
+        title: {
+          type: String,
+          notify: true
+        },
+        language: {
+          type: String,
+          notify: true
+        },
+        localeUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        var url = this.resolveUrl(this.localeUrl);
+        url = url + '?' + (new Date()).getTime();
+        this.loadResources(url);
+      },
+
+      handleMenu: function(event) {
+        this.$.drawerMain.toggle();
+      }
+    });
+  </script>
+  
+</dom-module>

@@ -5,6 +5,8 @@ package com.hsystems.lms.model;
  */
 public enum Permission {
 
+  VIEW_RESOURCE,
+  EDIT_RESOURCE,
   VIEW_HOME,
   VIEW_ASSIGNMENTS,
   VIEW_QUESTIONS,

@@ -1,33 +1,33 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.service.entity;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 10/9/16.
  */
-public class SignUpDetails extends SignInDetails implements Serializable {
+public class SignUpEntity extends SignInEntity implements Serializable {
 
   private static final long serialVersionUID = -6318683344722781066L;
 
-  protected String confirmPassword;
+  private String confirmPassword;
 
-  protected String firstName;
+  private String firstName;
 
-  protected String lastName;
+  private String lastName;
 
-  protected String dateOfBirth;
+  private String dateOfBirth;
 
-  protected String gender;
+  private String gender;
 
-  protected String mobile;
+  private String mobile;
 
-  protected String email;
+  private String email;
 
-  SignUpDetails() {
+  SignUpEntity() {
 
   }
 
-  public SignUpDetails(
+  public SignUpEntity(
       String id,
       String password,
       String confirmPassword,
@@ -38,8 +38,7 @@ public class SignUpDetails extends SignInDetails implements Serializable {
       String mobile,
       String email) {
 
-    this.id = id;
-    this.password = password;
+    super(id, password);
     this.confirmPassword = confirmPassword;
     this.firstName = firstName;
     this.lastName = lastName;

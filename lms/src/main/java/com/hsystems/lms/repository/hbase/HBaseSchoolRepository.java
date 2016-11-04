@@ -1,20 +1,17 @@
 package com.hsystems.lms.repository.hbase;
 
+import com.google.inject.Inject;
+
 import com.hsystems.lms.ReflectionUtils;
-import com.hsystems.lms.model.Constants;
 import com.hsystems.lms.model.Permission;
 import com.hsystems.lms.model.School;
+import com.hsystems.lms.provider.hbase.HBaseClient;
+import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.HBaseConfiguration;
-import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Connection;
-import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.client.Table;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
@@ -27,32 +24,35 @@ import java.util.Optional;
 public class HBaseSchoolRepository
     extends HBaseRepository implements SchoolRepository {
 
+  private HBaseClient client;
+
+  @Inject
+  HBaseSchoolRepository(HBaseClient client) {
+    this.client = client;
+  }
+
   public Optional<School> findBy(String id)
       throws RepositoryException {
 
-    Configuration configuration = HBaseConfiguration.create();
-    Get get = new Get(Bytes.toBytes(id));
+    try {
+      Get get = new Get(Bytes.toBytes(id));
+      Result result = client.get(get, Constants.TABLE_SCHOOLS);
 
-    try (Connection connection
-             = ConnectionFactory.createConnection(configuration)) {
-
-      TableName tableName = TableName.valueOf(Constants.TABLE_SCHOOLS);
-      Table table = connection.getTable(tableName);
-      Result result = table.get(get);
-
-      if (!result.isEmpty()) {
-        School school = (School) ReflectionUtils.getInstance(School.class);
-        ReflectionUtils.setValue(
-            school, Constants.FIELD_ID, Bytes.toString(result.getRow()));
-        populateSchoolFields(school, result);
-        return Optional.of(school);
+      if (result.isEmpty()) {
+        return Optional.empty();
       }
-      return Optional.empty();
+
+      School school = (School) ReflectionUtils.getInstance(School.class);
+      ReflectionUtils.setValue(
+          school, Constants.FIELD_ID, Bytes.toString(result.getRow()));
+      populateSchoolFields(school, result);
+      return Optional.of(school);
+
     } catch (IOException | InstantiationException
         | IllegalAccessException | InvocationTargetException
         | NoSuchFieldException e) {
-      throw new RepositoryException(
-          "error retrieving school", e);
+
+      throw new RepositoryException("error retrieving school", e);
     }
   }
 

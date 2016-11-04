@@ -12,14 +12,11 @@ import java.util.Map;
 /**
  * Created by naungsoe on 29/8/16.
  */
-public class WebModule extends ServletModule {
+public final class WebModule extends ServletModule {
 
   @Override
   protected void configureServlets() {
-    filter("/jsp/*", "/web/*").through(AuthenticationFilter.class);
-
-    Map<String, String> params = new HashMap<>();
-    params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
-    serve("/webapi/*").with(GuiceContainer.class, params);
+    //filter("/web/*").through(AuthenticationFilter.class);
+    serve("/webapi/*").with(GuiceContainer.class);
   }
 }

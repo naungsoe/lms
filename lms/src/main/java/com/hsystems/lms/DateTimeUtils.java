@@ -9,14 +9,23 @@ import java.time.format.DateTimeFormatter;
  */
 public final class DateTimeUtils {
 
-  private static final DateTimeFormatter formatter
-      = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+  private static final String DEFAULT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
 
   public static String toString(LocalDate date) {
+    return toString(date, DEFAULT_FORMAT);
+  }
+
+  public static String toString(LocalDate date, String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
     return date.format(formatter);
   }
 
   public static LocalDateTime toLocalDateTime(String value) {
+    return toLocalDateTime(value, DEFAULT_FORMAT);
+  }
+
+  public static LocalDateTime toLocalDateTime(String value, String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
     return LocalDateTime.parse(value, formatter);
   }
 }

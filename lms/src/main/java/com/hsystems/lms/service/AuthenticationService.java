@@ -5,9 +5,8 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.CommonUtils;
-import com.hsystems.lms.ReflectionUtils;
 import com.hsystems.lms.SecurityUtils;
-import com.hsystems.lms.model.SignInDetails;
+import com.hsystems.lms.service.entity.SignInEntity;
 import com.hsystems.lms.service.annotation.Log;
 import com.hsystems.lms.model.User;
 import com.hsystems.lms.repository.UserRepository;
@@ -16,7 +15,6 @@ import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.lang.reflect.InvocationTargetException;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Optional;
@@ -28,11 +26,11 @@ import java.util.Properties;
 @Singleton
 public class AuthenticationService {
 
-  private final Provider<Properties> propertiesProvider;
+  private Provider<Properties> propertiesProvider;
 
-  private final Provider<User> userProvider;
+  private Provider<User> userProvider;
 
-  private final UserRepository userRepository;
+  private UserRepository userRepository;
 
   @Inject
   AuthenticationService(
@@ -46,20 +44,20 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<User> signIn(SignInDetails signInDetails)
+  public Optional<User> signIn(SignInEntity signInEntity)
       throws ServiceException {
 
-    checkPreconditions(signInDetails);
+    checkPreconditions(signInEntity);
 
     try {
       Optional<User> userOptional
-          = userRepository.findBy(signInDetails.getId());
+          = userRepository.findBy(signInEntity.getId());
 
       if (userOptional.isPresent()) {
         String hashedPassword = SecurityUtils.getPassword(
-            signInDetails.getPassword(), userOptional.get().getSalt());
+            signInEntity.getPassword(), userOptional.get().getSalt());
 
-        if (userOptional.get().getId().equals(signInDetails.getId())
+        if (userOptional.get().getId().equals(signInEntity.getId())
             && userOptional.get().getPassword().equals(hashedPassword)) {
           return userOptional;
         }
@@ -72,7 +70,7 @@ public class AuthenticationService {
     return Optional.empty();
   }
 
-  private void checkPreconditions(SignInDetails signInDetails) {
+  private void checkPreconditions(SignInEntity signInEntity) {
     Properties properties = propertiesProvider.get();
     int maxIdLength = Integer.parseInt(
         properties.getProperty("field.user.id.max.length"));
@@ -80,21 +78,21 @@ public class AuthenticationService {
         properties.getProperty("field.user.password.max.length"));
 
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInDetails.getId()),
+        StringUtils.isNotEmpty(signInEntity.getId()),
         "id is missing");
     CommonUtils.checkArgument(
-        (signInDetails.getId().length() <= maxIdLength),
+        (signInEntity.getId().length() <= maxIdLength),
         "id length should not exceed");
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInDetails.getPassword()),
+        StringUtils.isNotEmpty(signInEntity.getPassword()),
         "password is missing");
     CommonUtils.checkArgument(
-        (signInDetails.getPassword().length() <= maxPasswordLength),
+        (signInEntity.getPassword().length() <= maxPasswordLength),
         "password length should not exceed");
   }
 
   @Log
-  public void signOut(SignInDetails signInDetails)
+  public void signOut(SignInEntity signInEntity)
       throws ServiceException {
 
     // clear sign in

@@ -33,8 +33,4 @@
      <name>hbase.zookeeper.quorum</name>
      <value>hsystems.com</value>
   </property>
-  <property>
-    <name>zookeeper.session.timeout</name>
-    <value>1200000</value>
-  </property>
 </configuration>

@@ -1,5 +1,6 @@
 package com.hsystems.lms;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.security.MessageDigest;
@@ -15,20 +16,26 @@ import javax.crypto.spec.PBEKeySpec;
  */
 public final class SecurityUtils {
 
-  private static final int iterations = 1000;
+  private static final String MD5_ALGORITHM = "MD5";
+  private static final String SALT_ALGORITHM = "SHA1PRNG";
+  private static final String KEY_ALGORITHM = "PBKDF2WithHmacSHA1";
+  private static final int ITERATIONS = 1000;
+  private static final int KEY_LENGTH = 256;
+  private static final int SALT_LENGTH = 16;
 
-  private static final int keyLength = 256;
+  public static String getRandomSalt()
+      throws NoSuchAlgorithmException {
 
-  public static String getRandomSalt() throws NoSuchAlgorithmException {
-    byte[] salt = new byte[16];
-    SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");
+    byte[] salt = new byte[SALT_LENGTH];
+    SecureRandom secureRandom = SecureRandom.getInstance(SALT_ALGORITHM);
     secureRandom.nextBytes(salt);
     return Bytes.toHex(salt);
   }
 
   public static String getMD5Hash(String input, String salt) {
     try {
-      return getHash(input, salt, "MD5");
+      return getHash(input, salt, MD5_ALGORITHM);
+
     } catch (NoSuchAlgorithmException e) {
       return "";
     }
@@ -38,7 +45,10 @@ public final class SecurityUtils {
       throws NoSuchAlgorithmException {
 
     MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
-    messageDigest.update(salt.getBytes());
+
+    if (StringUtils.isNotEmpty(salt)) {
+      messageDigest.update(salt.getBytes());
+    }
 
     byte[] hash = messageDigest.digest(input.getBytes());
     return Bytes.toHex(hash);
@@ -48,9 +58,8 @@ public final class SecurityUtils {
       throws NoSuchAlgorithmException, InvalidKeySpecException {
 
     PBEKeySpec keySpec = new PBEKeySpec(
-        input.toCharArray(), salt.getBytes(), iterations, keyLength);
-    SecretKeyFactory keyFactory = SecretKeyFactory
-        .getInstance("PBKDF2WithHmacSHA1");
+        input.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
+    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
     byte[] key = keyFactory.generateSecret(keySpec).getEncoded();
     return Bytes.toHex(key);
   }

@@ -5,11 +5,11 @@ package com.hsystems.lms.service.query;
  */
 public final class Criterion {
 
-  private final Operator operator;
+  private Operator operator;
 
-  private final String field;
+  private String field;
 
-  private final String value;
+  private String value;
 
   public Criterion(
       Operator operator, String field, String value) {

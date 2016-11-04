@@ -33,6 +33,5 @@ public final class AccountHelpServlet extends BaseServlet {
   protected void doPost()
       throws ServletException, IOException {
 
-
   }
 }

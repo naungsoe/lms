@@ -11,15 +11,15 @@ public class Group implements Serializable {
 
   private static final long serialVersionUID = 2420329732282197342L;
 
-  protected String id;
+  private String id;
 
-  protected String name;
+  private String name;
 
-  protected List<Permission> permissions;
+  private List<Permission> permissions;
 
-  protected School school;
+  private School school;
 
-  protected List<User> members;
+  private List<User> members;
 
   Group() {
 

@@ -12,31 +12,31 @@ public class User implements Serializable {
 
   private static final long serialVersionUID = -3039577050861410422L;
 
-  protected String id;
+  private String id;
 
-  protected String password;
+  private String password;
 
-  protected String salt;
+  private String salt;
 
-  protected String firstName;
+  private String firstName;
 
-  protected String lastName;
+  private String lastName;
 
-  protected LocalDate dateOfBirth;
+  private LocalDate dateOfBirth;
 
-  protected String gender;
+  private String gender;
 
-  protected String mobile;
+  private String mobile;
 
-  protected String email;
+  private String email;
 
-  protected String locale;
+  private String locale;
 
-  protected List<Permission> permissions;
+  private List<Permission> permissions;
 
-  protected School school;
+  private School school;
 
-  protected List<Group> groups;
+  private List<Group> groups;
 
   User() {
 

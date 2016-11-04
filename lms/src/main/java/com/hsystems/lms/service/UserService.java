@@ -10,7 +10,7 @@ import com.hsystems.lms.SecurityUtils;
 import com.hsystems.lms.model.Group;
 import com.hsystems.lms.model.Permission;
 import com.hsystems.lms.model.School;
-import com.hsystems.lms.model.SignUpDetails;
+import com.hsystems.lms.service.entity.SignUpEntity;
 import com.hsystems.lms.model.User;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.SchoolRepository;
@@ -64,14 +64,14 @@ public class UserService {
 
     try {
       return userRepository.findBy(id);
+
     } catch (RepositoryException e) {
-      throw new ServiceException(
-          "error retrieving user", e);
+      throw new ServiceException("error retrieving user", e);
     }
   }
 
   @Log
-  public void signUp(SignUpDetails signUpDetails)
+  public void signUp(SignUpEntity signUpDetails)
       throws ServiceException {
 
     try {
@@ -80,15 +80,15 @@ public class UserService {
       User user = getUser(signUpDetails);
       userRepository.save(user);
       indexingService.index(user);
+
     } catch (NoSuchAlgorithmException | InvalidKeySpecException
         | RepositoryException e) {
 
-      throw new ServiceException(
-          "error signing up", e);
+      throw new ServiceException("error signing up", e);
     }
   }
 
-  private void checkSignUpPreconditions(SignUpDetails signUpDetails)
+  private void checkSignUpPreconditions(SignUpEntity signUpDetails)
       throws IllegalArgumentException {
 
     CommonUtils.checkArgument(
@@ -108,7 +108,7 @@ public class UserService {
         "last name cannot be empty");
   }
 
-  private User getUser(SignUpDetails signUpDetails)
+  private User getUser(SignUpEntity signUpDetails)
       throws NoSuchAlgorithmException, InvalidKeySpecException,
       RepositoryException {
 

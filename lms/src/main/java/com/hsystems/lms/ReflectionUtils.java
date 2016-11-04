@@ -18,22 +18,24 @@ public final class ReflectionUtils {
       InvocationTargetException {
 
     Optional<Constructor> constructor = getParamLessConstructor(type);
+
     if (constructor.isPresent()) {
       constructor.get().setAccessible(true);
       return constructor.get().newInstance(initargs);
     }
 
-    throw new InstantiationException(
-        "error creating instance");
+    throw new InstantiationException("error creating instance");
   }
 
   public static Optional<Constructor> getParamLessConstructor(Class type) {
     Constructor[] constructors = type.getDeclaredConstructors();
+
     for (int i = 0; i < constructors.length; i++) {
       if (constructors[i].getGenericParameterTypes().length == 0) {
         return Optional.of(constructors[i]);
       }
     }
+
     return Optional.empty();
   }
 
@@ -43,12 +45,15 @@ public final class ReflectionUtils {
 
     Field field = instance.getClass().getDeclaredField(fieldName);
     field.setAccessible(true);
+
     if (field.getType() == value.getClass()) {
       field.set(instance, value);
+
     } else {
       if (value.getClass() == LocalDate.class) {
         String castValue = DateUtils.toString((LocalDate)value);
         field.set(instance, castValue);
+
       } else {
         Object castValue = field.getType().cast(value);
         field.set(instance, castValue);
@@ -83,25 +88,31 @@ public final class ReflectionUtils {
 
     Field[] sourceFields = source.getClass().getDeclaredFields();
     Field[] destinationFields = destination.getClass().getDeclaredFields();
+
     for (Field destinationField : destinationFields) {
       for (Field sourceField : sourceFields) {
         if (!destinationField.getName().equals(sourceField.getName())) {
           continue;
         }
+
         sourceField.setAccessible(true);
 
         String fieldName = destinationField.getName();
         Object fieldValue = sourceField.get(source);
+
         if (sourceField.getType() == List.class) {
           ReflectionUtils.setValue(
               destination, fieldName, (List<String>)fieldValue);
+
         } else if (sourceField.getType() == LocalDate.class) {
           ReflectionUtils.setValue(
               destination, fieldName, (LocalDate)fieldValue);
+
         } else {
           ReflectionUtils.setValue(
               destination, fieldName, (String)fieldValue);
         }
+
         break;
       }
     }
@@ -111,10 +122,12 @@ public final class ReflectionUtils {
       throws NoSuchFieldException {
 
     Field field = instance.getClass().getDeclaredField(fieldName);
+
     if (field.getType() == List.class) {
       ParameterizedType paramType = (ParameterizedType) field.getGenericType();
       return (Class<?>) paramType.getActualTypeArguments()[0];
     }
+
     return field.getType();
   }
 }

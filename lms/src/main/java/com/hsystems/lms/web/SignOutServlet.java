@@ -2,7 +2,7 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.model.SignInDetails;
+import com.hsystems.lms.service.entity.SignInEntity;
 import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.AuthenticationService;
 
@@ -42,12 +42,14 @@ public final class SignOutServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      SignInDetails signInDetails
-          = ServletUtils.getEntity(getRequest(), SignInDetails.class);
-      service.signOut(signInDetails);
+      SignInEntity signInEntity
+          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
+      service.signOut(signInEntity);
       sendRedirect("/web/signin");
+
     } catch (ServiceException e) {
       sendRedirect("/web/signin");
+
     } finally {
       clearSessionAndCookies();
     }

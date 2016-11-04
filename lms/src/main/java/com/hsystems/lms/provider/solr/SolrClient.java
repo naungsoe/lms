@@ -35,9 +35,9 @@ public final class SolrClient {
   }
 
   public <T> List<T> query(SolrQuery query, Class<T> type)
-    throws SolrServerException, IOException,
-    InstantiationException, IllegalAccessException,
-    InvocationTargetException {
+      throws SolrServerException, IOException,
+      InstantiationException, IllegalAccessException,
+      InvocationTargetException {
 
     CloudSolrClient client = getClient();
     QueryResponse response = client.query(query);

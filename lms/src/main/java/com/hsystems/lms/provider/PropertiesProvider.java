@@ -38,6 +38,7 @@ public class PropertiesProvider implements Provider<Properties> {
         }
       }
     }
+
     return properties;
   }
 }

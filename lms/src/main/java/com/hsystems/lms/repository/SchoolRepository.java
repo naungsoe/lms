@@ -10,5 +10,6 @@ import java.util.Optional;
  */
 public interface SchoolRepository {
 
-  Optional<School> findBy(String id) throws RepositoryException;
+  Optional<School> findBy(String id)
+      throws RepositoryException;
 }

@@ -11,7 +11,9 @@ import java.io.InputStream;
  */
 public final class JsonUtils {
 
-  public static JsonNode parseJson(InputStream stream) throws IOException {
+  public static JsonNode parseJson(InputStream stream)
+      throws IOException {
+
     ObjectMapper mapper = new ObjectMapper();
     return mapper.readTree(stream);
   }

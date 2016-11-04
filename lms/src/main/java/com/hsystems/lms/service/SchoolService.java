@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.model.School;
+import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.service.annotation.Log;
@@ -21,22 +22,26 @@ public class SchoolService {
 
   private SchoolRepository schoolRepository;
 
+  private AuditLogRepository auditLogRepository;
+
   @Inject
   SchoolService(
-      SchoolRepository schoolRepository) {
+      SchoolRepository schoolRepository,
+      AuditLogRepository auditLogRepository) {
 
     this.schoolRepository = schoolRepository;
+    this.auditLogRepository = auditLogRepository;
   }
 
   @Log
-  public Optional<School> findBy(String key)
+  public Optional<School> findBy(String id)
       throws ServiceException {
 
     try {
-      return schoolRepository.findBy(key);
+      return schoolRepository.findBy(id);
+
     } catch (RepositoryException e) {
-      throw new ServiceException(
-          "error retrieving school", e);
+      throw new ServiceException("error retrieving school", e);
     }
   }
 }

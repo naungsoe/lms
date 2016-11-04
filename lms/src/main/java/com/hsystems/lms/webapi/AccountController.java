@@ -5,7 +5,7 @@ import com.google.inject.Singleton;
 
 import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.model.SignUpDetails;
+import com.hsystems.lms.service.entity.SignUpEntity;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -34,7 +34,7 @@ public class AccountController {
 
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  public Response signUp(SignUpDetails entity)
+  public Response signUp(SignUpEntity entity)
       throws IllegalArgumentException, ServiceException {
 
     userService.signUp(entity);

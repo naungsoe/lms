@@ -2,7 +2,7 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.model.SignInDetails;
+import com.hsystems.lms.service.entity.SignInEntity;
 import com.hsystems.lms.model.User;
 import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.AuthenticationService;
@@ -47,10 +47,10 @@ public final class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      SignInDetails signInDetails
-          = ServletUtils.getEntity(getRequest(), SignInDetails.class);
+      SignInEntity signInEntity
+          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
       Optional<User> userOptional
-          = authenticationService.signIn(signInDetails);
+          = authenticationService.signIn(signInEntity);
 
       if (userOptional.isPresent()) {
         createSessionAndCookies(userOptional.get());
@@ -61,8 +61,7 @@ public final class SignInServlet extends BaseServlet {
         loadSignIn();
       }
     } catch (ServiceException e) {
-      throw new ServletException(
-          "error signing in", e);
+      throw new ServletException("error signing in", e);
     }
   }
 

@@ -4,6 +4,8 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.provider.PropertiesProvider;
+import com.hsystems.lms.provider.hbase.HBaseClient;
+import com.hsystems.lms.provider.hbase.HBaseClientProvider;
 import com.hsystems.lms.provider.solr.SolrClient;
 import com.hsystems.lms.provider.solr.SolrClientProvider;
 import com.hsystems.lms.repository.GroupRepository;
@@ -28,11 +30,12 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 21/8/16.
  */
-public class AppModule extends AbstractModule {
+public final class AppModule extends AbstractModule {
 
   @Override
   protected void configure() {
     bind(Properties.class).toProvider(PropertiesProvider.class);
+    bind(HBaseClient.class).toProvider(HBaseClientProvider.class);
     bind(SolrClient.class).toProvider(SolrClientProvider.class);
     bind(IndexingService.class).to(SolrIndexingService.class);
     bind(SearchService.class).to(SolrSearchService.class);

@@ -10,7 +10,7 @@ public class RequiresInterceptor implements MethodInterceptor {
 
   public Object invoke(MethodInvocation invocation)
       throws Throwable {
-
+    
     return invocation.proceed();
   }
 }

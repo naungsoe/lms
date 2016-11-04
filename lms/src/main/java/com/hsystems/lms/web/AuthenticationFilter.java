@@ -35,11 +35,13 @@ public class AuthenticationFilter extends BaseFilter {
 
     if (isPublicResourceRequest() || isAuthenticated()) {
       getFilterChain().doFilter(getRequest(), getResponse());
+
     } else {
       populateUserProvider();
 
       if (isAuthenticated()) {
         getFilterChain().doFilter(getRequest(), getResponse());
+
       } else {
         getContext().log("unauthenticated access request url : "
             + getRequest().getRequestURI());
@@ -58,15 +60,14 @@ public class AuthenticationFilter extends BaseFilter {
     }
 
     try {
-      Optional<User> userOptional = authenticationService
-          .findSignedInUserBy(id);
+      Optional<User> userOptional
+          = authenticationService.findSignedInUserBy(id);
 
       if (userOptional.isPresent()) {
         createSession(userOptional.get());
       }
     } catch (ServiceException e) {
-      throw new ServletException(
-          "error retrieving signed in user", e);
+      throw new ServletException("error retrieving signed in user", e);
     }
   }
 

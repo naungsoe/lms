@@ -10,7 +10,8 @@ import com.hsystems.lms.service.interceptor.LogInterceptor;
 /**
  * Created by naungsoe on 14/9/16.
  */
-public class LogModule extends AbstractModule {
+public final class LogModule extends AbstractModule {
+
   protected void configure() {
     bindInterceptor(Matchers.any(),
         Matchers.annotatedWith(Log.class),
