@@ -1,4 +1,4 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
 
 /**
  * Created by naungsoe on 3/11/16.

@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository;
 
-import com.hsystems.lms.model.School;
 import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.model.School;
 
 import java.util.Optional;
 

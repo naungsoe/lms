@@ -1,7 +1,8 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
+
+import com.hsystems.lms.common.Permission;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**

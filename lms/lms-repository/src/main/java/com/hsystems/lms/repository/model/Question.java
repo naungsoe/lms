@@ -1,4 +1,6 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
+
+import com.hsystems.lms.common.QuestionType;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -4,13 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.CommonUtils;
-import com.hsystems.lms.SecurityUtils;
-import com.hsystems.lms.service.entity.SignInEntity;
-import com.hsystems.lms.service.annotation.Log;
-import com.hsystems.lms.model.User;
+import com.hsystems.lms.common.CommonUtils;
+import com.hsystems.lms.common.SecurityUtils;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.model.User;
+import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.service.entity.SignInEntity;
+import com.hsystems.lms.service.entity.UserEntity;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -44,7 +45,7 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<User> signIn(SignInEntity signInEntity)
+  public Optional<UserEntity> signIn(SignInEntity signInEntity)
       throws ServiceException {
 
     checkPreconditions(signInEntity);
@@ -59,7 +60,7 @@ public class AuthenticationService {
 
         if (userOptional.get().getId().equals(signInEntity.getId())
             && userOptional.get().getPassword().equals(hashedPassword)) {
-          return userOptional;
+          return null;
         }
       }
     } catch (RepositoryException | NoSuchAlgorithmException
@@ -99,11 +100,18 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<User> findSignedInUserBy(String id)
+  public Optional<UserEntity> findSignedInUserBy(String id)
       throws ServiceException {
 
     try {
-      return userRepository.findBy(id);
+      Optional<User> userOptional = userRepository.findBy(id);
+
+      if (userOptional.isPresent()) {
+        return null;
+      }
+
+      return Optional.empty();
+
     } catch (RepositoryException e) {
       throw new ServiceException(
           "error retrieving signed in user", e);

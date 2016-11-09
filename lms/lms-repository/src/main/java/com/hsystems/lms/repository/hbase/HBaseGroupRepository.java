@@ -2,13 +2,13 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.ReflectionUtils;
-import com.hsystems.lms.model.Group;
-import com.hsystems.lms.model.Permission;
-import com.hsystems.lms.provider.hbase.HBaseClient;
+import com.hsystems.lms.common.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.hbase.provider.HBaseClient;
+import com.hsystems.lms.repository.model.Group;
+import com.hsystems.lms.common.Permission;
 
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;

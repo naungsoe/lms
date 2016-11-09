@@ -1,8 +1,8 @@
-package com.hsystems.lms.provider.solr;
+package com.hsystems.lms.service.solr.provider;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.ReflectionUtils;
+import com.hsystems.lms.common.ReflectionUtils;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
@@ -10,7 +10,6 @@ import org.apache.solr.client.solrj.impl.CloudSolrClient;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.SolrInputDocument;
 
 import java.io.IOException;
 import java.lang.reflect.Field;

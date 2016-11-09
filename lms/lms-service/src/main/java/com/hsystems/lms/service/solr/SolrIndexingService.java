@@ -4,10 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import com.hsystems.lms.service.IndexingService;
 import com.hsystems.lms.service.annotation.Log;
 import com.hsystems.lms.service.exception.ServiceException;
-import com.hsystems.lms.provider.solr.SolrClient;
-import com.hsystems.lms.service.IndexingService;
+import com.hsystems.lms.service.solr.provider.SolrClient;
 
 import org.apache.solr.client.solrj.SolrServerException;
 

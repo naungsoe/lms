@@ -1,8 +1,8 @@
 package com.hsystems.lms.service.mapper;
 
-import com.hsystems.lms.DateTimeUtils;
-import com.hsystems.lms.DateUtils;
-import com.hsystems.lms.ReflectionUtils;
+import com.hsystems.lms.common.DateTimeUtils;
+import com.hsystems.lms.common.DateUtils;
+import com.hsystems.lms.common.ReflectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -39,30 +39,31 @@ public final class EntityMapper {
 
     for (Field field : fields) {
       String name = field.getName();
-      Optional<Field> fieldOptional = sourceFields.stream().filter(
+      Optional<Field> sourceFieldOptional = sourceFields.stream().filter(
           x -> x.getName().equals(name)).findFirst();
 
-      if (fieldOptional.isPresent()) {
+      if (sourceFieldOptional.isPresent()) {
         ReflectionUtils.setValue(instance, name,
-            getFieldValue(source, fieldOptional.get()));
+            getFieldValue(source, sourceFieldOptional.get(), field.getType()));
 
       } else {
         Queue<String> nameTokens = getNameTokens(name);
         ReflectionUtils.setValue(instance, name,
-            getCompositeFieldValue(source, sourceFields, nameTokens));
+            getCompositeFieldValue(source, sourceFields,
+                nameTokens, field.getType()));
       }
     }
 
     return instance;
   }
 
-  private <T> Object getFieldValue(T instance, Field field)
+  private <T,S> Object getFieldValue(S source, Field field, Class<T> type)
       throws NoSuchFieldException, IllegalAccessException {
 
-    Class<?> fieldType = field.getType();
-    Object value = field.get(instance);
+    Class<?> sourceFieldType = field.getType();
+    Object value = field.get(source);
 
-    if (fieldType == List.class) {
+    if (sourceFieldType == List.class) {
       List list = (List) value;
       Class<?> itemType = ReflectionUtils.getListType(field);
       List<Class<?>> items = new ArrayList<>();
@@ -71,16 +72,16 @@ public final class EntityMapper {
 
       }
 
-    } else if (fieldType == LocalDate.class) {
+    } else if (sourceFieldType == LocalDate.class) {
       return DateUtils.toString((LocalDate) value,
           configuration.getDateFormat());
 
-    } else if (fieldType.equals(LocalDateTime.class.getName())) {
+    } else if (sourceFieldType == LocalDateTime.class) {
       return DateTimeUtils.toString((LocalDateTime) value,
           configuration.getDateTimeFormat());
     }
 
-    return value;
+    return null;
   }
 
   private Queue<String> getNameTokens(String name) {
@@ -95,8 +96,8 @@ public final class EntityMapper {
     return tokens;
   }
 
-  private <T> Object getCompositeFieldValue(
-      T instance, List<Field> fields, Queue<String> nameTokens)
+  private <T,S> Object getCompositeFieldValue(
+      S source, List<Field> fields, Queue<String> nameTokens, Class<T> type)
     throws NoSuchFieldException, IllegalAccessException {
 
     String name = nameTokens.poll();
@@ -104,7 +105,7 @@ public final class EntityMapper {
         x -> x.getName().equals(name)).findFirst();
 
     if (nameTokens.isEmpty()) {
-      return getFieldValue(instance, fieldOptional.get());
+      return getFieldValue(source, fieldOptional.get(), type);
     }
 
     if (!fieldOptional.isPresent()) {
@@ -116,8 +117,10 @@ public final class EntityMapper {
       } while (!fieldOptional.isPresent());
     }
 
-    Object composite = fieldOptional.get().get(instance);
-    List<Field> compositeFields = ReflectionUtils.getFields(composite.getClass());
-    return getCompositeFieldValue(composite, compositeFields, nameTokens);
+    Object composite = fieldOptional.get().get(source);
+    List<Field> compositeFields
+        = ReflectionUtils.getFields(composite.getClass());
+    return getCompositeFieldValue(
+        composite, compositeFields, nameTokens, type);
   }
 }

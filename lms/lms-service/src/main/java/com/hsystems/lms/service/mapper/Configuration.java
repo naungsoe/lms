@@ -1,6 +1,6 @@
 package com.hsystems.lms.service.mapper;
 
-import com.hsystems.lms.model.School;
+import com.hsystems.lms.repository.model.User;
 
 /**
  * Created by naungsoe on 4/11/16.
@@ -19,10 +19,10 @@ public class Configuration {
     this.dateTimeFormat = dateTimeFormat;
   }
 
-  public static Configuration create(School school) {
+  public static Configuration create(User user) {
     return new Configuration(
-        school.getDateFormat(),
-        school.getDateTimeFormat()
+        user.getDateFormat(),
+        user.getDateTimeFormat()
     );
   }
 

@@ -1,0 +1,155 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="lms-style.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+
+<dom-module id="lms-signup">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      app-toolbar [main-title] {
+        padding: 0;
+      }
+
+      .credentials {
+        max-width: 300px;
+      }
+
+      .particulars {
+        max-width: 600px;
+      }
+
+      .credentials [title],
+      .particulars [title] {
+        margin: 24px 16px 0 16px !important;
+      }
+
+      .credentials paper-input,
+      .particulars paper-input,
+      .particulars paper-dropdown-menu {
+        min-width: 268px;
+        margin: 0 16px;
+      }
+
+      .form-actions {
+        margin: 24px 16px !important;
+      }
+    </style>
+
+    <app-header fixed effects="waterfall">
+      <app-toolbar>
+        <h3 main-title>{{localize('titlePage')}}</h3>
+        <paper-button on-tap="handleSignIn" raised>{{localize('buttonSignIn')}}</paper-button>
+      </app-toolbar>
+    </app-header>
+
+    <div main-content>
+      <form id="formSignUp" method="post" action="{{signUpUrl}}" f
+            content-type="application/json" is="iron-form" flex-vertical>
+        <div class="form-content" flex-horizontal>
+          <section class="credentials" flex-auto>
+            <h4 title>{{localize('titleSignInDetails')}}</h4>
+            <paper-input name="id" label="{{localize('labelId')}}" value="{{id}}"
+                         on-keydown="handleKeydown" on-change="handleChange" autofocus required
+                         error-message="{{localize('labelIdRequired')}}"></paper-input>
+            <paper-input name="password" label="{{localize('labelPassword')}}" type="password"
+                         on-keydown="handleKeydown" on-change="handleChange" required
+                         error-message="{{localize('labelPasswordRequired')}}"></paper-input>
+            <paper-input name="confirmPassword" label="{{localize('labelConfirmPassword')}}" type="password"
+                         on-keydown="handleKeydown" on-change="handleChange" required
+                         error-message="{{localize('labelConfirmPasswordRequired')}}"></paper-input>
+          </section>
+          <section class="particulars" flex-auto>
+            <h4 title>{{localize('titleParticulars')}}</h4>
+            <div flex-horizontal>
+              <paper-input name="firstName" label="{{localize('labelFirstName')}}" value="{{firstName}}"
+                           on-keydown="handleKeydown" on-change="handleChange" required
+                           error-message="{{localize('labelFirstNameRequired')}}" flex-auto></paper-input>
+              <paper-input name="lastName" label="{{localize('labelLastName')}}" value="{{lastName}}"
+                           on-keydown="handleKeydown" on-change="handleChange" required
+                           error-message="{{localize('labelLastNameRequired')}}" flex-auto></paper-input>
+            </div>
+            <div flex-horizontal>
+              <paper-input name="birthday" label="{{localize('labelBirthday')}}" value="{{birthday}}"
+                           pattern="{{datePattern}}" on-keydown="handleKeydown" on-change="handleChange"
+                           error-message="{{localize('labelBirthdayRequired')}}" flex-auto>
+              </paper-input>
+              <paper-dropdown-menu label="{{localize('labelGender')}}" flex-auto>
+                <paper-listbox class="dropdown-content">
+                  <paper-item>{{localize('labelGenderFemale')}}</paper-item>
+                  <paper-item>{{localize('labelGenderMale')}}</paper-item>
+                  <paper-item>{{localize('labelGenderOther')}}</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </div>
+            <div flex-horizontal>
+              <paper-input name="mobile" label="{{localize('labelMobile')}}" value="{{mobile}}"
+                           on-keydown="handleKeydown" on-change="handleChange"
+                           error-message="{{localize('labelMobileError')}}" flex-auto></paper-input>
+              <paper-input name="email" label="{{localize('labelEmail')}}" value="{{email}}"
+                           on-keydown="handleKeydown" on-change="handleChange"
+                           error-message="{{localize('labelEmailError')}}" flex-auto></paper-input>
+            </div>
+          </section>
+        </div>
+        <div class="form-actions">
+          <paper-button on-tap="handleSignUp" raised>{{localize('buttonSignUp')}}</paper-button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-signup',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      
+      properties: {
+        datePattern: {
+          type: String,
+          notify: true
+        },
+        signInUrl: {
+          type: String,
+          notify: true
+        },
+        signUpUrl: {
+          type: String,
+          notify: true
+        },
+        language: {
+          type: String,
+          notify: true
+        },
+        localeUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        var url = this.resolveUrl(this.localeUrl);
+        url = url + '?' + (new Date()).getTime();
+        this.loadResources(url);
+      },
+
+      handleSignIn: function(event) {
+        window.location = this.signInUrl;
+      },
+
+      handleSignUp: function(event) {
+        this.$.formSignUp.submit();
+      }
+    });
+  </script>
+  
+</dom-module>

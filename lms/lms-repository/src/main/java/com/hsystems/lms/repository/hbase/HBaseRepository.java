@@ -1,11 +1,11 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.hsystems.lms.DateUtils;
-import com.hsystems.lms.ReflectionUtils;
-import com.hsystems.lms.model.Group;
-import com.hsystems.lms.model.School;
-import com.hsystems.lms.model.User;
+import com.hsystems.lms.common.DateUtils;
+import com.hsystems.lms.common.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.model.Group;
+import com.hsystems.lms.repository.model.School;
+import com.hsystems.lms.repository.model.User;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -44,7 +44,6 @@ public abstract class HBaseRepository {
     ReflectionUtils.setValue(school, Constants.FIELD_NAME,
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_NAME));
-
     return school;
   }
 

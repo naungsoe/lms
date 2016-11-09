@@ -1,6 +1,6 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
 
-import org.apache.solr.client.solrj.beans.Field;
+import com.hsystems.lms.common.Permission;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -34,9 +34,12 @@ public class User implements Serializable {
 
   private String locale;
 
+  private String dateFormat;
+
+  private String dateTimeFormat;
+
   private List<Permission> permissions;
 
-  @Field
   private School school;
 
   private List<Group> groups;
@@ -56,6 +59,8 @@ public class User implements Serializable {
       String mobile,
       String email,
       String locale,
+      String dateFormat,
+      String dateTimeFormat,
       List<Permission> permissions,
       School school,
       List<Group> groups) {
@@ -70,6 +75,8 @@ public class User implements Serializable {
     this.mobile = mobile;
     this.email = email;
     this.locale = locale;
+    this.dateFormat = dateFormat;
+    this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
     this.school = school;
     this.groups = groups;
@@ -111,6 +118,14 @@ public class User implements Serializable {
 
   public String getLocale() {
     return locale;
+  }
+
+  public String getDateFormat() {
+    return dateFormat;
+  }
+
+  public String getDateTimeFormat() {
+    return dateTimeFormat;
   }
 
   public List<Permission> getPermissions() {

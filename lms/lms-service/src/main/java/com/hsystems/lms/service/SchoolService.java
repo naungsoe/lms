@@ -1,18 +1,17 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.model.School;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.model.School;
 import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.service.entity.SchoolEntity;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
@@ -34,11 +33,17 @@ public class SchoolService {
   }
 
   @Log
-  public Optional<School> findBy(String id)
+  public Optional<SchoolEntity> findBy(String id)
       throws ServiceException {
 
     try {
-      return schoolRepository.findBy(id);
+      Optional<School> schoolOptional = schoolRepository.findBy(id);
+
+      if (schoolOptional.isPresent()) {
+        return null;
+      }
+
+      return Optional.empty();
 
     } catch (RepositoryException e) {
       throw new ServiceException("error retrieving school", e);

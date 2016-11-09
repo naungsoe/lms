@@ -4,19 +4,20 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.CommonUtils;
-import com.hsystems.lms.DateUtils;
-import com.hsystems.lms.SecurityUtils;
-import com.hsystems.lms.model.Group;
-import com.hsystems.lms.model.Permission;
-import com.hsystems.lms.model.School;
-import com.hsystems.lms.service.entity.SignUpEntity;
-import com.hsystems.lms.model.User;
+import com.hsystems.lms.common.CommonUtils;
+import com.hsystems.lms.common.DateUtils;
+import com.hsystems.lms.common.SecurityUtils;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.model.Group;
+import com.hsystems.lms.common.Permission;
+import com.hsystems.lms.repository.model.School;
+import com.hsystems.lms.repository.model.User;
 import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.service.entity.SignUpEntity;
+import com.hsystems.lms.service.entity.UserEntity;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -59,11 +60,17 @@ public class UserService {
   }
 
   @Log
-  public Optional<User> findBy(String id)
+  public Optional<UserEntity> findBy(String id)
       throws ServiceException {
 
     try {
-      return userRepository.findBy(id);
+      Optional<User> userOptional = userRepository.findBy(id);
+
+      if (userOptional.isPresent()) {
+        return null;
+      }
+
+      return Optional.empty();
 
     } catch (RepositoryException e) {
       throw new ServiceException("error retrieving user", e);
@@ -71,13 +78,13 @@ public class UserService {
   }
 
   @Log
-  public void signUp(SignUpEntity signUpDetails)
+  public void signUp(SignUpEntity signUpEntity)
       throws ServiceException {
 
     try {
-      checkSignUpPreconditions(signUpDetails);
+      checkSignUpPreconditions(signUpEntity);
 
-      User user = getUser(signUpDetails);
+      User user = getUser(signUpEntity);
       userRepository.save(user);
       indexingService.index(user);
 
@@ -88,51 +95,53 @@ public class UserService {
     }
   }
 
-  private void checkSignUpPreconditions(SignUpEntity signUpDetails)
+  private void checkSignUpPreconditions(SignUpEntity signUpEntity)
       throws IllegalArgumentException {
 
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signUpDetails.getId()),
+        StringUtils.isNotEmpty(signUpEntity.getId()),
         "id cannot be empty");
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signUpDetails.getPassword()),
+        StringUtils.isNotEmpty(signUpEntity.getPassword()),
         "password cannot be empty");
     CommonUtils.checkArgument(
-        signUpDetails.getPassword().equals(signUpDetails.getConfirmPassword()),
+        signUpEntity.getPassword().equals(signUpEntity.getConfirmPassword()),
         "password and confirm password must be same");
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpDetails.getFirstName()),
+        StringUtils.isEmpty(signUpEntity.getFirstName()),
         "first name cannot be empty");
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpDetails.getLastName()),
+        StringUtils.isEmpty(signUpEntity.getLastName()),
         "last name cannot be empty");
   }
 
-  private User getUser(SignUpEntity signUpDetails)
+  private User getUser(SignUpEntity signUpEntity)
       throws NoSuchAlgorithmException, InvalidKeySpecException,
       RepositoryException {
 
     Properties properties = propertiesProvider.get();
-    Optional<School> school = schoolRepository.findBy(
+    Optional<School> schoolOptional = schoolRepository.findBy(
         properties.getProperty("app.default.school.id"));
-    Optional<Group> group = groupRepository.findBy(
+    Optional<Group> groupOptional = groupRepository.findBy(
         properties.getProperty("app.default.group.id"));
     String randomSalt = SecurityUtils.getRandomSalt();
 
     return new User(
-        signUpDetails.getId(),
+        signUpEntity.getId(),
         SecurityUtils.getPassword(
-            signUpDetails.getPassword(), randomSalt),
+            signUpEntity.getPassword(), randomSalt),
         randomSalt,
-        signUpDetails.getFirstName(),
-        signUpDetails.getLastName(),
-        DateUtils.toLocalDate(signUpDetails.getDateOfBirth()),
-        signUpDetails.getGender(),
-        signUpDetails.getMobile(),
-        signUpDetails.getEmail(),
-        school.get().getLocale(),
+        signUpEntity.getFirstName(),
+        signUpEntity.getLastName(),
+        DateUtils.toLocalDate(signUpEntity.getDateOfBirth()),
+        signUpEntity.getGender(),
+        signUpEntity.getMobile(),
+        signUpEntity.getEmail(),
+        schoolOptional.get().getLocale(),
+        schoolOptional.get().getDateFormat(),
+        schoolOptional.get().getDateTimeFormat(),
         new ArrayList<Permission>(),
-        school.get(),
+        schoolOptional.get(),
         new ArrayList<Group>()
     );
   }

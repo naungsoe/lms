@@ -1,7 +1,6 @@
 package com.hsystems.lms.common;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -29,7 +28,7 @@ public final class SecurityUtils {
     byte[] salt = new byte[SALT_LENGTH];
     SecureRandom secureRandom = SecureRandom.getInstance(SALT_ALGORITHM);
     secureRandom.nextBytes(salt);
-    return Bytes.toHex(salt);
+    return CommonUtils.getHex(salt);
   }
 
   public static String getMD5Hash(String input, String salt) {
@@ -51,7 +50,7 @@ public final class SecurityUtils {
     }
 
     byte[] hash = messageDigest.digest(input.getBytes());
-    return Bytes.toHex(hash);
+    return CommonUtils.getHex(hash);
   }
 
   public static String getPassword(String input, String salt)
@@ -61,6 +60,6 @@ public final class SecurityUtils {
         input.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
     SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
     byte[] key = keyFactory.generateSecret(keySpec).getEncoded();
-    return Bytes.toHex(key);
+    return CommonUtils.getHex(key);
   }
 }

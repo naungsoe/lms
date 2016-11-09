@@ -1,4 +1,4 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

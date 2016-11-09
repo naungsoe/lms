@@ -1,0 +1,12 @@
+{
+  "en_US": {
+    "titlePage": "Storage",
+    "tabMyStorage": "My Storage",
+    "tabSharedWithMe": "Shared with me",
+    "menuNewFolder": "New folder",
+    "menuUploadFile": "Upload file",
+    "menuItemHome": "Home",
+    "menuItemStorage": "Storage",
+    "menuItemSignOut": "Sign out"
+  }
+}

@@ -1,4 +1,6 @@
-package com.hsystems.lms.model;
+package com.hsystems.lms.repository.model;
+
+import com.hsystems.lms.common.Permission;
 
 import java.io.Serializable;
 import java.util.Collections;

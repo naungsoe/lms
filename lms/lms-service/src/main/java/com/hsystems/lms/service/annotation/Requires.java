@@ -1,6 +1,6 @@
 package com.hsystems.lms.service.annotation;
 
-import com.hsystems.lms.model.Permission;
+import com.hsystems.lms.common.Permission;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
