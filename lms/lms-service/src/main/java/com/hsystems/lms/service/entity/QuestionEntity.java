@@ -16,7 +16,7 @@ public class QuestionEntity implements Serializable {
 
   private String body;
 
-  private List<QuestionOptionEntity> optionEntities;
+  private List<QuestionOptionEntity> options;
 
   private String schoolId;
 
@@ -24,13 +24,17 @@ public class QuestionEntity implements Serializable {
 
   private String createdById;
 
-  private String createdByName;
+  private String createdByFirstName;
+
+  private String createdByLastName;
 
   private String createdDateTime;
 
   private String modifiedById;
 
-  private String modifiedByName;
+  private String modifiedByFirstName;
+
+  private String modifiedByLastName;
 
   private String modifiedDateTime;
 
@@ -62,13 +66,13 @@ public class QuestionEntity implements Serializable {
     this.body = body;
   }
 
-  public List<QuestionOptionEntity> getOptionEntities() {
-    return optionEntities;
+  public List<QuestionOptionEntity> getOptions() {
+    return options;
   }
 
-  public void setOptionEntities(
-      List<QuestionOptionEntity> optionEntities) {
-    this.optionEntities = optionEntities;
+  public void setOptions(
+      List<QuestionOptionEntity> options) {
+    this.options = options;
   }
 
   public String getSchoolId() {
@@ -95,12 +99,20 @@ public class QuestionEntity implements Serializable {
     this.createdById = createdById;
   }
 
-  public String getCreatedByName() {
-    return createdByName;
+  public String getCreatedByFirstName() {
+    return createdByFirstName;
   }
 
-  public void setCreatedByName(String createdByName) {
-    this.createdByName = createdByName;
+  public void setCreatedByFirstName(String createdByFirstName) {
+    this.createdByFirstName = createdByFirstName;
+  }
+
+  public String getCreatedByLastName() {
+    return createdByLastName;
+  }
+
+  private void setCreatedByLastName(String createdByLastName) {
+    this.createdByLastName = createdByLastName;
   }
 
   public String getCreatedDateTime() {
@@ -119,12 +131,20 @@ public class QuestionEntity implements Serializable {
     this.modifiedById = modifiedById;
   }
 
-  public String getModifiedByName() {
-    return modifiedByName;
+  public String getModifiedByFirstName() {
+    return modifiedByFirstName;
   }
 
-  public void setModifiedByName(String modifiedByName) {
-    this.modifiedByName = modifiedByName;
+  public void setModifiedByFirstName(String modifiedByFirstName) {
+    this.modifiedByFirstName = modifiedByFirstName;
+  }
+
+  public String getModifiedByLastName() {
+    return modifiedByLastName;
+  }
+
+  public void setModifiedByLastName(String modifiedByLastName) {
+    this.modifiedByLastName = modifiedByLastName;
   }
 
   public String getModifiedDateTime() {

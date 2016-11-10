@@ -8,5 +8,5 @@ public enum QuestionType {
   MCQ,
   MRQ,
   FIB,
-  Essay
+  ESSAY
 }

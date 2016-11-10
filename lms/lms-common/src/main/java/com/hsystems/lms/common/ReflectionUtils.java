@@ -3,11 +3,13 @@ package com.hsystems.lms.common;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Created by naungsoe on 13/8/16.
@@ -50,7 +52,15 @@ public final class ReflectionUtils {
       throws NoSuchFieldException, IllegalAccessException {
 
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
-    Object value = fieldOptional.get().get(instance);
+    return getValue(instance, fieldOptional.get(), type);
+  }
+
+  public static <T,S> S getValue(T instance, Field field, Class<S> type)
+      throws NoSuchFieldException, IllegalAccessException {
+
+    field.setAccessible(true);
+
+    Object value = field.get(instance);
     return type.cast(value);
   }
 
@@ -70,27 +80,33 @@ public final class ReflectionUtils {
 
   public static <T> Optional<Field> getField(Class<T> type, String name) {
     List<Field> fields = getFields(type);
-    return fields.stream().filter(x -> x.getName().equals(name)).findFirst();
+    return fields.stream()
+        .filter(x -> x.getName().equals(name))
+        .findFirst();
   }
 
   public static <T> List<Field> getFields(Class<T> type) {
     List<Field> fields = new ArrayList<>();
-    fields.addAll(Arrays.asList(type.getDeclaredFields()));
+    List<Field> declaredFields = Arrays.asList(type.getDeclaredFields());
+    declaredFields.stream()
+        .filter(x -> !Modifier.isStatic(x.getModifiers()))
+        .forEach(fields::add);
 
-    Class<?> superClass = type.getSuperclass();
-
-    while (superClass != null) {
-      fields.addAll(Arrays.asList(superClass.getDeclaredFields()));
-      superClass = superClass.getSuperclass();
+    if (type.getSuperclass() != null) {
+      fields.addAll(getFields(type.getSuperclass()));
     }
 
     return fields;
   }
 
-  public static <T> Class<?> getListType(Field field)
+  public static <T> Class<?> getType(Field field)
       throws NoSuchFieldException {
 
-    ParameterizedType paramType = (ParameterizedType) field.getGenericType();
-    return (Class<?>) paramType.getActualTypeArguments()[0];
+    if (field.getType() == List.class) {
+      ParameterizedType paramType = (ParameterizedType) field.getGenericType();
+      return (Class<?>) paramType.getActualTypeArguments()[0];
+    }
+
+    return field.getType();
   }
 }

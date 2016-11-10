@@ -4,8 +4,12 @@ import com.hsystems.lms.common.DateTimeUtils;
 import com.hsystems.lms.common.DateUtils;
 import com.hsystems.lms.common.ReflectionUtils;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.enums.EnumUtils;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,59 +33,69 @@ public final class EntityMapper {
     this.configuration = configuration;
   }
 
-  public <T,S> T map(S source, Class<T> type)
+  public <T,S> S map(T source, Class<S> type)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    T instance = (T) ReflectionUtils.getInstance(type);
+    S instance = (S) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(type);
     List<Field> sourceFields = ReflectionUtils.getFields(source.getClass());
 
     for (Field field : fields) {
-      String name = field.getName();
-      Optional<Field> sourceFieldOptional = sourceFields.stream().filter(
-          x -> x.getName().equals(name)).findFirst();
+      String fieldName = field.getName();
+      Class<?> fieldType = ReflectionUtils.getType(field);
+      Optional<Field> sourceFieldOptional = sourceFields.stream()
+          .filter(x -> x.getName().equals(fieldName))
+          .findFirst();
 
       if (sourceFieldOptional.isPresent()) {
-        ReflectionUtils.setValue(instance, name,
-            getFieldValue(source, sourceFieldOptional.get(), field.getType()));
+        ReflectionUtils.setValue(instance, fieldName,
+            getFieldValue(source, sourceFieldOptional.get(), fieldType));
 
       } else {
-        Queue<String> nameTokens = getNameTokens(name);
-        ReflectionUtils.setValue(instance, name,
+        Queue<String> nameTokens = getNameTokens(fieldName);
+        ReflectionUtils.setValue(instance, fieldName,
             getCompositeFieldValue(source, sourceFields,
-                nameTokens, field.getType()));
+                nameTokens, fieldType));
       }
     }
 
     return instance;
   }
 
-  private <T,S> Object getFieldValue(S source, Field field, Class<T> type)
-      throws NoSuchFieldException, IllegalAccessException {
+  private <T,S> Object getFieldValue(T instance, Field field, Class<S> type)
+      throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
 
-    Class<?> sourceFieldType = field.getType();
-    Object value = field.get(source);
+    Class<?> fieldType = field.getType();
+    Object fieldValue = ReflectionUtils.getValue(instance, field, Object.class);
 
-    if (sourceFieldType == List.class) {
-      List list = (List) value;
-      Class<?> itemType = ReflectionUtils.getListType(field);
-      List<Class<?>> items = new ArrayList<>();
+    if (fieldType == List.class) {
+      List<S> valueList = new ArrayList<>();
 
-      for (Object item : list) {
-
+      for (Object fieldItem : (List) fieldValue) {
+        S valueItem = map(fieldItem, type);
+        valueList.add(valueItem);
       }
 
-    } else if (sourceFieldType == LocalDate.class) {
-      return DateUtils.toString((LocalDate) value,
+      return valueList;
+
+    } else if (fieldType == LocalDate.class) {
+      return DateUtils.toString((LocalDate) fieldValue,
           configuration.getDateFormat());
 
-    } else if (sourceFieldType == LocalDateTime.class) {
-      return DateTimeUtils.toString((LocalDateTime) value,
+    } else if (fieldType == LocalDateTime.class) {
+      return DateTimeUtils.toString((LocalDateTime) fieldValue,
           configuration.getDateTimeFormat());
+
+    } else if (fieldType.isEnum()) {
+      return fieldValue.toString();
+
+    } else if (fieldType.isPrimitive()) {
+      return fieldValue;
     }
 
-    return null;
+    return type.cast(fieldValue);
   }
 
   private Queue<String> getNameTokens(String name) {
@@ -97,30 +111,36 @@ public final class EntityMapper {
   }
 
   private <T,S> Object getCompositeFieldValue(
-      S source, List<Field> fields, Queue<String> nameTokens, Class<T> type)
-    throws NoSuchFieldException, IllegalAccessException {
+      T instance, List<Field> fields,
+      Queue<String> fieldNameTokens, Class<S> type)
+    throws NoSuchFieldException, IllegalAccessException,
+      InstantiationException, InvocationTargetException {
 
-    String name = nameTokens.poll();
-    Optional<Field> fieldOptional = fields.stream().filter(
-        x -> x.getName().equals(name)).findFirst();
+    String fieldName = fieldNameTokens.poll();
+    Optional<Field> fieldOptional = fields.stream()
+        .filter(x -> x.getName().equals(StringUtils.uncapitalize(fieldName)))
+        .findFirst();
 
-    if (nameTokens.isEmpty()) {
-      return getFieldValue(source, fieldOptional.get(), type);
-    }
-
-    if (!fieldOptional.isPresent()) {
+    if (!fieldNameTokens.isEmpty() && !fieldOptional.isPresent()) {
       do {
-        String compositeName = name + nameTokens.poll();
-        fieldOptional = fields.stream().filter(
-            x -> x.getName().equals(compositeName)).findFirst();
+        String compositeFieldName = fieldName + fieldNameTokens.poll();
+        fieldOptional = fields.stream()
+            .filter(x -> x.getName().equals(
+                StringUtils.uncapitalize(compositeFieldName)))
+            .findFirst();
 
       } while (!fieldOptional.isPresent());
     }
 
-    Object composite = fieldOptional.get().get(source);
+    if (fieldNameTokens.isEmpty()) {
+      return getFieldValue(instance, fieldOptional.get(), type);
+    }
+
+    Object compositeInstance = ReflectionUtils.getValue(
+        instance, fieldOptional.get(), Object.class);
     List<Field> compositeFields
-        = ReflectionUtils.getFields(composite.getClass());
+        = ReflectionUtils.getFields(compositeInstance.getClass());
     return getCompositeFieldValue(
-        composite, compositeFields, nameTokens, type);
+        compositeInstance, compositeFields, fieldNameTokens, type);
   }
 }

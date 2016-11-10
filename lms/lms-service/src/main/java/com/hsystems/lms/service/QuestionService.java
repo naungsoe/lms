@@ -99,7 +99,7 @@ public class QuestionService {
 
       Question question = new Question(
           "1",
-          QuestionType.Essay,
+          QuestionType.ESSAY,
           "Question Body",
           options,
           school,
@@ -111,10 +111,10 @@ public class QuestionService {
 
       Configuration configuration = Configuration.create(user);
       EntityMapper mapper = new EntityMapper(configuration);
-      return Optional.of(mapper.map(mapper, QuestionEntity.class));
+      return Optional.of(mapper.map(question, QuestionEntity.class));
 
     } catch (Exception e) {
-      throw new ServiceException("error retrieving school", e);
+      throw new ServiceException("error retrieving question", e);
     }
   }
 }

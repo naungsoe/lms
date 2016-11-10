@@ -15,7 +15,7 @@ public final class QuestionOptionEntity implements Serializable {
 
   private String feedback;
 
-  private String correct;
+  private boolean correct;
 
   public QuestionOptionEntity() {
 
@@ -45,11 +45,11 @@ public final class QuestionOptionEntity implements Serializable {
     this.feedback = feedback;
   }
 
-  public String getCorrect() {
+  public boolean getCorrect() {
     return correct;
   }
 
-  public void setCorrect(String correct) {
+  public void setCorrect(boolean correct) {
     this.correct = correct;
   }
 }
