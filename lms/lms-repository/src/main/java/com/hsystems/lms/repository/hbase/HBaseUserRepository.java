@@ -2,14 +2,14 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.ReflectionUtils;
+import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
-import com.hsystems.lms.repository.model.Group;
+import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.repository.model.User;
+import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.client.Result;
@@ -100,7 +100,7 @@ public class HBaseUserRepository
         getString(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_LAST_NAME));
     ReflectionUtils.setValue(user, Constants.FIELD_DATE_OF_BIRTH,
-        getLocalDate(result, Constants.FAMILY_DATA,
+        getLocalDateTime(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_DATE_OF_BIRTH));
     ReflectionUtils.setValue(user, Constants.FIELD_GENDER,
         getString(result, Constants.FAMILY_DATA,

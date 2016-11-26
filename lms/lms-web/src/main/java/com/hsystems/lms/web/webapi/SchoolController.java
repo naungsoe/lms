@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.service.SchoolService;
-import com.hsystems.lms.service.entity.SchoolEntity;
+import com.hsystems.lms.service.model.SchoolModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import javax.ws.rs.GET;
@@ -30,7 +30,7 @@ public class SchoolController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public SchoolEntity getSchool(@PathParam("id") String id)
+  public SchoolModel getSchool(@PathParam("id") String id)
       throws ServiceException {
 
     return schoolService.findBy(id).get();

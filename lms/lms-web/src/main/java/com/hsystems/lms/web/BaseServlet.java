@@ -3,7 +3,7 @@ package com.hsystems.lms.web;
 import com.google.inject.Injector;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.hsystems.lms.common.JsonUtils;
+import com.hsystems.lms.common.util.JsonUtils;
 
 import org.apache.commons.lang.StringUtils;
 

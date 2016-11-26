@@ -2,14 +2,14 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.ReflectionUtils;
+import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.repository.model.ShareLog;
-import com.hsystems.lms.repository.model.User;
+import com.hsystems.lms.repository.entity.ShareLog;
+import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.client.Result;

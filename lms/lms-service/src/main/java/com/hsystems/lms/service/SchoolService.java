@@ -6,9 +6,9 @@ import com.google.inject.Singleton;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.model.School;
-import com.hsystems.lms.service.annotation.Log;
-import com.hsystems.lms.service.entity.SchoolEntity;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.service.model.SchoolModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import java.util.Optional;
@@ -33,7 +33,7 @@ public class SchoolService {
   }
 
   @Log
-  public Optional<SchoolEntity> findBy(String id)
+  public Optional<SchoolModel> findBy(String id)
       throws ServiceException {
 
     try {

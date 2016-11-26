@@ -7,7 +7,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 /**
  * Created by naungsoe on 29/8/16.
  */
-public final class WebModule extends ServletModule {
+public class WebModule extends ServletModule {
 
   @Override
   protected void configureServlets() {

@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/home", loadOnStartup = 1)
-public final class HomeServlet extends BaseServlet {
+public class HomeServlet extends BaseServlet {
 
   private static final long serialVersionUID = 3995669475828674385L;
 

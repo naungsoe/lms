@@ -1,6 +1,6 @@
 package com.hsystems.lms.web;
 
-import com.hsystems.lms.common.ReflectionUtils;
+import com.hsystems.lms.common.util.ReflectionUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -35,7 +35,7 @@ public final class ServletUtils {
     return value;
   }
   
-  public static <T> T getEntity(
+  public static <T> T getModel(
       HttpServletRequest request, Class<T> type)
       throws ServletException {
 

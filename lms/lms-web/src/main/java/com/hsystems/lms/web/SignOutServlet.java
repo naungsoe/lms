@@ -3,7 +3,7 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.entity.SignInEntity;
+import com.hsystems.lms.service.model.SignInModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/signout", loadOnStartup = 1)
-public final class SignOutServlet extends BaseServlet {
+public class SignOutServlet extends BaseServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
 
@@ -42,9 +42,9 @@ public final class SignOutServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      SignInEntity signInEntity
-          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
-      service.signOut(signInEntity);
+      SignInModel signInModel
+          = ServletUtils.getModel(getRequest(), SignInModel.class);
+      service.signOut(signInModel);
       sendRedirect("/web/signin");
 
     } catch (ServiceException e) {

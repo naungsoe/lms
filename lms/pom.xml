@@ -140,11 +140,9 @@
         <version>${hbase.version}</version>
       </dependency>
       <dependency>
-        <groupId>org.apache.solr</groupId>
-        <artifactId>solr-solrj</artifactId>
+        <groupId>solr.solrj.shade</groupId>
+        <artifactId>solr-solrj-shaded</artifactId>
         <version>${solrj.version}</version>
-        <type>pom</type>
-        <scope>import</scope>
       </dependency>
     </dependencies>
   </dependencyManagement>
@@ -176,7 +174,7 @@
     <guice.jersey.version>1.19.2</guice.jersey.version>
     <hadoop.version>2.7.2</hadoop.version>
     <hbase.version>1.0-SNAPSHOT</hbase.version>
-    <solrj.version>6.2.0</solrj.version>
+    <solrj.version>1.0-SNAPSHOT</solrj.version>
     <java.version>1.8</java.version>
     <jetty.version>9.3.7.v20160115</jetty.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

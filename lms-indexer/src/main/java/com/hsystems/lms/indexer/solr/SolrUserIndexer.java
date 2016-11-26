@@ -3,10 +3,10 @@ package com.hsystems.lms.indexer.solr;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.HBaseUtils;
+//import com.hsystems.lms.HBaseUtils;
 import com.hsystems.lms.exception.IndexerException;
 import com.hsystems.lms.indexer.UserIndexer;
-import com.hsystems.lms.io.FileReader;
+//import com.hsystems.lms.io.FileReader;
 import com.hsystems.lms.provider.solr.SolrClient;
 
 import org.apache.hadoop.hbase.client.Result;
@@ -49,13 +49,13 @@ public class SolrUserIndexer implements UserIndexer {
     String usersFiles = properties.getProperty("app.indexer.users.files");
     List<String> usersFileUris = Arrays.asList(usersFiles.split("\\,"));
 
-    List<Result> results;
+    List<Result> results = new ArrayList<>();
 
-    try {
-      results = FileReader.read(usersFileUris);
-    } catch (IOException e) {
-      throw new IndexerException("error reading files", e);
-    }
+//    try {
+//      results = FileReader.read(usersFileUris);
+//    } catch (IOException e) {
+//      throw new IndexerException("error reading files", e);
+//    }
 
     index(results);
   }
@@ -65,7 +65,7 @@ public class SolrUserIndexer implements UserIndexer {
 
     try {
       List<SolrInputDocument> documents = new ArrayList<>();
-      result.stream().forEach(x -> documents.add(convert(x)));
+//      result.stream().forEach(x -> documents.add(convert(x)));
 
       SolrClient solrClient = solrClientProvider.get();
       solrClient.index(COLLECTION, documents);
@@ -74,13 +74,13 @@ public class SolrUserIndexer implements UserIndexer {
     }
   }
 
-  private SolrInputDocument convert(Result result) {
-    SolrInputDocument document = new SolrInputDocument();
-    document.addField("id", Bytes.toString(result.getRow()));
-    document.addField("firstName_s",
-        HBaseUtils.getString(result, COLUMN_FAMILY, "fname"));
-    document.addField("lastName_s",
-        HBaseUtils.getString(result, COLUMN_FAMILY, "lname"));
-    return document;
-  }
+//  private SolrInputDocument convert(Result result) {
+//    SolrInputDocument document = new SolrInputDocument();
+//    document.addField("id", Bytes.toString(result.getRow()));
+//    document.addField("firstName_s",
+//        HBaseUtils.getString(result, COLUMN_FAMILY, "fname"));
+//    document.addField("lastName_s",
+//        HBaseUtils.getString(result, COLUMN_FAMILY, "lname"));
+//    return document;
+//  }
 }

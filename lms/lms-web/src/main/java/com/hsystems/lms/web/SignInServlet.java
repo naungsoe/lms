@@ -3,8 +3,8 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.entity.SignInEntity;
-import com.hsystems.lms.service.entity.UserEntity;
+import com.hsystems.lms.service.model.SignInModel;
+import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import java.io.IOException;
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpSession;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/signin", loadOnStartup = 1)
-public final class SignInServlet extends BaseServlet {
+public class SignInServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
@@ -47,13 +47,13 @@ public final class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     try {
-      SignInEntity signInEntity
-          = ServletUtils.getEntity(getRequest(), SignInEntity.class);
-      Optional<UserEntity> userEntityOptional
-          = authenticationService.signIn(signInEntity);
+      SignInModel signInModel
+          = ServletUtils.getModel(getRequest(), SignInModel.class);
+      Optional<UserModel> userModelOptional
+          = authenticationService.signIn(signInModel);
 
-      if (userEntityOptional.isPresent()) {
-        createSessionAndCookies(userEntityOptional.get());
+      if (userModelOptional.isPresent()) {
+        createSessionAndCookies(userModelOptional.get());
         sendRedirect("/web/home");
       } else {
         setAttribute("id", getParameter("id"));
@@ -65,12 +65,12 @@ public final class SignInServlet extends BaseServlet {
     }
   }
 
-  private void createSessionAndCookies(UserEntity userEntity) {
+  private void createSessionAndCookies(UserModel userModel) {
     HttpSession session = getRequest().getSession(true);
-    session.setAttribute("userEntity", userEntity);
+    session.setAttribute("userModel", userModel);
     session.setMaxInactiveInterval(30 * 60);
 
-    Cookie cookie = new Cookie("id", userEntity.getId());
+    Cookie cookie = new Cookie("id", userModel.getId());
     cookie.setMaxAge(30 * 60);
     getResponse().addCookie(cookie);
   }

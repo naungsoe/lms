@@ -9,7 +9,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/users", loadOnStartup = 1)
-public final class UserServlet extends BaseServlet {
+public class UserServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 

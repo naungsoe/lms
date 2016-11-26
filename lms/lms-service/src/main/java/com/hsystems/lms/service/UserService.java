@@ -4,26 +4,28 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.common.CommonUtils;
-import com.hsystems.lms.common.DateUtils;
-import com.hsystems.lms.common.SecurityUtils;
+import com.hsystems.lms.common.Permission;
+import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.common.util.DateTimeUtils;
+import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.GroupRepository;
+import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.model.Group;
-import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.repository.model.School;
-import com.hsystems.lms.repository.model.User;
-import com.hsystems.lms.service.annotation.Log;
-import com.hsystems.lms.service.entity.SignUpEntity;
-import com.hsystems.lms.service.entity.UserEntity;
 import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.model.SignUpModel;
+import com.hsystems.lms.service.model.UserModel;
 
 import org.apache.commons.lang.StringUtils;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Properties;
@@ -42,7 +44,7 @@ public class UserService {
 
   private UserRepository userRepository;
 
-  private IndexingService indexingService;
+  private IndexRepository indexRepository;
 
   @Inject
   UserService(
@@ -50,17 +52,17 @@ public class UserService {
       SchoolRepository schoolRepository,
       GroupRepository groupRepository,
       UserRepository userRepository,
-      IndexingService indexingService) {
+      IndexRepository indexRepository) {
 
     this.propertiesProvider = propertiesProvider;
     this.schoolRepository = schoolRepository;
     this.groupRepository = groupRepository;
     this.userRepository = userRepository;
-    this.indexingService = indexingService;
+    this.indexRepository = indexRepository;
   }
 
   @Log
-  public Optional<UserEntity> findBy(String id)
+  public Optional<UserModel> findBy(String id)
       throws ServiceException {
 
     try {
@@ -78,15 +80,15 @@ public class UserService {
   }
 
   @Log
-  public void signUp(SignUpEntity signUpEntity)
+  public void signUp(SignUpModel signUpModel)
       throws ServiceException {
 
     try {
-      checkSignUpPreconditions(signUpEntity);
+      checkSignUpPreconditions(signUpModel);
 
-      User user = getUser(signUpEntity);
+      User user = getUser(signUpModel);
       userRepository.save(user);
-      indexingService.index(user);
+      indexRepository.save(user);
 
     } catch (NoSuchAlgorithmException | InvalidKeySpecException
         | RepositoryException e) {
@@ -95,27 +97,27 @@ public class UserService {
     }
   }
 
-  private void checkSignUpPreconditions(SignUpEntity signUpEntity)
+  private void checkSignUpPreconditions(SignUpModel signUpModel)
       throws IllegalArgumentException {
 
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signUpEntity.getId()),
+        StringUtils.isNotEmpty(signUpModel.getId()),
         "id cannot be empty");
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signUpEntity.getPassword()),
+        StringUtils.isNotEmpty(signUpModel.getPassword()),
         "password cannot be empty");
     CommonUtils.checkArgument(
-        signUpEntity.getPassword().equals(signUpEntity.getConfirmPassword()),
+        signUpModel.getPassword().equals(signUpModel.getConfirmPassword()),
         "password and confirm password must be same");
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpEntity.getFirstName()),
+        StringUtils.isEmpty(signUpModel.getFirstName()),
         "first name cannot be empty");
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpEntity.getLastName()),
+        StringUtils.isEmpty(signUpModel.getLastName()),
         "last name cannot be empty");
   }
 
-  private User getUser(SignUpEntity signUpEntity)
+  private User getUser(SignUpModel signUpModel)
       throws NoSuchAlgorithmException, InvalidKeySpecException,
       RepositoryException {
 
@@ -127,22 +129,26 @@ public class UserService {
     String randomSalt = SecurityUtils.getRandomSalt();
 
     return new User(
-        signUpEntity.getId(),
+        signUpModel.getId(),
         SecurityUtils.getPassword(
-            signUpEntity.getPassword(), randomSalt),
+            signUpModel.getPassword(), randomSalt),
         randomSalt,
-        signUpEntity.getFirstName(),
-        signUpEntity.getLastName(),
-        DateUtils.toLocalDate(signUpEntity.getDateOfBirth()),
-        signUpEntity.getGender(),
-        signUpEntity.getMobile(),
-        signUpEntity.getEmail(),
+        signUpModel.getFirstName(),
+        signUpModel.getLastName(),
+        DateTimeUtils.toLocalDateTime(signUpModel.getDateOfBirth()),
+        signUpModel.getGender(),
+        signUpModel.getMobile(),
+        signUpModel.getEmail(),
         schoolOptional.get().getLocale(),
         schoolOptional.get().getDateFormat(),
         schoolOptional.get().getDateTimeFormat(),
         new ArrayList<Permission>(),
         schoolOptional.get(),
-        new ArrayList<Group>()
+        new ArrayList<Group>(),
+        null,
+        LocalDateTime.now(),
+        null,
+        LocalDateTime.now()
     );
   }
 }

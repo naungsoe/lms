@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.entity.UserEntity;
+import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -60,11 +60,11 @@ public class AuthenticationFilter extends BaseFilter {
     }
 
     try {
-      Optional<UserEntity> userEntityOptional
+      Optional<UserModel> userModelOptional
           = authenticationService.findSignedInUserBy(id);
 
-      if (userEntityOptional.isPresent()) {
-        createSession(userEntityOptional.get());
+      if (userModelOptional.isPresent()) {
+        createSession(userModelOptional.get());
       }
     } catch (ServiceException e) {
       throw new ServletException("error retrieving signed in user", e);
@@ -84,9 +84,9 @@ public class AuthenticationFilter extends BaseFilter {
     return (session.getAttribute("user") != null);
   }
 
-  private void createSession(UserEntity userEntity) {
+  private void createSession(UserModel userModel) {
     HttpSession session = getSession(true);
-    session.setAttribute("user", userEntity);
+    session.setAttribute("user", userModel);
     session.setMaxInactiveInterval(30 * 60);
   }
 }

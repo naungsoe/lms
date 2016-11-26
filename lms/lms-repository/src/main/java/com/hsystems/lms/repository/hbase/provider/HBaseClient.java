@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * Created by administrator on 31/10/16.
  */
-public final class HBaseClient {
+public class HBaseClient {
 
   public Result get(Get get, String tableName)
       throws IOException {

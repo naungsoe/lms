@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository;
 
 import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.model.ShareLog;
+import com.hsystems.lms.repository.entity.ShareLog;
 
 import java.util.List;
 

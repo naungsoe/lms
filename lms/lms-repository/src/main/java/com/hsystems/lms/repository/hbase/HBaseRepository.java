@@ -1,11 +1,11 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.hsystems.lms.common.DateUtils;
-import com.hsystems.lms.common.ReflectionUtils;
+import com.hsystems.lms.common.util.DateTimeUtils;
+import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
-import com.hsystems.lms.repository.model.Group;
-import com.hsystems.lms.repository.model.School;
-import com.hsystems.lms.repository.model.User;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -14,9 +14,11 @@ import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -24,7 +26,9 @@ import java.util.List;
  */
 public abstract class HBaseRepository {
 
-  protected Scan getRowFilterScan(String key) {
+  protected Scan getRowFilterScan(String key)
+      throws IOException {
+
     String keyRegex = String.format("^%s[_0-9a-zA-Z]*$", key);
     Scan scan = new Scan(Bytes.toBytes(key));
     RegexStringComparator comparator = new RegexStringComparator(keyRegex);
@@ -79,21 +83,16 @@ public abstract class HBaseRepository {
   protected String getString(
       Result result, byte[] family, byte[] identifier) {
 
-    return Bytes.toString(result.getValue(family, identifier));
+    byte[] value = result.getValue(family, identifier);
+    return (value == null) ? null : Bytes.toString(value);
   }
 
-  protected LocalDate getLocalDate(
+  protected LocalDateTime getLocalDateTime(
       Result result, byte[] family, byte[] identifier) {
 
-    String date = Bytes.toString(result.getValue(family, identifier));
-    return DateUtils.toLocalDate(date, Constants.DATE_FORMAT);
-  }
-
-  protected LocalDate getLocalDateTime(
-      Result result, byte[] family, byte[] identifier) {
-
-    String dateTime = Bytes.toString(result.getValue(family, identifier));
-    return DateUtils.toLocalDate(dateTime, Constants.DATE_TIME_FORMAT);
+    byte[] value = result.getValue(family, identifier);
+    return (value == null) ? null : DateTimeUtils.toLocalDateTime(
+        Bytes.toString(value), Constants.DATE_TIME_FORMAT);
   }
 
   protected <E extends Enum<E>> E getEnum(
@@ -101,8 +100,8 @@ public abstract class HBaseRepository {
       throws InstantiationException, IllegalAccessException,
       NoSuchFieldException {
 
-    String value = Bytes.toString(result.getValue(family, identifier));
-    return Enum.valueOf(type, value);
+    byte[] value = result.getValue(family, identifier);
+    return (value == null) ? null : Enum.valueOf(type, Bytes.toString(value));
   }
 
   protected <E extends Enum<E>> List<E> getEnumList(
@@ -110,12 +109,17 @@ public abstract class HBaseRepository {
       throws InstantiationException, IllegalAccessException,
       NoSuchFieldException {
 
-    List<E> list = new ArrayList<>();
-    String[] values = Bytes.toString(result.getValue(
-        family, identifier)).split("\\,");
+    byte[] value = result.getValue(family, identifier);
 
-    for (String value : values) {
-      list.add(Enum.valueOf(type, value));
+    if (value == null) {
+      return Collections.EMPTY_LIST;
+    }
+
+    String[] items = Bytes.toString(value).split("\\,");
+    List<E> list = new ArrayList<>();
+
+    for (String item : items) {
+      list.add(Enum.valueOf(type, item));
     }
 
     return list;

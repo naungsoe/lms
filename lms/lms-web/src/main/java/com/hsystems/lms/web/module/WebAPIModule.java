@@ -10,7 +10,7 @@ import com.hsystems.lms.web.webapi.UserController;
 /**
  * Created by naungsoe on 21/8/16.
  */
-public final class WebAPIModule extends AbstractModule {
+public class WebAPIModule extends AbstractModule {
 
   @Override
   protected void configure() {

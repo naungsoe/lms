@@ -68,16 +68,19 @@
       <version>${junit.version}</version>
       <scope>test</scope>
     </dependency>
+    <!--
     <dependency>
       <groupId>com.google.guava</groupId>
       <artifactId>guava</artifactId>
       <version>${guava.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>com.google.inject</groupId>
       <artifactId>guice</artifactId>
       <version>${guice.version}</version>
     </dependency>
+    <!--
     <dependency>
       <groupId>org.apache.hadoop</groupId>
       <artifactId>hadoop-common</artifactId>
@@ -98,6 +101,7 @@
       <artifactId>hbase-server</artifactId>
       <version>${hbase.version}</version>
     </dependency>
+    -->
     <dependency>
       <groupId>org.apache.hbase</groupId>
       <artifactId>hbase-client</artifactId>
@@ -106,11 +110,6 @@
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
-      <version>${solrj.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.solr</groupId>
-      <artifactId>solr-core</artifactId>
       <version>${solrj.version}</version>
     </dependency>
   </dependencies>

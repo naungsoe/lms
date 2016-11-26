@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository;
 
 import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.model.User;
+import com.hsystems.lms.repository.entity.User;
 
 import java.util.Optional;
 

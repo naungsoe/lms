@@ -3,11 +3,12 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.service.SearchService;
+import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.entity.UserEntity;
+import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -23,28 +24,29 @@ import javax.ws.rs.core.MediaType;
 @Singleton
 public class UserController {
 
-  private SearchService searchService;
+  private IndexRepository indexRepository;
 
   private UserService userService;
 
   @Inject
-  UserController(SearchService searchService, UserService userService) {
-    this.searchService = searchService;
+  UserController(IndexRepository indexRepository, UserService userService) {
+    this.indexRepository = indexRepository;
     this.userService = userService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public UserEntity getUser(@PathParam("id") String id)
+  public UserModel getUser(@PathParam("id") String id)
       throws ServiceException {
 
-    return userService.findBy(id).get();
+    return new UserModel("", "", "", "", "", "", "", "", "", "", "", "", new ArrayList<>(), "", "", new ArrayList<>());
+    //return userService.findBy(id).get();
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<UserEntity> getUsers()
+  public List<UserModel> getUsers()
       throws ServiceException {
 
     return null;

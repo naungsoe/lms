@@ -13,7 +13,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/accounthelp", loadOnStartup = 1)
-public final class AccountHelpServlet extends BaseServlet {
+public class AccountHelpServlet extends BaseServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
 

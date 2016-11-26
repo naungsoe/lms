@@ -4,14 +4,14 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.common.CommonUtils;
-import com.hsystems.lms.common.SecurityUtils;
+import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.model.User;
-import com.hsystems.lms.service.annotation.Log;
-import com.hsystems.lms.service.entity.SignInEntity;
-import com.hsystems.lms.service.entity.UserEntity;
+import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.service.model.SignInModel;
+import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
@@ -45,20 +45,20 @@ public class AuthenticationService {
   }
 
   @Log
-  public Optional<UserEntity> signIn(SignInEntity signInEntity)
+  public Optional<UserModel> signIn(SignInModel signInModel)
       throws ServiceException {
 
-    checkPreconditions(signInEntity);
+    checkPreconditions(signInModel);
 
     try {
       Optional<User> userOptional
-          = userRepository.findBy(signInEntity.getId());
+          = userRepository.findBy(signInModel.getId());
 
       if (userOptional.isPresent()) {
         String hashedPassword = SecurityUtils.getPassword(
-            signInEntity.getPassword(), userOptional.get().getSalt());
+            signInModel.getPassword(), userOptional.get().getSalt());
 
-        if (userOptional.get().getId().equals(signInEntity.getId())
+        if (userOptional.get().getId().equals(signInModel.getId())
             && userOptional.get().getPassword().equals(hashedPassword)) {
           return null;
         }
@@ -71,7 +71,7 @@ public class AuthenticationService {
     return Optional.empty();
   }
 
-  private void checkPreconditions(SignInEntity signInEntity) {
+  private void checkPreconditions(SignInModel signInModel) {
     Properties properties = propertiesProvider.get();
     int maxIdLength = Integer.parseInt(
         properties.getProperty("field.user.id.max.length"));
@@ -79,28 +79,28 @@ public class AuthenticationService {
         properties.getProperty("field.user.password.max.length"));
 
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInEntity.getId()),
+        StringUtils.isNotEmpty(signInModel.getId()),
         "id is missing");
     CommonUtils.checkArgument(
-        (signInEntity.getId().length() <= maxIdLength),
+        (signInModel.getId().length() <= maxIdLength),
         "id length should not exceed");
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signInEntity.getPassword()),
+        StringUtils.isNotEmpty(signInModel.getPassword()),
         "password is missing");
     CommonUtils.checkArgument(
-        (signInEntity.getPassword().length() <= maxPasswordLength),
+        (signInModel.getPassword().length() <= maxPasswordLength),
         "password length should not exceed");
   }
 
   @Log
-  public void signOut(SignInEntity signInEntity)
+  public void signOut(SignInModel signInModel)
       throws ServiceException {
 
     // clear sign in
   }
 
   @Log
-  public Optional<UserEntity> findSignedInUserBy(String id)
+  public Optional<UserModel> findSignedInUserBy(String id)
       throws ServiceException {
 
     try {

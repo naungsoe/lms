@@ -1,8 +1,9 @@
 package com.hsystems.lms.web;
 
-import com.hsystems.lms.service.annotation.Log;
+import com.hsystems.lms.common.annotation.Log;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
@@ -13,7 +14,7 @@ import javax.servlet.annotation.WebServlet;
  * Created by naungsoe on 8/8/16.
  */
 @WebServlet(value = "/web/error", loadOnStartup = 1)
-public final class ErrorServlet extends BaseServlet {
+public class ErrorServlet extends BaseServlet {
 
   private static final long serialVersionUID = -1943733219860896344L;
 
@@ -24,7 +25,7 @@ public final class ErrorServlet extends BaseServlet {
       = "javax.servlet.error.exception";
 
   private final static Logger logger
-      = Logger.getLogger(ErrorServlet.class);
+      = LogManager.getLogger(ErrorServlet.class);
 
   private final static String messageFormat
       = "error requesting uri %s";
