@@ -2,16 +2,15 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
-import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.repository.entity.User;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -42,7 +41,7 @@ public class HBaseUserRepository
       Scan scan = getRowFilterScan(id);
       List<Result> results = client.scan(scan, Constants.TABLE_USERS);
 
-      if (CollectionUtils.isEmpty(results)) {
+      if (results.isEmpty()) {
         return Optional.empty();
       }
 

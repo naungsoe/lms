@@ -9,11 +9,6 @@ import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.QuestionModel;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.client.utils.URLEncodedUtils;
-
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -48,7 +43,6 @@ public class QuestionController {
   public QuestionModel getQuestion(@PathParam("id") String id)
       throws ServiceException {
 
-    questionService.update(id);
     return questionService.findBy(id).get();
   }
 }

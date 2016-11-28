@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.client.Table;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -48,11 +49,12 @@ public class HBaseClient {
       Table table = connection.getTable(TableName.valueOf(tableName));
       ResultScanner scanner = table.getScanner(scan);
       Iterator<Result> iterator = scanner.iterator();
-      List<Result> results = new ArrayList<>();
 
       if (!iterator.hasNext()) {
-        return results;
+        return Collections.emptyList();
       }
+
+      List<Result> results = new ArrayList<>();
 
       while (iterator.hasNext()) {
         results.add(iterator.next());

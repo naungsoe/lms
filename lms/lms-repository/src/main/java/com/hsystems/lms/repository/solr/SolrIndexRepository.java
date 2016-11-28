@@ -5,21 +5,16 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by naungsoe on 10/8/16.
@@ -41,8 +36,7 @@ public class SolrIndexRepository implements IndexRepository {
 
     try {
       SolrClient client = solrClientProvider.get();
-      SolrQuery solrQuery = getSolrQuery(query);
-      return client.query(solrQuery, type);
+      return client.query(query, type);
 
     } catch (SolrServerException | IOException
         | InstantiationException | IllegalAccessException
@@ -50,39 +44,6 @@ public class SolrIndexRepository implements IndexRepository {
 
       throw new RepositoryException("error executing query", e);
     }
-  }
-
-  private SolrQuery getSolrQuery(Query query) {
-    SolrQuery solrQuery = new SolrQuery();
-
-    solrQuery.setQuery("*:*");
-
-    List<Criterion> criteria = query.getCriteria();
-    criteria.stream().forEach(x -> {
-      switch (x.getOperator()) {
-        case EQUAL:
-          solrQuery.addFilterQuery(x.getField() + ":" + x.getValue());
-          break;
-
-        default:
-          solrQuery.addFilterQuery(x.getField() + ":" + x.getValue());
-          break;
-      }
-    });
-
-    List<String> fields = query.getFields();
-    fields.stream().forEach(x -> solrQuery.addField(x));
-
-    Optional<Criterion> criterionOptional = criteria.stream()
-        .filter(x -> "typeName_s".equals(x.getField())).findFirst();
-
-    if (criterionOptional.isPresent()) {
-      Criterion criterion = criterionOptional.get();
-      solrQuery.addField(criterion.getField() + ":" + criterion.getValue());
-    }
-
-    solrQuery.setStart(query.getOffset());
-    return solrQuery;
   }
 
   @Log

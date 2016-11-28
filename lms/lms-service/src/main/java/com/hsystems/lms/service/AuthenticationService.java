@@ -4,15 +4,17 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
+import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.mapper.Configuration;
+import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.SignInModel;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.service.exception.ServiceException;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -68,6 +70,7 @@ public class AuthenticationService {
 
       throw new ServiceException("error signing in", e);
     }
+
     return Optional.empty();
   }
 
@@ -90,6 +93,11 @@ public class AuthenticationService {
     CommonUtils.checkArgument(
         (signInModel.getPassword().length() <= maxPasswordLength),
         "password length should not exceed");
+  }
+
+  private ModelMapper getMapper() {
+    Configuration configuration = Configuration.create();
+    return new ModelMapper(configuration);
   }
 
   @Log

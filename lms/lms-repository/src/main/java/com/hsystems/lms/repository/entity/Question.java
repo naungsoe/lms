@@ -33,8 +33,6 @@ public class Question extends Auditable implements Serializable {
   @IndexField(type = IndexFieldType.OBJECT)
   private School school;
 
-  private long timestamp;
-
   Question() {
 
   }

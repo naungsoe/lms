@@ -4,11 +4,13 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.query.Criterion;
+import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -21,7 +23,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -31,6 +36,11 @@ import java.util.stream.Collectors;
  * Created by naungsoe on 25/9/16.
  */
 public class SolrClient {
+
+  private static final String FIELD_ID = "id";
+  private static final String FIELD_TYPE_NAME = "typeName_s";
+
+  private static final String SEPARATOR_ID = "_";
 
   private Provider<Properties> propertiesProvider;
 
@@ -42,7 +52,7 @@ public class SolrClient {
     this.propertiesProvider = propertiesProvider;
   }
 
-  public <T> QueryResult<T> query(SolrQuery query, Class<T> type)
+  public <T> QueryResult<T> query(Query query, Class<T> type)
       throws SolrServerException, IOException,
       InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
@@ -53,7 +63,10 @@ public class SolrClient {
 
     CloudSolrClient client = getClient();
     client.setDefaultCollection(collection);
-    QueryResponse response = client.query(query);
+
+    SolrQuery solrQuery = getSolrQuery(query, type);
+    QueryResponse response = client.query(solrQuery);
+
     return new QueryResult<T>(
         response.getElapsedTime(),
         getEntities(response.getResults(), type)
@@ -68,15 +81,59 @@ public class SolrClient {
         .withZkHost(zkHost).build();
   }
 
+  private <T> SolrQuery getSolrQuery(Query query, Class<T> type) {
+    SolrQuery solrQuery = new SolrQuery();
+    solrQuery.setQuery("*:*");
+
+    List<Criterion> criteria = query.getCriteria();
+    criteria.stream().forEach(x -> {
+      switch (x.getOperator()) {
+        case EQUAL:
+          solrQuery.addFilterQuery(String.format("%s:%s",
+              x.getField(), x.getValue()));
+          break;
+
+        default:
+          solrQuery.addFilterQuery(String.format("%s:%s",
+              x.getField(), x.getValue()));
+          break;
+      }
+    });
+
+    String typeNameFilterQuery = String.format("%s:%s",
+        FIELD_TYPE_NAME, type.getTypeName());
+    solrQuery.addFilterQuery(typeNameFilterQuery);
+
+    List<String> fields = query.getFields();
+
+    if (fields.isEmpty()) {
+      solrQuery.addField("*");
+
+    } else {
+      fields.stream().forEach(x -> solrQuery.addField(x));
+    }
+
+    String typeNameField = String.format("[child parentFilter=%s:%s]",
+        FIELD_TYPE_NAME, type.getTypeName());
+    solrQuery.addField(typeNameField);
+
+    solrQuery.setStart(query.getOffset());
+    return solrQuery;
+  }
+
   protected <T> List<T> getEntities(SolrDocumentList documents, Class<T> type)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
+    if (documents.isEmpty()) {
+      Collections.emptyList();
+    }
+
     List<T> entities = new ArrayList<>();
-    String typeName = type.getTypeName();
 
     for (SolrDocument document : documents) {
-      if (typeName.equals(document.getFieldValue("typeName_s"))) {
+      if (type.getTypeName().equals(
+          document.getFieldValue(FIELD_TYPE_NAME))) {
         entities.add(getEntity(document, type));
       }
     }
@@ -114,8 +171,14 @@ public class SolrClient {
 
     switch (annotation.type()) {
       case IDENTITY:
-        ReflectionUtils.setValue(entity, fieldName,
-            document.getFieldValue(fieldName));
+        String id = document.getFieldValue(fieldName).toString();
+        if (id.contains(SEPARATOR_ID)) {
+          ReflectionUtils.setValue(entity, fieldName,
+              id.substring(id.lastIndexOf(SEPARATOR_ID)));
+
+        } else {
+          ReflectionUtils.setValue(entity, fieldName, id);
+        }
         break;
 
       case BOOLEAN:
@@ -144,8 +207,14 @@ public class SolrClient {
         break;
 
       case DATETIME:
-        ReflectionUtils.setValue(entity, fieldName,
-            document.getFieldValue(fieldName + "_dt"));
+        Object date = document.getFieldValue(fieldName + "_dt");
+        if (date == null) {
+          ReflectionUtils.setValue(entity, fieldName, null);
+
+        } else {
+          ReflectionUtils.setValue(entity, fieldName,
+              DateTimeUtils.toLocalDateTime((Date) date));
+        }
         break;
 
       case STRING:
@@ -161,8 +230,9 @@ public class SolrClient {
         break;
 
       case TEXT_GENERAL:
-        ReflectionUtils.setValue(entity, fieldName,
-            document.getFieldValue(fieldName + "_t"));
+        List<String> textGenerals
+            = (List<String>) document.getFieldValue(fieldName + "_t");
+        ReflectionUtils.setValue(entity, fieldName, textGenerals.get(0));
         break;
 
       case TEXT_WHITE_SPACE:
@@ -171,31 +241,41 @@ public class SolrClient {
         break;
 
       case OBJECT:
-        Optional<SolrDocument> documentOptional
-            = document.getChildDocuments().stream()
-            .filter(x -> fieldName.equals(x.getFieldValue("fieldName_s")))
-            .findFirst();
+        if (document.getChildDocuments() == null) {
+          ReflectionUtils.setValue(entity, fieldName, null);
 
-        if (documentOptional.isPresent()) {
-          childEntity = getEntity(documentOptional.get(), field.getType());
-          ReflectionUtils.setValue(entity, fieldName, childEntity);
+        } else {
+          Optional<SolrDocument> documentOptional
+              = document.getChildDocuments().stream()
+              .filter(x -> fieldName.equals(x.getFieldValue("fieldName_s")))
+              .findFirst();
+
+          if (documentOptional.isPresent()) {
+            childEntity = getEntity(documentOptional.get(), field.getType());
+            ReflectionUtils.setValue(entity, fieldName, childEntity);
+          }
         }
         break;
 
       case LIST:
-        List<Object> childEntities = new ArrayList<>();
-        Class<?> listType = ReflectionUtils.getListType(field);
-        List<SolrDocument> childDocuments
-            = document.getChildDocuments().stream()
-            .filter(x -> fieldName.equals(x.getFieldValue("fieldName_s")))
-            .collect(Collectors.toList());
+        if (document.getChildDocuments() == null) {
+          ReflectionUtils.setValue(entity, fieldName, Collections.emptyList());
 
-        for (SolrDocument childDocument : childDocuments) {
-          childEntity = getEntity(childDocument, listType);
-          childEntities.add(childEntity);
+        } else {
+          List<Object> childEntities = new ArrayList<>();
+          Class<?> listType = ReflectionUtils.getListType(field);
+          List<SolrDocument> childDocuments
+              = document.getChildDocuments().stream()
+              .filter(x -> fieldName.equals(x.getFieldValue("fieldName_s")))
+              .collect(Collectors.toList());
+
+          for (SolrDocument childDocument : childDocuments) {
+            childEntity = getEntity(childDocument, listType);
+            childEntities.add(childEntity);
+          }
+
+          ReflectionUtils.setValue(entity, fieldName, childEntities);
         }
-
-        ReflectionUtils.setValue(entity, fieldName, childEntities);
         break;
     }
   }
@@ -211,7 +291,10 @@ public class SolrClient {
 
     CloudSolrClient client = getClient();
     client.setDefaultCollection(collection);
-    client.add(getDocument(entity));
+
+    SolrInputDocument document = getDocument(entity);
+    updateChildDocumentsId(document);
+    client.add(document);
     client.commit();
   }
 
@@ -219,8 +302,6 @@ public class SolrClient {
       throws IllegalAccessException, NoSuchFieldException {
 
     SolrInputDocument document = new SolrInputDocument();
-    document.addField("typeName_s", entity.getClass().getTypeName());
-
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
 
     for (Field field : fields) {
@@ -231,6 +312,7 @@ public class SolrClient {
       populateFields(document, entity, field);
     }
 
+    document.addField(FIELD_TYPE_NAME, entity.getClass().getTypeName());
     return document;
   }
 
@@ -252,7 +334,7 @@ public class SolrClient {
 
     switch (annotation.type()) {
       case IDENTITY:
-        document.addField(fieldName, fieldValue);
+        document.addField(FIELD_ID, fieldValue);
         break;
 
       case BOOLEAN:
@@ -315,5 +397,15 @@ public class SolrClient {
         document.addChildDocuments(childDocuments);
         break;
     }
+  }
+
+  protected void updateChildDocumentsId(SolrInputDocument document) {
+    Object documentId = document.getFieldValue(FIELD_ID);
+
+    document.getChildDocuments().forEach(x -> {
+      Object childDocumentId = x.getFieldValue(FIELD_ID);
+      x.setField(FIELD_ID, documentId.toString() + SEPARATOR_ID
+          + childDocumentId.toString());
+    });
   }
 }

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.repository.AuditLogRepository;
@@ -13,11 +12,7 @@ import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.service.exception.ServiceException;
-import com.hsystems.lms.service.mapper.Configuration;
-import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.QuestionModel;
-
-import org.apache.commons.collections.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,7 +23,7 @@ import java.util.Optional;
  * Created by naungsoe on 15/10/16.
  */
 @Singleton
-public class QuestionService {
+public class QuestionService extends BaseService {
 
   private QuestionRepository questionRepository;
 
@@ -57,11 +52,10 @@ public class QuestionService {
 
     try {
       Optional<Question> optional = questionRepository.findBy(id);
-      ModelMapper mapper = getMapper();
 
       if (optional.isPresent()) {
-        QuestionModel model = mapper.map(
-            optional.get(), QuestionModel.class);
+        Question question = optional.get();
+        QuestionModel model = getModel(question, QuestionModel.class);
         return Optional.of(model);
       }
 
@@ -72,29 +66,24 @@ public class QuestionService {
     }
   }
 
-  private ModelMapper getMapper() {
-    Configuration configuration = Configuration.create();
-    return new ModelMapper(configuration);
-  }
-
   @Log
   public QueryResult<QuestionModel> findAllBy(Query query)
       throws ServiceException {
 
     try {
-      QueryResult<Question> queryResult = indexRepository.findAllBy(
-          query, Question.class);
+      QueryResult<Question> queryResult
+          = indexRepository.findAllBy(query, Question.class);
+      List<Question> questions = queryResult.getEntities();
 
-      if (CollectionUtils.isEmpty(queryResult.getEntities())) {
+      if (questions.isEmpty()) {
         return new QueryResult<QuestionModel>(
-            queryResult.getElapsedTime(), Collections.EMPTY_LIST);
+            queryResult.getElapsedTime(), Collections.emptyList());
       }
 
-      ModelMapper mapper = getMapper();
       List<QuestionModel> questionModels = new ArrayList<>();
 
-      for (Question question : queryResult.getEntities()) {
-        QuestionModel questionModel = mapper.map(question, QuestionModel.class);
+      for (Question question : questions) {
+        QuestionModel questionModel = getModel(question, QuestionModel.class);
         questionModels.add(questionModel);
       }
 

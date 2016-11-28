@@ -3,8 +3,8 @@ package com.hsystems.lms.common.util;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 /**
  * Created by naungsoe on 10/9/16.
@@ -34,5 +34,14 @@ public final class DateTimeUtils {
   public static LocalDateTime toLocalDateTime(long value) {
     return Instant.ofEpochMilli(value)
         .atZone(ZoneId.systemDefault()).toLocalDateTime();
+  }
+
+  public static LocalDateTime toLocalDateTime(Date date) {
+    return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+  }
+
+  public static long getCurrentMilliseconds() {
+    return LocalDateTime.now().atZone(ZoneId.systemDefault())
+        .toInstant().toEpochMilli();
   }
 }

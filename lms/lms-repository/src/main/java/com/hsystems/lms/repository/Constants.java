@@ -8,7 +8,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 public class Constants {
 
   public static final String DATE_FORMAT = "yyyy-MM-dd";
-  public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS zzz";
+  public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   public static final String FIELD_ID = "id";
   public static final String FIELD_PASSWORD = "password";
@@ -33,6 +33,11 @@ public class Constants {
 
   public static final String FIELD_TYPE = "type";
   public static final String FIELD_BODY = "body";
+  public static final String FIELD_HINT = "hint";
+  public static final String FIELD_EXPLANATION = "hint";
+  public static final String FIELD_OPTIONS = "options";
+  public static final String FIELD_FEEDBACK = "feedback";
+  public static final String FIELD_CORRECT = "correct";
   public static final String FIELD_TIMESTAMP = "timestamp";
   public static final String FIELD_ACTION = "action";
 
@@ -44,8 +49,7 @@ public class Constants {
 
   public static final byte[] FAMILY_DATA = Bytes.toBytes("d");
 
-  public static final byte[] IDENTIFIER_CREATED_DATE_TIME = Bytes.toBytes(FIELD_CREATED_DATE_TIME);
-  public static final byte[] IDENTIFIER_MODIFIED_DATE_TIME = Bytes.toBytes(FIELD_MODIFIED_DATE_TIME);
+  public static final byte[] IDENTIFIER_DATE_TIME = Bytes.toBytes("datetime");
   public static final byte[] IDENTIFIER_ID = Bytes.toBytes(FIELD_ID);
   public static final byte[] IDENTIFIER_PASSWORD = Bytes.toBytes(FIELD_PASSWORD);
   public static final byte[] IDENTIFIER_SALT = Bytes.toBytes(FIELD_SALT);
@@ -60,6 +64,10 @@ public class Constants {
   public static final byte[] IDENTIFIER_PERMISSIONS = Bytes.toBytes(FIELD_PERMISSIONS);
   public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes(FIELD_TYPE);
   public static final byte[] IDENTIFIER_BODY = Bytes.toBytes(FIELD_BODY);
+  public static final byte[] IDENTIFIER_HINT = Bytes.toBytes(FIELD_HINT);
+  public static final byte[] IDENTIFIER_EXPLANATION = Bytes.toBytes(FIELD_EXPLANATION);
+  public static final byte[] IDENTIFIER_FEEDBACK = Bytes.toBytes(FIELD_FEEDBACK);
+  public static final byte[] IDENTIFIER_CORRECT = Bytes.toBytes(FIELD_CORRECT);
   public static final byte[] IDENTIFIER_TIMESTAMP = Bytes.toBytes(FIELD_TIMESTAMP);
   public static final byte[] IDENTIFIER_ACTION = Bytes.toBytes(FIELD_ACTION);
 
@@ -69,4 +77,5 @@ public class Constants {
   public static final String SEPARATOR_USER = "_usr_";
   public static final String SEPARATOR_CREATED_BY = "_cre_";
   public static final String SEPARATOR_MODIFIED_BY = "_mod_";
+  public static final String SEPARATOR_OPTION = "_opt_";
 }

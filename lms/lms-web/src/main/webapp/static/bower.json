@@ -16,6 +16,7 @@
     "paper-listbox": "polymerelements/paper-listbox#^1.0.10",
     "paper-date-picker": "polymer-paper-date-picker#^1.1.5",
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.0.10",
-    "paper-radio-button": "PolymerElements/paper-radio-button#^1.0.10"
+    "paper-radio-button": "PolymerElements/paper-radio-button#^1.0.10",
+    "quill-element": "^0.0.6"
   }
 }

@@ -7,6 +7,7 @@ import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter;
@@ -71,13 +72,43 @@ public abstract class HBaseRepository {
       InvocationTargetException, NoSuchFieldException {
 
     User user = (User) ReflectionUtils.getInstance(User.class);
-    String id = rowKey.split(Constants.SEPARATOR_GROUP)[1];
+    String id;
+
+    if (rowKey.contains(Constants.SEPARATOR_CREATED_BY)) {
+      id = rowKey.split(Constants.SEPARATOR_CREATED_BY)[1];
+
+    } else if (rowKey.contains(Constants.SEPARATOR_MODIFIED_BY)) {
+      id = rowKey.split(Constants.SEPARATOR_MODIFIED_BY)[1];
+
+    } else if (rowKey.contains(Constants.SEPARATOR_USER)) {
+      id = rowKey.split(Constants.SEPARATOR_USER)[1];
+
+    } else {
+      id = getString(result, Constants.FAMILY_DATA, Constants.IDENTIFIER_ID);
+    }
 
     ReflectionUtils.setValue(user, Constants.FIELD_ID, id);
-    ReflectionUtils.setValue(user, Constants.FIELD_NAME,
+    ReflectionUtils.setValue(user, Constants.FIELD_FIRST_NAME,
         getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
+            Constants.IDENTIFIER_FIRST_NAME));
+    ReflectionUtils.setValue(user, Constants.FIELD_LAST_NAME,
+        getString(result, Constants.FAMILY_DATA,
+            Constants.IDENTIFIER_LAST_NAME));
     return user;
+  }
+
+  protected boolean getBoolean(
+      Result result, byte[] family, byte[] identifier) {
+
+    String value = getString(result, family, identifier);
+    return StringUtils.isEmpty(value) ? false : Boolean.parseBoolean(value);
+  }
+
+  protected long getLong(
+      Result result, byte[] family, byte[] identifier) {
+
+    String value = getString(result, family, identifier);
+    return StringUtils.isEmpty(value) ? 0 : Long.parseLong(value);
   }
 
   protected String getString(
@@ -112,7 +143,7 @@ public abstract class HBaseRepository {
     byte[] value = result.getValue(family, identifier);
 
     if (value == null) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
 
     String[] items = Bytes.toString(value).split("\\,");

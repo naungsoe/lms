@@ -2,18 +2,17 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.Action;
 import com.hsystems.lms.common.EntityType;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
-import com.hsystems.lms.common.Action;
-import com.hsystems.lms.repository.entity.AuditLog;
-import com.hsystems.lms.repository.entity.User;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -45,8 +44,8 @@ public class HBaseAuditLogRepository
       Scan scan = getRowFilterScan(id);
       List<Result> results = client.scan(scan, Constants.TABLE_AUDIT_LOG);
 
-      if (CollectionUtils.isEmpty(results)) {
-        return Collections.EMPTY_LIST;
+      if (results.isEmpty()) {
+        return Collections.emptyList();
       }
 
       List<AuditLog> auditLogs = new ArrayList<>();
@@ -82,23 +81,15 @@ public class HBaseAuditLogRepository
           getString(result, Constants.FAMILY_DATA,
               Constants.IDENTIFIER_ID));
       ReflectionUtils.setValue(auditLog, Constants.FIELD_TIMESTAMP,
-          getString(result, Constants.FAMILY_DATA,
+          getLong(result, Constants.FAMILY_DATA,
               Constants.IDENTIFIER_TIMESTAMP));
     }
 
     ReflectionUtils.setValue(auditLog, Constants.FIELD_TYPE,
         getEnum(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_TYPE, EntityType.class));
-
-    User user = (User) ReflectionUtils.getInstance(User.class);
-    ReflectionUtils.setValue(user, Constants.FIELD_ID,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_ID));
-    ReflectionUtils.setValue(user, Constants.FIELD_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
-    ReflectionUtils.setValue(auditLog, Constants.FIELD_USER, user);
-
+    ReflectionUtils.setValue(auditLog, Constants.FIELD_USER,
+        getUser(rowKey, result));
     ReflectionUtils.setValue(auditLog, Constants.FIELD_ACTION,
         getEnum(result, Constants.FAMILY_DATA,
             Constants.IDENTIFIER_ACTION, Action.class));
@@ -123,6 +114,20 @@ public class HBaseAuditLogRepository
         | IllegalAccessException | InvocationTargetException
         | NoSuchFieldException e) {
       throw new RepositoryException("error retrieving auditlog", e);
+    }
+  }
+
+  public void save(AuditLog auditLog)
+      throws RepositoryException {
+
+    try {
+      Put put = new Put(Bytes.toBytes(auditLog.getEntityId()));
+      byte[] type = Bytes.toBytes(auditLog.getEntityType().toString());
+      put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE, type);
+      client.put(put, Constants.TABLE_AUDIT_LOG);
+
+    } catch (IOException e) {
+      throw new RepositoryException("error saving auditlog", e);
     }
   }
 }

@@ -34,7 +34,7 @@ import java.util.Properties;
  * Created by naungsoe on 8/8/16.
  */
 @Singleton
-public class UserService {
+public class UserService extends BaseService {
 
   private Provider<Properties> propertiesProvider;
 
