@@ -15,10 +15,6 @@ public class UserModel implements Serializable {
 
   private String id;
 
-  private String password;
-
-  private String salt;
-
   private String firstName;
 
   private String lastName;
@@ -51,8 +47,6 @@ public class UserModel implements Serializable {
 
   public UserModel(
       String id,
-      String password,
-      String salt,
       String firstName,
       String lastName,
       String dateOfBirth,
@@ -68,8 +62,6 @@ public class UserModel implements Serializable {
       List<UserGroupModel> groups) {
 
     this.id = id;
-    this.password = password;
-    this.salt = salt;
     this.firstName = firstName;
     this.lastName = lastName;
     this.dateOfBirth = dateOfBirth;
@@ -88,12 +80,6 @@ public class UserModel implements Serializable {
   public String getId() {
     return id;
   }
-
-  public String getPassword() {
-    return password;
-  }
-
-  public String getSalt() { return salt; }
 
   public String getFirstName() {
     return firstName;

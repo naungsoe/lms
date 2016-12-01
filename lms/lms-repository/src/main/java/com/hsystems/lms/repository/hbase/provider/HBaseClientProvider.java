@@ -7,7 +7,13 @@ import com.google.inject.Provider;
  */
 public class HBaseClientProvider implements Provider<HBaseClient> {
 
+  private final HBaseClient client;
+
+  public HBaseClientProvider() {
+    this.client = new HBaseClient();
+  }
+
   public HBaseClient get() {
-    return new HBaseClient();
+    return client;
   }
 }

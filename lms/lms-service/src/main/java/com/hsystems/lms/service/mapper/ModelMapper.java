@@ -23,7 +23,7 @@ public class ModelMapper {
 
   private static final String NAME_TOKEN_PATTERN = "([A-Za-z][a-z]+)";
 
-  private Configuration configuration;
+  private final Configuration configuration;
 
   public ModelMapper(Configuration configuration) {
     this.configuration = configuration;

@@ -28,12 +28,12 @@ import java.util.Optional;
 public class HBaseQuestionRepository
     extends HBaseRepository implements QuestionRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
-  private HBaseAuditLogRepository auditLogRepository;
+  private final HBaseAuditLogRepository auditLogRepository;
 
   @Inject
-  HBaseQuestionRepository(
+  public HBaseQuestionRepository(
       HBaseClient client, HBaseAuditLogRepository auditLogRepository) {
 
     this.client = client;

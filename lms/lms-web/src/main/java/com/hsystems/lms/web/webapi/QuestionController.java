@@ -1,8 +1,9 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
+import com.hsystems.lms.common.Permission;
+import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.service.QuestionService;
@@ -21,14 +22,18 @@ import javax.ws.rs.core.UriInfo;
  * Created by naungsoe on 10/9/16.
  */
 @Path("questions")
-@Singleton
 public class QuestionController {
 
+  private final QuestionService questionService;
+
   @Inject
-  private QuestionService questionService;
+  public QuestionController(QuestionService questionService) {
+    this.questionService = questionService;
+  }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
+  @Requires(Permission.VIEW_QUESTIONS)
   public QueryResult<QuestionModel> getQuestions(
       @Context UriInfo uriInfo)
       throws ServiceException {
@@ -40,6 +45,7 @@ public class QuestionController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
+  @Requires(Permission.VIEW_QUESTIONS)
   public QuestionModel getQuestion(@PathParam("id") String id)
       throws ServiceException {
 

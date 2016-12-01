@@ -11,14 +11,11 @@ import java.lang.reflect.InvocationTargetException;
  */
 public abstract class BaseService {
 
-  protected User user;
-
-  protected <T,S> S getModel(T entity, Class<S> type)
+  protected <T,S> S getModel(
+      T entity, Class<S> type, Configuration configuration)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    Configuration configuration = (user == null)
-      ? Configuration.create() : Configuration.create(user);
     ModelMapper mapper = new ModelMapper(configuration);
     return mapper.map(entity, type);
   }

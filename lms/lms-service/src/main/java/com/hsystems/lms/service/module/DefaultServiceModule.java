@@ -1,12 +1,11 @@
 package com.hsystems.lms.service.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.Singleton;
 import com.google.inject.matcher.Matchers;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.interceptor.LogInterceptor;
-import com.hsystems.lms.common.interceptor.RequiresInterceptor;
 import com.hsystems.lms.common.provider.PropertiesProvider;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.GroupRepository;
@@ -27,6 +26,7 @@ import com.hsystems.lms.repository.solr.SolrIndexRepository;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.SchoolService;
 import com.hsystems.lms.service.UserService;
 
@@ -40,25 +40,32 @@ public class DefaultServiceModule extends AbstractModule {
   @Override
   protected void configure() {
     bindInterceptor(Matchers.any(),
-        Matchers.annotatedWith(Requires.class),
-        new RequiresInterceptor());
-
-    bindInterceptor(Matchers.any(),
         Matchers.annotatedWith(Log.class),
         new LogInterceptor());
 
-    bind(HBaseClient.class).toProvider(HBaseClientProvider.class);
-    bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class);
-    bind(ShareLogRepository.class).to(HBaseShareLogRepository.class);
-    bind(SchoolRepository.class).to(HBaseSchoolRepository.class);
-    bind(GroupRepository.class).to(HBaseGroupRepository.class);
-    bind(UserRepository.class).to(HBaseUserRepository.class);
-    bind(QuestionRepository.class).to(HBaseQuestionRepository.class);
-    bind(Properties.class).toProvider(PropertiesProvider.class);
-    bind(SolrClient.class).toProvider(SolrClientProvider.class);
-    bind(IndexRepository.class).to(SolrIndexRepository.class);
-    bind(AuthenticationService.class);
-    bind(SchoolService.class);
-    bind(UserService.class);
+    bind(HBaseClient.class).toProvider(HBaseClientProvider.class)
+        .in(Singleton.class);
+    bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)
+        .in(Singleton.class);
+    bind(ShareLogRepository.class).to(HBaseShareLogRepository.class)
+        .in(Singleton.class);
+    bind(SchoolRepository.class).to(HBaseSchoolRepository.class)
+        .in(Singleton.class);
+    bind(GroupRepository.class).to(HBaseGroupRepository.class)
+        .in(Singleton.class);
+    bind(UserRepository.class).to(HBaseUserRepository.class)
+        .in(Singleton.class);
+    bind(QuestionRepository.class).to(HBaseQuestionRepository.class)
+        .in(Singleton.class);
+    bind(Properties.class).toProvider(PropertiesProvider.class)
+        .in(Singleton.class);
+    bind(SolrClient.class).toProvider(SolrClientProvider.class)
+        .in(Singleton.class);
+    bind(IndexRepository.class).to(SolrIndexRepository.class)
+        .in(Singleton.class);
+    bind(AuthenticationService.class).in(Singleton.class);
+    bind(SchoolService.class).in(Singleton.class);
+    bind(UserService.class).in(Singleton.class);
+    bind(QuestionService.class).in(Singleton.class);
   }
 }

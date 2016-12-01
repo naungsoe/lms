@@ -1,7 +1,6 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -12,6 +11,7 @@ import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
 
 import java.util.ArrayList;
@@ -22,19 +22,18 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-@Singleton
 public class QuestionService extends BaseService {
 
-  private QuestionRepository questionRepository;
+  private final QuestionRepository questionRepository;
 
-  private AuditLogRepository auditLogRepository;
+  private final AuditLogRepository auditLogRepository;
 
-  private ShareLogRepository shareLogRepository;
+  private final ShareLogRepository shareLogRepository;
 
-  private IndexRepository indexRepository;
+  private final IndexRepository indexRepository;
 
   @Inject
-  QuestionService(
+  public QuestionService(
       QuestionRepository questionRepository,
       AuditLogRepository auditLogRepository,
       ShareLogRepository shareLogRepository,
@@ -42,7 +41,7 @@ public class QuestionService extends BaseService {
 
     this.questionRepository = questionRepository;
     this.auditLogRepository = auditLogRepository;
-    this.auditLogRepository = auditLogRepository;
+    this.shareLogRepository = shareLogRepository;
     this.indexRepository = indexRepository;
   }
 
@@ -50,12 +49,20 @@ public class QuestionService extends BaseService {
   public Optional<QuestionModel> findBy(String id)
       throws ServiceException {
 
+    return findBy(id, Configuration.create());
+  }
+
+  @Log
+  public Optional<QuestionModel> findBy(String id, Configuration configuration)
+      throws ServiceException {
+
     try {
       Optional<Question> optional = questionRepository.findBy(id);
 
       if (optional.isPresent()) {
         Question question = optional.get();
-        QuestionModel model = getModel(question, QuestionModel.class);
+        QuestionModel model = getModel(question,
+            QuestionModel.class, configuration);
         return Optional.of(model);
       }
 
@@ -68,6 +75,14 @@ public class QuestionService extends BaseService {
 
   @Log
   public QueryResult<QuestionModel> findAllBy(Query query)
+      throws ServiceException {
+
+    return findAllBy(query, Configuration.create());
+  }
+
+  @Log
+  public QueryResult<QuestionModel> findAllBy(
+      Query query, Configuration configuration)
       throws ServiceException {
 
     try {
@@ -83,7 +98,8 @@ public class QuestionService extends BaseService {
       List<QuestionModel> questionModels = new ArrayList<>();
 
       for (Question question : questions) {
-        QuestionModel questionModel = getModel(question, QuestionModel.class);
+        QuestionModel questionModel = getModel(question,
+            QuestionModel.class, configuration);
         questionModels.add(questionModel);
       }
 

@@ -8,9 +8,9 @@ import com.hsystems.lms.repository.entity.User;
  */
 public class Configuration {
 
-  private String dateFormat;
+  private final String dateFormat;
 
-  private String dateTimeFormat;
+  private final String dateTimeFormat;
 
   Configuration(
       String dateFormat,

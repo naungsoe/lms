@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.solr;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -19,13 +18,12 @@ import java.lang.reflect.InvocationTargetException;
 /**
  * Created by naungsoe on 10/8/16.
  */
-@Singleton
 public class SolrIndexRepository implements IndexRepository {
 
-  private Provider<SolrClient> solrClientProvider;
+  private final Provider<SolrClient> solrClientProvider;
 
   @Inject
-  SolrIndexRepository(Provider<SolrClient> solrClientProvider) {
+  public SolrIndexRepository(Provider<SolrClient> solrClientProvider) {
     this.solrClientProvider = solrClientProvider;
   }
 

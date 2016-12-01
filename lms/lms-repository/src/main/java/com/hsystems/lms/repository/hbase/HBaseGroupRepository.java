@@ -24,10 +24,10 @@ import java.util.Optional;
 public class HBaseGroupRepository
     extends HBaseRepository implements GroupRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
   @Inject
-  HBaseGroupRepository(HBaseClient client) {
+  public HBaseGroupRepository(HBaseClient client) {
     this.client = client;
   }
 

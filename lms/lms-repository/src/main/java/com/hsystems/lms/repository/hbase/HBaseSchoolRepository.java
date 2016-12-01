@@ -24,10 +24,10 @@ import java.util.Optional;
 public class HBaseSchoolRepository
     extends HBaseRepository implements SchoolRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
   @Inject
-  HBaseSchoolRepository(HBaseClient client) {
+  public HBaseSchoolRepository(HBaseClient client) {
     this.client = client;
   }
 

@@ -1,6 +1,7 @@
 package com.hsystems.lms.web.module;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.servlet.RequestScoped;
 
 import com.hsystems.lms.web.webapi.AccountController;
 import com.hsystems.lms.web.webapi.QuestionController;
@@ -14,9 +15,9 @@ public class WebAPIModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bind(AccountController.class);
-    bind(SchoolController.class);
-    bind(UserController.class);
-    bind(QuestionController.class);
+    bind(AccountController.class).in(RequestScoped.class);
+    bind(SchoolController.class).in(RequestScoped.class);
+    bind(UserController.class).in(RequestScoped.class);
+    bind(QuestionController.class).in(RequestScoped.class);
   }
 }

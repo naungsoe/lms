@@ -30,10 +30,10 @@ import java.util.Optional;
 public class HBaseAuditLogRepository
     extends HBaseRepository implements AuditLogRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
   @Inject
-  HBaseAuditLogRepository(HBaseClient client) {
+  public HBaseAuditLogRepository(HBaseClient client) {
     this.client = client;
   }
 

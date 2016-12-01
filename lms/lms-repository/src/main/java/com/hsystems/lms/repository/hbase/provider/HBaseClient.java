@@ -23,10 +23,14 @@ import java.util.List;
  */
 public class HBaseClient {
 
+  private Configuration configuration;
+
+  public HBaseClient() {
+    configuration = HBaseConfiguration.create();
+  }
+
   public Result get(Get get, String tableName)
       throws IOException {
-
-    Configuration configuration = HBaseConfiguration.create();
 
     try (Connection connection
              = ConnectionFactory.createConnection(configuration)) {
@@ -40,8 +44,6 @@ public class HBaseClient {
 
   public List<Result> scan(Scan scan, String tableName)
       throws IOException {
-
-    Configuration configuration = HBaseConfiguration.create();
 
     try (Connection connection
              = ConnectionFactory.createConnection(configuration)) {
@@ -68,8 +70,6 @@ public class HBaseClient {
 
   public void put(Put put, String tableName)
       throws IOException {
-    
-    Configuration configuration = HBaseConfiguration.create();
 
     try (Connection connection
              = ConnectionFactory.createConnection(configuration)) {

@@ -1,4 +1,4 @@
-package com.hsystems.lms.common.interceptor;
+package com.hsystems.lms.web.security;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;

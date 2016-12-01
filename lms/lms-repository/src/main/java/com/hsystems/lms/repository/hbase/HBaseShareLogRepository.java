@@ -27,10 +27,10 @@ import java.util.List;
 public class HBaseShareLogRepository
     extends HBaseRepository implements ShareLogRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
   @Inject
-  HBaseShareLogRepository(HBaseClient client) {
+  public HBaseShareLogRepository(HBaseClient client) {
     this.client = client;
   }
 

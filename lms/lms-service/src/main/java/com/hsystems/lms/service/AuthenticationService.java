@@ -2,11 +2,11 @@ package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 
+import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
-import com.hsystems.lms.common.util.SecurityUtils;
+import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.exception.RepositoryException;
@@ -14,35 +14,31 @@ import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.SignInModel;
+import com.hsystems.lms.service.model.UserGroupModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Properties;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
-@Singleton
 public class AuthenticationService {
 
-  private Provider<Properties> propertiesProvider;
+  private final Provider<Properties> propertiesProvider;
 
-  private Provider<User> userProvider;
-
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
   @Inject
-  AuthenticationService(
+  public AuthenticationService(
       Provider<Properties> propertiesProvider,
-      Provider<User> userProvider,
       UserRepository userRepository) {
 
     this.propertiesProvider = propertiesProvider;
-    this.userProvider = userProvider;
     this.userRepository = userRepository;
   }
 
@@ -51,27 +47,43 @@ public class AuthenticationService {
       throws ServiceException {
 
     checkPreconditions(signInModel);
+    return Optional.of(new UserModel(
+        "1",
+        "Admin",
+        "User",
+        LocalDateTime.now().toString(),
+        "Male",
+        "987654321",
+        "admin@openschool.com",
+        "en_US",
+        Constants.DATE_FORMAT,
+        Constants.DATE_TIME_FORMAT,
+        new ArrayList<Permission>(),
+        "OS",
+        "Open School",
+        new ArrayList<UserGroupModel>()
+    ));
 
-    try {
-      Optional<User> userOptional
-          = userRepository.findBy(signInModel.getId());
-
-      if (userOptional.isPresent()) {
-        String hashedPassword = SecurityUtils.getPassword(
-            signInModel.getPassword(), userOptional.get().getSalt());
-
-        if (userOptional.get().getId().equals(signInModel.getId())
-            && userOptional.get().getPassword().equals(hashedPassword)) {
-          return null;
-        }
-      }
-    } catch (RepositoryException | NoSuchAlgorithmException
-        | InvalidKeySpecException e) {
-
-      throw new ServiceException("error signing in", e);
-    }
-
-    return Optional.empty();
+//    try {
+//      Optional<User> userOptional
+//          = userRepository.findBy(signInModel.getId());
+//
+//      if (userOptional.isPresent()) {
+//        String hashedPassword = SecurityUtils.getPassword(
+//            signInModel.getPassword(), userOptional.get().getSalt());
+//
+//        if (userOptional.get().getId().equals(signInModel.getId())
+//            && userOptional.get().getPassword().equals(hashedPassword)) {
+//          return null;
+//        }
+//      }
+//    } catch (RepositoryException | NoSuchAlgorithmException
+//        | InvalidKeySpecException e) {
+//
+//      throw new ServiceException("error signing in", e);
+//    }
+//
+//    return Optional.empty();
   }
 
   private void checkPreconditions(SignInModel signInModel) {

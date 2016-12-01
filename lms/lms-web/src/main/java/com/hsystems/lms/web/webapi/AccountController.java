@@ -1,11 +1,10 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
-import com.hsystems.lms.service.model.SignUpModel;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.UserService;
+import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.model.SignUpModel;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -20,11 +19,14 @@ import javax.ws.rs.core.Response.Status;
  * Created by naungsoe on 10/9/16.
  */
 @Path("account")
-@Singleton
 public class AccountController {
 
+  private final UserService userService;
+
   @Inject
-  private UserService userService;
+  public AccountController(UserService userService) {
+    this.userService = userService;
+  }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)

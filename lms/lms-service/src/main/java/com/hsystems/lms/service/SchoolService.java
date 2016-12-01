@@ -1,7 +1,6 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.repository.AuditLogRepository;
@@ -16,15 +15,14 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-@Singleton
 public class SchoolService extends BaseService {
 
-  private SchoolRepository schoolRepository;
+  private final SchoolRepository schoolRepository;
 
-  private AuditLogRepository auditLogRepository;
+  private final AuditLogRepository auditLogRepository;
 
   @Inject
-  SchoolService(
+  public SchoolService(
       SchoolRepository schoolRepository,
       AuditLogRepository auditLogRepository) {
 

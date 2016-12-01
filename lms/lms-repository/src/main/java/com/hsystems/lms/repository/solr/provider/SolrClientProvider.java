@@ -12,12 +12,15 @@ public class SolrClientProvider implements Provider<SolrClient> {
 
   private Provider<Properties> propertiesProvider;
 
+  private SolrClient client;
+
   @Inject
   SolrClientProvider(Provider<Properties> propertiesProvider) {
     this.propertiesProvider = propertiesProvider;
+    this.client = new SolrClient(propertiesProvider);
   }
 
   public SolrClient get() {
-    return new SolrClient(propertiesProvider);
+    return client;
   }
 }

@@ -2,7 +2,6 @@ package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Log;
@@ -18,6 +17,7 @@ import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignUpModel;
 import com.hsystems.lms.service.model.UserModel;
 
@@ -33,21 +33,20 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 8/8/16.
  */
-@Singleton
 public class UserService extends BaseService {
 
-  private Provider<Properties> propertiesProvider;
+  private final Provider<Properties> propertiesProvider;
 
-  private SchoolRepository schoolRepository;
+  private final SchoolRepository schoolRepository;
 
-  private GroupRepository groupRepository;
+  private final GroupRepository groupRepository;
 
-  private UserRepository userRepository;
+  private final UserRepository userRepository;
 
-  private IndexRepository indexRepository;
+  private final IndexRepository indexRepository;
 
   @Inject
-  UserService(
+  public UserService(
       Provider<Properties> propertiesProvider,
       SchoolRepository schoolRepository,
       GroupRepository groupRepository,
@@ -63,6 +62,13 @@ public class UserService extends BaseService {
 
   @Log
   public Optional<UserModel> findBy(String id)
+      throws ServiceException {
+
+    return findBy(id, Configuration.create());
+  }
+
+  @Log
+  public Optional<UserModel> findBy(String id, Configuration configuration)
       throws ServiceException {
 
     try {

@@ -1,12 +1,11 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.exception.ServiceException;
+import com.hsystems.lms.service.model.UserModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,15 +20,16 @@ import javax.ws.rs.core.MediaType;
  * Root resource (exposed at "users" path)
  */
 @Path("users")
-@Singleton
 public class UserController {
 
-  private IndexRepository indexRepository;
+  private final IndexRepository indexRepository;
 
-  private UserService userService;
+  private final UserService userService;
 
   @Inject
-  UserController(IndexRepository indexRepository, UserService userService) {
+  public UserController(
+      IndexRepository indexRepository, UserService userService) {
+
     this.indexRepository = indexRepository;
     this.userService = userService;
   }
@@ -40,7 +40,7 @@ public class UserController {
   public UserModel getUser(@PathParam("id") String id)
       throws ServiceException {
 
-    return new UserModel("", "", "", "", "", "", "", "", "", "", "", "", new ArrayList<>(), "", "", new ArrayList<>());
+    return new UserModel("", "", "", "", "", "", "", "", "", "", new ArrayList<>(), "", "", new ArrayList<>());
     //return userService.findBy(id).get();
   }
 

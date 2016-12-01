@@ -2,8 +2,6 @@ package com.hsystems.lms.common.provider;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.interceptor.LogInterceptor;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -17,29 +15,36 @@ import java.util.Properties;
 public class PropertiesProvider implements Provider<Properties> {
 
   private final static Logger logger
-      = LogManager.getLogger(LogInterceptor.class);
+      = LogManager.getLogger(PropertiesProvider.class);
 
   private static final String fileName = "application.properties";
 
-  public Properties get() {
-    Properties properties = new Properties();
+  private Properties properties;
+
+  public PropertiesProvider() {
     InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream(fileName);
 
     try {
-      properties.load(inputStream);
+      this.properties = new Properties();
+      this.properties.load(inputStream);
+
     } catch (IOException e) {
       logger.error("failed to load properties", e);
+
     } finally {
       if (inputStream != null) {
         try {
           inputStream.close();
+
         } catch (IOException e) {
           logger.error("failed to close stream", e);
         }
       }
     }
+  }
 
+  public Properties get() {
     return properties;
   }
 }

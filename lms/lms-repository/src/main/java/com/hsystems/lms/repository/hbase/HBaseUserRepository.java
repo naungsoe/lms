@@ -27,10 +27,10 @@ import java.util.Optional;
 public class HBaseUserRepository
     extends HBaseRepository implements UserRepository {
 
-  private HBaseClient client;
+  private final HBaseClient client;
 
   @Inject
-  HBaseUserRepository(HBaseClient client) {
+  public HBaseUserRepository(HBaseClient client) {
     this.client = client;
   }
 
