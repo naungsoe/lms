@@ -30,7 +30,7 @@ public class HBaseShareLogRepository
   private final HBaseClient client;
 
   @Inject
-  public HBaseShareLogRepository(HBaseClient client) {
+  HBaseShareLogRepository(HBaseClient client) {
     this.client = client;
   }
 

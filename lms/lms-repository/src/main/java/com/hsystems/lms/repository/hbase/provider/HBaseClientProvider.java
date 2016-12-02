@@ -9,7 +9,7 @@ public class HBaseClientProvider implements Provider<HBaseClient> {
 
   private final HBaseClient client;
 
-  public HBaseClientProvider() {
+  HBaseClientProvider() {
     this.client = new HBaseClient();
   }
 

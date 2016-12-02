@@ -1,10 +1,13 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
 
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.provider.UserModelProvider;
+import com.hsystems.lms.web.util.ServletUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -12,6 +15,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -19,8 +23,17 @@ import javax.servlet.http.HttpSession;
  */
 public class AuthenticationFilter extends BaseFilter {
 
+  private final Injector injector;
+
+  private final AuthenticationService authenticationService;
+
   @Inject
-  private AuthenticationService authenticationService;
+  AuthenticationFilter(
+      Injector injector, AuthenticationService authenticationService) {
+
+    this.injector = injector;
+    this.authenticationService = authenticationService;
+  }
 
   public void init()
       throws ServletException {
@@ -62,7 +75,7 @@ public class AuthenticationFilter extends BaseFilter {
           = authenticationService.findSignedInUserBy(id);
 
       if (userModelOptional.isPresent()) {
-        createIdentity(userModelOptional.get());
+        createSessionAndCookies(userModelOptional.get());
       }
     } catch (ServiceException e) {
       throw new ServletException("error retrieving signed in user", e);
@@ -78,13 +91,17 @@ public class AuthenticationFilter extends BaseFilter {
   }
 
   private boolean isAuthenticated() {
-    HttpSession session = getSession(false);
-    return (session.getAttribute("userModel") != null);
+    UserModelProvider provider = injector.getInstance(UserModelProvider.class);
+    return (provider.get() != null);
   }
 
-  private void createIdentity(UserModel userModel) {
-    HttpSession session = getSession(true);
+  private void createSessionAndCookies(UserModel userModel) {
+    HttpSession session = getRequest().getSession(true);
     session.setAttribute("userModel", userModel);
     session.setMaxInactiveInterval(30 * 60);
+
+    Cookie cookie = new Cookie("id", userModel.getId());
+    cookie.setMaxAge(30 * 60);
+    getResponse().addCookie(cookie);
   }
 }

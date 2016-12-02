@@ -1,9 +1,8 @@
 package com.hsystems.lms.web;
 
-import com.google.inject.Injector;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.hsystems.lms.common.util.JsonUtils;
+import com.hsystems.lms.web.util.ServletUtils;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,21 +33,6 @@ public abstract class BaseServlet extends HttpServlet {
 
   protected HttpServletResponse getResponse() {
     return response;
-  }
-
-  @Override
-  public void init(ServletConfig config)
-      throws ServletException {
-
-    String className = Injector.class.getName();
-    ServletContext context = config.getServletContext();
-    Injector injector = (Injector) context.getAttribute(className);
-
-    if (injector == null) {
-      throw new ServletException("guice Injector not found");
-    }
-
-    injector.injectMembers(this);
   }
 
   protected void initRequest(

@@ -33,7 +33,7 @@ public class HBaseAuditLogRepository
   private final HBaseClient client;
 
   @Inject
-  public HBaseAuditLogRepository(HBaseClient client) {
+  HBaseAuditLogRepository(HBaseClient client) {
     this.client = client;
   }
 

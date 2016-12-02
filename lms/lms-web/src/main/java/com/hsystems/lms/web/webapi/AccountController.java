@@ -24,7 +24,7 @@ public class AccountController {
   private final UserService userService;
 
   @Inject
-  public AccountController(UserService userService) {
+  AccountController(UserService userService) {
     this.userService = userService;
   }
 

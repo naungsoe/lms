@@ -33,7 +33,7 @@ public class QuestionService extends BaseService {
   private final IndexRepository indexRepository;
 
   @Inject
-  public QuestionService(
+  QuestionService(
       QuestionRepository questionRepository,
       AuditLogRepository auditLogRepository,
       ShareLogRepository shareLogRepository,

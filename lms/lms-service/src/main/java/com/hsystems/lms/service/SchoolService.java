@@ -22,7 +22,7 @@ public class SchoolService extends BaseService {
   private final AuditLogRepository auditLogRepository;
 
   @Inject
-  public SchoolService(
+  SchoolService(
       SchoolRepository schoolRepository,
       AuditLogRepository auditLogRepository) {
 

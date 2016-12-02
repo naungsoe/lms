@@ -46,7 +46,7 @@ public class UserService extends BaseService {
   private final IndexRepository indexRepository;
 
   @Inject
-  public UserService(
+  UserService(
       Provider<Properties> propertiesProvider,
       SchoolRepository schoolRepository,
       GroupRepository groupRepository,

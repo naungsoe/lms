@@ -27,7 +27,7 @@ public class UserController {
   private final UserService userService;
 
   @Inject
-  public UserController(
+  UserController(
       IndexRepository indexRepository, UserService userService) {
 
     this.indexRepository = indexRepository;

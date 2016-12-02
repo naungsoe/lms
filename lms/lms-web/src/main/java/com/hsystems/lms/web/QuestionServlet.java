@@ -1,19 +1,21 @@
 package com.hsystems.lms.web;
 
+import com.hsystems.lms.common.Permission;
+import com.hsystems.lms.common.annotation.Requires;
+
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 
 /**
  * Created by naungsoe on 31/10/16.
  */
-@WebServlet(value = "/web/questions", loadOnStartup = 1)
 public class QuestionServlet extends BaseServlet {
 
   private static final long serialVersionUID = 4601083196372398436L;
 
   @Override
+  @Requires(Permission.VIEW_QUESTIONS)
   protected void doGet()
       throws ServletException, IOException {
 
@@ -23,6 +25,7 @@ public class QuestionServlet extends BaseServlet {
   }
 
   @Override
+  @Requires(Permission.CREATE_QUESTION)
   protected void doPost()
       throws ServletException, IOException {
 

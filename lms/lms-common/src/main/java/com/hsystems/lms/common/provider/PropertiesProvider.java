@@ -19,14 +19,14 @@ public class PropertiesProvider implements Provider<Properties> {
 
   private static final String fileName = "application.properties";
 
-  private Properties properties;
+  private final Properties properties;
 
-  public PropertiesProvider() {
+  PropertiesProvider() {
+    this.properties = new Properties();
     InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream(fileName);
 
     try {
-      this.properties = new Properties();
       this.properties.load(inputStream);
 
     } catch (IOException e) {

@@ -30,7 +30,7 @@ public class HBaseUserRepository
   private final HBaseClient client;
 
   @Inject
-  public HBaseUserRepository(HBaseClient client) {
+  HBaseUserRepository(HBaseClient client) {
     this.client = client;
   }
 

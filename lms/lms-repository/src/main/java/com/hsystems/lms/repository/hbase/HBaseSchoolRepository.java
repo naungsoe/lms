@@ -27,7 +27,7 @@ public class HBaseSchoolRepository
   private final HBaseClient client;
 
   @Inject
-  public HBaseSchoolRepository(HBaseClient client) {
+  HBaseSchoolRepository(HBaseClient client) {
     this.client = client;
   }
 

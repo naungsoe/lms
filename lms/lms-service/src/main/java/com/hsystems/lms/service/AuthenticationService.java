@@ -34,7 +34,7 @@ public class AuthenticationService {
   private final UserRepository userRepository;
 
   @Inject
-  public AuthenticationService(
+  AuthenticationService(
       Provider<Properties> propertiesProvider,
       UserRepository userRepository) {
 

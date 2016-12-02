@@ -8,12 +8,10 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
-@WebServlet(value = "/web/error", loadOnStartup = 1)
 public class ErrorServlet extends BaseServlet {
 
   private static final long serialVersionUID = -1943733219860896344L;

@@ -21,7 +21,7 @@ public class SchoolController {
   private final SchoolService schoolService;
 
   @Inject
-  public SchoolController(SchoolService schoolService) {
+  SchoolController(SchoolService schoolService) {
     this.schoolService = schoolService;
   }
 

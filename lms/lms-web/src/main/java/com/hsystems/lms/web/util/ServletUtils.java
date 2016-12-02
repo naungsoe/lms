@@ -1,4 +1,4 @@
-package com.hsystems.lms.web;
+package com.hsystems.lms.web.util;
 
 import com.hsystems.lms.common.util.ReflectionUtils;
 

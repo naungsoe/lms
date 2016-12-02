@@ -6,9 +6,10 @@ package com.hsystems.lms.common;
 public enum Permission {
 
   VIEW_RESOURCE,
-  EDIT_RESOURCE,
+  CREATE_RESOURCE,
   VIEW_HOME,
   VIEW_ASSIGNMENTS,
+  CREATE_ASSIGNMENT,
   VIEW_QUESTIONS,
   CREATE_QUESTION,
   VIEW_QUIZS,

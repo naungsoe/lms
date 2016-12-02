@@ -2,10 +2,7 @@ package com.hsystems.lms.service.module;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
-import com.google.inject.matcher.Matchers;
 
-import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.interceptor.LogInterceptor;
 import com.hsystems.lms.common.provider.PropertiesProvider;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.GroupRepository;
@@ -39,10 +36,6 @@ public class DefaultServiceModule extends AbstractModule {
 
   @Override
   protected void configure() {
-    bindInterceptor(Matchers.any(),
-        Matchers.annotatedWith(Log.class),
-        new LogInterceptor());
-
     bind(HBaseClient.class).toProvider(HBaseClientProvider.class)
         .in(Singleton.class);
     bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)

@@ -23,7 +23,7 @@ public class SolrIndexRepository implements IndexRepository {
   private final Provider<SolrClient> solrClientProvider;
 
   @Inject
-  public SolrIndexRepository(Provider<SolrClient> solrClientProvider) {
+  SolrIndexRepository(Provider<SolrClient> solrClientProvider) {
     this.solrClientProvider = solrClientProvider;
   }
 
