@@ -22,44 +22,52 @@ public final class SecurityUtils {
   private static final int KEY_LENGTH = 256;
   private static final int SALT_LENGTH = 16;
 
-  public static String getRandomSalt()
-      throws NoSuchAlgorithmException {
+  public static String getRandomSalt() {
+    try {
+      byte[] salt = new byte[SALT_LENGTH];
+      SecureRandom secureRandom = SecureRandom.getInstance(SALT_ALGORITHM);
+      secureRandom.nextBytes(salt);
+      return CommonUtils.getHex(salt);
 
-    byte[] salt = new byte[SALT_LENGTH];
-    SecureRandom secureRandom = SecureRandom.getInstance(SALT_ALGORITHM);
-    secureRandom.nextBytes(salt);
-    return CommonUtils.getHex(salt);
+    } catch (NoSuchAlgorithmException e) {
+      throw new IllegalArgumentException(
+          "error generating random salt", e);
+    }
   }
 
   public static String getMD5Hash(String input, String salt) {
+    return getHash(input, salt, MD5_ALGORITHM);
+  }
+
+  public static String getHash(String input, String salt, String algorithm) {
     try {
-      return getHash(input, salt, MD5_ALGORITHM);
+      MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+
+      if (StringUtils.isNotEmpty(salt)) {
+        messageDigest.update(salt.getBytes());
+      }
+
+      byte[] hash = messageDigest.digest(input.getBytes());
+      return CommonUtils.getHex(hash);
 
     } catch (NoSuchAlgorithmException e) {
-      return "";
+      throw new IllegalArgumentException(
+          "error generating hash", e);
     }
   }
 
-  public static String getHash(String input, String salt, String algorithm)
-      throws NoSuchAlgorithmException {
+  public static String getPassword(String input, String salt) {
 
-    MessageDigest messageDigest = MessageDigest.getInstance(algorithm);
+    try {
+      PBEKeySpec keySpec = new PBEKeySpec(
+          input.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
+      SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
+      byte[] key = keyFactory.generateSecret(keySpec).getEncoded();
+      return CommonUtils.getHex(key);
 
-    if (StringUtils.isNotEmpty(salt)) {
-      messageDigest.update(salt.getBytes());
+    } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+      throw new IllegalArgumentException(
+          "error generating hashed password", e);
     }
-
-    byte[] hash = messageDigest.digest(input.getBytes());
-    return CommonUtils.getHex(hash);
-  }
-
-  public static String getPassword(String input, String salt)
-      throws NoSuchAlgorithmException, InvalidKeySpecException {
-
-    PBEKeySpec keySpec = new PBEKeySpec(
-        input.toCharArray(), salt.getBytes(), ITERATIONS, KEY_LENGTH);
-    SecretKeyFactory keyFactory = SecretKeyFactory.getInstance(KEY_ALGORITHM);
-    byte[] key = keyFactory.generateSecret(keySpec).getEncoded();
-    return CommonUtils.getHex(key);
   }
 }

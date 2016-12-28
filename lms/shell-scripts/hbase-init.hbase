@@ -4,13 +4,13 @@ create 'permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'permissions', 'VIEW_HOME', 'd:name', 'View Home', 1480299712295
 put 'permissions', 'VIEW_ASSIGNMENTS', 'd:name', 'View Assignments', 1480299712295
 put 'permissions', 'VIEW_QUESTIONS', 'd:name', 'View Questions', 1480299712295
-put 'permissions', 'CREATE_QUESTION', 'd:name', 'Create Question', 1480299712295
+put 'permissions', 'EDIT_QUESTION', 'd:name', 'Create Question', 1480299712295
 put 'permissions', 'VIEW_USERS', 'd:name', 'View Users', 1480299712295
-put 'permissions', 'CREATE_USER', 'd:name', 'Create School', 1480299712295
+put 'permissions', 'EDIT_USER', 'd:name', 'Create School', 1480299712295
 put 'permissions', 'VIEW_GROUPS', 'd:name', 'View Groups', 1480299712295
-put 'permissions', 'CREATE_GROUP', 'd:name', 'Create Group', 1480299712295
+put 'permissions', 'EDIT_GROUP', 'd:name', 'Create Group', 1480299712295
 put 'permissions', 'VIEW_SCHOOLS', 'd:name', 'View Schools', 1480299712295
-put 'permissions', 'CREATE_SCHOOL', 'd:name', 'Create School', 1480299712295
+put 'permissions', 'EDIT_SCHOOL', 'd:name', 'Create School', 1480299712295
 
 
 disable 'schools'
@@ -18,29 +18,40 @@ drop 'schools'
 create 'schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'schools', 'OS', 'd:name', 'Open School', 1480299712295
 put 'schools', 'OS', 'd:locale', 'en_US', 1480299712295
-put 'schools', 'OS', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,CREATE_QUESTION,VIEW_USERS,CREATE_USER,VIEW_GROUPS,CREATE_GROUP', 1480299712295
+put 'schools', 'OS', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'schools', 'OS_grp_f911532b4d664c1bf10cdc70ed3529f8', 'd:name', 'Administrators', 1480299712295
+put 'schools', 'OS_grp_d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
+put 'schools', 'OS_grp_57bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Students', 1480299712295
+put 'schools', 'OS_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'schools', 'OS_cre_system', 'd:lname', 'System', 1480299712295
+put 'schools', 'OS_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 disable 'groups'
 drop 'groups'
 create 'groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:name', 'Administrators', 1480299712295
-put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:permissions', 'VIEW_USERS,CREATE_USER,VIEW_GROUPS,CREATE_GROUP', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:permissions', 'VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
 put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_sch_OS', 'd:name', 'Open School', 1480299712295
-put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_cre_admin', 'd:fname', 'Admin', 1480299712295
-put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_cre_admin', 'd:lname', 'User', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_mem_admin', 'd:fname', 'Admin', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_mem_admin', 'd:lname', 'User', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:lname', 'System', 1480299712295
+put 'groups', 'f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 put 'groups', 'd95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
-put 'groups', 'd95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,CREATE_QUESTION', 1480299712295
+put 'groups', 'd95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION', 1480299712295
 put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_sch_OS', 'd:name', 'Open School', 1480299712295
-put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_cre_admin', 'd:fname', 'Admin', 1480299712295
-put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_cre_admin', 'd:lname', 'User', 1480299712295
+put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_cre_system', 'd:lname', 'System', 1480299712295
+put 'groups', 'd95422d3337b0ebf5b00e01fe252939b_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 put 'groups', '57bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Students', 1480299712295
 put 'groups', '57bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS', 1480299712295
 put 'groups', '57bf72fe391ef22bd852d0f45db4766a_sch_OS', 'd:name', 'Open School', 1480299712295
-put 'groups', '57bf72fe391ef22bd852d0f45db4766a_cre_admin', 'd:fname', 'Admin', 1480299712295
-put 'groups', '57bf72fe391ef22bd852d0f45db4766a_cre_admin', 'd:lname', 'User', 1480299712295
+put 'groups', '57bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'groups', '57bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:lname', 'System', 1480299712295
+put 'groups', '57bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 disable 'users'
@@ -50,15 +61,20 @@ put 'users', 'admin', 'd:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af
 put 'users', 'admin', 'd:salt', 'c3c704f0a67f469086e8ff50a056b3d5', 1480299712295
 put 'users', 'admin', 'd:fname', 'Admin', 1480299712295
 put 'users', 'admin', 'd:lname', 'User', 1480299712295
-put 'users', 'admin', 'd:dob', '1990-01-01', 1480299712295
+put 'users', 'admin', 'd:dob', '1990-11-28T05:16:31.893', 1480299712295
 put 'users', 'admin', 'd:gender', 'Male', 1480299712295
 put 'users', 'admin', 'd:mobile', '987654321', 1480299712295
 put 'users', 'admin', 'd:email', 'admin@google.com', 1480299712295
 put 'users', 'admin', 'd:locale', 'en_US', 1480299712295
-put 'users', 'admin', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,CREATE_QUESTION,VIEW_USERS,CREATE_USER,VIEW_GROUPS,CREATE_GROUP', 1480299712295
+put 'users', 'admin', 'd:dateFormat', 'yyyy-MM-dd', 1480299712295
+put 'users', 'admin', 'd:dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
+put 'users', 'admin', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
 put 'users', 'admin_sch_OS', 'd:name', 'Open School', 1480299712295
 put 'users', 'admin_grp_f911532b4d664c1bf10cdc70ed3529f8', 'd:name', 'Administrators', 1480299712295
 put 'users', 'admin_grp_d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
+put 'users', 'admin_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'users', 'admin_cre_system', 'd:lname', 'System', 1480299712295
+put 'users', 'admin_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 disable 'questions'
@@ -68,18 +84,22 @@ put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MCQ', 1480299712
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1', 'd:body', '1', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1', 'd:correct', 'false', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_2', 'd:body', '2', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_2', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_2', 'd:correct', 'false', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_3', 'd:body', '3', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_3', 'd:feedback', 'Correct.', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_3', 'd:correct', 'true', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_4', 'd:body', '4', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_4', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_4', 'd:correct', 'false', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:body', '1', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:correct', 'false', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:order', '1', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:body', '2', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:correct', 'false', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:order', '2', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:body', '3', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:feedback', 'Correct.', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:correct', 'true', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:order', '3', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:body', '4', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:correct', 'false', 1480299712295
+put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:order', '4', 1480299712295
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_sch_OS', 'd:name', 'Open School', 1480299712295
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_cre_admin', 'd:fname', 'Admin', 1480299712295
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_cre_admin', 'd:lname', 'User', 1480299712295
@@ -89,28 +109,60 @@ put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_mod_admin', 'd:lname', 'User'
 put 'questions', '1efe773c7c5f41de68effd1ce03e6d7e_mod_admin', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
-disable 'quiz'
-drop 'quiz'
-create 'quiz', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'quiz', '3f47f91bede47d64045ee4841138303a', 'd:title', 'Additions 1', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_sch_OS', 'd:name', 'Open School', 1480299712295
-put 'quiz', '1efe773c7c5f41de68effd1ce03e6d7e_cre_admin', 'd:fname', 'Admin', 1480299712295
-put 'quiz', '1efe773c7c5f41de68effd1ce03e6d7e_cre_admin', 'd:lname', 'User', 1480299712295
-put 'quiz', '1efe773c7c5f41de68effd1ce03e6d7e_mod_admin', 'd:fname', 'Admin', 1480299712295
-put 'quiz', '1efe773c7c5f41de68effd1ce03e6d7e_mod_admin', 'd:lname', 'User', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8', 'd:body', '1 + 2 = ?', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_1', 'd:body', '1', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_1', 'd:feedback', 'Incorrect.', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_1', 'd:correct', 'false', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_2', 'd:body', '2', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_2', 'd:feedback', 'Incorrect.', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_2', 'd:correct', 'false', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_3', 'd:body', '3', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_3', 'd:feedback', 'Correct.', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_3', 'd:correct', 'true', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_4', 'd:body', '4', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_4', 'd:feedback', 'Incorrect.', 1480299712295
-put 'quiz', '3f47f91bede47d64045ee4841138303a_que_49a2cc395df373a4ed06214ccb599df8_opt_4', 'd:correct', 'false', 1480299712295
+disable 'quizzes'
+drop 'quizzes'
+create 'quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'quizzes', '3f47f91bede47d64045ee4841138303a', 'd:title', 'Additions 1', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a', 'd:instructions', 'Section A: Answer all questions.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110', 'd:instructions', 'Answer all questions.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8', 'd:type', 'MCQ', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8', 'd:body', '1 + 2 = ?', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8', 'd:hint', 'Addition within 10.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8', 'd:explanation', '1 + 2 = 3', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712291', 'd:body', '1', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712291', 'd:correct', 'false', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712291', 'd:order', '1', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712292', 'd:body', '2', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712292', 'd:correct', 'false', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712292', 'd:order', '2', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712293', 'd:body', '3', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712293', 'd:feedback', 'Correct.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712293', 'd:correct', 'true', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712293', 'd:order', '3', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:body', '4', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:correct', 'false', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:order', '4', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_sch_OS', 'd:name', 'Open School', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_cre_admin', 'd:fname', 'Admin', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_cre_admin', 'd:lname', 'User', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_cre_admin', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_mod_admin', 'd:fname', 'Admin', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_mod_admin', 'd:lname', 'User', 1480299712400
+put 'quizzes', '3f47f91bede47d64045ee4841138303a_mod_admin', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
+
+
+disable 'referencelog'
+drop 'referencelog'
+create 'referencelog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'referencelog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ', 1480299712295
+put 'referencelog', '3f47f91bede47d64045ee4841138303a_ref_1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION', 1480299712295
+put 'referencelog', '3f47f91bede47d64045ee4841138303a_ref_1efe773c7c5f41de68effd1ce03e6d7e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+disable 'sharelog'
+drop 'sharelog'
+create 'sharelog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:id', 'admin', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:lname', 'User', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:fname', 'Admin', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:lname', 'User', 1480299712295
+put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:permission', 'EDIT_RESOURCE', 1480299712295
 
 
 disable 'auditlog'
@@ -175,25 +227,20 @@ put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:id', 'admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712295'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:action', 'CREATED'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712400'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:action', 'MODIFIED'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:type', 'QUIZ'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:id', 'admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:fname', 'Admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:lname', 'User'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:action', 'CREATED'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:type', 'QUIZ'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:id', 'admin'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:fname', 'Admin'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:lname', 'User'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:action', 'SHARED'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:type', 'QUIZ'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:id', 'admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:fname', 'Admin'
 put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:action', 'CREATED'
-
-
-disable 'sharelog'
-drop 'sharelog'
-create 'sharelog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'quiz'
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:datetime', '2016-11-28T05:16:31.893'
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_usr_admin', 'd:fname', 'Admin'
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_usr_admin', 'd:lname', 'User'
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_usr_admin', 'd:permissions', 'VIEW_RESOURCE,EDIT_RESOURCE'
+put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:action', 'MODIFIED'

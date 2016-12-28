@@ -3,7 +3,7 @@ package com.hsystems.lms.service.model;
 import java.io.Serializable;
 
 /**
- * Created by administrator on 4/11/16.
+ * Created by naungsoe on 4/11/16.
  */
 public class QuestionOptionModel implements Serializable {
 
@@ -16,6 +16,8 @@ public class QuestionOptionModel implements Serializable {
   private String feedback;
 
   private boolean correct;
+
+  private int order;
 
   public QuestionOptionModel() {
 
@@ -45,11 +47,19 @@ public class QuestionOptionModel implements Serializable {
     this.feedback = feedback;
   }
 
-  public boolean getCorrect() {
+  public boolean isCorrect() {
     return correct;
   }
 
   public void setCorrect(boolean correct) {
     this.correct = correct;
+  }
+
+  public int getOrder() {
+    return order;
+  }
+
+  public void setOrder(int order) {
+    this.order = order;
   }
 }

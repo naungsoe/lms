@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 public @interface IndexField {
 
-  IndexFieldType type() default IndexFieldType.STRING;
+  String name() default "";
 
-  String value() default "";
+  IndexFieldType type() default IndexFieldType.STRING;
 }

@@ -1,0 +1,85 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+
+<dom-module id="lms-question-list">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      :host {
+        @apply(--layout-vertical);
+      }
+
+      .question {
+        border-bottom-width: 1px;
+        border-bottom-style: solid;
+        border-bottom-color: var(--paper-grey-200);
+        padding: 16px;
+        @apply(--layout-flex-auto);
+      }
+    </style>
+
+    <iron-ajax auto url="{{restUrl}}" params="{{restParams}}" method="GET"
+               handle-as="json" content-type="application/json"
+               on-response="handleResponse"></iron-ajax>
+
+    <iron-list items="[[questions]]" as="question">
+      <template>
+        <div class="question">
+          <template is="dom-if" if="{{_isMCQ(question)}}">
+            <div class="question-body">
+              {{question.body}}
+            </div>
+            <div class="question-options">
+              <template is="dom-repeat" items="{{question.options}}" as="option">
+                <div class="question-option">
+                  {{option.body}}
+                </div>
+              </template>
+            </div>
+            <div class="question-actions">
+              Some actions
+            </div>
+          </template>
+        </div>
+      </template>
+    </iron-list>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-question-list',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      
+      properties: {
+        restUrl: {
+          type: String,
+          notify: true
+        },
+        restParams: {
+          type: Object,
+          notify: true
+        },
+        questions: {
+          type: Array,
+          notify: true
+        }
+      },
+
+      _isMCQ: function(question) {
+        return (question.type === 'MCQ');
+      },
+
+      _isMRQ: function(question) {
+        return (question.type === 'MRQ');
+      },
+
+      handleResponse: function(event) {
+        this.questions = event.detail.response.entities;
+      }
+    });
+  </script>
+  
+</dom-module>

@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection("questions")
+@IndexCollection(name = "questions")
 public class Question extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 6004706395678775298L;
@@ -26,6 +26,12 @@ public class Question extends Auditable implements Serializable {
 
   @IndexField(type = IndexFieldType.TEXT_GENERAL)
   private String body;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private String hint;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private String explanation;
 
   @IndexField(type = IndexFieldType.LIST)
   private List<QuestionOption> options;
@@ -41,6 +47,24 @@ public class Question extends Auditable implements Serializable {
       String id,
       QuestionType type,
       String body,
+      String hint,
+      String explanation,
+      List<QuestionOption> options) {
+
+    this.id = id;
+    this.type = type;
+    this.body = body;
+    this.hint = hint;
+    this.explanation = explanation;
+    this.options = options;
+  }
+
+  public Question(
+      String id,
+      QuestionType type,
+      String body,
+      String hint,
+      String explanation,
       List<QuestionOption> options,
       School school,
       User createdBy,
@@ -51,6 +75,8 @@ public class Question extends Auditable implements Serializable {
     this.id = id;
     this.type = type;
     this.body = body;
+    this.hint = hint;
+    this.explanation = explanation;
     this.options = options;
     this.school = school;
     this.createdBy = createdBy;
@@ -69,9 +95,40 @@ public class Question extends Auditable implements Serializable {
     return body;
   }
 
+  public String getHint() { return hint; }
+
+  public String getExplanation() { return explanation; }
+
   public List<QuestionOption> getOptions() {
     return Collections.unmodifiableList(options);
   }
 
   public School getSchool() { return  school; }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    Question question = (Question) obj;
+    return id.equals(question.getId());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder optionsBuilder = new StringBuilder();
+    options.forEach(x -> optionsBuilder.append(x).append(","));
+
+    return String.format(
+        "Question{id=%s, type=%s, body=%s, hint=%s, "
+            + "explanation=%s, options=%s, school=%s}",
+        id, type, body, school, hint, explanation,
+        optionsBuilder, school);
+  }
 }

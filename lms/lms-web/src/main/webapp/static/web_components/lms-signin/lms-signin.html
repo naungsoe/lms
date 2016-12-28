@@ -1,0 +1,128 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-card/paper-card.html">
+
+<dom-module id="lms-signin">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      :host {
+        background-color: var(--paper-grey-50);
+        height: 100vh;
+        width: 100vw;
+        @apply(--layout-vertical);
+        @apply(--layout-center);
+        @apply(--layout-center-justified);
+      }
+
+      paper-card {
+        width: 320px;
+      }
+
+      paper-card .card-actions {
+        border: 0 !important;
+        margin: 0 0 16px 0;
+      }
+
+      paper-card .card-content paper-input {
+        padding: 8px 0;
+      }
+
+      .module-actions {
+        margin: 16px 0;
+      }
+    </style>
+
+    <form id="formSignIn" method="post" action="[[signInUrl]]">
+      <paper-card heading="[[localize('titleCard')]]" alt="[[localize('titleCard')]]" signin>
+        <div class="card-content">
+          <paper-input name="id" label="[[localize('labelId')]]" value="{{id}}" on-keydown="handleKeydown"
+                       autofocus no-label-float required type="text" autocomplete="off"
+                       error-message="[[localize('labelIdRequired')]]"></paper-input>
+          <paper-input name="password" label="[[localize('labelPassword')]]" value="{{password}}" on-keydown="handleKeydown"
+                       no-label-float required type="password" autocomplete="new-password"
+                       error-message="[[localize('labelPasswordRequired')]]"></paper-input>
+          <div class="error" hidden$="[[_hideError(error, 'errorCredential')]]">{{localize('errorCredential')}}</div>
+        </div>
+        <div class="card-actions">
+          <paper-button on-tap="handleSignIn" raised>[[localize('buttonSignIn')]]</paper-button>
+          <paper-button on-tap="handleAccountHelp" class="link">[[localize('buttonAccountHelp')]]</paper-button>
+        </div>
+      </paper-card>
+    </form>
+
+    <div class="module-actions">
+      <paper-button on-tap="handleSignUp" class="link">[[localize('buttonSignUp')]]</paper-button>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-signin',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
+      ],
+      
+      properties: {
+        id: {
+          type: String,
+          notify: true
+        },
+        password: {
+          type: String,
+          notify: true
+        },
+        error: {
+          type: String,
+          notify: true
+        },
+        signInUrl: {
+          type: String,
+          notify: true
+        },
+        accountHelpUrl: {
+          type: String,
+          notify: true
+        },
+        signUpUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      _hideError(error, placeholder) {
+        return (error !== placeholder);
+      },
+
+      handleKeydown: function(event) {
+        if (event.keyCode === 13) {
+          this.handleSignIn();
+        }
+      },
+
+      handleSignIn: function(event) {
+        var valid = this.$$('[name=id]').validate();
+        valid = this.$$('[name=password]').validate() && valid;
+
+        if (valid) {
+          this.$.formSignIn.submit();
+        } else {
+          this.error = '';
+        }
+      },
+
+      handleAccountHelp: function(event) {
+        window.location = this.accountHelpUrl;
+      },
+
+      handleSignUp: function(event) {
+        window.location = this.signUpUrl;
+      }
+    });
+  </script>
+  
+</dom-module>

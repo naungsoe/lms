@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface IndexCollection {
 
-  String value() default "";
+  String name() default "";
 }

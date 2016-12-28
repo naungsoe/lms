@@ -1,8 +1,8 @@
 package com.hsystems.lms.repository;
 
-import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.entity.AuditLog;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -12,9 +12,11 @@ import java.util.Optional;
 public interface AuditLogRepository {
 
   List<AuditLog> findAllBy(String id)
-      throws RepositoryException;
+      throws IOException;
 
   Optional<AuditLog> findLastestLogBy(String id)
-      throws RepositoryException;
+      throws IOException;
 
+  void save(AuditLog auditLog)
+      throws IOException;
 }

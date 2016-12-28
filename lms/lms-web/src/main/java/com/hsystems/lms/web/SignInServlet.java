@@ -3,7 +3,6 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.SignInModel;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.util.ServletUtils;
@@ -49,23 +48,19 @@ public class SignInServlet extends BaseServlet {
   protected void doPost()
       throws ServletException, IOException {
 
-    try {
-      SignInModel model = ServletUtils.getModel(
-          getRequest(), SignInModel.class);
-      Optional<UserModel> userModelOptional
-          = authenticationService.signIn(model);
+    SignInModel model = ServletUtils.getModel(
+        getRequest(), SignInModel.class);
+    Optional<UserModel> userModelOptional
+        = authenticationService.signIn(model);
 
-      if (userModelOptional.isPresent()) {
-        createSessionAndCookies(userModelOptional.get());
-        sendRedirect("/web/home");
+    if (userModelOptional.isPresent()) {
+      createSessionAndCookies(userModelOptional.get());
+      sendRedirect("/web/home");
 
-      } else {
-        setAttribute("id", getParameter("id"));
-        setAttribute("error", "errorCredential");
-        loadSignIn();
-      }
-    } catch (ServiceException e) {
-      throw new ServletException("error signing in", e);
+    } else {
+      setAttribute("id", getParameter("id"));
+      setAttribute("error", "errorCredential");
+      loadSignIn();
     }
   }
 

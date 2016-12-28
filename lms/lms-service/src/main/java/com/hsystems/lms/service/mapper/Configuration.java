@@ -2,6 +2,7 @@ package com.hsystems.lms.service.mapper;
 
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.service.model.UserModel;
 
 /**
  * Created by naungsoe on 4/11/16.
@@ -31,6 +32,13 @@ public class Configuration {
     return new Configuration(
         user.getDateFormat(),
         user.getDateTimeFormat()
+    );
+  }
+
+  public static Configuration create(UserModel userModel) {
+    return new Configuration(
+        userModel.getDateFormat(),
+        userModel.getDateTimeFormat()
     );
   }
 

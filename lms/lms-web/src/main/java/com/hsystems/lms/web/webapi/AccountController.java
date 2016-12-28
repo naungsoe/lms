@@ -3,8 +3,9 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.SignUpModel;
+
+import java.io.IOException;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -37,7 +38,7 @@ public class AccountController {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   public Response signUp(SignUpModel signUpModel)
-      throws IllegalArgumentException, ServiceException {
+      throws IOException {
 
     userService.signUp(signUpModel);
     return Response.status(Status.CREATED)

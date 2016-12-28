@@ -3,31 +3,26 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
-import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.SignInModel;
-import com.hsystems.lms.service.model.UserGroupModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.Properties;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class AuthenticationService {
+public class AuthenticationService extends BaseService {
 
   private final Provider<Properties> propertiesProvider;
 
@@ -44,46 +39,26 @@ public class AuthenticationService {
 
   @Log
   public Optional<UserModel> signIn(SignInModel signInModel)
-      throws ServiceException {
-
+      throws IOException {
     checkPreconditions(signInModel);
-    return Optional.of(new UserModel(
-        "1",
-        "Admin",
-        "User",
-        LocalDateTime.now().toString(),
-        "Male",
-        "987654321",
-        "admin@openschool.com",
-        "en_US",
-        Constants.DATE_FORMAT,
-        Constants.DATE_TIME_FORMAT,
-        new ArrayList<Permission>(),
-        "OS",
-        "Open School",
-        new ArrayList<UserGroupModel>()
-    ));
 
-//    try {
-//      Optional<User> userOptional
-//          = userRepository.findBy(signInModel.getId());
-//
-//      if (userOptional.isPresent()) {
-//        String hashedPassword = SecurityUtils.getPassword(
-//            signInModel.getPassword(), userOptional.get().getSalt());
-//
-//        if (userOptional.get().getId().equals(signInModel.getId())
-//            && userOptional.get().getPassword().equals(hashedPassword)) {
-//          return null;
-//        }
-//      }
-//    } catch (RepositoryException | NoSuchAlgorithmException
-//        | InvalidKeySpecException e) {
-//
-//      throw new ServiceException("error signing in", e);
-//    }
-//
-//    return Optional.empty();
+    Optional<User> userOptional
+        = userRepository.findBy(signInModel.getId());
+
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      String hashedPassword = SecurityUtils.getPassword(
+          signInModel.getPassword(), user.getSalt());
+
+      if (user.getId().equals(signInModel.getId())
+          && user.getPassword().equals(hashedPassword)) {
+        Configuration configuration = Configuration.create(user);
+        UserModel userModel = getModel(user, UserModel.class, configuration);
+        return Optional.of(userModel);
+      }
+    }
+
+    return Optional.empty();
   }
 
   private void checkPreconditions(SignInModel signInModel) {
@@ -107,34 +82,24 @@ public class AuthenticationService {
         "password length should not exceed");
   }
 
-  private ModelMapper getMapper() {
-    Configuration configuration = Configuration.create();
-    return new ModelMapper(configuration);
-  }
-
   @Log
-  public void signOut(SignInModel signInModel)
-      throws ServiceException {
-
+  public void signOut(SignInModel signInModel) {
     // clear sign in
   }
 
   @Log
   public Optional<UserModel> findSignedInUserBy(String id)
-      throws ServiceException {
+      throws IOException {
 
-    try {
-      Optional<User> userOptional = userRepository.findBy(id);
+    Optional<User> userOptional = userRepository.findBy(id);
 
-      if (userOptional.isPresent()) {
-        return null;
-      }
-
-      return Optional.empty();
-
-    } catch (RepositoryException e) {
-      throw new ServiceException(
-          "error retrieving signed in user", e);
+    if (userOptional.isPresent()) {
+      Configuration configuration = Configuration.create();
+      ModelMapper mapper = new ModelMapper(configuration);
+      UserModel model = mapper.map(userOptional.get(), UserModel.class);
+      return Optional.of(model);
     }
+
+    return Optional.empty();
   }
 }

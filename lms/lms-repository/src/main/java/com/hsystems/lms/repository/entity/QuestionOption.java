@@ -24,6 +24,9 @@ public class QuestionOption implements Serializable {
   @IndexField(type = IndexFieldType.BOOLEAN)
   private boolean correct;
 
+  @IndexField(type = IndexFieldType.INTEGER)
+  private int order;
+
   QuestionOption() {
 
   }
@@ -32,12 +35,14 @@ public class QuestionOption implements Serializable {
       String id,
       String body,
       String feedback,
-      boolean correct) {
+      boolean correct,
+      int order) {
 
     this.id = id;
     this.body = body;
     this.feedback = feedback;
     this.correct = correct;
+    this.order = order;
   }
 
   public String getId() {
@@ -70,5 +75,35 @@ public class QuestionOption implements Serializable {
 
   public void setCorrect(boolean correct) {
     this.correct = correct;
+  }
+
+  public int getOrder() {
+    return order;
+  }
+
+  public void setOrder(int order) {
+    this.order = order;
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    QuestionOption option = (QuestionOption) obj;
+    return id.equals(option.getId());
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "Question{id=%s, body=%s, feedback=%s, correct=%s, order=%s}",
+        id, body, feedback, correct, order);
   }
 }

@@ -9,7 +9,6 @@
   <template>
     <style>
       :host {
-        background-color: var(--paper-grey-50);
         padding: 0;
         margin: 0;
         @apply(--paper-font-body1);
@@ -43,6 +42,15 @@
         background-color: var(--paper-grey-50);
       }
 
+      app-toolbar paper-input-container {
+        padding: 0;
+        background-color: var(--paper-grey-50);
+      }
+
+      app-toolbar paper-input-container paper-icon-button {
+        color: var(--paper-grey-900);
+      }
+
       paper-tabs {
         --paper-tabs-selection-bar-color: var(--paper-grey-50);
         --paper-tabs: {
@@ -72,7 +80,15 @@
         };
       }
 
-      paper-input {
+      paper-card[question] {
+        --paper-card-header-text: {
+          color: var(--paper-grey-900);
+          background-color: var(--paper-grey-100);
+        };
+      }
+
+      paper-input,
+      paper-input-container {
         --paper-input-container-label: {
           @apply(--paper-font-body1);
         };
@@ -84,6 +100,15 @@
         };
         --paper-input-container-underline-focus: {
           background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-input-container[search] {
+        --paper-input-container-underline: {
+          background-color: var(--paper-teal-900);
+        };
+        --paper-input-container-underline-focus: {
+          background-color: var(--paper-teal-900);
         };
       }
 
@@ -108,6 +133,19 @@
 
       paper-button.link {
         color: var(--paper-blue-500);
+      }
+
+      paper-fab {
+        --paper-fab-background: var(--paper-teal-500);
+        --paper-fab-keyboard-focus-background: var(--paper-teal-500);
+        --paper-fab-disabled-background: var(--paper-teal-500);
+        color: var(--paper-grey-50);
+      }
+
+      paper-fab[add] {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
       }
 
       form .form-content section {

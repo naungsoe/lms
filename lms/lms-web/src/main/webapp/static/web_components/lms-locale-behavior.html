@@ -1,0 +1,29 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+  window.LMS = window.LMS || {};
+
+  LMS.LocaleBehavior = {
+
+    properties: {
+      language: {
+        type: String,
+        notify: true
+      },
+      localeUrl: {
+        type: String,
+        notify: true
+      },
+      resources: {
+        type: Object,
+        notify: true
+      }
+    },
+
+    attached: function() {
+      var url = this.resolveUrl(this.localeUrl);
+      url = url + '?' + (new Date()).getTime();
+      this.loadResources(url);
+    }
+  };
+</script>

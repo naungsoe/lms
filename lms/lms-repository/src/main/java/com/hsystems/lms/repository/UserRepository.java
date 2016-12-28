@@ -1,8 +1,8 @@
 package com.hsystems.lms.repository;
 
-import com.hsystems.lms.repository.exception.RepositoryException;
 import com.hsystems.lms.repository.entity.User;
 
+import java.io.IOException;
 import java.util.Optional;
 
 /**
@@ -11,8 +11,8 @@ import java.util.Optional;
 public interface UserRepository {
 
   Optional<User> findBy(String id)
-      throws RepositoryException;
+      throws IOException;
 
   void save(User user)
-      throws RepositoryException;
+      throws IOException;
 }

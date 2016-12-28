@@ -174,4 +174,64 @@ public class Query {
   public int getLimit() {
     return limit;
   }
+
+  @Override
+  public int hashCode() {
+    int prime = 31;
+    int result = 0;
+
+    for (String field: fields) {
+      result = result * prime + field.hashCode();
+    }
+
+    for (Criterion criterion: criteria) {
+      result = result * prime + criterion.hashCode();
+    }
+
+    for (SortKey sortKey: sortKeys) {
+      result = result * prime + sortKey.hashCode();
+    }
+
+    result = result * prime + offset;
+    return result * prime + limit;
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    Query query = (Query) obj;
+    long fieldCount = query.getFields().stream()
+        .filter(x -> fields.stream()
+            .anyMatch(y -> x.equals(y))).count();
+    long criterionCount = query.getCriteria().stream()
+        .filter(x -> criteria.stream()
+            .anyMatch(y -> y.equals(x))).count();
+    long sortKeyCount = query.getSortKeys().stream()
+        .filter(x -> sortKeys.stream()
+            .anyMatch(y -> y.equals(x))).count();
+    return (fields.size() == fieldCount)
+        && (criteria.size() == criterionCount)
+        && (sortKeys.size() == sortKeyCount)
+        && (offset == query.getOffset())
+        && (limit == query.getLimit());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder fieldsBuilder = new StringBuilder();
+    fields.forEach(x -> fieldsBuilder.append(x).append(","));
+
+    StringBuilder criteriaBuilder = new StringBuilder();
+    fields.forEach(x -> criteriaBuilder.append(x).append(","));
+
+    StringBuilder sortKeysBuilder = new StringBuilder();
+    fields.forEach(x -> sortKeysBuilder.append(x).append(","));
+
+    return String.format(
+        "Query{fields=%s, criteria=%s, sortKeys=%s, offset=%s, limit=%s}",
+        fieldsBuilder, criteriaBuilder, sortKeysBuilder, offset, limit);
+  }
 }

@@ -1,7 +1,5 @@
 package com.hsystems.lms.common.query;
 
-import javax.swing.*;
-
 /**
  * Created by administrator on 24/11/16.
  */
@@ -22,5 +20,30 @@ public class SortKey {
 
   public SortOrder getOrder() {
     return order;
+  }
+
+  @Override
+  public int hashCode() {
+    int prime = 31;
+    int result = field.hashCode();
+    return result * prime + order.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    SortKey sortKey = (SortKey) obj;
+    return field.equals(sortKey.getField())
+        && order.equals(sortKey.getOrder());
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "SortKey{field=%s, order=%s}",
+        field, order);
   }
 }

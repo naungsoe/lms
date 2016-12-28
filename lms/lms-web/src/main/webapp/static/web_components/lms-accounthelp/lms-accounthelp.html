@@ -1,0 +1,83 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+
+<dom-module id="lms-accounthelp">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      app-toolbar [main-title] {
+        padding: 0;
+      }
+
+      .issues {
+        max-width: 300px;
+      }
+
+      .issues [title] {
+        margin: 24px 16px 8px 16px !important;
+      }
+
+      .form-actions {
+        margin: 24px 16px !important;
+      }
+    </style>
+
+    <app-header fixed effects="waterfall">
+      <app-toolbar>
+        <h3 main-title>{{localize('titlePage')}}</h3>
+        <paper-button on-tap="handleSignIn" raised>{{localize('buttonSignIn')}}</paper-button>
+      </app-toolbar>
+    </app-header>
+
+    <div main-content>
+      <form id="formAccountHelp" method="post" action="{{accountHelpUrl}}" flex-vertical>
+        <div class="form-content" flex-horizontal>
+          <section class="issues" flex-auto>
+            <h4 title>{{localize('labelIssues')}}</h4>
+            <paper-radio-group>
+              <paper-radio-button name="id">Forgot my id</paper-radio-button>
+              <paper-radio-button name="password">Forgot my password</paper-radio-button>
+            </paper-radio-group>
+          </section>
+        </div>
+        <div class="form-actions" hidden>
+          <paper-button on-tap="handleRecoverAccount" raised>{{localize('buttonRecoverAccount')}}</paper-button>
+        </div>
+      </form>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-accounthelp',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
+      ],
+      
+      properties: {
+        signInUrl: {
+          type: String,
+          notify: true
+        },
+        accountHelpUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      handleSignIn: function(event) {
+        window.location = this.signInUrl;
+      }
+    });
+  </script>
+  
+</dom-module>

@@ -2,20 +2,19 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.ReflectionUtils;
+import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.GroupRepository;
-import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.repository.hbase.provider.HBaseClient;
+import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.common.Permission;
+import com.hsystems.lms.repository.hbase.mapper.HBaseGroupMapper;
+import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
-import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.client.Scan;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -26,45 +25,40 @@ public class HBaseGroupRepository
 
   private final HBaseClient client;
 
+  private final AuditLogRepository auditLogRepository;
+
+  private final HBaseGroupMapper mapper;
+
   @Inject
-  HBaseGroupRepository(HBaseClient client) {
+  HBaseGroupRepository(
+      HBaseClient client, AuditLogRepository auditLogRepository) {
+
     this.client = client;
+    this.auditLogRepository = auditLogRepository;
+    this.mapper = new HBaseGroupMapper();
   }
 
+  @Override
   public Optional<Group> findBy(String id)
-      throws RepositoryException {
+      throws IOException {
 
-    try {
-      Get get = new Get(Bytes.toBytes(id));
-      Result result = client.get(get, Constants.TABLE_GROUPS);
+    Optional<AuditLog> auditLogOptional
+        = auditLogRepository.findLastestLogBy(id);
 
-      if (result.isEmpty()) {
-        return Optional.empty();
-      }
-
-      Group group = (Group) ReflectionUtils.getInstance(Group.class);
-      ReflectionUtils.setValue(
-          group, Constants.FIELD_ID, Bytes.toString(result.getRow()));
-      populateGroupFields(group, result);
-      return Optional.of(group);
-
-    } catch (IOException | InstantiationException
-        | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
-
-      throw new RepositoryException("error retrieving group", e);
+    if (!auditLogOptional.isPresent()) {
+      return Optional.empty();
     }
-  }
 
-  protected void populateGroupFields(Group group, Result result)
-      throws InstantiationException, IllegalAccessException,
-      NoSuchFieldException {
+    Scan scan = getRowFilterScan(id);
+    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
 
-    ReflectionUtils.setValue(group, Constants.FIELD_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
-    ReflectionUtils.setValue(group, Constants.FIELD_PERMISSIONS,
-        getEnumList(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_PERMISSIONS, Permission.class));
+    List<Result> results = client.scan(scan, Constants.TABLE_GROUPS);
+
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
+
+    Group group = mapper.map(results);
+    return Optional.of(group);
   }
 }

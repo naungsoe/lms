@@ -5,6 +5,7 @@ import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,9 +33,20 @@ public class School extends Auditable implements Serializable {
 
   private List<Permission> permissions;
 
+  private List<Group> groups;
+
   School() {
 
   }
+
+  public School(
+      String id,
+      String name) {
+
+    this.id = id;
+    this.name = name;
+  }
+
 
   public School(
       String id,
@@ -42,7 +54,12 @@ public class School extends Auditable implements Serializable {
       String locale,
       String dateFormat,
       String dateTimeFormat,
-      List<Permission> permissions) {
+      List<Permission> permissions,
+      List<Group> groups,
+      User createdBy,
+      LocalDateTime createdDateTime,
+      User modifiedBy,
+      LocalDateTime modifiedDateTime) {
 
     this.id = id;
     this.name = name;
@@ -50,6 +67,11 @@ public class School extends Auditable implements Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
+    this.groups = groups;
+    this.createdBy = createdBy;
+    this.createdDateTime = createdDateTime;
+    this.modifiedBy = modifiedBy;
+    this.modifiedDateTime = modifiedDateTime;
   }
 
   public String getId() {
@@ -72,5 +94,42 @@ public class School extends Auditable implements Serializable {
 
   public List<Permission> getPermissions() {
     return Collections.unmodifiableList(permissions);
+  }
+
+  public List<Group> getGroups() {
+    return Collections.unmodifiableList(groups);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    School school = (School) obj;
+    return id.equals(school.getId());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder permissionsBuilder = new StringBuilder();
+    permissions.forEach(x -> permissionsBuilder.append(x).append(","));
+
+    StringBuilder groupsBuilder = new StringBuilder();
+    groups.forEach(x -> groupsBuilder.append(x).append(","));
+
+    return String.format(
+        "School{id=%s, name=%s, locale=%s, dateFormat=%s, "
+            + "dateTimeFormat=%s, permissions=%s, groups=%s, "
+            + "createdBy=%s, createdDateTime=%s, modifiedBy=%s, "
+            + "modifiedDateTime=%s}",
+        id, name, locale, dateFormat, dateTimeFormat, permissions,
+        groupsBuilder, createdBy, createdDateTime, modifiedBy,
+        modifiedDateTime);
   }
 }

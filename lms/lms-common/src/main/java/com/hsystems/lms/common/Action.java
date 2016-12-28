@@ -6,5 +6,8 @@ package com.hsystems.lms.common;
 public enum Action {
 
   CREATED,
-  MODIFIED
+  MODIFIED,
+  DELETED,
+  SHARED,
+  REFERENCED
 }

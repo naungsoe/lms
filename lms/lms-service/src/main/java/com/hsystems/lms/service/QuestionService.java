@@ -10,10 +10,10 @@ import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,35 +47,31 @@ public class QuestionService extends BaseService {
 
   @Log
   public Optional<QuestionModel> findBy(String id)
-      throws ServiceException {
+      throws IOException {
 
     return findBy(id, Configuration.create());
   }
 
   @Log
-  public Optional<QuestionModel> findBy(String id, Configuration configuration)
-      throws ServiceException {
+  public Optional<QuestionModel> findBy(
+      String id, Configuration configuration)
+      throws IOException {
 
-    try {
-      Optional<Question> optional = questionRepository.findBy(id);
+    Optional<Question> questionOptional = questionRepository.findBy(id);
 
-      if (optional.isPresent()) {
-        Question question = optional.get();
-        QuestionModel model = getModel(question,
-            QuestionModel.class, configuration);
-        return Optional.of(model);
-      }
-
-      return Optional.empty();
-
-    } catch (Exception e) {
-      throw new ServiceException("error retrieving question", e);
+    if (questionOptional.isPresent()) {
+      Question question = questionOptional.get();
+      QuestionModel model = getModel(question,
+          QuestionModel.class, configuration);
+      return Optional.of(model);
     }
+
+    return Optional.empty();
   }
 
   @Log
   public QueryResult<QuestionModel> findAllBy(Query query)
-      throws ServiceException {
+      throws IOException {
 
     return findAllBy(query, Configuration.create());
   }
@@ -83,47 +79,38 @@ public class QuestionService extends BaseService {
   @Log
   public QueryResult<QuestionModel> findAllBy(
       Query query, Configuration configuration)
-      throws ServiceException {
+      throws IOException {
 
-    try {
-      QueryResult<Question> queryResult
-          = indexRepository.findAllBy(query, Question.class);
-      List<Question> questions = queryResult.getEntities();
+    QueryResult<Question> queryResult
+        = indexRepository.findAllBy(query, Question.class);
+    List<Question> questions = queryResult.getEntities();
 
-      if (questions.isEmpty()) {
-        return new QueryResult<QuestionModel>(
-            queryResult.getElapsedTime(), Collections.emptyList());
-      }
-
-      List<QuestionModel> questionModels = new ArrayList<>();
-
-      for (Question question : questions) {
-        QuestionModel questionModel = getModel(question,
-            QuestionModel.class, configuration);
-        questionModels.add(questionModel);
-      }
-
-      return new QueryResult<QuestionModel>(
-          queryResult.getElapsedTime(), questionModels);
-
-    } catch (Exception e) {
-      throw new ServiceException("error retrieving question", e);
+    if (questions.isEmpty()) {
+      return new QueryResult<>(queryResult.getElapsedTime(),
+          Collections.emptyList());
     }
+
+    List<QuestionModel> questionModels = new ArrayList<>();
+
+    for (Question question : questions) {
+      QuestionModel questionModel = getModel(question,
+          QuestionModel.class, configuration);
+      questionModels.add(questionModel);
+    }
+
+    return new QueryResult<>(
+        queryResult.getElapsedTime(), questionModels);
   }
 
   @Log
   public void update(String id)
-      throws ServiceException {
+      throws IOException {
 
-    try {
-      Optional<Question> optional = questionRepository.findBy(id);
+    Optional<Question> questionOptional
+        = questionRepository.findBy(id);
 
-      if (optional.isPresent()) {
-        indexRepository.save(optional.get());
-      }
-
-    } catch (Exception e) {
-      throw new ServiceException("error updating question", e);
+    if (questionOptional.isPresent()) {
+      indexRepository.save(questionOptional.get());
     }
   }
 }

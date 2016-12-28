@@ -73,7 +73,7 @@ public abstract class BaseServlet extends HttpServlet {
     response.sendRedirect(url);
   }
 
-  protected void loadLocale(String page)
+  protected void loadLocale(String module)
       throws IOException {
 
     String defaultLocale = "en_US";
@@ -81,11 +81,13 @@ public abstract class BaseServlet extends HttpServlet {
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     request.setAttribute("locale", locale);
 
-    String localeUrl = "/locales/" + page + "/" + locale + ".json";
+    String localeUrl = String.format("/webapi/locales/%s", module);
     request.setAttribute("localeUrl", localeUrl);
 
-    ServletContext context = request.getServletContext();
-    InputStream stream = context.getResourceAsStream(localeUrl);
+    String localeFilePath = String.format(
+        "locales/%s/%s.json", module, locale);
+    InputStream stream = getClass().getClassLoader()
+        .getResourceAsStream(localeFilePath);
     localObject = JsonUtils.parseJson(stream).get(locale);
   }
 

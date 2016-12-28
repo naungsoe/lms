@@ -1,0 +1,9 @@
+{
+  "en_US": {
+    "menuItemHome": "Home",
+    "menuItemQuizzes": "Quizzes",
+    "menuItemQuestions": "Questions",
+    "menuItemStorage": "Storage",
+    "menuItemSignOut": "Sign out"
+  }
+}

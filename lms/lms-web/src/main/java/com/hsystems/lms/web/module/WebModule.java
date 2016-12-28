@@ -8,6 +8,7 @@ import com.google.inject.servlet.ServletModule;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.interceptor.LogInterceptor;
+import com.hsystems.lms.common.provider.PropertiesProvider;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.AuthenticationFilter;
 import com.hsystems.lms.web.ErrorServlet;
@@ -18,9 +19,11 @@ import com.hsystems.lms.web.SignOutServlet;
 import com.hsystems.lms.web.SignUpServlet;
 import com.hsystems.lms.web.StorageServlet;
 import com.hsystems.lms.web.UserServlet;
+import com.hsystems.lms.web.interceptor.RequiresInterceptor;
 import com.hsystems.lms.web.provider.UserModelProvider;
-import com.hsystems.lms.web.security.RequiresInterceptor;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
+
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 29/8/16.
@@ -37,6 +40,8 @@ public class WebModule extends ServletModule {
         Matchers.annotatedWith(Requires.class),
         new RequiresInterceptor(getProvider(UserModel.class)));
 
+    bind(Properties.class).toProvider(PropertiesProvider.class)
+        .in(Singleton.class);
     bind(UserModel.class).toProvider(UserModelProvider.class)
         .in(RequestScoped.class);
     bind(ErrorServlet.class).in(Singleton.class);

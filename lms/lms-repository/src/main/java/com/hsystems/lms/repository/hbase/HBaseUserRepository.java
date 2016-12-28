@@ -2,22 +2,18 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.common.util.ReflectionUtils;
+import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,95 +25,44 @@ public class HBaseUserRepository
 
   private final HBaseClient client;
 
+  private final AuditLogRepository auditLogRepository;
+
+  private final HBaseUserMapper mapper;
+
   @Inject
-  HBaseUserRepository(HBaseClient client) {
+  HBaseUserRepository(
+      HBaseClient client, AuditLogRepository auditLogRepository) {
+
     this.client = client;
+    this.auditLogRepository = auditLogRepository;
+    this.mapper = new HBaseUserMapper();
   }
 
+  @Override
   public Optional<User> findBy(String id)
-      throws RepositoryException {
+      throws IOException {
 
-    try {
-      Scan scan = getRowFilterScan(id);
-      List<Result> results = client.scan(scan, Constants.TABLE_USERS);
+    Optional<AuditLog> auditLogOptional
+        = auditLogRepository.findLastestLogBy(id);
 
-      if (results.isEmpty()) {
-        return Optional.empty();
-      }
-
-      return getUser(results);
-
-    } catch (IOException | InstantiationException
-        | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
-
-      throw new RepositoryException("error retrieving user", e);
-    }
-  }
-
-  protected Optional<User> getUser(List<Result> results)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    User user = (User) ReflectionUtils.getInstance(User.class);
-    List<Group> groups = new ArrayList<>();
-
-    for (Result result : results) {
-      String rowKey = Bytes.toString(result.getRow());
-
-      if (rowKey.contains(Constants.SEPARATOR_SCHOOL)) {
-        ReflectionUtils.setValue(
-            user, Constants.FIELD_SCHOOL, getSchool(rowKey, result));
-
-      } else if (rowKey.contains(Constants.SEPARATOR_GROUP)) {
-        groups.add(getGroup(rowKey, result));
-
-      } else {
-        ReflectionUtils.setValue(user, Constants.FIELD_ID, rowKey);
-        populateUserFields(user, result);
-      }
+    if (!auditLogOptional.isPresent()) {
+      return Optional.empty();
     }
 
-    ReflectionUtils.setValue(user, Constants.FIELD_GROUPS, groups);
+    Scan scan = getRowFilterScan(id);
+    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
+
+    List<Result> results = client.scan(scan, Constants.TABLE_USERS);
+
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
+
+    User user = mapper.map(results);
     return Optional.of(user);
   }
 
-  protected void populateUserFields(User user, Result result)
-      throws InstantiationException, IllegalAccessException,
-      NoSuchFieldException {
-
-    ReflectionUtils.setValue(user, Constants.FIELD_PASSWORD,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_PASSWORD));
-    ReflectionUtils.setValue(user, Constants.FIELD_SALT,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_SALT));
-    ReflectionUtils.setValue(user, Constants.FIELD_FIRST_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_FIRST_NAME));
-    ReflectionUtils.setValue(user, Constants.FIELD_LAST_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_LAST_NAME));
-    ReflectionUtils.setValue(user, Constants.FIELD_DATE_OF_BIRTH,
-        getLocalDateTime(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_DATE_OF_BIRTH));
-    ReflectionUtils.setValue(user, Constants.FIELD_GENDER,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_GENDER));
-    ReflectionUtils.setValue(user, Constants.FIELD_MOBILE,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_MOBILE));
-    ReflectionUtils.setValue(user, Constants.FIELD_EMAIL,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_EMAIL));
-    ReflectionUtils.setValue(user, Constants.FIELD_LOCALE,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_LOCALE));
-    ReflectionUtils.setValue(user, Constants.FIELD_PERMISSIONS,
-        getEnumList(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_PERMISSIONS, Permission.class));
-  }
-
+  @Override
   public void save(User user) {
 
   }

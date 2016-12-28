@@ -15,18 +15,19 @@ import java.util.Optional;
  */
 public final class ReflectionUtils {
 
-  public static Object getInstance(Class type, Object ... initargs)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException {
-
+  public static Object getInstance(Class type, Object ... initargs) {
     Optional<Constructor> constructor = getParamLessConstructor(type);
 
-    if (constructor.isPresent()) {
+    try {
       constructor.get().setAccessible(true);
       return constructor.get().newInstance(initargs);
-    }
 
-    throw new InstantiationException("error creating instance");
+    } catch (InstantiationException | IllegalAccessException
+        | InvocationTargetException e) {
+
+      throw new IllegalArgumentException(
+          "error creating instance", e);
+    }
   }
 
   public static Optional<Constructor> getParamLessConstructor(Class type) {
@@ -41,40 +42,44 @@ public final class ReflectionUtils {
     return Optional.empty();
   }
 
-  public static <T> String getString(T instance, String fieldName)
-      throws NoSuchFieldException, IllegalAccessException {
-
+  public static <T> String getString(T instance, String fieldName) {
     return ReflectionUtils.getValue(instance, fieldName, String.class);
   }
 
-  public static <T,S> S getValue(T instance, String fieldName, Class<S> type)
-      throws NoSuchFieldException, IllegalAccessException {
-
+  public static <T,S> S getValue(T instance, String fieldName, Class<S> type) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
     return getValue(instance, fieldOptional.get(), type);
   }
 
-  public static <T,S> S getValue(T instance, Field field, Class<S> type)
-      throws NoSuchFieldException, IllegalAccessException {
-
+  public static <T,S> S getValue(T instance, Field field, Class<S> type) {
     field.setAccessible(true);
 
-    Object value = field.get(instance);
-    return type.cast(value);
+    try {
+      Object value = field.get(instance);
+      return type.cast(value);
+
+    } catch (IllegalAccessException e) {
+      throw new IllegalArgumentException(
+          "error getting field value", e);
+    }
   }
 
-  public static <T,S> void setValue(T instance, String fieldName, S value)
-      throws IllegalAccessException, NoSuchFieldException {
-
+  public static <T,S> void setValue(T instance, String fieldName, S value) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
 
     if (!fieldOptional.isPresent()) {
       return;
     }
 
-    Field field = fieldOptional.get();
-    field.setAccessible(true);
-    field.set(instance, value);
+    try {
+      Field field = fieldOptional.get();
+      field.setAccessible(true);
+      field.set(instance, value);
+
+    } catch (IllegalAccessException e) {
+      throw new IllegalArgumentException(
+          "error setting field value", e);
+    }
   }
 
   public static <T> Optional<Field> getField(Class<T> type, String name) {
@@ -98,9 +103,7 @@ public final class ReflectionUtils {
     return fields;
   }
 
-  public static <T> Class<?> getListType(Field field)
-      throws NoSuchFieldException {
-
+  public static <T> Class<?> getListType(Field field) {
     ParameterizedType paramType = (ParameterizedType) field.getGenericType();
     return (Class<?>) paramType.getActualTypeArguments()[0];
   }

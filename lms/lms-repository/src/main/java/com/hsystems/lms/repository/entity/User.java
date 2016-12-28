@@ -61,6 +61,16 @@ public class User extends Auditable implements Serializable {
 
   public User(
       String id,
+      String firstName,
+      String lastName) {
+
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
+
+  public User(
+      String id,
       String password,
       String salt,
       String firstName,
@@ -157,5 +167,40 @@ public class User extends Auditable implements Serializable {
 
   public List<Group> getGroups() {
     return Collections.unmodifiableList(groups);
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    User user = (User) obj;
+    return id.equals(user.getId());
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder permissionsBuilder = new StringBuilder();
+    permissions.forEach(x -> permissionsBuilder.append(x).append(","));
+
+    StringBuilder groupsBuilder = new StringBuilder();
+    groups.forEach(x -> groupsBuilder.append(x).append(","));
+
+    return String.format(
+        "School{id=%s, password=%s, salt=%s, firstName=%s, "
+            + "lastName=%s, dateOfBirth=%s, gender=%s, mobile=%s, "
+            + "email=%s, locale=%s, dateFormat=%s, dateTimeFormat=%s, "
+            + "permissions=%s, school=%s, groups=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        id, password, salt, firstName, lastName, dateOfBirth,
+        gender, mobile, email, locale, dateFormat, dateTimeFormat,
+        permissionsBuilder, school, groupsBuilder, createdBy,
+        createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

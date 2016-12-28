@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * Created by administrator on 3/11/16.
+ * Created by naungsoe on 3/11/16.
  */
 public class QuestionModel implements Serializable {
 
@@ -15,6 +15,10 @@ public class QuestionModel implements Serializable {
   private String type;
 
   private String body;
+
+  private String hint;
+
+  private String explanation;
 
   private List<QuestionOptionModel> options;
 
@@ -66,6 +70,21 @@ public class QuestionModel implements Serializable {
     this.body = body;
   }
 
+  public String getHint() {
+    return hint;
+  }
+
+  public void setHint(String hint) {
+    this.hint = hint;
+  }
+
+  public String getExplanation() {
+    return explanation;
+  }
+
+  public void setExplanation(String explanation) {
+    this.explanation = explanation;
+  }
 
   public List<QuestionOptionModel> getOptions() {
     return options;

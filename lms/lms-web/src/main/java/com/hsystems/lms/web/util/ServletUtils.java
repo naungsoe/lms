@@ -5,9 +5,7 @@ import com.hsystems.lms.common.util.ReflectionUtils;
 import org.apache.commons.lang.StringUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -36,26 +34,19 @@ public final class ServletUtils {
   }
   
   public static <T> T getModel(
-      HttpServletRequest request, Class<T> type)
-      throws ServletException {
+      HttpServletRequest request, Class<T> type) {
 
-    try {
-      T instance = (T) ReflectionUtils.getInstance(type);
-      Field[] fields = type.getDeclaredFields();
+    T instance = (T) ReflectionUtils.getInstance(type);
+    Field[] fields = type.getDeclaredFields();
 
-      for (Field field : fields) {
-        String value = request.getParameter(field.getName());
+    for (Field field : fields) {
+      String value = request.getParameter(field.getName());
 
-        if (StringUtils.isNotEmpty(value)) {
-          ReflectionUtils.setValue(instance, field.getName(), value);
-        }
+      if (StringUtils.isNotEmpty(value)) {
+        ReflectionUtils.setValue(instance, field.getName(), value);
       }
-      return instance;
-
-    } catch (InstantiationException | IllegalAccessException
-        | InvocationTargetException | NoSuchFieldException e) {
-
-      throw new ServletException("error getting entity", e);
     }
+
+    return instance;
   }
 }

@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.provider.UserModelProvider;
 import com.hsystems.lms.web.util.ServletUtils;
@@ -70,15 +69,11 @@ public class AuthenticationFilter extends BaseFilter {
       return;
     }
 
-    try {
-      Optional<UserModel> userModelOptional
-          = authenticationService.findSignedInUserBy(id);
+    Optional<UserModel> userModelOptional
+        = authenticationService.findSignedInUserBy(id);
 
-      if (userModelOptional.isPresent()) {
-        createSessionAndCookies(userModelOptional.get());
-      }
-    } catch (ServiceException e) {
-      throw new ServletException("error retrieving signed in user", e);
+    if (userModelOptional.isPresent()) {
+      createSessionAndCookies(userModelOptional.get());
     }
   }
 

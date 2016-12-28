@@ -4,7 +4,6 @@ import com.hsystems.lms.common.Action;
 import com.hsystems.lms.common.EntityType;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 2/11/16.
@@ -55,5 +54,33 @@ public class AuditLog implements Serializable {
 
   public Action getAction() {
     return action;
+  }
+
+  @Override
+  public int hashCode() {
+    int prime = 31;
+    int result = entityId.hashCode();
+    result = result * prime + user.hashCode();
+    return result * prime + Long.hashCode(timestamp);
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    AuditLog auditLog = (AuditLog) obj;
+    return entityId.equals(auditLog.getEntityId())
+        && user.equals(auditLog.getUser())
+        && (timestamp == auditLog.getTimestamp());
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "AuditLog{entityId=%s, entityType=%s, user=%s, "
+            + "timestamp=%s, action=%s}",
+        entityId, entityType, user, timestamp, action);
   }
 }

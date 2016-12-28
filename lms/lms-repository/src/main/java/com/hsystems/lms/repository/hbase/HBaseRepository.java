@@ -27,132 +27,16 @@ import java.util.List;
  */
 public abstract class HBaseRepository {
 
+  public static final String SCAN_KEY_FORMAT = "^%s[_0-9a-zA-Z]*$";
+
   protected Scan getRowFilterScan(String key)
       throws IOException {
 
-    String keyRegex = String.format("^%s[_0-9a-zA-Z]*$", key);
+    String keyRegex = String.format(SCAN_KEY_FORMAT, key);
     Scan scan = new Scan(Bytes.toBytes(key));
     RegexStringComparator comparator = new RegexStringComparator(keyRegex);
     RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, comparator);
     scan.setFilter(filter);
     return scan;
-  }
-
-  protected School getSchool(String rowKey, Result result)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    School school = (School) ReflectionUtils.getInstance(School.class);
-    String id = rowKey.split(Constants.SEPARATOR_SCHOOL)[1];
-
-    ReflectionUtils.setValue(school, Constants.FIELD_ID, id);
-    ReflectionUtils.setValue(school, Constants.FIELD_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
-    return school;
-  }
-
-  protected Group getGroup(String rowKey, Result result)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    Group group = (Group) ReflectionUtils.getInstance(Group.class);
-    String id = rowKey.split(Constants.SEPARATOR_GROUP)[1];
-
-    ReflectionUtils.setValue(group, Constants.FIELD_ID, id);
-    ReflectionUtils.setValue(group, Constants.FIELD_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
-
-    return group;
-  }
-
-  protected User getUser(String rowKey, Result result)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    User user = (User) ReflectionUtils.getInstance(User.class);
-    String id;
-
-    if (rowKey.contains(Constants.SEPARATOR_CREATED_BY)) {
-      id = rowKey.split(Constants.SEPARATOR_CREATED_BY)[1];
-
-    } else if (rowKey.contains(Constants.SEPARATOR_MODIFIED_BY)) {
-      id = rowKey.split(Constants.SEPARATOR_MODIFIED_BY)[1];
-
-    } else if (rowKey.contains(Constants.SEPARATOR_USER)) {
-      id = rowKey.split(Constants.SEPARATOR_USER)[1];
-
-    } else {
-      id = getString(result, Constants.FAMILY_DATA, Constants.IDENTIFIER_ID);
-    }
-
-    ReflectionUtils.setValue(user, Constants.FIELD_ID, id);
-    ReflectionUtils.setValue(user, Constants.FIELD_FIRST_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_FIRST_NAME));
-    ReflectionUtils.setValue(user, Constants.FIELD_LAST_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_LAST_NAME));
-    return user;
-  }
-
-  protected boolean getBoolean(
-      Result result, byte[] family, byte[] identifier) {
-
-    String value = getString(result, family, identifier);
-    return StringUtils.isEmpty(value) ? false : Boolean.parseBoolean(value);
-  }
-
-  protected long getLong(
-      Result result, byte[] family, byte[] identifier) {
-
-    String value = getString(result, family, identifier);
-    return StringUtils.isEmpty(value) ? 0 : Long.parseLong(value);
-  }
-
-  protected String getString(
-      Result result, byte[] family, byte[] identifier) {
-
-    byte[] value = result.getValue(family, identifier);
-    return (value == null) ? null : Bytes.toString(value);
-  }
-
-  protected LocalDateTime getLocalDateTime(
-      Result result, byte[] family, byte[] identifier) {
-
-    byte[] value = result.getValue(family, identifier);
-    return (value == null) ? null : DateTimeUtils.toLocalDateTime(
-        Bytes.toString(value), Constants.DATE_TIME_FORMAT);
-  }
-
-  protected <E extends Enum<E>> E getEnum(
-      Result result, byte[] family, byte[] identifier, Class<E> type)
-      throws InstantiationException, IllegalAccessException,
-      NoSuchFieldException {
-
-    byte[] value = result.getValue(family, identifier);
-    return (value == null) ? null : Enum.valueOf(type, Bytes.toString(value));
-  }
-
-  protected <E extends Enum<E>> List<E> getEnumList(
-      Result result, byte[] family, byte[] identifier, Class<E> type)
-      throws InstantiationException, IllegalAccessException,
-      NoSuchFieldException {
-
-    byte[] value = result.getValue(family, identifier);
-
-    if (value == null) {
-      return Collections.emptyList();
-    }
-
-    String[] items = Bytes.toString(value).split("\\,");
-    List<E> list = new ArrayList<>();
-
-    for (String item : items) {
-      list.add(Enum.valueOf(type, item));
-    }
-
-    return list;
   }
 }

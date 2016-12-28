@@ -2,24 +2,20 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.Permission;
-import com.hsystems.lms.common.util.ReflectionUtils;
+import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.ShareLog;
-import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.exception.RepositoryException;
+import com.hsystems.lms.repository.hbase.mapper.HBaseShareLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by naungsoe on 14/10/16.
@@ -29,60 +25,40 @@ public class HBaseShareLogRepository
 
   private final HBaseClient client;
 
+  private final AuditLogRepository auditLogRepository;
+
+  private final HBaseShareLogMapper mapper;
+
   @Inject
-  HBaseShareLogRepository(HBaseClient client) {
+  HBaseShareLogRepository(
+      HBaseClient client, AuditLogRepository auditLogRepository) {
+
     this.client = client;
+    this.auditLogRepository = auditLogRepository;
+    this.mapper = new HBaseShareLogMapper();
   }
 
-  public List<ShareLog> findAllBy(String id)
-      throws RepositoryException {
+  @Override
+  public Optional<ShareLog> findBy(String id)
+      throws IOException {
 
-    try {
-      Scan scan = getRowFilterScan(id);
-      List<Result> results = client.scan(scan, Constants.TABLE_USERS);
+    Optional<AuditLog> auditLogOptional
+        = auditLogRepository.findLastestLogBy(id);
 
-      if (results.isEmpty()) {
-        return Collections.emptyList();
-      }
-
-      List<ShareLog> shareLogs = new ArrayList<>();
-
-      for (Result result : results) {
-        String rowKey = Bytes.toString(result.getRow());
-
-        if (rowKey.contains(Constants.SEPARATOR_USER)) {
-          shareLogs.add(getShareLog(rowKey, result));
-        }
-      }
-
-      return shareLogs;
-
-    } catch (IOException | InstantiationException
-        | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
-
-      throw new RepositoryException("error retrieving sharelog", e);
+    if (!auditLogOptional.isPresent()) {
+      return Optional.empty();
     }
-  }
 
-  protected ShareLog getShareLog(String rowKey, Result result)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
+    Scan scan = getRowFilterScan(id);
+    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
 
-    ShareLog shareLog = (ShareLog) ReflectionUtils.getInstance(ShareLog.class);
-    User user = (User) ReflectionUtils.getInstance(User.class);
-    String id = rowKey.split(Constants.SEPARATOR_SCHOOL)[1];
+    List<Result> results = client.scan(scan, Constants.TABLE_SHARE_LOG);
 
-    ReflectionUtils.setValue(user, Constants.FIELD_ID, id);
-    ReflectionUtils.setValue(user, Constants.FIELD_NAME,
-        getString(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_NAME));
-    ReflectionUtils.setValue(shareLog, Constants.FIELD_USER, user);
+    if (results.isEmpty()) {
+      return Optional.empty();
+    }
 
-    ReflectionUtils.setValue(shareLog, Constants.FIELD_PERMISSIONS,
-        getEnumList(result, Constants.FAMILY_DATA,
-            Constants.IDENTIFIER_PERMISSIONS, Permission.class));
-
-    return shareLog;
+    ShareLog shareLog = mapper.map(results);
+    return Optional.of(shareLog);
   }
 }

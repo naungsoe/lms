@@ -3,7 +3,6 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
@@ -15,18 +14,15 @@ import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.exception.RepositoryException;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignUpModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import org.apache.commons.lang.StringUtils;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
+import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -62,50 +58,35 @@ public class UserService extends BaseService {
 
   @Log
   public Optional<UserModel> findBy(String id)
-      throws ServiceException {
+      throws IOException {
 
     return findBy(id, Configuration.create());
   }
 
   @Log
-  public Optional<UserModel> findBy(String id, Configuration configuration)
-      throws ServiceException {
+  public Optional<UserModel> findBy(
+      String id, Configuration configuration)
+      throws IOException {
 
-    try {
-      Optional<User> userOptional = userRepository.findBy(id);
+    Optional<User> userOptional = userRepository.findBy(id);
 
-      if (userOptional.isPresent()) {
-        return null;
-      }
-
-      return Optional.empty();
-
-    } catch (RepositoryException e) {
-      throw new ServiceException("error retrieving user", e);
+    if (userOptional.isPresent()) {
+      return null;
     }
+
+    return Optional.empty();
   }
 
   @Log
-  public void signUp(SignUpModel signUpModel)
-      throws ServiceException {
+  public void signUp(SignUpModel signUpModel) throws IOException {
+    checkSignUpPreconditions(signUpModel);
 
-    try {
-      checkSignUpPreconditions(signUpModel);
-
-      User user = getUser(signUpModel);
-      userRepository.save(user);
-      indexRepository.save(user);
-
-    } catch (NoSuchAlgorithmException | InvalidKeySpecException
-        | RepositoryException e) {
-
-      throw new ServiceException("error signing up", e);
-    }
+    User user = getUser(signUpModel);
+    userRepository.save(user);
+    indexRepository.save(user);
   }
 
-  private void checkSignUpPreconditions(SignUpModel signUpModel)
-      throws IllegalArgumentException {
-
+  private void checkSignUpPreconditions(SignUpModel signUpModel) {
     CommonUtils.checkArgument(
         StringUtils.isNotEmpty(signUpModel.getId()),
         "id cannot be empty");
@@ -123,38 +104,46 @@ public class UserService extends BaseService {
         "last name cannot be empty");
   }
 
-  private User getUser(SignUpModel signUpModel)
-      throws NoSuchAlgorithmException, InvalidKeySpecException,
-      RepositoryException {
-
+  private User getUser(SignUpModel signUpModel) throws IOException {
     Properties properties = propertiesProvider.get();
     Optional<School> schoolOptional = schoolRepository.findBy(
         properties.getProperty("app.default.school.id"));
     Optional<Group> groupOptional = groupRepository.findBy(
         properties.getProperty("app.default.group.id"));
+
     String randomSalt = SecurityUtils.getRandomSalt();
+    String hashedPassword = SecurityUtils.getPassword(
+        signUpModel.getPassword(), randomSalt);
+
+    LocalDateTime dateOfBirth = DateTimeUtils.toLocalDateTime(
+        signUpModel.getDateOfBirth());
+
+    User createdBy = new User(
+        "system",
+        "LMS",
+        "System"
+    );
 
     return new User(
         signUpModel.getId(),
-        SecurityUtils.getPassword(
-            signUpModel.getPassword(), randomSalt),
+        hashedPassword,
         randomSalt,
         signUpModel.getFirstName(),
         signUpModel.getLastName(),
-        DateTimeUtils.toLocalDateTime(signUpModel.getDateOfBirth()),
+        dateOfBirth,
         signUpModel.getGender(),
         signUpModel.getMobile(),
         signUpModel.getEmail(),
         schoolOptional.get().getLocale(),
         schoolOptional.get().getDateFormat(),
         schoolOptional.get().getDateTimeFormat(),
-        new ArrayList<Permission>(),
+        groupOptional.get().getPermissions(),
         schoolOptional.get(),
-        new ArrayList<Group>(),
-        null,
+        Arrays.asList(groupOptional.get()),
+        createdBy,
         LocalDateTime.now(),
         null,
-        LocalDateTime.now()
+        null
     );
   }
 }

@@ -3,8 +3,9 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.SchoolService;
-import com.hsystems.lms.service.exception.ServiceException;
 import com.hsystems.lms.service.model.SchoolModel;
+
+import java.io.IOException;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -29,7 +30,7 @@ public class SchoolController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
   public SchoolModel getSchool(@PathParam("id") String id)
-      throws ServiceException {
+      throws IOException {
 
     return schoolService.findBy(id).get();
   }

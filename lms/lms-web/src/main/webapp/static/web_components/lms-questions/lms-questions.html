@@ -1,0 +1,115 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+<link rel="import" href="../lms-app-nav.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
+<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
+<link rel="import" href="lms-question-list.html">
+<link rel="import" href="lms-question-create.html">
+
+<dom-module id="lms-questions">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      [main-content] {
+        padding-top: 112px;
+      }
+    </style>
+
+    <app-header nav condenses fixed effects="waterfall">
+      <app-toolbar>
+        <paper-icon-button icon="menu" on-tap="handleMenu"></paper-icon-button>
+        <h3 main-title>{{localize('titlePage')}}</h3>
+        <paper-input-container id="inputContainerSearch" no-label-float search hidden>
+          <input id="inputSearch" is="iron-input" type="text">
+          <paper-icon-button suffix icon="search"></paper-icon-button>
+        </paper-input-container>
+        <paper-icon-button id="buttonSearchToggle" icon="search"
+                           on-tap="handleSearchToggle"></paper-icon-button>
+        </paper-input>
+      </app-toolbar>
+
+      <paper-tabs id="tabsMain" selected="0" sticky on-iron-select="handleSelect">
+        <paper-tab>{{localize('tabMyQuestions')}}</paper-tab>
+        <paper-tab>{{localize('tabSharedWithMe')}}</paper-tab>
+      </paper-tabs>
+    </app-header>
+
+    <div main-content>
+      <lms-question-list rest-url="{{restUrl}}" rest-params="{{listParams}}"
+                         resources="{{resources}}"></lms-question-list>
+
+      <lms-question-create rest-url="{{restUrl}}" rest-params="{{createParams}}"
+                           resources="{{resources}}" hidden></lms-question-create>
+    </div>
+
+    <paper-fab icon="add" add hidden$="{{_hideAdd(activeTab)}}"
+               on-tap="handleCreate"></paper-fab>
+
+    <app-drawer id="drawerMain" swipe-open>
+      <lms-app-nav language="{{language}}" resources="{{resources}}"></lms-app-nav>
+    </app-drawer>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-questions',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
+      ],
+      
+      properties: {
+        title: {
+          type: String,
+          notify: true
+        },
+        activeTab: {
+          type: String,
+          notify: true
+        },
+        restUrl: {
+          type: String,
+          notify: true
+        },
+        listParams: {
+          type: Object,
+          notify: true
+        },
+        createParams: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _hideAdd: function(activeTab) {
+        console.log(activeTab);
+      },
+
+      handleMenu: function(event) {
+        this.$.drawerMain.toggle();
+      },
+
+      handleSearchToggle: function(event) {
+        this.$.buttonSearchToggle.hidden = true;
+        this.$.inputContainerSearch.hidden = false;
+        this.$.inputSearch.focus();
+      },
+
+      handleSelect: function(event) {
+        console.log(this.$.tabsMain);
+      },
+
+      handleCreate: function(event) {
+
+      }
+    });
+  </script>
+  
+</dom-module>

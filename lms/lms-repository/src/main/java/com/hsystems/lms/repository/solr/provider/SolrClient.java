@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -53,24 +52,30 @@ public class SolrClient {
   }
 
   public <T> QueryResult<T> query(Query query, Class<T> type)
-      throws SolrServerException, IOException,
-      InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
+      throws IOException {
 
     IndexCollection annotation = type.getAnnotation(IndexCollection.class);
-    String collection = StringUtils.isEmpty(annotation.value())
-        ? type.getSimpleName() : annotation.value();
+    String collection = StringUtils.isEmpty(annotation.name())
+        ? type.getSimpleName() : annotation.name();
 
     CloudSolrClient client = getClient();
     client.setDefaultCollection(collection);
 
-    SolrQuery solrQuery = getSolrQuery(query, type);
-    QueryResponse response = client.query(solrQuery);
+    try {
+      SolrQuery solrQuery = getSolrQuery(query, type);
+      QueryResponse response = client.query(solrQuery);
 
-    return new QueryResult<T>(
-        response.getElapsedTime(),
-        getEntities(response.getResults(), type)
-    );
+      return new QueryResult<T>(
+          response.getElapsedTime(),
+          getEntities(response.getResults(), type)
+      );
+    } catch (SolrServerException | InstantiationException
+        | IllegalAccessException | InvocationTargetException
+        | NoSuchFieldException e) {
+
+      throw new IOException(
+          "error querying entities", e);
+    }
   }
 
   protected CloudSolrClient getClient() {
@@ -153,25 +158,26 @@ public class SolrClient {
         continue;
       }
 
-      populateProperties(entity, document, field);
+      populateProperty(entity, document, field);
     }
 
     return entity;
   }
 
-  protected <T> void populateProperties(
+  protected <T> void populateProperty(
       T entity, SolrDocument document, Field field)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     IndexField annotation = field.getAnnotation(IndexField.class);
-    String fieldName = StringUtils.isEmpty(annotation.value())
-        ? field.getName() : annotation.value();
+    String fieldName = StringUtils.isEmpty(annotation.name())
+        ? field.getName() : annotation.name();
     Object childEntity;
 
     switch (annotation.type()) {
       case IDENTITY:
         String id = document.getFieldValue(fieldName).toString();
+
         if (id.contains(SEPARATOR_ID)) {
           ReflectionUtils.setValue(entity, fieldName,
               id.substring(id.lastIndexOf(SEPARATOR_ID)));
@@ -207,13 +213,11 @@ public class SolrClient {
         break;
 
       case DATETIME:
-        Object date = document.getFieldValue(fieldName + "_dt");
-        if (date == null) {
-          ReflectionUtils.setValue(entity, fieldName, null);
+        Object datetime = document.getFieldValue(fieldName + "_dt");
 
-        } else {
+        if (datetime != null) {
           ReflectionUtils.setValue(entity, fieldName,
-              DateTimeUtils.toLocalDateTime((Date) date));
+              DateTimeUtils.toLocalDateTime((Date) datetime));
         }
         break;
 
@@ -281,21 +285,28 @@ public class SolrClient {
   }
 
   public <T> void index(T entity)
-      throws SolrServerException, IOException,
-      NoSuchFieldException, IllegalAccessException {
+      throws IOException {
 
     IndexCollection annotation = entity.getClass()
         .getAnnotation(IndexCollection.class);
-    String collection = StringUtils.isEmpty(annotation.value())
-        ? entity.getClass().getSimpleName() : annotation.value();
+    String collection = StringUtils.isEmpty(annotation.name())
+        ? entity.getClass().getSimpleName() : annotation.name();
 
     CloudSolrClient client = getClient();
     client.setDefaultCollection(collection);
 
-    SolrInputDocument document = getDocument(entity);
-    updateChildDocumentsId(document);
-    client.add(document);
-    client.commit();
+    try {
+      SolrInputDocument document = getDocument(entity);
+      updateChildDocumentsId(document);
+      client.add(document);
+      client.commit();
+
+    } catch (NoSuchFieldException | IllegalAccessException
+        | SolrServerException e) {
+
+      throw new IOException(
+          "error indexing entity", e);
+    }
   }
 
   protected <T> SolrInputDocument getDocument(T entity)
@@ -328,8 +339,8 @@ public class SolrClient {
     }
 
     IndexField annotation = field.getAnnotation(IndexField.class);
-    String fieldName = StringUtils.isEmpty(annotation.value())
-        ? field.getName() : annotation.value();
+    String fieldName = StringUtils.isEmpty(annotation.name())
+        ? field.getName() : annotation.name();
     SolrInputDocument childDocument;
 
     switch (annotation.type()) {

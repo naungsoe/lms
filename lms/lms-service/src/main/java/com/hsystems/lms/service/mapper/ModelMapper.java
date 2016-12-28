@@ -3,135 +3,64 @@ package com.hsystems.lms.service.mapper;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by naungsoe on 4/11/16.
  */
-public class ModelMapper {
-
-  private static final String NAME_TOKEN_PATTERN = "([A-Za-z][a-z]+)";
-
-  private final Configuration configuration;
+public class ModelMapper extends Mapper {
 
   public ModelMapper(Configuration configuration) {
     this.configuration = configuration;
   }
 
-  public <T,S> S map(T source, Class<S> type)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    S instance = (S) ReflectionUtils.getInstance(type);
-    List<Field> fields = ReflectionUtils.getFields(type);
-    List<Field> sourceFields = ReflectionUtils.getFields(source.getClass());
-
-    for (Field field : fields) {
-      String fieldName = field.getName();
-      Optional<Field> sourceFieldOptional = sourceFields.stream()
-          .filter(x -> x.getName().equals(fieldName))
-          .findFirst();
-
-      if (sourceFieldOptional.isPresent()) {
-        ReflectionUtils.setValue(instance, fieldName,
-            getFieldValue(source, sourceFieldOptional.get()));
-
-      } else {
-        Queue<String> nameTokens = getNameTokens(fieldName);
-        ReflectionUtils.setValue(instance, fieldName,
-            getCompositeFieldValue(source, sourceFields,
-                nameTokens, field.getType()));
-      }
-    }
-
-    return instance;
+  @Override
+  protected Object getDateTimeValue(Object dateTime) {
+    return DateTimeUtils.toString((LocalDateTime) dateTime,
+        configuration.getDateTimeFormat());
   }
 
-  private <T> Object getFieldValue(T instance, Field field)
-      throws NoSuchFieldException, IllegalAccessException,
-      InstantiationException, InvocationTargetException {
+  @Override
+  protected  <T,S> S getCompositeFieldValue(
+      T source, List<Field> sourceFields,
+      String fieldName, Class<S> type) {
 
-    Class<?> fieldType = field.getType();
-    Object fieldValue = ReflectionUtils.getValue(instance, field, Object.class);
-
-    if (fieldType == List.class) {
-      List<Object> valueList = new ArrayList<>();
-
-      for (Object fieldItem : (List) fieldValue) {
-        Object valueItem = map(fieldItem, ReflectionUtils.getListType(field));
-        valueList.add(valueItem);
-      }
-
-      return valueList;
-
-    } else if (fieldType == LocalDateTime.class) {
-      return DateTimeUtils.toString((LocalDateTime) fieldValue,
-          configuration.getDateTimeFormat());
-
-    } else if (fieldType.isEnum()) {
-      return fieldValue.toString();
-
-    } else if (fieldType.isPrimitive()) {
-      return fieldValue;
-    }
-
-    return fieldType.cast(fieldValue);
-  }
-
-  private Queue<String> getNameTokens(String name) {
-    Pattern pattern = Pattern.compile(NAME_TOKEN_PATTERN);
-    Matcher matcher = pattern.matcher(name);
-    Queue<String> tokens = new LinkedList<>();
-
-    while (matcher.find()) {
-      tokens.add(matcher.group(0));
-    }
-
-    return tokens;
-  }
-
-  private <T,S> Object getCompositeFieldValue(
-      T instance, List<Field> fields,
-      Queue<String> fieldNameTokens, Class<S> type)
-    throws NoSuchFieldException, IllegalAccessException,
-      InstantiationException, InvocationTargetException {
-
-    String fieldName = fieldNameTokens.poll();
-    Optional<Field> fieldOptional = fields.stream()
-        .filter(x -> x.getName().equals(StringUtils.uncapitalize(fieldName)))
-        .findFirst();
+    Queue<String> fieldNameTokens = getNameTokens(fieldName);
+    String fieldNameToken = fieldNameTokens.poll();
+    Optional<Field> fieldOptional = getField(sourceFields, fieldNameToken);
 
     if (!fieldNameTokens.isEmpty() && !fieldOptional.isPresent()) {
       do {
-        String compositeFieldName = fieldName + fieldNameTokens.poll();
-        fieldOptional = fields.stream()
-            .filter(x -> x.getName().equals(
-                StringUtils.uncapitalize(compositeFieldName)))
-            .findFirst();
+        fieldNameToken = fieldNameToken + fieldNameTokens.poll();
+        fieldOptional = getField(sourceFields, fieldNameToken);
 
       } while (!fieldOptional.isPresent());
     }
 
     if (fieldNameTokens.isEmpty()) {
-      return getFieldValue(instance, fieldOptional.get());
+      return (S) getFieldValue(source, fieldOptional.get(), type);
     }
 
     Object compositeInstance = ReflectionUtils.getValue(
-        instance, fieldOptional.get(), Object.class);
+        source, fieldOptional.get(), Object.class);
+
+    if (compositeInstance == null) {
+      return null;
+    }
+
     List<Field> compositeFields
         = ReflectionUtils.getFields(compositeInstance.getClass());
+    String compositeFieldName = fieldNameTokens.poll();
+
+    while (!fieldNameTokens.isEmpty()) {
+      compositeFieldName = compositeFieldName + fieldNameTokens.poll();
+    }
+
     return getCompositeFieldValue(
-        compositeInstance, compositeFields, fieldNameTokens, type);
+        compositeInstance, compositeFields, compositeFieldName, type);
   }
 }

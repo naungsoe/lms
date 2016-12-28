@@ -61,4 +61,31 @@ public class Criterion {
   public String getValue() {
     return value;
   }
+
+  @Override
+  public int hashCode() {
+    int prime = 31;
+    int result = operator.hashCode();
+    result = result * prime + field.hashCode();
+    return result * prime + value.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    Criterion criterion = (Criterion) obj;
+    return operator.equals(criterion.getOperator())
+        && field.equals(criterion.getField())
+        && value.equals(criterion.getValue());
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "Criterion{operator=%s, field=%s, value=%s}",
+        operator, field, value);
+  }
 }
