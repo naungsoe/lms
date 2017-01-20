@@ -1,10 +1,11 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class HBaseGroupMapper extends HBaseMapper<Group> {
 
   @Override
-  public Group map(List<Result> results) {
+  public Group getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     String id = Bytes.toString(mainResult.getRow());
@@ -61,7 +62,12 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
   }
 
   @Override
-  public List<Put> map(Group entity, long timestamp) {
-    return null;
+  public List<Put> getPuts(Group entity, long timestamp) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<Delete> getDeletes(Group entity, long timestamp) {
+    return new ArrayList<>();
   }
 }

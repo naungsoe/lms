@@ -394,7 +394,7 @@ readdir-scoped-modules: 1.0.2
 readline2: 1.0.1
 rechoir: 0.6.2
 redent: 1.0.0
-registry-url: 3.0.3
+repositoryRegistry-url: 3.0.3
 repeat-string: 1.5.4
 repeating: 2.0.0
 replace-ext: 0.0.1

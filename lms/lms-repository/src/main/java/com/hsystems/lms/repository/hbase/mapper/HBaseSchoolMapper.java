@@ -1,10 +1,11 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -20,7 +21,7 @@ import java.util.Optional;
 public class HBaseSchoolMapper extends HBaseMapper<School> {
 
   @Override
-  public School map(List<Result> results) {
+  public School getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     String id = Bytes.toString(mainResult.getRow());
@@ -62,7 +63,12 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
   }
 
   @Override
-  public List<Put> map(School entity, long timestamp) {
-    return null;
+  public List<Put> getPuts(School entity, long timestamp) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<Delete> getDeletes(School entity, long timestamp) {
+    return new ArrayList<>();
   }
 }

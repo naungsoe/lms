@@ -10,14 +10,14 @@ import java.util.Properties;
  */
 public class SolrClientProvider implements Provider<SolrClient> {
 
-  private Provider<Properties> propertiesProvider;
+  private final Properties properties;
 
-  private SolrClient client;
+  private final SolrClient client;
 
   @Inject
-  SolrClientProvider(Provider<Properties> propertiesProvider) {
-    this.propertiesProvider = propertiesProvider;
-    this.client = new SolrClient(propertiesProvider);
+  SolrClientProvider(Properties properties) {
+    this.properties = properties;
+    this.client = new SolrClient(properties);
   }
 
   public SolrClient get() {

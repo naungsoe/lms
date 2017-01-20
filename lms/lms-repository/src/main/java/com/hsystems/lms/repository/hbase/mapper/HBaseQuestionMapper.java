@@ -1,11 +1,13 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.QuestionType;
+import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -21,7 +23,7 @@ import java.util.Optional;
 public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
   @Override
-  public Question map(List<Result> results) {
+  public Question getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     String id = Bytes.toString(mainResult.getRow());
@@ -67,7 +69,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
 
   @Override
-  public List<Put> map(Question entity, long timestamp) {
+  public List<Put> getPuts(Question entity, long timestamp) {
     List<Put> questionPuts = new ArrayList<>();
     Put questionPut = new Put(
         Bytes.toBytes(entity.getId()), timestamp);
@@ -89,5 +91,33 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         entity.getId(), timestamp);
     addDateTimeColumn(questionPut, entity.getModifiedDateTime());
     return questionPuts;
+  }
+
+  @Override
+  public List<Delete> getDeletes(Question entity, long timestamp) {
+    List<Delete> questionDeletes = new ArrayList<>();
+    Delete questionDelete = new Delete(Bytes.toBytes(entity.getId()));
+    questionDeletes.add(questionDelete);
+
+    entity.getOptions().stream().forEach(x -> {
+      String key = String.format("%s%s%s", entity.getId(),
+          Constants.SEPARATOR_OPTION, x.getId());
+      Delete optionDelete = new Delete(Bytes.toBytes(key));
+      questionDeletes.add(optionDelete);
+    });
+
+    String key = String.format("%s%s%s", entity.getId(),
+        Constants.SEPARATOR_CREATED_BY, entity.getCreatedBy().getId());
+    Delete createdByDelete = new Delete(Bytes.toBytes(key));
+    questionDeletes.add(createdByDelete);
+
+    if (entity.getModifiedBy() != null) {
+      key = String.format("%s%s%s", entity.getId(),
+          Constants.SEPARATOR_CREATED_BY, entity.getModifiedBy().getId());
+      Delete modifiedByDelete = new Delete(Bytes.toBytes(key));
+      questionDeletes.add(modifiedByDelete);
+    }
+
+    return questionDeletes;
   }
 }

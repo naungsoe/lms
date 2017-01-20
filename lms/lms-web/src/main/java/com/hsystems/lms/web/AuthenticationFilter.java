@@ -5,7 +5,7 @@ import com.google.inject.Injector;
 
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.web.provider.UserModelProvider;
+import com.hsystems.lms.web.provider.PrincipalProvider;
 import com.hsystems.lms.web.util.ServletUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -86,7 +86,7 @@ public class AuthenticationFilter extends BaseFilter {
   }
 
   private boolean isAuthenticated() {
-    UserModelProvider provider = injector.getInstance(UserModelProvider.class);
+    PrincipalProvider provider = injector.getInstance(PrincipalProvider.class);
     return (provider.get() != null);
   }
 

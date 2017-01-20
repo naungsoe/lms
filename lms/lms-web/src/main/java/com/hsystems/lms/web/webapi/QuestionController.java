@@ -3,23 +3,29 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
+import java.util.Optional;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.EntityTag;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 /**
@@ -28,16 +34,16 @@ import javax.ws.rs.core.UriInfo;
 @Path("questions")
 public class QuestionController {
 
-  private final Provider<UserModel> userModelProvider;
+  private final Provider<Principal> principalProvider;
 
   private final QuestionService questionService;
 
   @Inject
   QuestionController(
-      Provider<UserModel> userModelProvider,
+      Provider<Principal> principalProvider,
       QuestionService questionService) {
 
-    this.userModelProvider = userModelProvider;
+    this.principalProvider = principalProvider;
     this.questionService = questionService;
   }
 
@@ -48,8 +54,8 @@ public class QuestionController {
       @Context UriInfo uriInfo)
       throws IOException {
 
-    Configuration configuration
-        = Configuration.create(userModelProvider.get());
+    UserModel userModel = (UserModel) principalProvider.get();
+    Configuration configuration = Configuration.create(userModel);
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
     return questionService.findAllBy(query, configuration);
   }
@@ -58,11 +64,24 @@ public class QuestionController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
   @Requires(Permission.VIEW_QUESTIONS)
-  public QuestionModel getQuestion(@PathParam("id") String id)
+  public QuestionModel getQuestion(
+      @PathParam("id") String id,
+      @Context HttpServletResponse response)
       throws IOException {
 
-    Configuration configuration
-        = Configuration.create(userModelProvider.get());
-    return questionService.findBy(id, configuration).get();
+    UserModel userModel = (UserModel) principalProvider.get();
+    Configuration configuration = Configuration.create(userModel);
+    Optional<QuestionModel> questionModelOptional
+        = questionService.findBy(id, configuration);
+
+    if (!questionModelOptional.isPresent()) {
+      throw new WebApplicationException(
+          Response.Status.NOT_FOUND);
+    }
+
+    QuestionModel questionModel = questionModelOptional.get();
+    EntityTag entityTag = new EntityTag(
+        Long.toString(questionModel.getTimestamp()));
+    return questionModel;
   }
 }

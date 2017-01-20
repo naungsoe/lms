@@ -1,14 +1,15 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.QuestionType;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.QuizSection;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -24,7 +25,7 @@ import java.util.Optional;
 public class HBaseQuizMapper extends HBaseMapper<Quiz> {
 
   @Override
-  public Quiz map(List<Result> results) {
+  public Quiz getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     String id = Bytes.toString(mainResult.getRow());
@@ -88,9 +89,13 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
     );
   }
 
+  @Override
+  public List<Put> getPuts(Quiz entity, long timestamp) {
+    return new ArrayList<>();
+  }
 
   @Override
-  public List<Put> map(Quiz entity, long timestamp) {
-    return null;
+  public List<Delete> getDeletes(Quiz entity, long timestamp) {
+    return new ArrayList<>();
   }
 }

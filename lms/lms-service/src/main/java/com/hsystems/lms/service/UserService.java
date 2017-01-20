@@ -1,16 +1,13 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
-import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.SchoolRepository;
-import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
@@ -31,28 +28,20 @@ import java.util.Properties;
  */
 public class UserService extends BaseService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final Properties properties;
 
-  private final SchoolRepository schoolRepository;
-
-  private final GroupRepository groupRepository;
-
-  private final UserRepository userRepository;
+  private final UnitOfWork unitOfWork;
 
   private final IndexRepository indexRepository;
 
   @Inject
   UserService(
-      Provider<Properties> propertiesProvider,
-      SchoolRepository schoolRepository,
-      GroupRepository groupRepository,
-      UserRepository userRepository,
+      Properties properties,
+      UnitOfWork unitOfWork,
       IndexRepository indexRepository) {
 
-    this.propertiesProvider = propertiesProvider;
-    this.schoolRepository = schoolRepository;
-    this.groupRepository = groupRepository;
-    this.userRepository = userRepository;
+    this.properties = properties;
+    this.unitOfWork = unitOfWork;
     this.indexRepository = indexRepository;
   }
 
@@ -68,10 +57,14 @@ public class UserService extends BaseService {
       String id, Configuration configuration)
       throws IOException {
 
-    Optional<User> userOptional = userRepository.findBy(id);
+    Optional<User> userOptional
+        = indexRepository.findBy(id, User.class);
 
     if (userOptional.isPresent()) {
-      return null;
+      User user = userOptional.get();
+      UserModel model = getModel(user,
+          UserModel.class, configuration);
+      return Optional.of(model);
     }
 
     return Optional.empty();
@@ -82,8 +75,8 @@ public class UserService extends BaseService {
     checkSignUpPreconditions(signUpModel);
 
     User user = getUser(signUpModel);
-    userRepository.save(user);
-    indexRepository.save(user);
+    unitOfWork.registerNew(user);
+    unitOfWork.commit();
   }
 
   private void checkSignUpPreconditions(SignUpModel signUpModel) {
@@ -105,11 +98,21 @@ public class UserService extends BaseService {
   }
 
   private User getUser(SignUpModel signUpModel) throws IOException {
-    Properties properties = propertiesProvider.get();
-    Optional<School> schoolOptional = schoolRepository.findBy(
-        properties.getProperty("app.default.school.id"));
-    Optional<Group> groupOptional = groupRepository.findBy(
-        properties.getProperty("app.default.group.id"));
+    String schoolId = properties.getProperty("app.default.school.id");
+    String groupId = properties.getProperty("app.default.group.id");
+
+    Optional<School> schoolOptional
+        = indexRepository.findBy(schoolId, School.class);
+    Optional<Group> groupOptional
+        = indexRepository.findBy(groupId, Group.class);
+
+    if (!schoolOptional.isPresent()) {
+      throw new IllegalArgumentException(
+          "error retrieving school");
+    } else if (!groupOptional.isPresent()) {
+      throw new IllegalArgumentException(
+          "error retrieving group");
+    }
 
     String randomSalt = SecurityUtils.getRandomSalt();
     String hashedPassword = SecurityUtils.getPassword(

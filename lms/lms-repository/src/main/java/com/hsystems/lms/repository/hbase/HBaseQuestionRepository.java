@@ -2,14 +2,14 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 
@@ -25,40 +25,48 @@ public class HBaseQuestionRepository
 
   private final HBaseClient client;
 
-  private final AuditLogRepository auditLogRepository;
-
   private final HBaseQuestionMapper mapper;
 
   @Inject
   HBaseQuestionRepository(
-      HBaseClient client, AuditLogRepository auditLogRepository) {
+      HBaseClient client,
+      HBaseQuestionMapper mapper) {
 
     this.client = client;
-    this.auditLogRepository = auditLogRepository;
-    this.mapper = new HBaseQuestionMapper();
+    this.mapper = mapper;
   }
 
   @Override
-  public Optional<Question> findBy(String id)
+  public Optional<Question> findBy(String id, long timestamp)
       throws IOException {
 
-    Optional<AuditLog> auditLogOptional
-        = auditLogRepository.findLastestLogBy(id);
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(timestamp);
 
-    if (!auditLogOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Scan scan = getRowFilterScan(id);
-    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
-
-    List<Result> results = client.scan(scan, Constants.TABLE_QUESTIONS);
+    List<Result> results = client.scan(scan,
+        Constants.TABLE_QUESTIONS);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    Question question = mapper.map(results);
+    Question question = mapper.getEntity(results);
     return Optional.of(question);
+  }
+
+  @Override
+  public void save(Question question, long timestamp)
+      throws IOException {
+
+    List<Put> puts = mapper.getPuts(question, timestamp);
+    client.put(puts, Constants.TABLE_QUESTIONS);
+  }
+
+  @Override
+  public void delete(Question question, long timestamp)
+      throws IOException {
+
+    List<Delete> deletes = mapper.getDeletes(question, timestamp);
+    client.delete(deletes, Constants.TABLE_QUESTIONS);
   }
 }

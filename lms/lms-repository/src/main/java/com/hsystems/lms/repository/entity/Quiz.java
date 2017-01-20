@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class Quiz extends Auditable implements Serializable {
+public class Quiz extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 645532833693995164L;
 
@@ -56,6 +56,7 @@ public class Quiz extends Auditable implements Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  @Override
   public String getId() {
     return id;
   }

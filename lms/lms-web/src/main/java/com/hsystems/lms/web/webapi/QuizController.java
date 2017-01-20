@@ -3,12 +3,13 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuizModel;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
 
@@ -24,28 +25,28 @@ import javax.ws.rs.core.MediaType;
 @Path("quizzes")
 public class QuizController {
 
-  private final Provider<UserModel> userModelProvider;
+  private final Provider<Principal> principalProvider;
 
   private final QuizService quizService;
 
   @Inject
   QuizController(
-      Provider<UserModel> userModelProvider,
+      Provider<Principal> principalProvider,
       QuizService quizService) {
 
-    this.userModelProvider = userModelProvider;
+    this.principalProvider = principalProvider;
     this.quizService = quizService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @Requires(Permission.VIEW_QUESTIONS)
+  @Requires(Permission.VIEW_QUIZZES)
   public QuizModel getQuiz(@PathParam("id") String id)
       throws IOException {
 
-    Configuration configuration
-        = Configuration.create(userModelProvider.get());
+    UserModel userModel = (UserModel) principalProvider.get();
+    Configuration configuration = Configuration.create(userModel);
     return quizService.findBy(id, configuration).get();
   }
 }

@@ -5,13 +5,13 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
+import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,24 +24,16 @@ import java.util.Optional;
  */
 public class QuestionService extends BaseService {
 
-  private final QuestionRepository questionRepository;
-
-  private final AuditLogRepository auditLogRepository;
-
-  private final ShareLogRepository shareLogRepository;
+  private final UnitOfWork unitOfWork;
 
   private final IndexRepository indexRepository;
 
   @Inject
   QuestionService(
-      QuestionRepository questionRepository,
-      AuditLogRepository auditLogRepository,
-      ShareLogRepository shareLogRepository,
+      UnitOfWork unitOfWork,
       IndexRepository indexRepository) {
 
-    this.questionRepository = questionRepository;
-    this.auditLogRepository = auditLogRepository;
-    this.shareLogRepository = shareLogRepository;
+    this.unitOfWork = unitOfWork;
     this.indexRepository = indexRepository;
   }
 
@@ -57,7 +49,8 @@ public class QuestionService extends BaseService {
       String id, Configuration configuration)
       throws IOException {
 
-    Optional<Question> questionOptional = questionRepository.findBy(id);
+    Optional<Question> questionOptional
+        = indexRepository.findBy(id, Question.class);
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
@@ -83,12 +76,19 @@ public class QuestionService extends BaseService {
 
     QueryResult<Question> queryResult
         = indexRepository.findAllBy(query, Question.class);
-    List<Question> questions = queryResult.getEntities();
 
-    if (questions.isEmpty()) {
+    if (queryResult.getItems().isEmpty()) {
       return new QueryResult<>(queryResult.getElapsedTime(),
           Collections.emptyList());
     }
+
+    List<QuestionModel> questionModels
+        = getQuestionModels(queryResult.getItems(), configuration);
+    return new QueryResult<>(queryResult.getElapsedTime(), questionModels);
+  }
+
+  private List<QuestionModel> getQuestionModels(
+      List<Question> questions, Configuration configuration) {
 
     List<QuestionModel> questionModels = new ArrayList<>();
 
@@ -98,19 +98,64 @@ public class QuestionService extends BaseService {
       questionModels.add(questionModel);
     }
 
-    return new QueryResult<>(
-        queryResult.getElapsedTime(), questionModels);
+    return questionModels;
   }
 
   @Log
-  public void update(String id)
+  public void create(QuestionModel questionModel)
       throws IOException {
 
-    Optional<Question> questionOptional
-        = questionRepository.findBy(id);
+    create(questionModel, Configuration.create());
+  }
 
-    if (questionOptional.isPresent()) {
-      indexRepository.save(questionOptional.get());
+  @Log
+  public void create(QuestionModel questionModel, Configuration configuration)
+      throws IOException {
+
+    Question question = getEntity(questionModel,
+        Question.class, configuration);
+    unitOfWork.registerNew(question);
+    unitOfWork.commit();
+  }
+
+  @Log
+  public void save(QuestionModel questionModel)
+      throws IOException {
+
+    save(questionModel, Configuration.create());
+  }
+
+  @Log
+  public void save(QuestionModel questionModel, Configuration configuration)
+      throws IOException {
+
+    Question question = getEntity(questionModel,
+        Question.class, configuration);
+    unitOfWork.registerDirty(question);
+    unitOfWork.commit();
+  }
+
+  @Log
+  public void delete(String id, UserModel userModel)
+      throws IOException, IllegalAccessException {
+
+    Optional<Question> questionOptional
+        = indexRepository.findBy(id, Question.class);
+
+    if (!questionOptional.isPresent()) {
+      throw new IllegalArgumentException(
+          "error retrieving question");
     }
+
+    Question question = questionOptional.get();
+    User createdBy = question.getCreatedBy();
+
+    if (!createdBy.getId().equals(userModel.getId())) {
+      throw new IllegalAccessException(
+          "error deleting question");
+    }
+
+    unitOfWork.registerDeleted(question);
+    unitOfWork.commit();
   }
 }

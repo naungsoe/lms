@@ -2,10 +2,8 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -25,32 +23,23 @@ public class HBaseUserRepository
 
   private final HBaseClient client;
 
-  private final AuditLogRepository auditLogRepository;
-
   private final HBaseUserMapper mapper;
 
   @Inject
   HBaseUserRepository(
-      HBaseClient client, AuditLogRepository auditLogRepository) {
+      HBaseClient client,
+      HBaseUserMapper mapper) {
 
     this.client = client;
-    this.auditLogRepository = auditLogRepository;
-    this.mapper = new HBaseUserMapper();
+    this.mapper = mapper;
   }
 
   @Override
-  public Optional<User> findBy(String id)
+  public Optional<User> findBy(String id, long timestamp)
       throws IOException {
 
-    Optional<AuditLog> auditLogOptional
-        = auditLogRepository.findLastestLogBy(id);
-
-    if (!auditLogOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Scan scan = getRowFilterScan(id);
-    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, Constants.TABLE_USERS);
 
@@ -58,12 +47,19 @@ public class HBaseUserRepository
       return Optional.empty();
     }
 
-    User user = mapper.map(results);
+    User user = mapper.getEntity(results);
     return Optional.of(user);
   }
 
   @Override
-  public void save(User user) {
+  public void save(User entity, long timestamp)
+      throws IOException {
+
+  }
+
+  @Override
+  public void delete(User entity, long timestamp)
+      throws IOException {
 
   }
 }

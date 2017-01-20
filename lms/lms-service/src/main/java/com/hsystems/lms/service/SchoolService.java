@@ -3,8 +3,8 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.repository.AuditLogRepository;
-import com.hsystems.lms.repository.SchoolRepository;
+import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.service.model.SchoolModel;
 
@@ -16,27 +16,30 @@ import java.util.Optional;
  */
 public class SchoolService extends BaseService {
 
-  private final SchoolRepository schoolRepository;
+  private final UnitOfWork unitOfWork;
 
-  private final AuditLogRepository auditLogRepository;
+  private final IndexRepository indexRepository;
 
   @Inject
   SchoolService(
-      SchoolRepository schoolRepository,
-      AuditLogRepository auditLogRepository) {
+      UnitOfWork unitOfWork,
+      IndexRepository indexRepository) {
 
-    this.schoolRepository = schoolRepository;
-    this.auditLogRepository = auditLogRepository;
+    this.unitOfWork = unitOfWork;
+    this.indexRepository = indexRepository;
   }
 
   @Log
   public Optional<SchoolModel> findBy(String id)
       throws IOException {
 
-    Optional<School> schoolOptional = schoolRepository.findBy(id);
+    Optional<School> schoolOptional
+        = indexRepository.findBy(id, School.class);
 
     if (schoolOptional.isPresent()) {
-      return null;
+      School school = schoolOptional.get();
+      SchoolModel model = getModel(school, SchoolModel.class);
+      return Optional.of(model);
     }
 
     return Optional.empty();

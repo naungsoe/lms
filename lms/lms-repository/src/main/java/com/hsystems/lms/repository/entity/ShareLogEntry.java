@@ -1,7 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.Permission;
-
 import java.io.Serializable;
 
 /**

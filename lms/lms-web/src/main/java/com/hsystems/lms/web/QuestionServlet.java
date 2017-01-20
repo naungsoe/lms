@@ -2,7 +2,6 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.service.QuestionService;
 

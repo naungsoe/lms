@@ -1,15 +1,16 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -154,6 +155,11 @@ public abstract class HBaseMapper<T> {
   protected int getOrder(Result result) {
     return getInteger(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_ORDER);
+  }
+
+  protected <T extends Enum<T>> T getStatus(Result result, Class<T> type) {
+    return getEnum(result, Constants.FAMILY_DATA,
+        Constants.IDENTIFIER_STATUS, type);
   }
 
   protected boolean getBoolean(
@@ -395,10 +401,16 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value.toString()));
   }
 
+  protected <T extends Enum<T>> void addStatusColumn(Put put, T value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION,
+        Bytes.toBytes(value.toString()));
+  }
+
   protected void addQuestionOptionPut(
       List<Put> puts, QuestionOption option, String prefix, long timestamp) {
 
-    String rowKey = prefix + Constants.SEPARATOR_OPTION + option.getId();
+    String rowKey = String.format("%s%s%s", prefix,
+        Constants.SEPARATOR_OPTION, option.getId());
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addBodyColumn(put, option.getBody());
     addFeedbackColumn(put, option.getFeedback());
@@ -410,7 +422,8 @@ public abstract class HBaseMapper<T> {
   protected void addCreatedByPut(
       List<Put> puts, User user, String prefix, long timestamp) {
 
-    String rowKey = prefix + Constants.SEPARATOR_CREATED_BY + user.getId();
+    String rowKey = String.format("%s%s%s", prefix,
+        Constants.SEPARATOR_CREATED_BY, user.getId());
     addUserPut(puts, user, rowKey, timestamp);
   }
 
@@ -426,11 +439,14 @@ public abstract class HBaseMapper<T> {
   protected void addModifiedByPut(
       List<Put> puts, User user, String prefix, long timestamp) {
 
-    String rowKey = prefix + Constants.SEPARATOR_MODIFIED_BY + user.getId();
+    String rowKey = String.format("%s%s%s", prefix,
+        Constants.SEPARATOR_MODIFIED_BY, user.getId());
     addUserPut(puts, user, rowKey, timestamp);
   }
 
-  abstract T map(List<Result> results);
+  abstract T getEntity(List<Result> results);
 
-  abstract List<Put> map(T entity, long timestamp);
+  abstract List<Put> getPuts(T entity, long timestamp);
+
+  abstract List<Delete> getDeletes(T entity, long timestamp);
 }

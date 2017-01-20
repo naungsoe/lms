@@ -1,6 +1,7 @@
 package com.hsystems.lms.service.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -16,8 +17,18 @@ public class QuizSectionModel implements Serializable {
 
   private List<QuestionModel> questions;
 
-  public QuizSectionModel() {
+  QuizSectionModel() {
 
+  }
+
+  public QuizSectionModel(
+      String id,
+      String instructions,
+      List<QuestionModel> questions) {
+
+    this.id = id;
+    this.instructions = instructions;
+    this.questions = questions;
   }
 
   public String getId() {
@@ -37,11 +48,10 @@ public class QuizSectionModel implements Serializable {
   }
 
   public List<QuestionModel> getQuestions() {
-    return questions;
+    return Collections.unmodifiableList(questions);
   }
 
-  public void setQuestions(
-      List<QuestionModel> questions) {
+  public void setQuestions(List<QuestionModel> questions) {
     this.questions = questions;
   }
 }

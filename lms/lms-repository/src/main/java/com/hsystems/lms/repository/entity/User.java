@@ -1,7 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -12,7 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class User extends Auditable implements Serializable {
+public class User extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = -3039577050861410422L;
 
@@ -111,6 +110,7 @@ public class User extends Auditable implements Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  @Override
   public String getId() {
     return id;
   }

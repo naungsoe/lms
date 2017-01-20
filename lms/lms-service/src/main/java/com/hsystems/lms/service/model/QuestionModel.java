@@ -1,6 +1,7 @@
 package com.hsystems.lms.service.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -41,6 +42,8 @@ public class QuestionModel implements Serializable {
   private String modifiedByLastName;
 
   private String modifiedDateTime;
+
+  private long timestamp;
 
   public QuestionModel() {
 
@@ -87,7 +90,7 @@ public class QuestionModel implements Serializable {
   }
 
   public List<QuestionOptionModel> getOptions() {
-    return options;
+    return Collections.unmodifiableList(options);
   }
 
   public void setOptions(
@@ -173,5 +176,13 @@ public class QuestionModel implements Serializable {
 
   public void setModifiedDateTime(String modifiedDateTime) {
     this.modifiedDateTime = modifiedDateTime;
+  }
+
+  public long getTimestamp() {
+    return timestamp;
+  }
+
+  public void setTimestamp(long timestamp) {
+    this.timestamp = timestamp;
   }
 }

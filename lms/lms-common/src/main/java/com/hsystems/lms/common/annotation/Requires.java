@@ -1,7 +1,5 @@
 package com.hsystems.lms.common.annotation;
 
-import com.hsystems.lms.common.Permission;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -14,5 +12,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Requires {
 
-  Permission[] value();
+  String[] value();
 }

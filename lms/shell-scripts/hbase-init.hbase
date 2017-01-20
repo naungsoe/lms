@@ -144,103 +144,88 @@ put 'quizzes', '3f47f91bede47d64045ee4841138303a_mod_admin', 'd:lname', 'User', 
 put 'quizzes', '3f47f91bede47d64045ee4841138303a_mod_admin', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
 
 
-disable 'referencelog'
-drop 'referencelog'
-create 'referencelog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'referencelog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ', 1480299712295
-put 'referencelog', '3f47f91bede47d64045ee4841138303a_ref_1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION', 1480299712295
-put 'referencelog', '3f47f91bede47d64045ee4841138303a_ref_1efe773c7c5f41de68effd1ce03e6d7e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+disable 'transactions'
+drop 'transactions'
+create 'transactions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'transactions', '1480299712295', 'd:status', 'COMMITTED', 1480299712295
+put 'transactions', '1480299712295', 'd:1efe773c7c5f41de68effd1ce03e6d7e', 'CREATED', 1480299712295
 
 
-disable 'sharelog'
-drop 'sharelog'
-create 'sharelog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:id', 'admin', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a', 'd:lname', 'User', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:fname', 'Admin', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:lname', 'User', 1480299712295
-put 'sharelog', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:permission', 'EDIT_RESOURCE', 1480299712295
+disable 'operations'
+drop 'changelogs'
+create 'changelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'changelogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION', 1480299712295
+put 'changelogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED', 1480299712295
 
 
-disable 'auditlog'
-drop 'auditlog'
-create 'auditlog', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'auditlog', 'OS', 'd:type', 'SCHOOL'
-put 'auditlog', 'OS', 'd:id', 'admin'
-put 'auditlog', 'OS', 'd:fname', 'Admin'
-put 'auditlog', 'OS', 'd:lname', 'User'
-put 'auditlog', 'OS', 'd:timestamp', '1480299712295'
-put 'auditlog', 'OS', 'd:action', 'CREATED'
-put 'auditlog', 'OS_1480299712295', 'd:type', 'SCHOOL'
-put 'auditlog', 'OS_1480299712295', 'd:id', 'admin'
-put 'auditlog', 'OS_1480299712295', 'd:fname', 'Admin'
-put 'auditlog', 'OS_1480299712295', 'd:lname', 'User'
-put 'auditlog', 'OS_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:type', 'GROUP'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:id', 'admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8_1480299712295', 'd:type', 'GROUP'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8_1480299712295', 'd:id', 'admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8_1480299712295', 'd:fname', 'Admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8_1480299712295', 'd:lname', 'User'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b', 'd:type', 'GROUP'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b', 'd:id', 'admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
-put 'auditlog', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:type', 'GROUP'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:id', 'admin'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:fname', 'Admin'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:lname', 'User'
-put 'auditlog', 'd95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:type', 'GROUP'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:id', 'admin'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:type', 'GROUP'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:id', 'admin'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:fname', 'Admin'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:lname', 'User'
-put 'auditlog', '57bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:id', 'admin'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:type', 'QUESTION'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e_1480299712295 ', 'd:id', 'admin'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e_1480299712295 ', 'd:fname', 'Admin'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e_1480299712295 ', 'd:lname', 'User'
-put 'auditlog', '1efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:id', 'admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712400'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a', 'd:action', 'MODIFIED'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:type', 'QUIZ'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:id', 'admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:fname', 'Admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712295', 'd:action', 'CREATED'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:type', 'QUIZ'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:id', 'admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:fname', 'Admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:action', 'SHARED'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:type', 'QUIZ'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:id', 'admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:fname', 'Admin'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:lname', 'User'
-put 'auditlog', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:action', 'MODIFIED'
+disable 'referencelogs'
+drop 'referencelogs'
+create 'referencelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'referencelogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION'
+put 'referencelogs', '1efe773c7c5f41de68effd1ce03e6d7e_ref_3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
+put 'referencelogs', '1efe773c7c5f41de68effd1ce03e6d7e_ref_3f47f91bede47d64045ee4841138303a', 'd:id', '49a2cc395df373a4ed06214ccb599df8'
+
+
+disable 'sharelogs'
+drop 'sharelogs'
+create 'sharelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'sharelogs', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
+put 'sharelogs', '3f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712310'
+put 'sharelogs', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:fname', 'Admin'
+put 'sharelogs', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:lname', 'User'
+put 'sharelogs', '3f47f91bede47d64045ee4841138303a_sha_admin', 'd:permission', 'EDIT_RESOURCE'
+
+
+disable 'auditlogs'
+drop 'auditlogs'
+create 'auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'auditlogs', 'OS', 'd:type', 'SCHOOL'
+put 'auditlogs', 'OS', 'd:id', 'admin'
+put 'auditlogs', 'OS', 'd:fname', 'Admin'
+put 'auditlogs', 'OS', 'd:lname', 'User'
+put 'auditlogs', 'OS', 'd:timestamp', '1480299712295'
+put 'auditlogs', 'OS', 'd:action', 'CREATED'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:type', 'GROUP'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:id', 'admin'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
+put 'auditlogs', 'd95422d3337b0ebf5b00e01fe252939b', 'd:type', 'GROUP'
+put 'auditlogs', 'd95422d3337b0ebf5b00e01fe252939b', 'd:id', 'admin'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
+put 'auditlogs', 'f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:type', 'GROUP'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:id', 'admin'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
+put 'auditlogs', '57bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:id', 'admin'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
+put 'auditlogs', '1efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:id', 'admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:lname', 'User'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712400'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a', 'd:action', 'CREATED'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:type', 'QUIZ'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:id', 'admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:fname', 'Admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:lname', 'User'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712310', 'd:action', 'SHARED'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:type', 'QUIZ'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:id', 'admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:fname', 'Admin'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:lname', 'User'
+put 'auditlogs', '3f47f91bede47d64045ee4841138303a_1480299712400', 'd:action', 'MODIFIED'
+
+disable 'auditlogs'
+drop 'auditlogs'
+create 'auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}

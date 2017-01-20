@@ -2,10 +2,8 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.GroupRepository;
-import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.hbase.mapper.HBaseGroupMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -25,40 +23,44 @@ public class HBaseGroupRepository
 
   private final HBaseClient client;
 
-  private final AuditLogRepository auditLogRepository;
-
   private final HBaseGroupMapper mapper;
 
   @Inject
   HBaseGroupRepository(
-      HBaseClient client, AuditLogRepository auditLogRepository) {
+      HBaseClient client,
+      HBaseGroupMapper mapper) {
 
     this.client = client;
-    this.auditLogRepository = auditLogRepository;
-    this.mapper = new HBaseGroupMapper();
+    this.mapper = mapper;
   }
 
   @Override
-  public Optional<Group> findBy(String id)
+  public Optional<Group> findBy(String id, long timestamp)
       throws IOException {
 
-    Optional<AuditLog> auditLogOptional
-        = auditLogRepository.findLastestLogBy(id);
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(timestamp);
 
-    if (!auditLogOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Scan scan = getRowFilterScan(id);
-    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
-
-    List<Result> results = client.scan(scan, Constants.TABLE_GROUPS);
+    List<Result> results = client.scan(scan,
+        Constants.TABLE_GROUPS);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    Group group = mapper.map(results);
+    Group group = mapper.getEntity(results);
     return Optional.of(group);
+  }
+
+  @Override
+  public void save(Group entity, long timestamp)
+      throws IOException {
+
+  }
+
+  @Override
+  public void delete(Group entity, long timestamp)
+      throws IOException {
+
   }
 }

@@ -1,7 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.EntityType;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -10,13 +8,13 @@ import java.util.List;
 /**
  * Created by naungsoe on 2/11/16.
  */
-public class ShareLog implements Serializable {
+public class ShareLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 6359949551941210092L;
 
-  private String entityId;
+  private String id;
 
-  private EntityType entityType;
+  private EntityType type;
 
   private User sharedBy;
 
@@ -29,25 +27,26 @@ public class ShareLog implements Serializable {
   }
 
   public ShareLog(
-      String entityId,
-      EntityType entityType,
+      String id,
+      EntityType type,
       User sharedBy,
       LocalDateTime sharedDateTime,
       List<ShareLogEntry> entries) {
 
-    this.entityId = entityId;
-    this.entityType = entityType;
+    this.id = id;
+    this.type = type;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
     this.entries = entries;
   }
 
-  public String getEntityId() {
-    return entityId;
+  @Override
+  public String getId() {
+    return id;
   }
 
-  public EntityType getEntityType() {
-    return entityType;
+  public EntityType getType() {
+    return type;
   }
 
   public User getSharedBy() {
@@ -65,7 +64,7 @@ public class ShareLog implements Serializable {
   @Override
   public int hashCode() {
     int prime = 31;
-    int result = entityId.hashCode();
+    int result = id.hashCode();
     result = result * prime + sharedBy.hashCode();
     return result * prime + sharedDateTime.hashCode();
   }
@@ -77,7 +76,7 @@ public class ShareLog implements Serializable {
     }
 
     ShareLog shareLog = (ShareLog) obj;
-    return entityId.equals(shareLog.getEntityId())
+    return id.equals(shareLog.getId())
         && sharedBy.equals(shareLog.getSharedBy())
         && sharedDateTime.equals(shareLog.getSharedDateTime());
   }
@@ -90,6 +89,6 @@ public class ShareLog implements Serializable {
     return String.format(
         "ShareLog{entityId=%s, entityType=%s, sharedBy=%s, "
             + "sharedDateTime=%s, entries=%s}",
-        entityId, entityType, sharedBy, sharedDateTime, entriesBuilder);
+        id, type, sharedBy, sharedDateTime, entriesBuilder);
   }
 }

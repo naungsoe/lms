@@ -1,11 +1,11 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
+import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -24,26 +24,37 @@ import java.util.Properties;
  */
 public class AuthenticationService extends BaseService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final Properties properties;
+
+  private final UnitOfWork unitOfWork;
 
   private final UserRepository userRepository;
 
   @Inject
   AuthenticationService(
-      Provider<Properties> propertiesProvider,
+      Properties properties,
+      UnitOfWork unitOfWork,
       UserRepository userRepository) {
 
-    this.propertiesProvider = propertiesProvider;
+    this.properties = properties;
+    this.unitOfWork = unitOfWork;
     this.userRepository = userRepository;
   }
 
   @Log
   public Optional<UserModel> signIn(SignInModel signInModel)
       throws IOException {
+
     checkPreconditions(signInModel);
 
+    long timestamp = unitOfWork.getTimestamp(signInModel.getId());
+
+    if (timestamp == Long.MIN_VALUE) {
+      return Optional.empty();
+    }
+
     Optional<User> userOptional
-        = userRepository.findBy(signInModel.getId());
+        = userRepository.findBy(signInModel.getId(), timestamp);
 
     if (userOptional.isPresent()) {
       User user = userOptional.get();
@@ -52,6 +63,7 @@ public class AuthenticationService extends BaseService {
 
       if (user.getId().equals(signInModel.getId())
           && user.getPassword().equals(hashedPassword)) {
+
         Configuration configuration = Configuration.create(user);
         UserModel userModel = getModel(user, UserModel.class, configuration);
         return Optional.of(userModel);
@@ -62,7 +74,6 @@ public class AuthenticationService extends BaseService {
   }
 
   private void checkPreconditions(SignInModel signInModel) {
-    Properties properties = propertiesProvider.get();
     int maxIdLength = Integer.parseInt(
         properties.getProperty("field.user.id.max.length"));
     int maxPasswordLength = Integer.parseInt(
@@ -91,7 +102,13 @@ public class AuthenticationService extends BaseService {
   public Optional<UserModel> findSignedInUserBy(String id)
       throws IOException {
 
-    Optional<User> userOptional = userRepository.findBy(id);
+    long timestamp = unitOfWork.getTimestamp(id);
+
+    if (timestamp == Long.MIN_VALUE) {
+      return Optional.empty();
+    }
+
+    Optional<User> userOptional = userRepository.findBy(id, timestamp);
 
     if (userOptional.isPresent()) {
       Configuration configuration = Configuration.create();

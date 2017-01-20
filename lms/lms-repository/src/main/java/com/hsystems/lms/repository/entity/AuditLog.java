@@ -1,20 +1,19 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.Action;
-import com.hsystems.lms.common.EntityType;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 2/11/16.
  */
-public class AuditLog implements Serializable {
+public class AuditLog implements Entity, Serializable {
 
   private static final long serialVersionUID = -3408481188461757227L;
 
-  private String entityId;
+  private String id;
 
-  private EntityType entityType;
+  private EntityType type;
 
   private User user;
 
@@ -27,22 +26,23 @@ public class AuditLog implements Serializable {
   }
 
   public AuditLog(
-      String entityId,
-      EntityType entityType,
+      String id,
+      EntityType type,
       User user,
       long timestamp,
       Action action) {
 
-    this.entityId = entityId;
-    this.entityType = entityType;
+    this.id = id;
+    this.type = type;
     this.user = user;
     this.timestamp = timestamp;
     this.action = action;
   }
 
-  public String getEntityId() { return entityId; }
+  @Override
+  public String getId() { return id; }
 
-  public EntityType getEntityType() { return entityType; }
+  public EntityType getType() { return type; }
 
   public User getUser() {
     return user;
@@ -59,7 +59,7 @@ public class AuditLog implements Serializable {
   @Override
   public int hashCode() {
     int prime = 31;
-    int result = entityId.hashCode();
+    int result = id.hashCode();
     result = result * prime + user.hashCode();
     return result * prime + Long.hashCode(timestamp);
   }
@@ -71,7 +71,7 @@ public class AuditLog implements Serializable {
     }
 
     AuditLog auditLog = (AuditLog) obj;
-    return entityId.equals(auditLog.getEntityId())
+    return id.equals(auditLog.getId())
         && user.equals(auditLog.getUser())
         && (timestamp == auditLog.getTimestamp());
   }
@@ -81,6 +81,6 @@ public class AuditLog implements Serializable {
     return String.format(
         "AuditLog{entityId=%s, entityType=%s, user=%s, "
             + "timestamp=%s, action=%s}",
-        entityId, entityType, user, timestamp, action);
+        id, type, user, timestamp, action);
   }
 }

@@ -1,7 +1,5 @@
 package com.hsystems.lms.repository.solr.provider;
 
-import com.google.inject.Provider;
-
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.query.Criterion;
@@ -41,27 +39,21 @@ public class SolrClient {
 
   private static final String SEPARATOR_ID = "_";
 
-  private Provider<Properties> propertiesProvider;
+  private Properties properties;
 
   SolrClient() {
 
   }
 
-  SolrClient(Provider<Properties> propertiesProvider) {
-    this.propertiesProvider = propertiesProvider;
+  SolrClient(Properties properties) {
+    this.properties = properties;
   }
 
   public <T> QueryResult<T> query(Query query, Class<T> type)
       throws IOException {
 
-    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
-    String collection = StringUtils.isEmpty(annotation.name())
-        ? type.getSimpleName() : annotation.name();
-
-    CloudSolrClient client = getClient();
-    client.setDefaultCollection(collection);
-
     try {
+      CloudSolrClient client = getClient(type);
       SolrQuery solrQuery = getSolrQuery(query, type);
       QueryResponse response = client.query(solrQuery);
 
@@ -78,12 +70,17 @@ public class SolrClient {
     }
   }
 
-  protected CloudSolrClient getClient() {
-    Properties properties = propertiesProvider.get();
+  protected <T> CloudSolrClient getClient(Class<T> type) {
+    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+    String collection = StringUtils.isEmpty(annotation.name())
+        ? type.getSimpleName() : annotation.name();
+
     String zkHost = properties.getProperty("app.zookeeper.quorum")
         + ':' + properties.getProperty("app.zookeeper.client.port");
-    return new CloudSolrClient.Builder()
+    CloudSolrClient client = new CloudSolrClient.Builder()
         .withZkHost(zkHost).build();
+    client.setDefaultCollection(collection);
+    return client;
   }
 
   private <T> SolrQuery getSolrQuery(Query query, Class<T> type) {
@@ -287,15 +284,8 @@ public class SolrClient {
   public <T> void index(T entity)
       throws IOException {
 
-    IndexCollection annotation = entity.getClass()
-        .getAnnotation(IndexCollection.class);
-    String collection = StringUtils.isEmpty(annotation.name())
-        ? entity.getClass().getSimpleName() : annotation.name();
-
-    CloudSolrClient client = getClient();
-    client.setDefaultCollection(collection);
-
     try {
+      CloudSolrClient client = getClient(entity.getClass());
       SolrInputDocument document = getDocument(entity);
       updateChildDocumentsId(document);
       client.add(document);
@@ -418,5 +408,11 @@ public class SolrClient {
       x.setField(FIELD_ID, documentId.toString() + SEPARATOR_ID
           + childDocumentId.toString());
     });
+  }
+
+  public <T> void delete(T entity)
+      throws IOException {
+
+
   }
 }

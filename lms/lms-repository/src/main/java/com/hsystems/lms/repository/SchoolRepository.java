@@ -2,14 +2,9 @@ package com.hsystems.lms.repository;
 
 import com.hsystems.lms.repository.entity.School;
 
-import java.io.IOException;
-import java.util.Optional;
-
 /**
  * Created by naungsoe on 12/10/16.
  */
-public interface SchoolRepository {
+public interface SchoolRepository extends Repository<School> {
 
-  Optional<School> findBy(String id)
-      throws IOException;
 }

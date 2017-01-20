@@ -1,7 +1,5 @@
 package com.hsystems.lms.service.model;
 
-import com.hsystems.lms.common.Permission;
-
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -23,7 +21,7 @@ public class SchoolModel implements Serializable {
 
   private String dateTimeFormat;
 
-  private List<Permission> permissions;
+  private List<String> permissions;
 
   SchoolModel() {
 
@@ -35,7 +33,7 @@ public class SchoolModel implements Serializable {
       String locale,
       String dateFormat,
       String dateTimeFormat,
-      List<Permission> permissions) {
+      List<String> permissions) {
 
     this.id = id;
     this.name = name;
@@ -49,21 +47,47 @@ public class SchoolModel implements Serializable {
     return id;
   }
 
+  public void setId(String id) {
+    this.id = id;
+  }
+
   public String getName() {
     return name;
   }
 
-  public String getLocale() { return locale; }
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public String getLocale() {
+    return locale;
+  }
+
+  public void setLocale(String locale) {
+    this.locale = locale;
+  }
 
   public String getDateFormat() {
     return dateFormat;
+  }
+
+  public void setDateFormat(String dateFormat) {
+    this.dateFormat = dateFormat;
   }
 
   public String getDateTimeFormat() {
     return dateTimeFormat;
   }
 
-  public List<Permission> getPermissions() {
+  public void setDateTimeFormat(String dateTimeFormat) {
+    this.dateTimeFormat = dateTimeFormat;
+  }
+
+  public List<String> getPermissions() {
     return Collections.unmodifiableList(permissions);
+  }
+
+  public void setPermissions(List<String> permissions) {
+    this.permissions = permissions;
   }
 }

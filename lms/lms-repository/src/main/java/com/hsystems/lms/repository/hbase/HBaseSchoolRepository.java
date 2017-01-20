@@ -2,10 +2,8 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.SchoolRepository;
-import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.hbase.mapper.HBaseSchoolMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -25,32 +23,23 @@ public class HBaseSchoolRepository
 
   private final HBaseClient client;
 
-  private final AuditLogRepository auditLogRepository;
-
   private final HBaseSchoolMapper mapper;
 
   @Inject
   HBaseSchoolRepository(
-      HBaseClient client, AuditLogRepository auditLogRepository) {
+      HBaseClient client,
+      HBaseSchoolMapper mapper) {
 
     this.client = client;
-    this.auditLogRepository = auditLogRepository;
-    this.mapper = new HBaseSchoolMapper();
+    this.mapper = mapper;
   }
 
   @Override
-  public Optional<School> findBy(String id)
+  public Optional<School> findBy(String id, long timestamp)
       throws IOException {
 
-    Optional<AuditLog> auditLogOptional
-        = auditLogRepository.findLastestLogBy(id);
-
-    if (!auditLogOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Scan scan = getRowFilterScan(id);
-    scan.setTimeStamp(auditLogOptional.get().getTimestamp());
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, Constants.TABLE_SCHOOLS);
 
@@ -58,7 +47,17 @@ public class HBaseSchoolRepository
       return Optional.empty();
     }
 
-    School school = mapper.map(results);
+    School school = mapper.getEntity(results);
     return Optional.of(school);
+  }
+
+  @Override
+  public void save(School entity, long timestamp) throws IOException {
+
+  }
+
+  @Override
+  public void delete(School entity, long timestamp) throws IOException {
+
   }
 }

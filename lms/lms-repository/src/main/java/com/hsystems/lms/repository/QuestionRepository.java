@@ -8,8 +8,6 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 31/10/16.
  */
-public interface QuestionRepository {
+public interface QuestionRepository extends Repository<Question> {
 
-  Optional<Question> findBy(String id)
-      throws IOException;
 }

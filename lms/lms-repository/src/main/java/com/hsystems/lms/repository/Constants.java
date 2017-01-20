@@ -7,6 +7,8 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 public class Constants {
 
+  public static final String REPOSITORY_SUFFIX = "Repository";
+
   public static final String DATE_FORMAT = "yyyy-MM-dd";
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
@@ -15,9 +17,11 @@ public class Constants {
   public static final String TABLE_USERS = "users";
   public static final String TABLE_QUIZZES = "quizzes";
   public static final String TABLE_QUESTIONS = "questions";
-  public static final String TABLE_REFERENCE_LOG = "referencelog";
-  public static final String TABLE_SHARE_LOG = "sharelog";
-  public static final String TABLE_AUDIT_LOG = "auditlog";
+  public static final String TABLE_TRANSACTIONS = "transactions";
+  public static final String TABLE_OPERATIONS = "operations";
+  public static final String TABLE_REFERENCE_LOGS = "referencelogs";
+  public static final String TABLE_SHARE_LOGS = "sharelogs";
+  public static final String TABLE_AUDIT_LOGS = "auditlogs";
 
   public static final byte[] FAMILY_DATA = Bytes.toBytes("d");
 
@@ -46,6 +50,7 @@ public class Constants {
   public static final byte[] IDENTIFIER_FEEDBACK = Bytes.toBytes("feedback");
   public static final byte[] IDENTIFIER_CORRECT = Bytes.toBytes("correct");
   public static final byte[] IDENTIFIER_ORDER = Bytes.toBytes("order");
+  public static final byte[] IDENTIFIER_STATUS = Bytes.toBytes("status");
   public static final byte[] IDENTIFIER_TIMESTAMP = Bytes.toBytes("timestamp");
   public static final byte[] IDENTIFIER_ACTION = Bytes.toBytes("action");
 

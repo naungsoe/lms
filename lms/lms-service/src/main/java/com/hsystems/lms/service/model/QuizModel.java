@@ -1,6 +1,7 @@
 package com.hsystems.lms.service.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -67,7 +68,7 @@ public class QuizModel implements Serializable {
   }
 
   public List<QuizSectionModel> getSections() {
-    return sections;
+    return Collections.unmodifiableList(sections);
   }
 
   public void setSections(

@@ -5,6 +5,7 @@ import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Connection;
 import org.apache.hadoop.hbase.client.ConnectionFactory;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
@@ -14,6 +15,7 @@ import org.apache.hadoop.hbase.client.Table;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -71,11 +73,35 @@ public class HBaseClient {
   public void put(Put put, String tableName)
       throws IOException {
 
+    put(Arrays.asList(put), tableName);
+  }
+
+  public void put(List<Put> puts, String tableName)
+      throws IOException {
+
     try (Connection connection
              = ConnectionFactory.createConnection(configuration)) {
 
       Table table = connection.getTable(TableName.valueOf(tableName));
-      table.put(put);
+      table.put(puts);
+      table.close();
+    }
+  }
+
+  public void delete(Delete delete, String tableName)
+      throws IOException {
+
+    delete(Arrays.asList(delete), tableName);
+  }
+
+  public void delete(List<Delete> deletes, String tableName)
+      throws IOException {
+
+    try (Connection connection
+             = ConnectionFactory.createConnection(configuration)) {
+
+      Table table = connection.getTable(TableName.valueOf(tableName));
+      table.delete(deletes);
       table.close();
     }
   }

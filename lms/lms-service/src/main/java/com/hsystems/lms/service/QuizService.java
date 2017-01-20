@@ -3,10 +3,8 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.QuizRepository;
-import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuizModel;
@@ -19,24 +17,16 @@ import java.util.Optional;
  */
 public class QuizService extends BaseService {
 
-  private final QuizRepository quizRepository;
-
-  private final AuditLogRepository auditLogRepository;
-
-  private final ShareLogRepository shareLogRepository;
+  private final UnitOfWork unitOfWork;
 
   private final IndexRepository indexRepository;
 
   @Inject
   QuizService(
-      QuizRepository quizRepository,
-      AuditLogRepository auditLogRepository,
-      ShareLogRepository shareLogRepository,
+      UnitOfWork unitOfWork,
       IndexRepository indexRepository) {
 
-    this.quizRepository = quizRepository;
-    this.auditLogRepository = auditLogRepository;
-    this.shareLogRepository = shareLogRepository;
+    this.unitOfWork = unitOfWork;
     this.indexRepository = indexRepository;
   }
 
@@ -48,10 +38,18 @@ public class QuizService extends BaseService {
   }
 
   @Log
-  public Optional<QuizModel> findBy(String id, Configuration configuration)
+  public Optional<QuizModel> findBy(
+      String id, Configuration configuration)
       throws IOException {
 
-    Optional<Quiz> quizOptional = quizRepository.findBy(id);
+    long timestamp = unitOfWork.getTimestamp(id);
+
+    if (timestamp == Long.MIN_VALUE) {
+      return Optional.empty();
+    }
+
+    Optional<Quiz> quizOptional
+        = indexRepository.findBy(id, Quiz.class);
 
     if (quizOptional.isPresent()) {
       Quiz quiz = quizOptional.get();

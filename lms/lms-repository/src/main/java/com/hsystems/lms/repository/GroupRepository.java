@@ -8,8 +8,6 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public interface GroupRepository {
+public interface GroupRepository extends Repository<Group> {
 
-  Optional<Group> findBy(String id)
-      throws IOException;
 }

@@ -1,7 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
-import com.hsystems.lms.common.QuestionType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 
@@ -14,7 +13,7 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(name = "questions")
-public class Question extends Auditable implements Serializable {
+public class Question extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 6004706395678775298L;
 
@@ -85,6 +84,7 @@ public class Question extends Auditable implements Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  @Override
   public String getId() {
     return id;
   }

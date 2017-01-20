@@ -5,8 +5,8 @@ import com.google.inject.Provider;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.JsonUtils;
-import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.util.ServletUtils;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,11 +29,11 @@ import javax.ws.rs.core.MediaType;
 @Path("locales")
 public class LocaleController {
 
-  private final Provider<UserModel> userModelProvider;
+  private final Provider<Principal> principalProvider;
 
   @Inject
-  LocaleController(Provider<UserModel> userModelProvider) {
-    this.userModelProvider = userModelProvider;
+  LocaleController(Provider<Principal> principalProvider) {
+    this.principalProvider = principalProvider;
   }
 
   @GET

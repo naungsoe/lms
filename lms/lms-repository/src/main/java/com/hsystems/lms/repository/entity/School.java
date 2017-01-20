@@ -1,7 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -15,7 +14,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * Created by naungsoe on 7/10/16.
  */
 @XmlRootElement
-public class School extends Auditable implements Serializable {
+public class School extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
 
@@ -74,6 +73,7 @@ public class School extends Auditable implements Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  @Override
   public String getId() {
     return id;
   }

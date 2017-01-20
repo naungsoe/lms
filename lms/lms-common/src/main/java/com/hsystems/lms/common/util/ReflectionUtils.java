@@ -15,7 +15,7 @@ import java.util.Optional;
  */
 public final class ReflectionUtils {
 
-  public static Object getInstance(Class type, Object ... initargs) {
+  public static Object getInstance(Class type, Object... initargs) {
     Optional<Constructor> constructor = getParamLessConstructor(type);
 
     try {
@@ -32,26 +32,21 @@ public final class ReflectionUtils {
 
   public static Optional<Constructor> getParamLessConstructor(Class type) {
     Constructor[] constructors = type.getDeclaredConstructors();
-
-    for (int i = 0; i < constructors.length; i++) {
-      if (constructors[i].getGenericParameterTypes().length == 0) {
-        return Optional.of(constructors[i]);
-      }
-    }
-
-    return Optional.empty();
+    return Arrays.asList(constructors).stream()
+        .filter(x -> x.getGenericParameterTypes().length == 0)
+        .findAny();
   }
 
   public static <T> String getString(T instance, String fieldName) {
     return ReflectionUtils.getValue(instance, fieldName, String.class);
   }
 
-  public static <T,S> S getValue(T instance, String fieldName, Class<S> type) {
+  public static <T, S> S getValue(T instance, String fieldName, Class<S> type) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
     return getValue(instance, fieldOptional.get(), type);
   }
 
-  public static <T,S> S getValue(T instance, Field field, Class<S> type) {
+  public static <T, S> S getValue(T instance, Field field, Class<S> type) {
     field.setAccessible(true);
 
     try {
@@ -64,7 +59,7 @@ public final class ReflectionUtils {
     }
   }
 
-  public static <T,S> void setValue(T instance, String fieldName, S value) {
+  public static <T, S> void setValue(T instance, String fieldName, S value) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
 
     if (!fieldOptional.isPresent()) {

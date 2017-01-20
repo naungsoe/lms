@@ -1,6 +1,5 @@
 package com.hsystems.lms.web;
 
-import com.hsystems.lms.common.Permission;
 import com.hsystems.lms.common.annotation.Requires;
 
 import java.io.IOException;

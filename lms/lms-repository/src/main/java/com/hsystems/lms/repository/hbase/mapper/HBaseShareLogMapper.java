@@ -1,10 +1,11 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.EntityType;
+import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -19,7 +20,7 @@ import java.util.List;
 public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
 
   @Override
-  public ShareLog map(List<Result> results) {
+  public ShareLog getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     String entityId = Bytes.toString(mainResult.getRow());
@@ -46,7 +47,12 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
   }
 
   @Override
-  public List<Put> map(ShareLog entity, long timestamp) {
-    return null;
+  public List<Put> getPuts(ShareLog entity, long timestamp) {
+    return new ArrayList<>();
+  }
+
+  @Override
+  public List<Delete> getDeletes(ShareLog entity, long timestamp) {
+    return new ArrayList<>();
   }
 }

@@ -12,8 +12,7 @@ public class CommonUtils {
       'a', 'b', 'c', 'd', 'e', 'f'};
 
   public static void checkArgument(
-      boolean expression, String errorMessage)
-      throws IllegalArgumentException {
+      boolean expression, String errorMessage) {
 
     if (!expression) {
       throw new IllegalArgumentException(errorMessage);
@@ -29,7 +28,7 @@ public class CommonUtils {
     int numChars = bytes.length * 2;
     char[] ch = new char[numChars];
 
-    for(int i = 0; i < numChars; i += 2) {
+    for (int i = 0; i < numChars; i += 2) {
       byte d = bytes[i / 2];
       ch[i] = HEX_CHARS[d >> 4 & 15];
       ch[i + 1] = HEX_CHARS[d & 15];

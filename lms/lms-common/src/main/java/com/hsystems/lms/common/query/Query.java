@@ -32,6 +32,10 @@ public class Query {
     this.limit = 10;
   }
 
+  public static Query create() {
+    return new Query();
+  }
+
   public static Query create(String queryString) {
     Query query = new Query();
 
@@ -53,7 +57,7 @@ public class Query {
 
         switch (name) {
           case "fields":
-            query.addField(value.split(","));
+            query.addFields(Arrays.asList(value.split(",")));
             break;
 
           case "sort":
@@ -135,8 +139,8 @@ public class Query {
     return Collections.unmodifiableList(fields);
   }
 
-  public void addField(String... fields) {
-    this.fields.addAll(Arrays.asList(fields));
+  public void addField(String field) {
+    this.fields.add(field);
   }
 
   public void addFields(List<String> fields) {
@@ -147,8 +151,8 @@ public class Query {
     return Collections.unmodifiableList(criteria);
   }
 
-  public void addCriterion(Criterion... criteria) {
-    this.criteria.addAll(Arrays.asList(criteria));
+  public void addCriterion(Criterion criterion) {
+    this.criteria.add(criterion);
   }
 
   public void addCriteria(List<Criterion> criteria) {
@@ -159,8 +163,8 @@ public class Query {
     return Collections.unmodifiableList(sortKeys);
   }
 
-  public void addSortKey(SortKey... sortKeys) {
-    this.sortKeys.addAll(Arrays.asList(sortKeys));
+  public void addSortKey(SortKey sortKey) {
+    this.sortKeys.add(sortKey);
   }
 
   public void addSortKeys(List<SortKey> sortKeys) {
@@ -180,15 +184,15 @@ public class Query {
     int prime = 31;
     int result = 0;
 
-    for (String field: fields) {
+    for (String field : fields) {
       result = result * prime + field.hashCode();
     }
 
-    for (Criterion criterion: criteria) {
+    for (Criterion criterion : criteria) {
       result = result * prime + criterion.hashCode();
     }
 
-    for (SortKey sortKey: sortKeys) {
+    for (SortKey sortKey : sortKeys) {
       result = result * prime + sortKey.hashCode();
     }
 

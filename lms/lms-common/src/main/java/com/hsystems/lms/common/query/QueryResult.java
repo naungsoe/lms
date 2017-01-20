@@ -9,19 +9,19 @@ public class QueryResult<T> {
 
   private long elapsedTime;
 
-  private List<T> entities;
+  private List<T> items;
 
-  public QueryResult(long elapsedTime, List<T> entities) {
+  public QueryResult(long elapsedTime, List<T> items) {
     this.elapsedTime = elapsedTime;
-    this.entities = entities;
+    this.items = items;
   }
 
   public long getElapsedTime() {
     return elapsedTime;
   }
 
-  public List<T> getEntities() {
-    return entities;
+  public List<T> getItems() {
+    return items;
   }
 
   @Override
@@ -30,8 +30,8 @@ public class QueryResult<T> {
     int result = 0;
     result = result * prime + Long.hashCode(elapsedTime);
 
-    for (T entity : entities) {
-      result = result * prime + entity.hashCode();
+    for (T item : items) {
+      result = result * prime + item.hashCode();
     }
 
     return result;
@@ -44,18 +44,18 @@ public class QueryResult<T> {
     }
 
     QueryResult<T> queryResult = (QueryResult<T>) obj;
-    long entityCount = queryResult.getEntities().stream()
-        .filter(x -> entities.stream()
+    long itemCount = queryResult.getItems().stream()
+        .filter(x -> items.stream()
             .anyMatch(y -> x.equals(y))).count();
 
     return (elapsedTime == queryResult.getElapsedTime())
-        && (entities.size() == entityCount);
+        && (items.size() == itemCount);
   }
 
   @Override
   public String toString() {
     StringBuilder entitiesBuilder = new StringBuilder();
-    entities.forEach(x -> entitiesBuilder.append(x).append(","));
+    items.forEach(x -> entitiesBuilder.append(x).append(","));
 
     return String.format(
         "QueryResult{elapsedTime=%s, entities=%s}",
