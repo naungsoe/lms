@@ -71,9 +71,8 @@ public class HBaseUnitOfWork implements UnitOfWork {
   public void commit()
       throws IOException {
 
-    startTransaction();
-
     try {
+      startTransaction();
       insertNewEntities();
       updateDirtyEntities();
       deleteDeletedEntities();
