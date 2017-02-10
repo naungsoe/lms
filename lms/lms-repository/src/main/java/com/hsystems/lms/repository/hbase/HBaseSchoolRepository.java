@@ -41,7 +41,8 @@ public class HBaseSchoolRepository
     Scan scan = getRowKeyFilterScan(id);
     scan.setTimeStamp(timestamp);
 
-    List<Result> results = client.scan(scan, Constants.TABLE_SCHOOLS);
+    List<Result> results = client.scan(scan,
+        Constants.TABLE_SCHOOLS);
 
     if (results.isEmpty()) {
       return Optional.empty();
@@ -52,12 +53,14 @@ public class HBaseSchoolRepository
   }
 
   @Override
-  public void save(School entity, long timestamp) throws IOException {
+  public void save(School entity, long timestamp)
+      throws IOException {
 
   }
 
   @Override
-  public void delete(School entity, long timestamp) throws IOException {
+  public void delete(School entity, long timestamp)
+      throws IOException {
 
   }
 }

@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.annotation.Groups;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,6 +18,9 @@ public class User extends Auditable implements Entity, Serializable {
 
   @IndexField(type = IndexFieldType.IDENTITY)
   private String id;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private String signInId;
 
   private String password;
 
@@ -48,10 +52,6 @@ public class User extends Auditable implements Entity, Serializable {
 
   private List<Permission> permissions;
 
-  @IndexField(type = IndexFieldType.OBJECT)
-  private School school;
-
-  @IndexField(type = IndexFieldType.LIST)
   private List<Group> groups;
 
   User() {
@@ -70,6 +70,7 @@ public class User extends Auditable implements Entity, Serializable {
 
   public User(
       String id,
+      String signInId,
       String password,
       String salt,
       String firstName,
@@ -82,14 +83,13 @@ public class User extends Auditable implements Entity, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
-      School school,
-      List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
       LocalDateTime modifiedDateTime) {
 
     this.id = id;
+    this.signInId = signInId;
     this.password = password;
     this.salt = salt;
     this.firstName = firstName;
@@ -102,8 +102,6 @@ public class User extends Auditable implements Entity, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
-    this.school = school;
-    this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -113,6 +111,10 @@ public class User extends Auditable implements Entity, Serializable {
   @Override
   public String getId() {
     return id;
+  }
+
+  public String getSignInId() {
+    return signInId;
   }
 
   public String getPassword() {
@@ -161,10 +163,7 @@ public class User extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
-  public School getSchool() {
-    return school;
-  }
-
+  @Groups
   public List<Group> getGroups() {
     return Collections.unmodifiableList(groups);
   }
@@ -181,26 +180,23 @@ public class User extends Auditable implements Entity, Serializable {
     }
 
     User user = (User) obj;
-    return id.equals(user.getId());
+    return signInId.equals(user.getSignInId());
   }
 
   @Override
   public String toString() {
     StringBuilder permissionsBuilder = new StringBuilder();
-    permissions.forEach(x -> permissionsBuilder.append(x).append(","));
-
-    StringBuilder groupsBuilder = new StringBuilder();
-    groups.forEach(x -> groupsBuilder.append(x).append(","));
+    permissions.forEach(permission
+        -> permissionsBuilder.append(permission).append(","));
 
     return String.format(
-        "School{id=%s, password=%s, salt=%s, firstName=%s, "
+        "School{id=%s, signInId=%s, password=%s, salt=%s, firstName=%s, "
             + "lastName=%s, dateOfBirth=%s, gender=%s, mobile=%s, "
             + "email=%s, locale=%s, dateFormat=%s, dateTimeFormat=%s, "
-            + "permissions=%s, school=%s, groups=%s, createdBy=%s, "
-            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
-        id, password, salt, firstName, lastName, dateOfBirth,
-        gender, mobile, email, locale, dateFormat, dateTimeFormat,
-        permissionsBuilder, school, groupsBuilder, createdBy,
-        createdDateTime, modifiedBy, modifiedDateTime);
+            + "permissions=%s, createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
+        id, signInId, password, salt, firstName, lastName, dateOfBirth, gender,
+        mobile, email, locale, dateFormat, dateTimeFormat, permissionsBuilder,
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

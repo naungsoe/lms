@@ -8,10 +8,8 @@ import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseAuditLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,8 +55,8 @@ public class HBaseAuditLogRepository
     }
 
     List<AuditLog> auditLogs = new ArrayList<>();
-    results.stream().forEach(x -> {
-      AuditLog auditLog = mapper.getEntity(Arrays.asList(x));
+    results.stream().forEach(logResult -> {
+      AuditLog auditLog = mapper.getEntity(Arrays.asList(logResult));
       auditLogs.add(auditLog);
     });
     return auditLogs;
@@ -68,10 +66,7 @@ public class HBaseAuditLogRepository
   public void save(AuditLog auditLog, long timestamp)
       throws IOException {
 
-    Put put = new Put(Bytes.toBytes(auditLog.getId()), timestamp);
-    byte[] type = Bytes.toBytes(auditLog.getType().toString());
-    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE, type);
-    client.put(put, Constants.TABLE_AUDIT_LOGS);
+
   }
 
   @Override

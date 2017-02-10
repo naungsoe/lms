@@ -23,9 +23,6 @@ public class Group extends Auditable implements Entity, Serializable {
 
   private List<Permission> permissions;
 
-  @IndexField(type = IndexFieldType.OBJECT)
-  private School school;
-
   @IndexField(type = IndexFieldType.LIST)
   private List<User> members;
 
@@ -45,7 +42,6 @@ public class Group extends Auditable implements Entity, Serializable {
       String id,
       String name,
       List<Permission> permissions,
-      School school,
       List<User> members,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -55,7 +51,6 @@ public class Group extends Auditable implements Entity, Serializable {
     this.id = id;
     this.name = name;
     this.permissions = permissions;
-    this.school = school;
     this.members = members;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
@@ -76,8 +71,6 @@ public class Group extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
-  public School getSchool() { return  school; }
-
   public List<User> getMembers() {
     return Collections.unmodifiableList(members);
   }
@@ -94,22 +87,24 @@ public class Group extends Auditable implements Entity, Serializable {
     }
 
     Group group = (Group) obj;
+
     return id.equals(group.getId());
   }
 
   @Override
   public String toString() {
     StringBuilder permissionsBuilder = new StringBuilder();
-    permissions.forEach(x -> permissionsBuilder.append(x).append(","));
+    permissions.forEach(permission
+        -> permissionsBuilder.append(permission).append(","));
 
     StringBuilder membersBuilder = new StringBuilder();
-    members.forEach(x -> membersBuilder.append(x).append(","));
+    members.forEach(member -> membersBuilder.append(member).append(","));
 
     return String.format(
-        "Group{id=%s, name=%s, permissions=%s, school=%s, "
+        "Group{id=%s, name=%s, permissions=%s, "
             + "members=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, name, permissionsBuilder, school, membersBuilder,
+        id, name, permissionsBuilder, membersBuilder,
         createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

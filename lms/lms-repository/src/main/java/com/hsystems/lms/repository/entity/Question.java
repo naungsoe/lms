@@ -35,9 +35,6 @@ public class Question extends Auditable implements Entity, Serializable {
   @IndexField(type = IndexFieldType.LIST)
   private List<QuestionOption> options;
 
-  @IndexField(type = IndexFieldType.OBJECT)
-  private School school;
-
   Question() {
 
   }
@@ -77,7 +74,6 @@ public class Question extends Auditable implements Entity, Serializable {
     this.hint = hint;
     this.explanation = explanation;
     this.options = options;
-    this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -103,8 +99,6 @@ public class Question extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(options);
   }
 
-  public School getSchool() { return  school; }
-
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -117,18 +111,18 @@ public class Question extends Auditable implements Entity, Serializable {
     }
 
     Question question = (Question) obj;
+
     return id.equals(question.getId());
   }
 
   @Override
   public String toString() {
     StringBuilder optionsBuilder = new StringBuilder();
-    options.forEach(x -> optionsBuilder.append(x).append(","));
+    options.forEach(option -> optionsBuilder.append(option).append(","));
 
     return String.format(
         "Question{id=%s, type=%s, body=%s, hint=%s, "
-            + "explanation=%s, options=%s, school=%s}",
-        id, type, body, school, hint, explanation,
-        optionsBuilder, school);
+            + "explanation=%s, options=%s}",
+        id, type, body, hint, explanation, optionsBuilder);
   }
 }

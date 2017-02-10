@@ -45,8 +45,9 @@ public class QueryResult<T> {
 
     QueryResult<T> queryResult = (QueryResult<T>) obj;
     long itemCount = queryResult.getItems().stream()
-        .filter(x -> items.stream()
-            .anyMatch(y -> x.equals(y))).count();
+        .filter(itemX -> items.stream()
+            .anyMatch(itemY -> itemX.equals(itemY)))
+        .count();
 
     return (elapsedTime == queryResult.getElapsedTime())
         && (items.size() == itemCount);
@@ -55,7 +56,7 @@ public class QueryResult<T> {
   @Override
   public String toString() {
     StringBuilder entitiesBuilder = new StringBuilder();
-    items.forEach(x -> entitiesBuilder.append(x).append(","));
+    items.forEach(item -> entitiesBuilder.append(item).append(","));
 
     return String.format(
         "QueryResult{elapsedTime=%s, entities=%s}",

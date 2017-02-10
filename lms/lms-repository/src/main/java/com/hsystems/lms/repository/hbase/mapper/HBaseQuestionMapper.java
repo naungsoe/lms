@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
@@ -34,7 +35,10 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
     List<QuestionOption> options = new ArrayList<>();
     results.stream().filter(isOptionResult(id))
-        .forEach(x -> options.add(getQuestionOption(x)));
+        .forEach(optionResult -> {
+          QuestionOption option = getQuestionOption(optionResult);
+          options.add(option);
+        });
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
@@ -67,57 +71,65 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     );
   }
 
-
   @Override
   public List<Put> getPuts(Question entity, long timestamp) {
-    List<Put> questionPuts = new ArrayList<>();
-    Put questionPut = new Put(
-        Bytes.toBytes(entity.getId()), timestamp);
-    addTypeColumn(questionPut, entity.getType());
-    addBodyColumn(questionPut, entity.getBody());
-    addHintColumn(questionPut, entity.getHint());
-    addExplanationColumn(questionPut, entity.getExplanation());
-    questionPuts.add(questionPut);
+    List<Put> puts = new ArrayList<>();
+    addQuestionPut(puts, entity, timestamp);
+    addQuestionOptionsPut(puts, entity, timestamp);
+    addCreatedByPut(puts, entity, timestamp);
+    addModifiedByPut(puts, entity, timestamp);
+    return puts;
+  }
 
-    entity.getOptions().stream().forEach(x -> {
-      addQuestionOptionPut(questionPuts, x, entity.getId(), timestamp);
+  private void addQuestionPut(
+      List<Put> puts, Question entity, long timestamp) {
+
+    String questionId = String.format("%s%s",
+        entity.getSchool().getId(), entity.getId());
+    byte[] row = Bytes.toBytes(questionId);
+    Put put = new Put(row, timestamp);
+    addTypeColumn(put, entity.getType());
+    addBodyColumn(put, entity.getBody());
+    addHintColumn(put, entity.getHint());
+    addExplanationColumn(put, entity.getExplanation());
+    puts.add(put);
+  }
+
+  private void addQuestionOptionsPut(
+      List<Put> puts, Question entity, long timestamp) {
+
+    entity.getOptions().stream().forEach(option -> {
+      String prefix = entity.getId();
+      Put put = getQuestionOptionPut(option, prefix, timestamp);
+      puts.add(put);
     });
-
-    addCreatedByPut(questionPuts, entity.getCreatedBy(),
-        entity.getId(), timestamp);
-    addDateTimeColumn(questionPut, entity.getCreatedDateTime());
-
-    addModifiedByPut(questionPuts, entity.getCreatedBy(),
-        entity.getId(), timestamp);
-    addDateTimeColumn(questionPut, entity.getModifiedDateTime());
-    return questionPuts;
   }
 
   @Override
   public List<Delete> getDeletes(Question entity, long timestamp) {
-    List<Delete> questionDeletes = new ArrayList<>();
-    Delete questionDelete = new Delete(Bytes.toBytes(entity.getId()));
-    questionDeletes.add(questionDelete);
+    List<Delete> deletes = new ArrayList<>();
 
-    entity.getOptions().stream().forEach(x -> {
-      String key = String.format("%s%s%s", entity.getId(),
-          Constants.SEPARATOR_OPTION, x.getId());
-      Delete optionDelete = new Delete(Bytes.toBytes(key));
-      questionDeletes.add(optionDelete);
-    });
+    byte[] row = Bytes.toBytes(entity.getId());
+    Delete delete = new Delete(row, timestamp);
+    deletes.add(delete);
 
-    String key = String.format("%s%s%s", entity.getId(),
-        Constants.SEPARATOR_CREATED_BY, entity.getCreatedBy().getId());
-    Delete createdByDelete = new Delete(Bytes.toBytes(key));
-    questionDeletes.add(createdByDelete);
+    addQuestionOptionsDelete(deletes, entity, timestamp);
+    addCreatedByDelete(deletes, entity, timestamp);
 
     if (entity.getModifiedBy() != null) {
-      key = String.format("%s%s%s", entity.getId(),
-          Constants.SEPARATOR_CREATED_BY, entity.getModifiedBy().getId());
-      Delete modifiedByDelete = new Delete(Bytes.toBytes(key));
-      questionDeletes.add(modifiedByDelete);
+      addModifiedByDelete(deletes, entity, timestamp);
     }
 
-    return questionDeletes;
+    return deletes;
+  }
+
+  private void addQuestionOptionsDelete(
+      List<Delete> deletes, Question entity, long timestamp) {
+
+    entity.getOptions().stream().forEach(option -> {
+      String prefix = entity.getId();
+      Delete delete = getQuestionOptionDelete(option, prefix, timestamp);
+      deletes.add(delete);
+    });
   }
 }

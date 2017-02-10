@@ -8,7 +8,7 @@ import java.util.Optional;
 /**
  * Created by administrator on 6/1/17.
  */
-public interface Repository<T extends Entity> {
+public interface EntityRepository<T extends Entity> {
 
   Optional<T> findBy(String id, long timestamp)
       throws IOException;

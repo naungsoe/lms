@@ -43,8 +43,6 @@ public class QuestionModel implements Serializable {
 
   private String modifiedDateTime;
 
-  private long timestamp;
-
   public QuestionModel() {
 
   }
@@ -176,13 +174,5 @@ public class QuestionModel implements Serializable {
 
   public void setModifiedDateTime(String modifiedDateTime) {
     this.modifiedDateTime = modifiedDateTime;
-  }
-
-  public long getTimestamp() {
-    return timestamp;
-  }
-
-  public void setTimestamp(long timestamp) {
-    this.timestamp = timestamp;
   }
 }

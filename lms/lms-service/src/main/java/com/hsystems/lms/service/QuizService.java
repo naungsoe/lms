@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuizModel;

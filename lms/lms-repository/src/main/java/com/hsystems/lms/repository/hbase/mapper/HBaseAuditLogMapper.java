@@ -21,55 +21,35 @@ public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
 
   @Override
   public AuditLog getEntity(List<Result> results) {
-    Result result = results.get(0);
-    String row = Bytes.toString(result.getRow());
+    Result mainResult = results.get(0);
+    String row = Bytes.toString(mainResult.getRow());
     int endIndex = row.indexOf(Constants.SEPARATOR);
+
     String id = endIndex > 0
         ? row.substring(0, endIndex) : row;
+    EntityType type = getType(mainResult, EntityType.class);
+    User user = new User(
+        getId(mainResult),
+        getFirstName(mainResult),
+        getLastName(mainResult)
+    );
+    Action action = getAction(mainResult, Action.class);
     long timestamp = endIndex > 0
         ? Long.parseLong(row.substring(endIndex))
-        : getTimestamp(result);
-
-    EntityType type = getType(result, EntityType.class);
-    Action action = getAction(result, Action.class);
-
-    User user = new User(
-        getId(result),
-        getFirstName(result),
-        getLastName(result)
-    );
+        : getTimestamp(mainResult);
 
     return new AuditLog(
         id,
         type,
         user,
-        timestamp,
-        action
+        action,
+        timestamp
     );
   }
 
   @Override
   public List<Put> getPuts(AuditLog entity, long timestamp) {
-    List<Put> logPuts = new ArrayList<>();
-    Put latestLogPut = new Put(Bytes.toBytes(entity.getId()));
-    addTypeColumn(latestLogPut, entity.getType());
-    addIdColumn(latestLogPut, entity.getUser().getId());
-    addFirstNameColumn(latestLogPut, entity.getUser().getFirstName());
-    addLastNameColumn(latestLogPut, entity.getUser().getLastName());
-    addTimestampColumn(latestLogPut, timestamp);
-    addActionColumn(latestLogPut, entity.getAction());
-    logPuts.add(latestLogPut);
-
-    String rowKey = entity.getId()
-        + Constants.SEPARATOR + timestamp;
-    Put logPut = new Put(Bytes.toBytes(rowKey));
-    addTypeColumn(logPut, entity.getType());
-    addIdColumn(logPut, entity.getUser().getId());
-    addFirstNameColumn(logPut, entity.getUser().getFirstName());
-    addLastNameColumn(logPut, entity.getUser().getLastName());
-    addActionColumn(logPut, entity.getAction());
-    logPuts.add(logPut);
-    return logPuts;
+    return new ArrayList<>();
   }
 
   @Override

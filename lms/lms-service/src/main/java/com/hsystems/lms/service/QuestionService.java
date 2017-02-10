@@ -2,11 +2,17 @@ package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.Action;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.UnitOfWork;
+import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -24,16 +30,20 @@ import java.util.Optional;
  */
 public class QuestionService extends BaseService {
 
-  private final UnitOfWork unitOfWork;
+  private final QuestionRepository questionRepository;
+
+  private final MutateLogRepository mutateLogRepository;
 
   private final IndexRepository indexRepository;
 
   @Inject
   QuestionService(
-      UnitOfWork unitOfWork,
+      QuestionRepository questionRepository,
+      MutateLogRepository mutateLogRepository,
       IndexRepository indexRepository) {
 
-    this.unitOfWork = unitOfWork;
+    this.questionRepository = questionRepository;
+    this.mutateLogRepository = mutateLogRepository;
     this.indexRepository = indexRepository;
   }
 
@@ -109,53 +119,93 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public void create(QuestionModel questionModel, Configuration configuration)
+  public void create(
+      QuestionModel questionModel, Configuration configuration)
       throws IOException {
 
     Question question = getEntity(questionModel,
         Question.class, configuration);
-    unitOfWork.registerNew(question);
-    unitOfWork.commit();
+
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    MutateLog mutateLog = new MutateLog(question.getId(),
+        EntityType.QUESTION, Action.CREATED, timestamp);
+
+    save(question, mutateLog);
   }
 
-  @Log
-  public void save(QuestionModel questionModel)
+  private void save(Question question, MutateLog mutateLog)
       throws IOException {
 
-    save(questionModel, Configuration.create());
+    try {
+      questionRepository.save(question, mutateLog.getTimestamp());
+      mutateLogRepository.save(mutateLog, mutateLog.getTimestamp());
+
+    } catch (IOException e) {
+      mutateLogRepository.delete(mutateLog, mutateLog.getTimestamp());
+      questionRepository.delete(question, mutateLog.getTimestamp());
+      throw e;
+    }
+
+    indexRepository.save(question);
   }
 
   @Log
-  public void save(QuestionModel questionModel, Configuration configuration)
+  public void save(QuestionModel questionModel, UserModel userModel)
+      throws IOException {
+
+    save(questionModel, userModel, Configuration.create());
+  }
+
+  @Log
+  public void save(
+      QuestionModel questionModel, UserModel userModel,
+      Configuration configuration)
       throws IOException {
 
     Question question = getEntity(questionModel,
         Question.class, configuration);
-    unitOfWork.registerDirty(question);
-    unitOfWork.commit();
+    checkMutatePreconditions(question, userModel);
+
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    MutateLog mutateLog = new MutateLog(question.getId(),
+        EntityType.QUESTION, Action.MODIFIED, timestamp);
+
+    save(question, mutateLog);
   }
 
   @Log
   public void delete(String id, UserModel userModel)
       throws IOException, IllegalAccessException {
 
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(id, Long.MIN_VALUE);
+    CommonUtils.checkArgument(
+        mutateLogOptional.isPresent(),
+        "error retrieving question");
+
+    MutateLog mutateLog = mutateLogOptional.get();
     Optional<Question> questionOptional
-        = indexRepository.findBy(id, Question.class);
+        = questionRepository.findBy(id, mutateLog.getTimestamp());
 
-    if (!questionOptional.isPresent()) {
-      throw new IllegalArgumentException(
-          "error retrieving question");
+    if (questionOptional.isPresent()) {
+      Question question = questionOptional.get();
+      checkMutatePreconditions(question, userModel);
+
+      long timestamp = DateTimeUtils.getCurrentMilliseconds();
+      mutateLog = new MutateLog(question.getId(),
+          EntityType.QUESTION, Action.DELETED, timestamp);
+
+      mutateLogRepository.save(mutateLog, timestamp);
+      indexRepository.delete(question);
     }
+  }
 
-    Question question = questionOptional.get();
+  private void checkMutatePreconditions(
+      Question question, UserModel userModel) {
+
     User createdBy = question.getCreatedBy();
-
-    if (!createdBy.getId().equals(userModel.getId())) {
-      throw new IllegalAccessException(
-          "error deleting question");
-    }
-
-    unitOfWork.registerDeleted(question);
-    unitOfWork.commit();
+    CommonUtils.checkArgument(
+        createdBy.getId().equals(userModel.getId()),
+        "error mutating question");
   }
 }

@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
@@ -33,36 +32,43 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
     String instructions = getInstructions(mainResult);
 
     List<QuizSection> sections = new ArrayList<>();
-    results.stream().filter(isSectionResult(id)).forEach(x -> {
-      String sectionId = getId(x, Constants.SEPARATOR_SECTION);
-      String sectionInstructions = getInstructions(x);
+    results.stream().filter(isSectionResult(id))
+        .forEach(sectionResult -> {
+          String sectionId = getSectionId(sectionResult);
+          String sectionInstructions = getInstructions(sectionResult);
 
-      List<Question> questions = new ArrayList<>();
-      results.stream().filter(isQuestionResult(sectionId))
-          .forEach(y -> {
-            String questionId = getId(y, Constants.SEPARATOR_QUESTION);
-            QuestionType questionType = getType(y, QuestionType.class);
-            String questionBody = getBody(y);
-            String questionHint = getHint(y);
-            String questionExplanation = getExplanation(y);
+          List<Question> questions = new ArrayList<>();
+          results.stream().filter(isQuestionResult(sectionId))
+              .forEach(questionResult -> {
+                String questionId = getQuestionId(questionResult);
+                QuestionType questionType
+                    = getType(questionResult, QuestionType.class);
+                String questionBody = getBody(questionResult);
+                String questionHint = getHint(questionResult);
+                String questionExplanation = getExplanation(questionResult);
 
-            List<QuestionOption> options = new ArrayList<>();
-            results.stream().filter(isOptionResult(questionId))
-                .forEach(z -> options.add(getQuestionOption(z)));
+                List<QuestionOption> options = new ArrayList<>();
+                results.stream().filter(isOptionResult(questionId))
+                    .forEach(z -> options.add(getQuestionOption(z)));
 
-            Question question = new Question(questionId, questionType,
-                questionBody, questionHint, questionExplanation, options);
-            questions.add(question);
-          });
+                Question question = new Question(
+                    questionId,
+                    questionType,
+                    questionBody,
+                    questionHint,
+                    questionExplanation,
+                    options
+                );
+                questions.add(question);
+              });
 
-      QuizSection section = new QuizSection(
-          sectionId, sectionInstructions, questions);
-      sections.add(section);
-    });
-
-    Result schoolResult = results.stream()
-        .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
+          QuizSection section = new QuizSection(
+              sectionId,
+              sectionInstructions,
+              questions
+          );
+          sections.add(section);
+        });
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -81,7 +87,6 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
         title,
         instructions,
         sections,
-        school,
         createdBy,
         createdDateTime,
         modifiedBy,

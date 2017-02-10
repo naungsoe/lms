@@ -5,8 +5,11 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
-import com.hsystems.lms.repository.UnitOfWork;
+import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.MutateLog;
+import com.hsystems.lms.repository.entity.SignInLog;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.mapper.ModelMapper;
@@ -16,6 +19,7 @@ import com.hsystems.lms.service.model.UserModel;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -26,19 +30,23 @@ public class AuthenticationService extends BaseService {
 
   private final Properties properties;
 
-  private final UnitOfWork unitOfWork;
-
   private final UserRepository userRepository;
+
+  private final SignInLogRepository signInLogRepository;
+
+  private final MutateLogRepository mutateLogRepository;
 
   @Inject
   AuthenticationService(
       Properties properties,
-      UnitOfWork unitOfWork,
-      UserRepository userRepository) {
+      UserRepository userRepository,
+      SignInLogRepository signInLogRepository,
+      MutateLogRepository mutateLogRepository) {
 
     this.properties = properties;
-    this.unitOfWork = unitOfWork;
     this.userRepository = userRepository;
+    this.signInLogRepository = signInLogRepository;
+    this.mutateLogRepository = mutateLogRepository;
   }
 
   @Log
@@ -47,14 +55,16 @@ public class AuthenticationService extends BaseService {
 
     checkPreconditions(signInModel);
 
-    long timestamp = unitOfWork.getTimestamp(signInModel.getId());
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(signInModel.getId());
 
-    if (timestamp == Long.MIN_VALUE) {
+    if (!mutateLogOptional.isPresent()) {
       return Optional.empty();
     }
 
-    Optional<User> userOptional
-        = userRepository.findBy(signInModel.getId(), timestamp);
+    MutateLog mutateLog = mutateLogOptional.get();
+    Optional<User> userOptional = userRepository.findBy(
+        signInModel.getId(), mutateLog.getTimestamp());
 
     if (userOptional.isPresent()) {
       User user = userOptional.get();
@@ -102,15 +112,22 @@ public class AuthenticationService extends BaseService {
   public Optional<UserModel> findSignedInUserBy(String id)
       throws IOException {
 
-    long timestamp = unitOfWork.getTimestamp(id);
+    Optional<SignInLog> signInLogOptional
+        = signInLogRepository.findBy(id);
 
-    if (timestamp == Long.MIN_VALUE) {
-      return Optional.empty();
-    }
+    if (signInLogOptional.isPresent()) {
+      SignInLog signInLog = signInLogOptional.get();
+      Optional<MutateLog> mutateLogOptional
+          = mutateLogRepository.findBy(id);
 
-    Optional<User> userOptional = userRepository.findBy(id, timestamp);
+      if (!mutateLogOptional.isPresent() && isSessionValid(signInLog)) {
+        return Optional.empty();
+      }
 
-    if (userOptional.isPresent()) {
+      MutateLog mutateLog = mutateLogOptional.get();
+      Optional<User> userOptional
+          = userRepository.findBy(id, mutateLog.getTimestamp());
+
       Configuration configuration = Configuration.create();
       ModelMapper mapper = new ModelMapper(configuration);
       UserModel model = mapper.map(userOptional.get(), UserModel.class);
@@ -118,5 +135,10 @@ public class AuthenticationService extends BaseService {
     }
 
     return Optional.empty();
+  }
+
+  private boolean isSessionValid(SignInLog signInLog) {
+    properties.getProperty()
+    return signInLog.getDateTime().isBefore(LocalDateTime.now().plusMinutes());
   }
 }

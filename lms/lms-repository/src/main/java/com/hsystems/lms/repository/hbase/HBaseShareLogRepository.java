@@ -41,7 +41,8 @@ public class HBaseShareLogRepository
     Scan scan = getRowKeyFilterScan(id);
     scan.setTimeStamp(timestamp);
 
-    List<Result> results = client.scan(scan, Constants.TABLE_SHARE_LOGS);
+    List<Result> results = client.scan(scan,
+        Constants.TABLE_SHARE_LOGS);
 
     if (results.isEmpty()) {
       return Optional.empty();

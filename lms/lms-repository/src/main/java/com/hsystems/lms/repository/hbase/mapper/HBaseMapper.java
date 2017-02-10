@@ -2,10 +2,10 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.QuestionOption;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
 
@@ -35,6 +35,11 @@ public abstract class HBaseMapper<T> {
   protected String getId(Result result) {
     return getString(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_ID);
+  }
+
+  protected String getSignInId(Result result) {
+    return getString(result, Constants.FAMILY_DATA,
+        Constants.IDENTIFIER_SIGNIN_ID);
   }
 
   protected String getPassword(Result result) {
@@ -100,6 +105,11 @@ public abstract class HBaseMapper<T> {
   protected <T extends Enum<T>>  T getType(Result result, Class<T> type) {
     return getEnum(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_TYPE, type);
+  }
+
+  protected String getIpAddress(Result result) {
+    return getString(result, Constants.FAMILY_DATA,
+        Constants.IDENTIFIER_IP_ADDRESS);
   }
 
   protected String getTitle(Result result) {
@@ -252,12 +262,6 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_SHARE);
   }
 
-  protected School getSchool(Result result) {
-    String id = getId(result, Constants.SEPARATOR_SCHOOL);
-    String name = getName(result);
-    return new School(id, name);
-  }
-
   protected String getId(Result result, String separator) {
     String row = Bytes.toString(result.getRow());
     String regex = String.format(SEPARATED_ID_FORMAT, separator);
@@ -287,7 +291,9 @@ public abstract class HBaseMapper<T> {
     return getUser(result, Constants.SEPARATOR_MODIFIED_BY);
   }
 
-  protected List<Permission> getPermissions(Result result, String separator) {
+  protected List<Permission> getPermissions(
+      Result result, String separator) {
+
     List<Permission> permissions = new ArrayList<>();
     String value = getString(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_PERMISSIONS);
@@ -297,8 +303,10 @@ public abstract class HBaseMapper<T> {
     }
 
     String[] items = value.split("\\,");
-    Arrays.asList(items).stream()
-        .forEach(x -> permissions.add(Enum.valueOf(Permission.class, x)));
+    Arrays.asList(items).stream().forEach(item -> {
+      Permission permission = Enum.valueOf(Permission.class, item);
+      permissions.add(permission);
+    });
 
     return permissions;
   }
@@ -310,6 +318,14 @@ public abstract class HBaseMapper<T> {
 
   protected User getMember(Result result) {
     return getUser(result, Constants.SEPARATOR_MEMBER);
+  }
+
+  protected String getSectionId(Result result) {
+    return getId(result, Constants.SEPARATOR_SECTION);
+  }
+
+  protected String getQuestionId(Result result) {
+    return getId(result, Constants.SEPARATOR_QUESTION);
   }
 
   protected QuestionOption getQuestionOption(Result result) {
@@ -352,13 +368,18 @@ public abstract class HBaseMapper<T> {
 
   protected void addDateTimeColumn(Put put, LocalDateTime value) {
     String datetime = DateTimeUtils.toString(value, Constants.DATE_TIME_FORMAT);
-    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_LAST_NAME,
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_DATE_TIME,
         Bytes.toBytes(datetime));
   }
 
   protected <T extends Enum<T>> void addTypeColumn(Put put, T value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE,
         Bytes.toBytes(value.toString()));
+  }
+
+  protected void addIpAddressColumn(Put put, String value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_IP_ADDRESS,
+        Bytes.toBytes(value));
   }
 
   protected void addBodyColumn(Put put, String value) {
@@ -406,42 +427,78 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value.toString()));
   }
 
-  protected void addQuestionOptionPut(
-      List<Put> puts, QuestionOption option, String prefix, long timestamp) {
+  protected Put getQuestionOptionPut(
+      QuestionOption option, String prefix, long timestamp) {
 
     String rowKey = String.format("%s%s%s", prefix,
         Constants.SEPARATOR_OPTION, option.getId());
+
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addBodyColumn(put, option.getBody());
     addFeedbackColumn(put, option.getFeedback());
     addCorrectColumn(put, option.isCorrect());
     addOrderColumn(put, option.getOrder());
-    puts.add(put);
+    return put;
   }
 
   protected void addCreatedByPut(
-      List<Put> puts, User user, String prefix, long timestamp) {
+      List<Put> puts, Auditable auditable, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", prefix,
-        Constants.SEPARATOR_CREATED_BY, user.getId());
-    addUserPut(puts, user, rowKey, timestamp);
+    String rowKey = String.format("%s%s%s", auditable.getId(),
+        Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
+
+    Put put = getUserPut(auditable.getCreatedBy(), rowKey, timestamp);
+    addDateTimeColumn(put, auditable.getCreatedDateTime());
+    puts.add(put);
   }
 
-  protected void addUserPut(
-      List<Put> puts, User user, String rowKey, long timestamp) {
+  protected Put getUserPut(
+      User user, String rowKey, long timestamp) {
 
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addFirstNameColumn(put, user.getFirstName());
     addLastNameColumn(put, user.getLastName());
-    puts.add(put);
+    return put;
   }
 
   protected void addModifiedByPut(
-      List<Put> puts, User user, String prefix, long timestamp) {
+      List<Put> puts, Auditable auditable, long timestamp) {
+
+    String rowKey = String.format("%s%s%s", auditable.getId(),
+        Constants.SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
+
+    Put put = getUserPut(auditable.getModifiedBy(), rowKey, timestamp);
+    addDateTimeColumn(put, auditable.getModifiedDateTime());
+    puts.add(put);
+  }
+
+  protected Delete getQuestionOptionDelete(
+      QuestionOption option, String prefix, long timestamp) {
 
     String rowKey = String.format("%s%s%s", prefix,
-        Constants.SEPARATOR_MODIFIED_BY, user.getId());
-    addUserPut(puts, user, rowKey, timestamp);
+        Constants.SEPARATOR_OPTION, option.getId());
+
+    return new Delete(Bytes.toBytes(rowKey), timestamp);
+  }
+
+  protected void addCreatedByDelete(
+      List<Delete> deletes, Auditable auditable, long timestamp) {
+
+    String rowKey = String.format("%s%s%s", auditable.getId(),
+        Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
+
+    Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
+    deletes.add(delete);
+  }
+
+  protected void addModifiedByDelete(
+      List<Delete> deletes, Auditable auditable, long timestamp) {
+
+    String rowKey = String.format("%s%s%s", auditable.getId(),
+        Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
+
+    Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
+    deletes.add(delete);
   }
 
   abstract T getEntity(List<Result> results);

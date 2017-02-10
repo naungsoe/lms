@@ -7,7 +7,6 @@ import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.UnitOfWork;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;

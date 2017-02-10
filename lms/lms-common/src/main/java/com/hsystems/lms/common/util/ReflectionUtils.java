@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 /**
  * Created by naungsoe on 13/8/16.
@@ -33,8 +34,11 @@ public final class ReflectionUtils {
   public static Optional<Constructor> getParamLessConstructor(Class type) {
     Constructor[] constructors = type.getDeclaredConstructors();
     return Arrays.asList(constructors).stream()
-        .filter(x -> x.getGenericParameterTypes().length == 0)
-        .findAny();
+        .filter(isParameterlessConstructor()).findAny();
+  }
+
+  private static Predicate<Constructor> isParameterlessConstructor() {
+    return constructor -> constructor.getGenericParameterTypes().length == 0;
   }
 
   public static <T> String getString(T instance, String fieldName) {
@@ -80,7 +84,7 @@ public final class ReflectionUtils {
   public static <T> Optional<Field> getField(Class<T> type, String name) {
     List<Field> fields = getFields(type);
     return fields.stream()
-        .filter(x -> x.getName().equals(name))
+        .filter(field -> field.getName().equals(name))
         .findFirst();
   }
 
@@ -88,7 +92,7 @@ public final class ReflectionUtils {
     List<Field> fields = new ArrayList<>();
     List<Field> declaredFields = Arrays.asList(type.getDeclaredFields());
     declaredFields.stream()
-        .filter(x -> !Modifier.isStatic(x.getModifiers()))
+        .filter(field -> !Modifier.isStatic(field.getModifiers()))
         .forEach(fields::add);
 
     if (type.getSuperclass() != null) {

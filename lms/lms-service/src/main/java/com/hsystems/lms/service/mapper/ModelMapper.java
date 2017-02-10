@@ -57,10 +57,11 @@ public class ModelMapper extends Mapper {
     String compositeFieldName = fieldNameTokens.poll();
 
     while (!fieldNameTokens.isEmpty()) {
-      compositeFieldName = compositeFieldName + fieldNameTokens.poll();
+      compositeFieldName = String.format("%s%s",
+          compositeFieldName, fieldNameTokens.poll());
     }
 
-    return getCompositeFieldValue(
-        compositeInstance, compositeFields, compositeFieldName, type);
+    return getCompositeFieldValue(compositeInstance,
+        compositeFields, compositeFieldName, type);
   }
 }

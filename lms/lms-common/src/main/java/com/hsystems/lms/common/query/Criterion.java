@@ -13,6 +13,7 @@ public class Criterion {
 
   public Criterion(
       Operator operator, String field, String value) {
+
     this.operator = operator;
     this.field = field;
     this.value = value;

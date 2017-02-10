@@ -1,5 +1,6 @@
 package com.hsystems.lms.common.util;
 
+import java.security.AccessControlException;
 import java.util.UUID;
 
 /**
@@ -16,6 +17,22 @@ public class CommonUtils {
 
     if (!expression) {
       throw new IllegalArgumentException(errorMessage);
+    }
+  }
+
+  public static void checkNotNull(
+      Object value, String errorMessage) {
+
+    if (value == null) {
+      throw new NullPointerException(errorMessage);
+    }
+  }
+
+  public static void checkAccessControl(
+      boolean expression, String errorMessage) {
+
+    if (!expression) {
+      throw new AccessControlException(errorMessage);
     }
   }
 

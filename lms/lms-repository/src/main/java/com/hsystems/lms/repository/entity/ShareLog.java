@@ -20,7 +20,7 @@ public class ShareLog implements Entity, Serializable {
 
   private LocalDateTime sharedDateTime;
 
-  private List<ShareLogEntry> entries;
+  private List<ShareLogEntry> logEntries;
 
   ShareLog() {
 
@@ -31,13 +31,13 @@ public class ShareLog implements Entity, Serializable {
       EntityType type,
       User sharedBy,
       LocalDateTime sharedDateTime,
-      List<ShareLogEntry> entries) {
+      List<ShareLogEntry> logEntries) {
 
     this.id = id;
     this.type = type;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
-    this.entries = entries;
+    this.logEntries = logEntries;
   }
 
   @Override
@@ -57,8 +57,8 @@ public class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public List<ShareLogEntry> getEntries() {
-    return Collections.unmodifiableList(entries);
+  public List<ShareLogEntry> getLogEntries() {
+    return Collections.unmodifiableList(logEntries);
   }
 
   @Override
@@ -76,6 +76,7 @@ public class ShareLog implements Entity, Serializable {
     }
 
     ShareLog shareLog = (ShareLog) obj;
+
     return id.equals(shareLog.getId())
         && sharedBy.equals(shareLog.getSharedBy())
         && sharedDateTime.equals(shareLog.getSharedDateTime());
@@ -84,7 +85,8 @@ public class ShareLog implements Entity, Serializable {
   @Override
   public String toString() {
     StringBuilder entriesBuilder = new StringBuilder();
-    entries.forEach(x -> entriesBuilder.append(x).append(","));
+    logEntries.forEach(logEntry
+        -> entriesBuilder.append(logEntry).append(","));
 
     return String.format(
         "ShareLog{entityId=%s, entityType=%s, sharedBy=%s, "

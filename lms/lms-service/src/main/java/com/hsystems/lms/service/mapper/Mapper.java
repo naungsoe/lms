@@ -7,6 +7,7 @@ import org.apache.commons.lang.StringUtils;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +34,7 @@ public abstract class Mapper {
       Class<?> fieldType = (field.getType() == List.class)
           ? ReflectionUtils.getListType(field) : field.getType();
       Optional<Field> sourceFieldOptional = sourceFields.stream()
-          .filter(x -> x.getName().equals(fieldName))
+          .filter(sourceField -> sourceField.getName().equals(fieldName))
           .findFirst();
 
       if (sourceFieldOptional.isPresent()) {
@@ -77,24 +78,24 @@ public abstract class Mapper {
     return type.cast(fieldValue);
   }
 
-  protected <T> List<T> getListValue(Object list, Class<T> type) {
-    List<T> valueList = new ArrayList<>();
-
-    if (list == null) {
-      return valueList;
+  protected <T> List<T> getListValue(Object obj, Class<T> type) {
+    if (obj == null) {
+      return Collections.emptyList();
     }
 
-    for (Object fieldItem : (List) list) {
+    List<T> list = new ArrayList<>();
+
+    for (Object item : (List) obj) {
       if (type.isEnum()) {
-        valueList.add((T) fieldItem);
+        list.add((T) item);
 
       } else {
-        T valueItem = map(fieldItem, type);
-        valueList.add(valueItem);
+        T valueItem = map(item, type);
+        list.add(valueItem);
       }
     }
 
-    return valueList;
+    return list;
   }
 
   protected Queue<String> getNameTokens(String name) {
@@ -111,7 +112,7 @@ public abstract class Mapper {
 
   protected Optional<Field> getField(List<Field> fields, String fieldName) {
     return fields.stream()
-        .filter(x -> x.getName().equals(
+        .filter(field -> field.getName().equals(
             StringUtils.uncapitalize(fieldName)))
         .findFirst();
   }

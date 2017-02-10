@@ -5,6 +5,7 @@ package com.hsystems.lms.common;
  */
 public enum Action {
 
+  LOGGEDIN,
   CREATED,
   MODIFIED,
   DELETED,

@@ -36,6 +36,7 @@ public class SortKey {
     }
 
     SortKey sortKey = (SortKey) obj;
+
     return field.equals(sortKey.getField())
         && order.equals(sortKey.getOrder());
   }

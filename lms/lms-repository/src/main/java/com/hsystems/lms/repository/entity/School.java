@@ -32,20 +32,9 @@ public class School extends Auditable implements Entity, Serializable {
 
   private List<Permission> permissions;
 
-  private List<Group> groups;
-
   School() {
 
   }
-
-  public School(
-      String id,
-      String name) {
-
-    this.id = id;
-    this.name = name;
-  }
-
 
   public School(
       String id,
@@ -54,7 +43,6 @@ public class School extends Auditable implements Entity, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
-      List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -66,7 +54,6 @@ public class School extends Auditable implements Entity, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
-    this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -96,10 +83,6 @@ public class School extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
-  public List<Group> getGroups() {
-    return Collections.unmodifiableList(groups);
-  }
-
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -112,24 +95,22 @@ public class School extends Auditable implements Entity, Serializable {
     }
 
     School school = (School) obj;
+
     return id.equals(school.getId());
   }
 
   @Override
   public String toString() {
     StringBuilder permissionsBuilder = new StringBuilder();
-    permissions.forEach(x -> permissionsBuilder.append(x).append(","));
-
-    StringBuilder groupsBuilder = new StringBuilder();
-    groups.forEach(x -> groupsBuilder.append(x).append(","));
+    permissions.forEach(permission
+        -> permissionsBuilder.append(permission).append(","));
 
     return String.format(
         "School{id=%s, name=%s, locale=%s, dateFormat=%s, "
-            + "dateTimeFormat=%s, permissions=%s, groups=%s, "
-            + "createdBy=%s, createdDateTime=%s, modifiedBy=%s, "
-            + "modifiedDateTime=%s}",
+            + "dateTimeFormat=%s, permissions=%s, "
+            + "createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, locale, dateFormat, dateTimeFormat, permissions,
-        groupsBuilder, createdBy, createdDateTime, modifiedBy,
-        modifiedDateTime);
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

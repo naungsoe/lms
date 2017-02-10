@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
@@ -12,6 +11,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,10 +30,6 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
     String dateFormat= getDateFormat(mainResult);
     String dateTimeFormat = getDateTimmeFormat(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
-
-    List<Group> groups = new ArrayList<>();
-    results.stream().filter(isGroupResult(id))
-        .forEach(x -> groups.add(getGroup(x)));
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -54,7 +50,6 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
         dateFormat,
         dateTimeFormat,
         permissions,
-        groups,
         createdBy,
         createdDateTime,
         modifiedBy,

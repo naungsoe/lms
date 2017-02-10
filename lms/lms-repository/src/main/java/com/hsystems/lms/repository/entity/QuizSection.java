@@ -74,13 +74,15 @@ public class QuizSection implements Serializable {
     }
 
     QuizSection section = (QuizSection) obj;
+
     return id.equals(section.getId());
   }
 
   @Override
   public String toString() {
     StringBuilder questionsBuilder = new StringBuilder();
-    questions.forEach(x -> questionsBuilder.append(x).append(","));
+    questions.forEach(question
+        -> questionsBuilder.append(question).append(","));
 
     return String.format(
         "QuizSection{id=%s, instructions=%s, questions=%s}",

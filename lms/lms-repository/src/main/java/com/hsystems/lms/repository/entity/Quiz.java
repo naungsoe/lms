@@ -27,9 +27,6 @@ public class Quiz extends Auditable implements Entity, Serializable {
   @IndexField(type = IndexFieldType.LIST)
   private List<QuizSection> sections;
 
-  @IndexField(type = IndexFieldType.OBJECT)
-  private School school;
-
   Quiz() {
 
   }
@@ -39,7 +36,6 @@ public class Quiz extends Auditable implements Entity, Serializable {
       String title,
       String instructions,
       List<QuizSection> sections,
-      School school,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -49,7 +45,6 @@ public class Quiz extends Auditable implements Entity, Serializable {
     this.title = title;
     this.instructions = instructions;
     this.sections = sections;
-    this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -90,14 +85,6 @@ public class Quiz extends Auditable implements Entity, Serializable {
     this.sections = sections;
   }
 
-  public School getSchool() {
-    return school;
-  }
-
-  public void setSchool(School school) {
-    this.school = school;
-  }
-
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -110,16 +97,18 @@ public class Quiz extends Auditable implements Entity, Serializable {
     }
 
     Quiz quiz = (Quiz) obj;
+
     return id.equals(quiz.getId());
   }
 
   @Override
   public String toString() {
     StringBuilder sectionsBuilder = new StringBuilder();
-    sections.forEach(x -> sectionsBuilder.append(x).append(","));
+    sections.forEach(section
+        -> sectionsBuilder.append(section).append(","));
 
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, sections=%s, school=%s}",
-        id, title, instructions, sectionsBuilder, school);
+        "Quiz{id=%s, title=%s, instructions=%s, sections=%s}",
+        id, title, instructions, sectionsBuilder);
   }
 }

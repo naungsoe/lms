@@ -96,6 +96,7 @@ public class Query {
         MatchResult result = matcher.toMatchResult();
         String operator = result.group(1);
         String field = result.group(2);
+
         SortOrder sortOrder = "-".equals(operator)
             ? SortOrder.DESCENDING : SortOrder.ASCENDING;
         sortKeys.add(new SortKey(field, sortOrder));
@@ -207,18 +208,19 @@ public class Query {
     }
 
     Query query = (Query) obj;
-    long fieldCount = query.getFields().stream()
-        .filter(x -> fields.stream()
-            .anyMatch(y -> x.equals(y))).count();
-    long criterionCount = query.getCriteria().stream()
-        .filter(x -> criteria.stream()
-            .anyMatch(y -> y.equals(x))).count();
-    long sortKeyCount = query.getSortKeys().stream()
-        .filter(x -> sortKeys.stream()
-            .anyMatch(y -> y.equals(x))).count();
-    return (fields.size() == fieldCount)
-        && (criteria.size() == criterionCount)
-        && (sortKeys.size() == sortKeyCount)
+    long totalFields = query.getFields().stream()
+        .filter(field -> fields.stream()
+            .anyMatch(y -> field.equals(y))).count();
+    long totalCriteria = query.getCriteria().stream()
+        .filter(criterion -> criteria.stream()
+            .anyMatch(y -> y.equals(criterion))).count();
+    long totalSortKeys = query.getSortKeys().stream()
+        .filter(sortKey -> sortKeys.stream()
+            .anyMatch(y -> y.equals(sortKey))).count();
+
+    return (fields.size() == totalFields)
+        && (criteria.size() == totalCriteria)
+        && (sortKeys.size() == totalSortKeys)
         && (offset == query.getOffset())
         && (limit == query.getLimit());
   }
@@ -226,13 +228,15 @@ public class Query {
   @Override
   public String toString() {
     StringBuilder fieldsBuilder = new StringBuilder();
-    fields.forEach(x -> fieldsBuilder.append(x).append(","));
+    fields.forEach(field -> fieldsBuilder.append(field).append(","));
 
     StringBuilder criteriaBuilder = new StringBuilder();
-    fields.forEach(x -> criteriaBuilder.append(x).append(","));
+    criteria.forEach(criterion
+        -> criteriaBuilder.append(criterion).append(","));
 
     StringBuilder sortKeysBuilder = new StringBuilder();
-    fields.forEach(x -> sortKeysBuilder.append(x).append(","));
+    sortKeys.forEach(sortKey
+        -> sortKeysBuilder.append(sortKey).append(","));
 
     return String.format(
         "Query{fields=%s, criteria=%s, sortKeys=%s, offset=%s, limit=%s}",

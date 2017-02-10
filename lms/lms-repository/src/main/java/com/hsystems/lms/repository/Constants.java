@@ -7,8 +7,6 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 public class Constants {
 
-  public static final String REPOSITORY_SUFFIX = "Repository";
-
   public static final String DATE_FORMAT = "yyyy-MM-dd";
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
@@ -17,8 +15,7 @@ public class Constants {
   public static final String TABLE_USERS = "users";
   public static final String TABLE_QUIZZES = "quizzes";
   public static final String TABLE_QUESTIONS = "questions";
-  public static final String TABLE_TRANSACTIONS = "transactions";
-  public static final String TABLE_OPERATIONS = "operations";
+  public static final String TABLE_MUTATE_LOGS = "mutatelogs";
   public static final String TABLE_REFERENCE_LOGS = "referencelogs";
   public static final String TABLE_SHARE_LOGS = "sharelogs";
   public static final String TABLE_AUDIT_LOGS = "auditlogs";
@@ -27,6 +24,7 @@ public class Constants {
 
   public static final byte[] IDENTIFIER_DATE_TIME = Bytes.toBytes("datetime");
   public static final byte[] IDENTIFIER_ID = Bytes.toBytes("id");
+  public static final byte[] IDENTIFIER_SIGNIN_ID = Bytes.toBytes("signinid");
   public static final byte[] IDENTIFIER_PASSWORD = Bytes.toBytes("password");
   public static final byte[] IDENTIFIER_SALT = Bytes.toBytes("salt");
   public static final byte[] IDENTIFIER_NAME = Bytes.toBytes("name");
@@ -42,6 +40,7 @@ public class Constants {
   public static final byte[] IDENTIFIER_PERMISSION = Bytes.toBytes("permission");
   public static final byte[] IDENTIFIER_PERMISSIONS = Bytes.toBytes("permissions");
   public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes("type");
+  public static final byte[] IDENTIFIER_IP_ADDRESS = Bytes.toBytes("ip");
   public static final byte[] IDENTIFIER_TITLE = Bytes.toBytes("title");
   public static final byte[] IDENTIFIER_INSTRUCTIONS = Bytes.toBytes("instructions");
   public static final byte[] IDENTIFIER_BODY = Bytes.toBytes("body");

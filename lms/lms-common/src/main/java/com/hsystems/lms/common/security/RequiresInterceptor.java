@@ -3,6 +3,7 @@ package com.hsystems.lms.common.security;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.util.CommonUtils;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -23,19 +24,18 @@ public class RequiresInterceptor implements MethodInterceptor {
   public Object invoke(MethodInvocation invocation)
       throws Throwable {
 
-    if (principalProvider.get() != null) {
-      Requires requires = invocation.getMethod().getAnnotation(Requires.class);
-      String[] permissions = requires.value();
-      Principal principal = principalProvider.get();
-      boolean hasPermissions = Arrays.asList(permissions).stream()
-          .allMatch(x -> principal.hasPermission(x));
+    CommonUtils.checkNotNull(principalProvider.get(),
+        "error retrieving principalProvider");
 
-      if (hasPermissions) {
-        return invocation.proceed();
-      }
-    }
+    Requires requires = invocation.getMethod().getAnnotation(Requires.class);
+    String[] permissions = requires.value();
+    Principal principal = principalProvider.get();
+    boolean hasPermissions = Arrays.asList(permissions).stream()
+        .allMatch(permission -> principal.hasPermission(permission));
 
-    throw new IllegalAccessException("access denied: "
-        + invocation.getMethod().getName());
+    CommonUtils.checkAccessControl(hasPermissions,
+        String.format("access denied: %s",
+            invocation.getMethod().getName()));
+    return invocation.proceed();
   }
 }

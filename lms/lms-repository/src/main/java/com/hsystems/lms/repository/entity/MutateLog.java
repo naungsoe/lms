@@ -7,34 +7,30 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 2/11/16.
  */
-public class AuditLog implements Entity, Serializable {
+public class MutateLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = -3408481188461757227L;
+  private static final long serialVersionUID = 6681526004482435421L;
 
   private String id;
 
   private EntityType type;
 
-  private User user;
-
   private Action action;
 
   private long timestamp;
 
-  AuditLog() {
+  MutateLog() {
 
   }
 
-  public AuditLog(
+  public MutateLog(
       String id,
       EntityType type,
-      User user,
       Action action,
       long timestamp) {
 
     this.id = id;
     this.type = type;
-    this.user = user;
     this.action = action;
     this.timestamp = timestamp;
   }
@@ -43,10 +39,6 @@ public class AuditLog implements Entity, Serializable {
   public String getId() { return id; }
 
   public EntityType getType() { return type; }
-
-  public User getUser() {
-    return user;
-  }
 
   public Action getAction() {
     return action;
@@ -60,7 +52,6 @@ public class AuditLog implements Entity, Serializable {
   public int hashCode() {
     int prime = 31;
     int result = id.hashCode();
-    result = result * prime + user.hashCode();
     return result * prime + Long.hashCode(timestamp);
   }
 
@@ -70,17 +61,16 @@ public class AuditLog implements Entity, Serializable {
       return false;
     }
 
-    AuditLog auditLog = (AuditLog) obj;
+    MutateLog auditLog = (MutateLog) obj;
 
     return id.equals(auditLog.getId())
-        && user.equals(auditLog.getUser())
         && (timestamp == auditLog.getTimestamp());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, type=%s, user=%s, timestamp=%s, action=%s}",
-        id, type, user, timestamp, action);
+        "AuditLog{id=%s, type=%s, timestamp=%s, action=%s}",
+        id, type, timestamp, action);
   }
 }

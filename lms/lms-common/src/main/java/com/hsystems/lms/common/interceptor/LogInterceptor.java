@@ -23,6 +23,7 @@ public class LogInterceptor implements MethodInterceptor {
 
     try {
       return invocation.proceed();
+
     } finally {
       String type = invocation.getThis().getClass().getName();
       String method = invocation.getMethod().getName();

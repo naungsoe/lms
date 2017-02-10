@@ -33,16 +33,19 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
     );
     LocalDateTime sharedDateTime = getDateTime(mainResult);
 
-    List<ShareLogEntry> entries = new ArrayList<>();
+    List<ShareLogEntry> logEntries = new ArrayList<>();
     results.stream().filter(isShareResult(entityId))
-        .forEach(x -> entries.add(getShareLogEntry(x)));
+        .forEach(shareResult -> {
+          ShareLogEntry logEntry = getShareLogEntry(shareResult);
+          logEntries.add(logEntry);
+        });
 
     return new ShareLog(
         entityId,
         entityType,
         sharedBy,
         sharedDateTime,
-        entries
+        logEntries
     );
   }
 

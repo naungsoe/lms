@@ -28,13 +28,12 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
     String name = getName(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
 
-    Result schoolResult = results.stream()
-        .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
-
     List<User> members = new ArrayList<>();
     results.stream().filter(isMemberResult(id))
-        .forEach(x -> members.add(getMember(x)));
+        .forEach(memberResult -> {
+          User member = getMember(memberResult);
+          members.add(member);
+        });
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -52,7 +51,6 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
         id,
         name,
         permissions,
-        school,
         members,
         createdBy,
         createdDateTime,

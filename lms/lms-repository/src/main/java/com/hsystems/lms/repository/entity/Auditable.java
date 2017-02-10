@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 /**
  * Created by naungsoe on 5/11/16.
  */
-public abstract class Auditable {
+public abstract class Auditable implements Entity {
 
   @IndexField(type = IndexFieldType.OBJECT)
   protected User createdBy;

@@ -8,7 +8,8 @@ import java.util.List;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public interface AuditLogRepository extends Repository<AuditLog> {
+public interface AuditLogRepository
+    extends EntityRepository<AuditLog> {
 
   List<AuditLog> findAllBy(String id)
     throws IOException;
