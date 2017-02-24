@@ -14,15 +14,32 @@
       [menu] paper-menu paper-item [text] {
         margin: 0 16px;
       }
+
+
     </style>
 
     <div menu>
       <paper-menu on-iron-select="handleSelect">
-        <paper-item action="/web/home"><iron-icon icon="home"></iron-icon><div text>{{localize('menuItemHome')}}</div></paper-item>
-        <paper-item action="/web/quizzes"><iron-icon icon="extension"></iron-icon><div text>{{localize('menuItemQuizzes')}}</div></paper-item>
-        <paper-item action="/web/questions"><iron-icon icon="subject"></iron-icon><div text>{{localize('menuItemQuestions')}}</div></paper-item>
-        <paper-item action="/web/storage"><iron-icon icon="folder"></iron-icon><div text>{{localize('menuItemStorage')}}</div></paper-item>
-        <paper-item action="/web/signout"><iron-icon icon="exit-to-app"></iron-icon><div text>{{localize('menuItemSignOut')}}</div></paper-item>
+        <paper-item action="/web/home">
+          <iron-icon icon="home"></iron-icon>
+          <div text>{{localize('menuItemHome')}}</div>
+        </paper-item>
+        <paper-item action="/web/quizzes">
+          <iron-icon icon="extension"></iron-icon>
+          <div text>{{localize('menuItemQuizzes')}}</div>
+        </paper-item>
+        <paper-item action="/web/questions">
+          <iron-icon icon="subject"></iron-icon>
+          <div text>{{localize('menuItemQuestions')}}</div>
+        </paper-item>
+        <paper-item action="/web/storage">
+          <iron-icon icon="folder"></iron-icon>
+          <div text>{{localize('menuItemStorage')}}</div>
+        </paper-item>
+        <paper-item action="/web/signout">
+          <iron-icon icon="exit-to-app"></iron-icon>
+          <div text>{{localize('menuItemSignOut')}}</div>
+        </paper-item>
       </paper-menu>
     </div>
   </template>
@@ -64,6 +81,8 @@
         }
       }
     });
+
+
   </script>
-  
+
 </dom-module>

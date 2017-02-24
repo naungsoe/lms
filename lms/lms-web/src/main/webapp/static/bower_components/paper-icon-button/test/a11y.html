@@ -23,17 +23,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-  <test-fixture id="A11yIconButtons">
-    <template>
-      <paper-icon-button id="iconButton1" icon="add"></paper-icon-button>
-      <paper-icon-button id="iconButton2" icon="add" disabled></paper-icon-button>
-      <paper-icon-button id="iconButton3" icon="add" aria-label="custom"></paper-icon-button>
-      <paper-icon-button id="iconButton4" icon="add" alt="alt text"></paper-icon-button>
-      <paper-icon-button id="iconButton5" icon="add" aria-label="custom" alt="alt text" ></paper-icon-button>
-    </template>
-  </test-fixture>
+<test-fixture id="A11yIconButtons">
+  <template>
+    <paper-icon-button id="iconButton1" icon="add"></paper-icon-button>
+    <paper-icon-button id="iconButton2" icon="add" disabled></paper-icon-button>
+    <paper-icon-button id="iconButton3" icon="add" aria-label="custom"></paper-icon-button>
+    <paper-icon-button id="iconButton4" icon="add" alt="alt text"></paper-icon-button>
+    <paper-icon-button id="iconButton5" icon="add" aria-label="custom" alt="alt text"></paper-icon-button>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
 
     var b1;
     var b2;
@@ -86,7 +86,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       assert.strictEqual(b4.getAttribute('aria-label'), 'alt again');
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

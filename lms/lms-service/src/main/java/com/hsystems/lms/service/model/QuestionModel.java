@@ -1,5 +1,7 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 3/11/16.
  */
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class QuestionModel implements Serializable {
 
   private static final long serialVersionUID = 553257369714695546L;
@@ -22,10 +25,6 @@ public class QuestionModel implements Serializable {
   private String explanation;
 
   private List<QuestionOptionModel> options;
-
-  private String schoolId;
-
-  private String schoolName;
 
   private String createdById;
 
@@ -94,22 +93,6 @@ public class QuestionModel implements Serializable {
   public void setOptions(
       List<QuestionOptionModel> options) {
     this.options = options;
-  }
-
-  public String getSchoolId() {
-    return schoolId;
-  }
-
-  public void setSchoolId(String schoolId) {
-    this.schoolId = schoolId;
-  }
-
-  public String getSchoolName() {
-    return schoolName;
-  }
-
-  public void setSchoolName(String schoolName) {
-    this.schoolName = schoolName;
   }
 
   public String getCreatedById() {

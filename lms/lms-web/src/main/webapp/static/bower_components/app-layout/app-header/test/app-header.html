@@ -42,40 +42,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       background-color: red;
     }
 
+
   </style>
 
 </head>
 <body>
 
-  <test-fixture id="testHeader">
-    <template>
-      <div>
-        <app-header class="header">
-          <app-toolbar>
-            <div condensed-title>Title</div>
-          </app-toolbar>
-          <app-toolbar>
-            <div main-title spacer>Title</div>
-          </app-toolbar>
-        </app-header>
-        <div class="content"></div>
-      </div>
-    </template>
-  </test-fixture>
+<test-fixture id="testHeader">
+  <template>
+    <div>
+      <app-header class="header">
+        <app-toolbar>
+          <div condensed-title>Title</div>
+        </app-toolbar>
+        <app-toolbar>
+          <div main-title spacer>Title</div>
+        </app-toolbar>
+      </app-header>
+      <div class="content"></div>
+    </div>
+  </template>
+</test-fixture>
 
-  <test-fixture id="testStickyElement">
-    <template>
-      <div>
-        <app-header fixed condenses reveals class="header">
-          <app-toolbar></app-toolbar>
-          <app-toolbar sticky></app-toolbar>
-        </app-header>
-        <div class="content"></div>
-      </div>
-    </template>
-  </test-fixture>
+<test-fixture id="testStickyElement">
+  <template>
+    <div>
+      <app-header fixed condenses reveals class="header">
+        <app-toolbar></app-toolbar>
+        <app-toolbar sticky></app-toolbar>
+      </app-header>
+      <div class="content"></div>
+    </div>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
 
     function scrollTestHelper(scroller, tests) {
 
@@ -506,7 +507,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

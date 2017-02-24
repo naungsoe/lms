@@ -54,89 +54,90 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     width: 3000px;
     height: 3000px;
   }
+
 </style>
 
 <body>
 
-  <test-fixture id="TrivialDropdown">
-    <template>
+<test-fixture id="TrivialDropdown">
+  <template>
+    <iron-dropdown>
+      <div class="dropdown-content"></div>
+    </iron-dropdown>
+  </template>
+</test-fixture>
+
+<test-fixture id="NonLockingDropdown">
+  <template>
+    <iron-dropdown allow-outside-scroll>
+      <div class="dropdown-content">I don't lock scroll!</div>
+    </iron-dropdown>
+  </template>
+</test-fixture>
+
+<test-fixture id="AlignedDropdown">
+  <template>
+    <div class="container">
+      <iron-dropdown horizontal-align="right" vertical-align="top">
+        <div class="dropdown-content big"></div>
+      </iron-dropdown>
+    </div>
+  </template>
+</test-fixture>
+
+<!-- Absolutely position the dropdown so that it has enough space to move around -->
+<test-fixture id="OffsetDropdownTopLeft">
+  <template>
+    <div class="container positioned">
       <iron-dropdown>
         <div class="dropdown-content"></div>
       </iron-dropdown>
-    </template>
-  </test-fixture>
+    </div>
+  </template>
+</test-fixture>
 
-  <test-fixture id="NonLockingDropdown">
-    <template>
-      <iron-dropdown allow-outside-scroll>
-        <div class="dropdown-content">I don't lock scroll!</div>
+<test-fixture id="OffsetDropdownBottomRight">
+  <template>
+    <div class="container positioned">
+      <iron-dropdown horizontal-align="right" vertical-align="bottom">
+        <div class="dropdown-content"></div>
       </iron-dropdown>
-    </template>
-  </test-fixture>
+    </div>
+  </template>
+</test-fixture>
 
-  <test-fixture id="AlignedDropdown">
-    <template>
-      <div class="container">
-        <iron-dropdown horizontal-align="right" vertical-align="top">
-          <div class="dropdown-content big"></div>
-        </iron-dropdown>
+<test-fixture id="FocusableContentDropdown">
+  <template>
+    <iron-dropdown>
+      <div class="dropdown-content" tabindex="0">
+        <div class="subcontent" tabindex="0"></div>
       </div>
-    </template>
-  </test-fixture>
+    </iron-dropdown>
+  </template>
+</test-fixture>
 
-  <!-- Absolutely position the dropdown so that it has enough space to move around -->
-  <test-fixture id="OffsetDropdownTopLeft">
-    <template>
-      <div class="container positioned">
-        <iron-dropdown>
-          <div class="dropdown-content"></div>
-        </iron-dropdown>
-      </div>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="OffsetDropdownBottomRight">
-    <template>
-      <div class="container positioned">
-        <iron-dropdown horizontal-align="right" vertical-align="bottom">
-          <div class="dropdown-content"></div>
-        </iron-dropdown>
-      </div>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="FocusableContentDropdown">
-    <template>
+<test-fixture id="RTLDropdownLeft">
+  <template>
+    <div dir="rtl" class="container">
       <iron-dropdown>
-        <div class="dropdown-content" tabindex="0">
-          <div class="subcontent" tabindex="0"></div>
-        </div>
+        <div class="dropdown-content"></div>
       </iron-dropdown>
-    </template>
-  </test-fixture>
+    </div>
+  </template>
+</test-fixture>
 
-  <test-fixture id="RTLDropdownLeft">
-    <template>
-      <div dir="rtl" class="container">
-        <iron-dropdown>
-          <div class="dropdown-content"></div>
-        </iron-dropdown>
-      </div>
-    </template>
-  </test-fixture>
-
-  <test-fixture id="RTLDropdownRight">
-    <template>
-      <div dir="rtl" class="container">
-        <iron-dropdown horizontal-align="right">
-          <div class="dropdown-content"></div>
-        </iron-dropdown>
-      </div>
-    </template>
-  </test-fixture>
+<test-fixture id="RTLDropdownRight">
+  <template>
+    <div dir="rtl" class="container">
+      <iron-dropdown horizontal-align="right">
+        <div class="dropdown-content"></div>
+      </iron-dropdown>
+    </div>
+  </template>
+</test-fixture>
 
 
-  <script>
+<script>
     function elementIsVisible(element) {
       var contentRect = element.getBoundingClientRect();
       var computedStyle = window.getComputedStyle(element);
@@ -476,7 +477,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       });
     });
-  </script>
+
+</script>
 </body>
 
 </html>

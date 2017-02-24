@@ -15,7 +15,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
@@ -32,33 +32,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-  <test-fixture id="basic">
-    <template>
-      <neon-animated-pages>
-      </neon-animated-pages>
-    </template>
-  </test-fixture>
+<test-fixture id="basic">
+  <template>
+    <neon-animated-pages>
+    </neon-animated-pages>
+  </template>
+</test-fixture>
 
-  <test-fixture id="notify-resize">
-    <template>
-      <neon-animated-pages>
-        <a-resizable-page></a-resizable-page>
-        <b-resizable-page></b-resizable-page>
-        <c-resizable-page></c-resizable-page>
-      </neon-animated-pages>
-    </template>
-  </test-fixture>
+<test-fixture id="notify-resize">
+  <template>
+    <neon-animated-pages>
+      <a-resizable-page></a-resizable-page>
+      <b-resizable-page></b-resizable-page>
+      <c-resizable-page></c-resizable-page>
+    </neon-animated-pages>
+  </template>
+</test-fixture>
 
-  <test-fixture id="animate-initial-selection">
-    <template>
-      <neon-animated-pages entry-animation="slide-from-left-animation" exit-animation="slide-right-animation" animate-initial-selection>
-        <neon-animatable></neon-animatable>
-        <neon-animatable></neon-animatable>
-      </neon-animated-pages>
-    </template>
-  </test-fixture>
+<test-fixture id="animate-initial-selection">
+  <template>
+    <neon-animated-pages entry-animation="slide-from-left-animation" exit-animation="slide-right-animation"
+                         animate-initial-selection>
+      <neon-animatable></neon-animatable>
+      <neon-animatable></neon-animatable>
+    </neon-animated-pages>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
     suite('basic', function() {
     });
     suite('notify-resize', function() {
@@ -95,7 +96,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         animatedPages.selected = 0;
       });
     });
-  </script>
+
+</script>
 
 </body>
 </html>

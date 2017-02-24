@@ -11,7 +11,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -21,6 +22,10 @@ public class SignInServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
+  private static final String JSP_PATH = "/jsp/signin/index.jsp";
+
+  private static final String HOME_PATH = "/web/home";
+
   private final AuthenticationService authenticationService;
 
   @Inject
@@ -29,48 +34,44 @@ public class SignInServlet extends BaseServlet {
   }
 
   @Override
-  protected void doGet()
+  protected void doGet(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    setAttribute("id", getCookie("id"));
-    loadSignIn();
+    loadSignIn(request, response);
   }
 
-  private void loadSignIn()
+  private void loadSignIn(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    loadLocale("signin");
-    loadAttribute("titlePage");
-    forwardRequest("/jsp/signin/index.jsp");
+    loadLocale(request, "signin");
+    forwardRequest(request, response, JSP_PATH);
   }
 
   @Override
-  protected void doPost()
+  protected void doPost(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignInModel model = ServletUtils.getModel(
-        getRequest(), SignInModel.class);
+    SignInModel model = ServletUtils.getModel(request, SignInModel.class);
     Optional<UserModel> userModelOptional
         = authenticationService.signIn(model);
 
     if (userModelOptional.isPresent()) {
-      createSessionAndCookies(userModelOptional.get());
-      sendRedirect("/web/home");
+      createUserSession(request, userModelOptional.get());
+      redirectRequest(response, HOME_PATH);
 
     } else {
-      setAttribute("id", getParameter("id"));
-      setAttribute("error", "errorCredential");
-      loadSignIn();
+      request.setAttribute("error", "errorCredential");
+      loadSignIn(request, response);
     }
   }
 
-  private void createSessionAndCookies(UserModel userModel) {
-    HttpSession session = getRequest().getSession(true);
-    session.setAttribute("userModel", userModel);
-    session.setMaxInactiveInterval(30 * 60);
+  private void createUserSession(
+      HttpServletRequest request, UserModel userModel) {
 
-    Cookie cookie = new Cookie("id", userModel.getId());
-    cookie.setMaxAge(30 * 60);
-    getResponse().addCookie(cookie);
+    HttpSession session = request.getSession(true);
+    session.setAttribute("userModel", userModel);
   }
 }

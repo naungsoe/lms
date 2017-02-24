@@ -36,7 +36,7 @@ public class CommonUtils {
     }
   }
 
-  public static String getUniqueKey() {
+  public static String genUniqueKey() {
     String uuid = UUID.randomUUID().toString();
     return SecurityUtils.getMD5Hash(uuid, null);
   }

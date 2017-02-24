@@ -42,6 +42,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
       padding: 0;
     }
+
   </style>
 </head>
 <body>
@@ -134,6 +135,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: black;
       }
 
+
     </style>
 
     <iron-ajax url="data/contacts.json" last-response="{{items}}" auto></iron-ajax>
@@ -142,7 +144,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div main-title>Grouping items</div>
       <paper-menu-button id="menu" dynamic-align>
         <paper-icon-button icon="filter-list" class="dropdown-trigger"></paper-icon-button>
-          <iron-list class="state-list dropdown-content" items="[[states]]">
+        <iron-list class="state-list dropdown-content" items="[[states]]">
           <template>
             <paper-item on-click="_onStateClick">[[item.state]]</paper-item>
           </template>
@@ -217,6 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
     });
+
 
   </script>
 </dom-module>

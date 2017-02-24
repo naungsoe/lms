@@ -6,19 +6,17 @@ import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
+import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignUpModel;
 import com.hsystems.lms.service.model.UserModel;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -29,18 +27,14 @@ public class UserService extends BaseService {
 
   private final Properties properties;
 
-  private final UnitOfWork unitOfWork;
-
   private final IndexRepository indexRepository;
 
   @Inject
   UserService(
       Properties properties,
-      UnitOfWork unitOfWork,
       IndexRepository indexRepository) {
 
     this.properties = properties;
-    this.unitOfWork = unitOfWork;
     this.indexRepository = indexRepository;
   }
 
@@ -74,8 +68,6 @@ public class UserService extends BaseService {
     checkSignUpPreconditions(signUpModel);
 
     User user = getUser(signUpModel);
-    unitOfWork.registerNew(user);
-    unitOfWork.commit();
   }
 
   private void checkSignUpPreconditions(SignUpModel signUpModel) {
@@ -98,19 +90,12 @@ public class UserService extends BaseService {
 
   private User getUser(SignUpModel signUpModel) throws IOException {
     String schoolId = properties.getProperty("app.default.school.id");
-    String groupId = properties.getProperty("app.default.group.id");
-
     Optional<School> schoolOptional
         = indexRepository.findBy(schoolId, School.class);
-    Optional<Group> groupOptional
-        = indexRepository.findBy(groupId, Group.class);
 
     if (!schoolOptional.isPresent()) {
       throw new IllegalArgumentException(
           "error retrieving school");
-    } else if (!groupOptional.isPresent()) {
-      throw new IllegalArgumentException(
-          "error retrieving group");
     }
 
     String randomSalt = SecurityUtils.getRandomSalt();
@@ -127,6 +112,7 @@ public class UserService extends BaseService {
     );
 
     return new User(
+        CommonUtils.genUniqueKey(),
         signUpModel.getId(),
         hashedPassword,
         randomSalt,
@@ -139,9 +125,8 @@ public class UserService extends BaseService {
         schoolOptional.get().getLocale(),
         schoolOptional.get().getDateFormat(),
         schoolOptional.get().getDateTimeFormat(),
-        groupOptional.get().getPermissions(),
-        schoolOptional.get(),
-        Arrays.asList(groupOptional.get()),
+        Collections.emptyList(),
+        Collections.emptyList(),
         createdBy,
         LocalDateTime.now(),
         null,

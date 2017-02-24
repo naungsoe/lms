@@ -3,24 +3,29 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.provider.PrincipalProvider;
-import com.hsystems.lms.web.util.ServletUtils;
-
-import org.apache.commons.lang.StringUtils;
 
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class AuthenticationFilter extends BaseFilter {
+public class AuthenticationFilter
+    extends BaseFilter implements Filter {
 
   private final Injector injector;
 
@@ -28,59 +33,77 @@ public class AuthenticationFilter extends BaseFilter {
 
   @Inject
   AuthenticationFilter(
-      Injector injector, AuthenticationService authenticationService) {
+      Injector injector,
+      AuthenticationService authenticationService) {
 
     this.injector = injector;
     this.authenticationService = authenticationService;
   }
 
-  public void init()
+  @Override
+  public void init(FilterConfig filterConfig)
       throws ServletException {
 
-    getContext().log("AuthenticationFilter initialized");
+    ServletContext context = filterConfig.getServletContext();
+    context.log("AuthenticationFilter initialized");
   }
 
-  public void doFilter()
+  @Override
+  public void doFilter(
+      ServletRequest request, ServletResponse response, FilterChain chain)
       throws IOException, ServletException {
 
-    if (isPublicResourceRequest() || isAuthenticated()) {
-      getFilterChain().doFilter(getRequest(), getResponse());
+    String url = getRequestUrl(request);
+
+    if (!isAuthenticated() && !isPublicUrl(url)) {
+      populateUserSession(request, response);
+    }
+
+    if (isPublicUrl(url)) {
+      chain.doFilter(request, response);
 
     } else {
-      populateUserProvider();
-
-      if (isAuthenticated()) {
-        getFilterChain().doFilter(getRequest(), getResponse());
+      if (isSignInUrl(url)) {
+        if (isAuthenticated()) {
+          forwardRequest(request, response, "/web/home");
+        } else {
+          chain.doFilter(request, response);
+        }
+      } else if (isAuthenticated()) {
+        chain.doFilter(request, response);
 
       } else {
-        getContext().log("unauthenticated access request url : "
-            + getRequest().getRequestURI());
-        forwardRequest("/web/signin");
+        request.getServletContext().log(
+            String.format("unauthorized access to %s", url));
       }
     }
   }
 
-  private void populateUserProvider()
+  private void populateUserSession(
+      ServletRequest request, ServletResponse response)
       throws IOException, ServletException {
 
-    String id = ServletUtils.getCookie(getRequest(), "id");
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    String sessionId = httpRequest.getRequestedSessionId();
 
-    if (StringUtils.isEmpty(id)) {
+    if (StringUtils.isEmpty(sessionId)) {
       return;
     }
 
     Optional<UserModel> userModelOptional
-        = authenticationService.findSignedInUserBy(id);
+        = authenticationService.findSignedInUserBy(sessionId);
 
     if (userModelOptional.isPresent()) {
-      createSessionAndCookies(userModelOptional.get());
+      createUserSession(request, userModelOptional.get());
     }
   }
 
-  private boolean isPublicResourceRequest() {
-    String url = getRequest().getRequestURI();
-    return url.startsWith("/web/signin")
-        || url.startsWith("/web/accounthelp")
+  private boolean isSignInUrl(String url) {
+    return url.startsWith("/web/signin");
+  }
+
+  private boolean isPublicUrl(String url) {
+    return url.startsWith("/web/accounthelp")
         || url.startsWith("/web/signup")
         || url.startsWith("/web/error");
   }
@@ -90,13 +113,16 @@ public class AuthenticationFilter extends BaseFilter {
     return (provider.get() != null);
   }
 
-  private void createSessionAndCookies(UserModel userModel) {
-    HttpSession session = getRequest().getSession(true);
-    session.setAttribute("userModel", userModel);
-    session.setMaxInactiveInterval(30 * 60);
+  private void createUserSession(
+      ServletRequest request, UserModel userModel) {
 
-    Cookie cookie = new Cookie("id", userModel.getId());
-    cookie.setMaxAge(30 * 60);
-    getResponse().addCookie(cookie);
+    HttpServletRequest httpRequest = (HttpServletRequest) request;
+    HttpSession session = httpRequest.getSession(true);
+    session.setAttribute("userModel", userModel);
+  }
+
+  @Override
+  public void destroy() {
+
   }
 }

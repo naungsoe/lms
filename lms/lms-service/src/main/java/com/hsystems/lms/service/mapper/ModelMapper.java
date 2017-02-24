@@ -25,7 +25,7 @@ public class ModelMapper extends Mapper {
   }
 
   @Override
-  protected  <T,S> S getCompositeFieldValue(
+  protected <T, S> S getCompositeFieldValue(
       T source, List<Field> sourceFields,
       String fieldName, Class<S> type) {
 
@@ -33,12 +33,9 @@ public class ModelMapper extends Mapper {
     String fieldNameToken = fieldNameTokens.poll();
     Optional<Field> fieldOptional = getField(sourceFields, fieldNameToken);
 
-    if (!fieldNameTokens.isEmpty() && !fieldOptional.isPresent()) {
-      do {
-        fieldNameToken = fieldNameToken + fieldNameTokens.poll();
-        fieldOptional = getField(sourceFields, fieldNameToken);
-
-      } while (!fieldOptional.isPresent());
+    while (!fieldNameTokens.isEmpty() && !fieldOptional.isPresent()) {
+      fieldNameToken = fieldNameToken + fieldNameTokens.poll();
+      fieldOptional = getField(sourceFields, fieldNameToken);
     }
 
     if (fieldNameTokens.isEmpty()) {

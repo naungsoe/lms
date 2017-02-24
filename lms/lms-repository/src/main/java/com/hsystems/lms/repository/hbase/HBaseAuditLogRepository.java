@@ -66,13 +66,11 @@ public class HBaseAuditLogRepository
   public void save(AuditLog auditLog, long timestamp)
       throws IOException {
 
-
   }
 
   @Override
   public void delete(AuditLog auditLog, long timestamp)
       throws IOException {
-
 
   }
 }

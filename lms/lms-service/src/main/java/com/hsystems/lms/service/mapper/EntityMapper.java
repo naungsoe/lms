@@ -25,7 +25,7 @@ public class EntityMapper extends Mapper {
   }
 
   @Override
-  protected  <T,S> S getCompositeFieldValue(
+  protected <T, S> S getCompositeFieldValue(
       T source, List<Field> sourceFields,
       String fieldName, Class<S> type) {
 

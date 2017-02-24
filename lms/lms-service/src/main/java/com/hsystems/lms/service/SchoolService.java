@@ -15,16 +15,12 @@ import java.util.Optional;
  */
 public class SchoolService extends BaseService {
 
-  private final UnitOfWork unitOfWork;
-
   private final IndexRepository indexRepository;
 
   @Inject
   SchoolService(
-      UnitOfWork unitOfWork,
       IndexRepository indexRepository) {
 
-    this.unitOfWork = unitOfWork;
     this.indexRepository = indexRepository;
   }
 

@@ -31,13 +31,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
     }
 
+
   </style>
 
 </head>
 <body>
-  <dom-module id="my-element">
-    <template>
-      <style>
+<dom-module id="my-element">
+  <template>
+    <style>
         #threshold {
           position: absolute;
           top: 0;
@@ -59,20 +60,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         [item].last {
           margin-bottom: 40px;
         }
-      </style>
 
-      <iron-scroll-threshold on-lower-threshold="loadMoreData" id="threshold">
-        <iron-list id="list" items="[[items]]" scroll-target="threshold">
-          <template>
-            <div>
-              <div item class$="[[getItemClass(index, items.length)]]">[[index]]</div>
-            </div>
-          </template>
-        </iron-list>
-      </iron-scroll-threshold>
-    </template>
+    </style>
 
-    <script>
+    <iron-scroll-threshold on-lower-threshold="loadMoreData" id="threshold">
+      <iron-list id="list" items="[[items]]" scroll-target="threshold">
+        <template>
+          <div>
+            <div item class$="[[getItemClass(index, items.length)]]">[[index]]</div>
+          </div>
+        </template>
+      </iron-list>
+    </iron-scroll-threshold>
+  </template>
+
+  <script>
         Polymer({
           is: 'my-element',
           
@@ -103,10 +105,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             return (index == length - 1) ? 'last' : '';
           }
         });
-    </script>
-  </dom-module>
 
-  <my-element></my-element>
+  </script>
+</dom-module>
+
+<my-element></my-element>
 
 </body>
 </html>

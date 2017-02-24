@@ -37,26 +37,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       height: 3000px;
       background-color: red;
     }
+
   </style>
 
 </head>
 <body>
 
-  <test-fixture id="trivialHeader">
-    <template>
-      <app-header-layout>
-        <app-header condenses>
-          <app-toolbar></app-toolbar>
-          <app-toolbar>
-            <div main-title spacer>Title</div>
-          </app-toolbar>
-        </app-header>
-        <div class="content"></div>
-      </app-header-layout>
-    </template>
-  </test-fixture>
+<test-fixture id="trivialHeader">
+  <template>
+    <app-header-layout>
+      <app-header condenses>
+        <app-toolbar></app-toolbar>
+        <app-toolbar>
+          <div main-title spacer>Title</div>
+        </app-toolbar>
+      </app-header>
+      <div class="content"></div>
+    </app-header-layout>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
 
     suite('basic features', function() {
       var headerLayout, header, toolbar;
@@ -109,7 +110,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

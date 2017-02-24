@@ -164,6 +164,7 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
         /* slightly darker than the button, so that it's readable */
         opacity: 0.65;
       }
+
     </style>
 
     <div id="radioContainer">
@@ -171,7 +172,9 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
       <div id="onRadio"></div>
     </div>
 
-    <div id="radioLabel"><content></content></div>
+    <div id="radioLabel">
+      <content></content>
+    </div>
   </template>
 
   <script>
@@ -211,5 +214,6 @@ In order to apply the `Roboto` font to this element, make sure you've imported `
         this._rippleContainer = this.$.radioContainer;
       }
     })
+
   </script>
 </dom-module>

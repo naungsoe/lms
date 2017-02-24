@@ -12,6 +12,8 @@ public class SignInLog implements Entity, Serializable {
 
   private String id;
 
+  private String sessionId;
+
   private String ipAddress;
 
   private LocalDateTime dateTime;
@@ -22,16 +24,24 @@ public class SignInLog implements Entity, Serializable {
 
   public SignInLog(
       String id,
+      String sessionId,
       String ipAddress,
       LocalDateTime dateTime) {
 
     this.id = id;
+    this.sessionId = sessionId;
     this.ipAddress = ipAddress;
     this.dateTime = dateTime;
   }
 
   @Override
-  public String getId() { return id; }
+  public String getId() {
+    return id;
+  }
+
+  public String getSessionId() {
+    return sessionId;
+  }
 
   public String getIpAddress() {
     return ipAddress;
@@ -45,6 +55,7 @@ public class SignInLog implements Entity, Serializable {
   public int hashCode() {
     int prime = 31;
     int result = id.hashCode();
+    result = result * prime + sessionId.hashCode();
     result = result * prime + ipAddress.hashCode();
     return result * prime + dateTime.hashCode();
   }
@@ -58,6 +69,7 @@ public class SignInLog implements Entity, Serializable {
     SignInLog signInLog = (SignInLog) obj;
 
     return id.equals(signInLog.getId())
+        && sessionId.equals(signInLog.getSessionId())
         && ipAddress.equals(signInLog.getIpAddress())
         && dateTime.equals(signInLog.getDateTime());
   }
@@ -65,7 +77,7 @@ public class SignInLog implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "SignInLog{id=%s, ipAddress=%s, dateTime=%s}",
-        id, ipAddress, dateTime);
+        "SignInLog{id=%s, sessionId=%s, ipAddress=%s, dateTime=%s}",
+        id, sessionId, ipAddress, dateTime);
   }
 }

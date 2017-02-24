@@ -45,6 +45,10 @@ public final class ReflectionUtils {
     return ReflectionUtils.getValue(instance, fieldName, String.class);
   }
 
+  public static <T> Object getValue(T instance, String fieldName) {
+    return getValue(instance, fieldName, Object.class);
+  }
+
   public static <T, S> S getValue(T instance, String fieldName, Class<S> type) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
     return getValue(instance, fieldOptional.get(), type);

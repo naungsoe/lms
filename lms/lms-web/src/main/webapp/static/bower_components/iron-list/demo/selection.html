@@ -41,9 +41,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <body unresolved>
 
-  <dom-module id="x-app">
-    <template>
-      <style>
+<dom-module id="x-app">
+  <template>
+    <style>
 
         :host {
           display: block;
@@ -183,58 +183,62 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           @apply(--layout-flex);
         }
 
-      </style>
-      <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
 
-      <app-drawer-layout fullbleed>
-        <div class="content">
-          <app-toolbar class="pink-toolbar">
-            <div main-title>Selection using iron-list</div>
+    </style>
+    <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
+
+    <app-drawer-layout fullbleed>
+      <div class="content">
+        <app-toolbar class="pink-toolbar">
+          <div main-title>Selection using iron-list</div>
+          <div>
+            <paper-icon-button icon="star" alt="Starred" drawer-toggle></paper-icon-button>
+            <paper-badge label$="[[selectedItems.length]]"></paper-badge>
+          </div>
+        </app-toolbar>
+        <!-- Main List for the items -->
+        <iron-list id="itemsList" items="[[data]]" selected-items="{{selectedItems}}" selection-enabled multi-selection>
+          <template>
             <div>
-              <paper-icon-button icon="star" alt="Starred" drawer-toggle></paper-icon-button>
-              <paper-badge label$="[[selectedItems.length]]"></paper-badge>
-            </div>
-          </app-toolbar>
-          <!-- Main List for the items -->
-          <iron-list id="itemsList" items="[[data]]" selected-items="{{selectedItems}}" selection-enabled multi-selection>
-            <template>
-              <div>
-                <div tabindex$="[[tabIndex]]" aria-label$="Select/Deselect [[item.name]]" class$="[[_computedClass(selected)]]">
-                  <img class="avatar" src="[[item.image]]">
-                  <div class="pad">
-                    <div class="primary">
-                      [[item.name]]
-                    </div>
-                    <div class="secondary dim">[[item.shortText]]</div>
+              <div tabindex$="[[tabIndex]]" aria-label$="Select/Deselect [[item.name]]"
+                   class$="[[_computedClass(selected)]]">
+                <img class="avatar" src="[[item.image]]">
+                <div class="pad">
+                  <div class="primary">
+                    [[item.name]]
                   </div>
-                  <iron-icon icon$="[[iconForItem(selected)]]" class="star"></iron-icon>
+                  <div class="secondary dim">[[item.shortText]]</div>
                 </div>
-                <div class="border"></div>
+                <iron-icon icon$="[[iconForItem(selected)]]" class="star"></iron-icon>
               </div>
+              <div class="border"></div>
+            </div>
+          </template>
+        </iron-list>
+      </div>
+      <app-drawer align="right">
+        <div class="content">
+          <app-toolbar class="white-toolbar">
+            <div main-title>[[_getFormattedCount(selectedItems.length)]] Selected contacts</div>
+          </app-toolbar>
+          <template is="dom-if" if="[[!selectedItems.length]]">
+            <div class="no-selection">Select a contact</div>
+          </template>
+          <!-- List for the selected items -->
+          <iron-list id="selectedItemsList" items="[[selectedItems]]" hidden$="[[!selectedItems.length]]">
+            <template>
+              <paper-item tabindex$="[[tabIndex]]" on-tap="_unselect" aria-label$="Deselect [[item.name]]">
+                [[item.name]]
+              </paper-item>
             </template>
           </iron-list>
         </div>
-        <app-drawer align="right">
-          <div class="content">
-            <app-toolbar class="white-toolbar">
-              <div main-title>[[_getFormattedCount(selectedItems.length)]] Selected contacts</div>
-            </app-toolbar>
-            <template is="dom-if" if="[[!selectedItems.length]]">
-              <div class="no-selection">Select a contact</div>
-            </template>
-            <!-- List for the selected items -->
-            <iron-list id="selectedItemsList" items="[[selectedItems]]" hidden$="[[!selectedItems.length]]">
-              <template>
-                <paper-item tabindex$="[[tabIndex]]" on-tap="_unselect" aria-label$="Deselect [[item.name]]">[[item.name]]</paper-item>
-              </template>
-            </iron-list>
-          </div>
-        </app-drawer>
-      </app-drawer-layout>
+      </app-drawer>
+    </app-drawer-layout>
 
-    </template>
+  </template>
 
-    <script>
+  <script>
 
       HTMLImports.whenReady(function() {
 
@@ -271,10 +275,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
      });
 
-    </script>
-  </dom-module>
 
-  <x-app></x-app>
+  </script>
+</dom-module>
+
+<x-app></x-app>
 
 </body>
 </html>

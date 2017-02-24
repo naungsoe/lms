@@ -31,31 +31,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-  <test-fixture id="basic">
-    <template>
-      <x-translate></x-translate>
-    </template>
-  </test-fixture>
+<test-fixture id="basic">
+  <template>
+    <x-translate></x-translate>
+  </template>
+</test-fixture>
 
-  <test-fixture id="basic2">
-    <template>
-      <x-translate></x-translate>
-    </template>
-  </test-fixture>
+<test-fixture id="basic2">
+  <template>
+    <x-translate></x-translate>
+  </template>
+</test-fixture>
 
-  <test-fixture id="interpolated">
-    <template>
-      <x-translate2></x-translate2>
-    </template>
-  </test-fixture>
+<test-fixture id="interpolated">
+  <template>
+    <x-translate2></x-translate2>
+  </template>
+</test-fixture>
 
-  <test-fixture id="only-imperative">
-    <template>
-      <x-translate-only-imperative></x-translate-only-imperative>
-    </template>
-  </test-fixture>
+<test-fixture id="only-imperative">
+  <template>
+    <x-translate-only-imperative></x-translate-only-imperative>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
     function getRequestsCache(elem) {
       return elem.constructor.prototype.__localizationCache.requests;
     }
@@ -315,6 +315,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.notEqual(cachedString, newCachedString, 'cached string is different than before');
       });
     });
-  </script>
+
+</script>
 </body>
 </html>

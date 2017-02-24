@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.User;
 
@@ -33,9 +34,16 @@ public class HBaseUserMapper extends HBaseMapper<User> {
     String mobile = getMobile(mainResult);
     String email = getEmail(mainResult);
     String locale = getLocale(mainResult);
-    String dateFormat= getDateFormat(mainResult);
+    String dateFormat = getDateFormat(mainResult);
     String dateTimeFormat = getDateTimmeFormat(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
+
+    List<Group> groups = new ArrayList<>();
+    results.stream().filter(isGroupResult(id))
+        .forEach(groupResult -> {
+          Group group = getGroup(groupResult);
+          groups.add(group);
+        });
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -45,9 +53,9 @@ public class HBaseUserMapper extends HBaseMapper<User> {
     Optional<Result> modifiedByResultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = modifiedByResultOptional.isPresent()
-      ? getModifiedBy(modifiedByResultOptional.get()) : null;
+        ? getModifiedBy(modifiedByResultOptional.get()) : null;
     LocalDateTime modifiedDateTime = modifiedByResultOptional.isPresent()
-      ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
+        ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
 
     return new User(
         id,
@@ -64,6 +72,7 @@ public class HBaseUserMapper extends HBaseMapper<User> {
         dateFormat,
         dateTimeFormat,
         permissions,
+        groups,
         createdBy,
         createdDateTime,
         modifiedBy,

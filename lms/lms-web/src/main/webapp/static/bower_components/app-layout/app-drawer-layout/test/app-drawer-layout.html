@@ -49,23 +49,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     [drawer] {
       width: 100%;
     }
+
   </style>
 
 </head>
 <body>
 
-  <test-fixture id="testDrawerLayout">
-    <template>
-      <app-drawer-layout>
-        <app-drawer>Drawer</app-drawer>
-        <div drawer-toggle>Toggle</div>
-        <p>Content</p>
-        <x-resizeable></x-resizeable>
-      </app-drawer-layout>
-    </template>
-  </test-fixture>
+<test-fixture id="testDrawerLayout">
+  <template>
+    <app-drawer-layout>
+      <app-drawer>Drawer</app-drawer>
+      <div drawer-toggle>Toggle</div>
+      <p>Content</p>
+      <x-resizeable></x-resizeable>
+    </app-drawer-layout>
+  </template>
+</test-fixture>
 
-    <script>
+<script>
     HTMLImports.whenReady(function() {
       Polymer({
         is: 'x-resizeable',
@@ -74,10 +75,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ]
       });
     });
-    </script>
-  </dom-module>
 
-  <script>
+</script>
+</dom-module>
+
+<script>
 
     suite('basic features', function() {
       var drawerLayout, drawer;
@@ -181,7 +183,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

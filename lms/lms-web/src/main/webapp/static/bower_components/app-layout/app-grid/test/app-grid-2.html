@@ -25,13 +25,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
       padding: 0;
     }
+
   </style>
 </head>
 <body>
 
- <dom-module id="x-grid">
-    <template>
-      <style include="app-grid-style">
+<dom-module id="x-grid">
+  <template>
+    <style include="app-grid-style">
 
         :host {
           display: block;
@@ -62,17 +63,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             @apply(--app-grid-expandible-item);
         }
 
-      </style>
 
-      <ul class="app-grid">
-        <template items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" is="dom-repeat">
-          <li class="item">[[item]]</li>
-        </template>
-      </ul>
+    </style>
 
-    </template>
+    <ul class="app-grid">
+      <template items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]" is="dom-repeat">
+        <li class="item">[[item]]</li>
+      </template>
+    </ul>
 
-    <script>
+  </template>
+
+  <script>
 
       HTMLImports.whenReady(function() {
 
@@ -82,17 +84,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       });
 
-    </script>
-  </dom-module>
+
+  </script>
+</dom-module>
 
 
-  <test-fixture id="trivialGrid">
-    <template>
-      <x-grid></x-grid>
-    </template>
-  </test-fixture>
+<test-fixture id="trivialGrid">
+  <template>
+    <x-grid></x-grid>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
 
     function valueAsInt(obj) {
       var rtn = {top: 0, right: 0, bottom: 0, left: 0, width: 0};
@@ -151,7 +154,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

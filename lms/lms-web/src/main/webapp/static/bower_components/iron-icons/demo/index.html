@@ -90,43 +90,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       font-size: 10px;
     }
 
+
   </style>
 
 </head>
 <body>
 
-  <template is="dom-bind">
+<template is="dom-bind">
 
-   <iron-meta type="iconset" list="{{iconsets}}"></iron-meta>
+  <iron-meta type="iconset" list="{{iconsets}}"></iron-meta>
 
-    <template is="dom-repeat" items="{{iconsets}}">
+  <template is="dom-repeat" items="{{iconsets}}">
 
-      <h2>{{item.name}}</h2>
+    <h2>{{item.name}}</h2>
 
-      <div class="set">
+    <div class="set">
 
-        <template is="dom-repeat" items="{{getIconNames(item)}}">
+      <template is="dom-repeat" items="{{getIconNames(item)}}">
 
           <span class="container">
             <iron-icon icon="{{item}}"></iron-icon>
             <div>{{item}}</div>
           </span>
 
-        </template>
+      </template>
 
-      </div>
-
-    </template>
+    </div>
 
   </template>
 
-  <script>
+</template>
+
+<script>
 
     document.querySelector('[is=dom-bind]').getIconNames = function(iconset) {
       return iconset.getIconNames();
     };
 
-  </script>
+
+</script>
 
 </body>
 </html>

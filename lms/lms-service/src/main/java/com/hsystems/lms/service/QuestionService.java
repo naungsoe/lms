@@ -59,8 +59,15 @@ public class QuestionService extends BaseService {
       String id, Configuration configuration)
       throws IOException {
 
+    Optional<MutateLog> mutateLogOptional = mutateLogRepository.findBy(id);
+
+    if (!mutateLogOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    MutateLog mutateLog = mutateLogOptional.get();
     Optional<Question> questionOptional
-        = indexRepository.findBy(id, Question.class);
+        = questionRepository.findBy(id, mutateLog.getTimestamp());
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();

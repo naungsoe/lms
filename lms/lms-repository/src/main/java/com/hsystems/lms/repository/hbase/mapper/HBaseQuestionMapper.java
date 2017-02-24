@@ -1,11 +1,8 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.util.SecurityUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -40,10 +37,6 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
           options.add(option);
         });
 
-    Result schoolResult = results.stream()
-        .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
-
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
     User createdBy = getCreatedBy(createdByResult);
@@ -63,7 +56,6 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         hint,
         explanation,
         options,
-        school,
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -84,9 +76,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   private void addQuestionPut(
       List<Put> puts, Question entity, long timestamp) {
 
-    String questionId = String.format("%s%s",
-        entity.getSchool().getId(), entity.getId());
-    byte[] row = Bytes.toBytes(questionId);
+    byte[] row = Bytes.toBytes(entity.getId());
     Put put = new Put(row, timestamp);
     addTypeColumn(put, entity.getType());
     addBodyColumn(put, entity.getBody());

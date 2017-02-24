@@ -5,7 +5,6 @@ import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.QuizSection;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;

@@ -24,10 +24,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-  <dom-module id="test-checked">
-    <template>
-    </template>
-    <script>
+<dom-module id="test-checked">
+  <template>
+  </template>
+  <script>
     HTMLImports.whenReady(function() {
       Polymer({
         is: 'test-checked',
@@ -36,16 +36,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ]
       });
     });
-    </script>
-  </dom-module>
 
-  <test-fixture id="basic">
-    <template>
-      <test-checked></test-checked>
-    </template>
-  </test-fixture>
+  </script>
+</dom-module>
 
-  <script>
+<test-fixture id="basic">
+  <template>
+    <test-checked></test-checked>
+  </template>
+</test-fixture>
+
+<script>
     suite('PaperCheckedElementBehavior', function() {
       var checked;
 
@@ -88,7 +89,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
     });
-  </script>
+
+</script>
 
 </body>
 </html>

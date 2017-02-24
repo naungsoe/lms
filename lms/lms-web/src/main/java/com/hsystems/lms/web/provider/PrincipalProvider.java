@@ -4,10 +4,6 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.web.Permission;
-
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.servlet.http.HttpSession;
 
@@ -24,22 +20,23 @@ public class PrincipalProvider implements Provider<UserModel> {
   }
 
   public UserModel get() {
-    return new UserModel(
-        "1",
-        "Admin",
-        "User",
-        "01/01/1970",
-        "Male",
-        "987654321",
-        "admin@hsystems.com",
-        "en_US",
-        "dd/MM/yyyy",
-        "dd/MM/yyyy hh:mm:ss",
-        Arrays.asList(Permission.VIEW_HOME,
-            Permission.VIEW_QUESTIONS),
-        "OS",
-        "Open School",
-        new ArrayList<>()
-    );
+    return null;
+//    return new UserModel(
+//        "1",
+//        "Admin",
+//        "User",
+//        "01/01/1970",
+//        "Male",
+//        "987654321",
+//        "admin@hsystems.com",
+//        "en_US",
+//        "dd/MM/yyyy",
+//        "dd/MM/yyyy hh:mm:ss",
+//        Arrays.asList(Permission.VIEW_HOME,
+//            Permission.VIEW_QUESTIONS),
+//        "OS",
+//        "Open School",
+//        new ArrayList<>()
+//    );
   }
 }

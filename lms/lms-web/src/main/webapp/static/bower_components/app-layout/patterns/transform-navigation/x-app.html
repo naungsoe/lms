@@ -49,6 +49,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: none !important;
       }
 
+
     </style>
 
     <app-drawer-layout force-narrow>
@@ -70,7 +71,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <app-header class="main-header">
 
           <app-toolbar>
-            <paper-icon-button class="menu-button" icon="menu" drawer-toggle hidden$="{{wideLayout}}"></paper-icon-button>
+            <paper-icon-button class="menu-button" icon="menu" drawer-toggle
+                               hidden$="{{wideLayout}}"></paper-icon-button>
           </app-toolbar>
 
           <app-toolbar class="tabs-bar" hidden$="{{!wideLayout}}">
@@ -126,6 +128,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
     });
+
 
   </script>
 

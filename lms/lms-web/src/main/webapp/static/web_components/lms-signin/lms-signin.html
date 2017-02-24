@@ -33,28 +33,42 @@
       .module-actions {
         margin: 16px 0;
       }
+
     </style>
 
-    <form id="formSignIn" method="post" action="[[signInUrl]]">
-      <paper-card heading="[[localize('titleCard')]]" alt="[[localize('titleCard')]]" signin>
+    <form name="signIn" method="post" action="[[signInUrl]]">
+      <paper-card heading="[[localize('titleCard')]]"
+                  alt="[[localize('titleCard')]]" signin>
         <div class="card-content">
-          <paper-input name="id" label="[[localize('labelId')]]" value="{{id}}" on-keydown="handleKeydown"
-                       autofocus no-label-float required type="text" autocomplete="off"
-                       error-message="[[localize('labelIdRequired')]]"></paper-input>
-          <paper-input name="password" label="[[localize('labelPassword')]]" value="{{password}}" on-keydown="handleKeydown"
-                       no-label-float required type="password" autocomplete="new-password"
-                       error-message="[[localize('labelPasswordRequired')]]"></paper-input>
-          <div class="error" hidden$="[[_hideError(error, 'errorCredential')]]">{{localize('errorCredential')}}</div>
+          <paper-input name="id" label="[[localize('labelId')]]"
+                       value="{{id}}" type="text" autocomplete="off"
+                       error-message="[[localize('labelIdRequired')]]"
+                       on-keydown="handleKeydown"
+                       autofocus no-label-float required></paper-input>
+          <paper-input name="password" label="[[localize('labelPassword')]]"
+                       value="{{password}}" type="password" autocomplete="new-password"
+                       error-message="[[localize('labelPasswordRequired')]]"
+                       on-keydown="handleKeydown"
+                       no-label-float required></paper-input>
+          <div class="error" hidden$="[[_hideError(error, 'errorCredential')]]">
+            [[localize('errorCredential')]]
+          </div>
         </div>
         <div class="card-actions">
-          <paper-button on-tap="handleSignIn" raised>[[localize('buttonSignIn')]]</paper-button>
-          <paper-button on-tap="handleAccountHelp" class="link">[[localize('buttonAccountHelp')]]</paper-button>
+          <paper-button on-tap="handleSignIn" raised>
+            [[localize('buttonSignIn')]]
+          </paper-button>
+          <paper-button on-tap="handleAccountHelp" class="link">
+            [[localize('buttonAccountHelp')]]
+          </paper-button>
         </div>
       </paper-card>
     </form>
 
     <div class="module-actions">
-      <paper-button on-tap="handleSignUp" class="link">[[localize('buttonSignUp')]]</paper-button>
+      <paper-button on-tap="handleSignUp" class="link">
+        [[localize('buttonSignUp')]]
+      </paper-button>
     </div>
   </template>
 
@@ -109,7 +123,7 @@
         valid = this.$$('[name=password]').validate() && valid;
 
         if (valid) {
-          this.$.formSignIn.submit();
+          this.$$('[name=signIn]').submit();
         } else {
           this.error = '';
         }
@@ -123,6 +137,7 @@
         window.location = this.signUpUrl;
       }
     });
+
   </script>
-  
+
 </dom-module>

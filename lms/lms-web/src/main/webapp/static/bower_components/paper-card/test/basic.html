@@ -22,19 +22,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     paper-card {
       width: 400px;
     }
+
   </style>
 
 </head>
 <body>
-  <test-fixture id="basic">
-    <template>
-      <paper-card heading="header">
-        <div class="card-content"><p>Sample content</p></div>
-      </paper-card>
-    </template>
-  </test-fixture>
+<test-fixture id="basic">
+  <template>
+    <paper-card heading="header">
+      <div class="card-content"><p>Sample content</p></div>
+    </paper-card>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
     suite('a11y', function() {
       var f;
       setup(function () {
@@ -93,7 +94,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         assert.strictEqual(img.alt, f.alt);
       });
     });
-  </script>
+
+</script>
 
 </body>
 </html>

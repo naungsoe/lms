@@ -69,7 +69,9 @@ public class School extends Auditable implements Entity, Serializable {
     return name;
   }
 
-  public String getLocale() { return locale; }
+  public String getLocale() {
+    return locale;
+  }
 
   public String getDateFormat() {
     return dateFormat;

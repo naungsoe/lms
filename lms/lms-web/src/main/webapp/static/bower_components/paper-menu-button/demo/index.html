@@ -57,111 +57,112 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .horizontal-section {
       text-align: center;
     }
+
   </style>
 
 </head>
 <body unresolved>
 
 
-  <template id="Demo" is="dom-bind">
+<template id="Demo" is="dom-bind">
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Paper Icon Button + Paper Menu</h4>
-        <div class="horizontal-section">
-          <paper-menu-button>
-            <paper-icon-button icon="menu" class="dropdown-trigger" alt="menu"></paper-icon-button>
-            <paper-menu class="dropdown-content">
-              <template is="dom-repeat" items="[[letters]]" as="letter">
-                <paper-item>[[letter]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Paper Icon Button + Paper Menu</h4>
+      <div class="horizontal-section">
+        <paper-menu-button>
+          <paper-icon-button icon="menu" class="dropdown-trigger" alt="menu"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <template is="dom-repeat" items="[[letters]]" as="letter">
+              <paper-item>[[letter]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Paper Menu with multi selection</h4>
-        <div class="horizontal-section">
-          <paper-menu-button ignore-select>
-            <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
-            <paper-menu class="dropdown-content" multi>
-              <template is="dom-repeat" items="[[letters]]" as="letter">
-                <paper-item>[[letter]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Paper Menu with multi selection</h4>
+      <div class="horizontal-section">
+        <paper-menu-button ignore-select>
+          <paper-icon-button icon="menu" class="dropdown-trigger" alt="multi select"></paper-icon-button>
+          <paper-menu class="dropdown-content" multi>
+            <template is="dom-repeat" items="[[letters]]" as="letter">
+              <paper-item>[[letter]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Disabled</h4>
-        <div class="horizontal-section">
-          <paper-menu-button disabled>
-            <paper-icon-button icon="menu" class="dropdown-trigger" alt="menu"></paper-icon-button>
-            <paper-menu class="dropdown-content">
-              <template is="dom-repeat" items="[[letters]]" as="letter">
-                <paper-item>[[letter]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Disabled</h4>
+      <div class="horizontal-section">
+        <paper-menu-button disabled>
+          <paper-icon-button icon="menu" class="dropdown-trigger" alt="menu"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <template is="dom-repeat" items="[[letters]]" as="letter">
+              <paper-item>[[letter]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Alternate Alignment</h4>
-        <div class="horizontal-section">
-          <paper-menu-button vertical-align="bottom" horizontal-align="right">
-            <paper-icon-button icon="menu" class="dropdown-trigger" alt="bottom align"></paper-icon-button>
-            <paper-menu class="dropdown-content">
-              <template is="dom-repeat" items="[[letters]]" as="letter">
-                <paper-item>[[letter]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Alternate Alignment</h4>
+      <div class="horizontal-section">
+        <paper-menu-button vertical-align="bottom" horizontal-align="right">
+          <paper-icon-button icon="menu" class="dropdown-trigger" alt="bottom align"></paper-icon-button>
+          <paper-menu class="dropdown-content">
+            <template is="dom-repeat" items="[[letters]]" as="letter">
+              <paper-item>[[letter]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Alternate Button</h4>
-        <div class="horizontal-section">
-          <paper-menu-button>
-            <paper-button class="dropdown-trigger" raised>
-              <iron-icon icon="check"></iron-icon>
-              <span>Dinosaurs</span>
-            </paper-button>
-            <paper-menu class="dropdown-content">
-              <template is="dom-repeat" items="[[dinosaurs]]" as="dinosaur">
-                <paper-item>[[dinosaur]]</paper-item>
-              </template>
-            </paper-menu>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Alternate Button</h4>
+      <div class="horizontal-section">
+        <paper-menu-button>
+          <paper-button class="dropdown-trigger" raised>
+            <iron-icon icon="check"></iron-icon>
+            <span>Dinosaurs</span>
+          </paper-button>
+          <paper-menu class="dropdown-content">
+            <template is="dom-repeat" items="[[dinosaurs]]" as="dinosaur">
+              <paper-item>[[dinosaur]]</paper-item>
+            </template>
+          </paper-menu>
+        </paper-menu-button>
       </div>
     </div>
+  </div>
 
-    <div class="horizontal-section-container">
-      <div>
-        <h4>Alternate Content</h4>
-        <div class="horizontal-section">
-          <paper-menu-button vertical-align="bottom">
-            <paper-icon-button class="dropdown-trigger" icon="polymer" alt="polymer"></paper-icon-button>
-            <iron-image class="dropdown-content" src="../../iron-image/demo/polymer.svg"></iron-image>
-          </paper-menu-button>
-        </div>
+  <div class="horizontal-section-container">
+    <div>
+      <h4>Alternate Content</h4>
+      <div class="horizontal-section">
+        <paper-menu-button vertical-align="bottom">
+          <paper-icon-button class="dropdown-trigger" icon="polymer" alt="polymer"></paper-icon-button>
+          <iron-image class="dropdown-content" src="../../iron-image/demo/polymer.svg"></iron-image>
+        </paper-menu-button>
       </div>
     </div>
-  </template>
+  </div>
+</template>
 
-  <script>
+<script>
     Demo.letters = [
       'alpha',
       'beta',
@@ -197,7 +198,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       'yandusaurus',
       'zephyrosaurus'
     ];
-  </script>
+
+</script>
 
 </body>
 </html>

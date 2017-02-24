@@ -16,6 +16,8 @@
       [menu] paper-menu paper-item [text] {
         margin: 0 16px;
       }
+
+
     </style>
 
     <app-toolbar>
@@ -24,7 +26,7 @@
       <paper-icon-button icon="search"></paper-icon-button>
     </app-toolbar>
 
-    <app-drawer id="drawerMain" swipe-open>
+    <app-drawer name="drawerMain" swipe-open>
       <lms-app-nav language="{{language}}" locale-url="{{localeUrl}}"></lms-app-nav>
     </app-drawer>
   </template>
@@ -39,9 +41,11 @@
       ],
 
       handleMenu: function(event) {
-        this.$.drawerMain.toggle();
+        this.$$('[name=drawerMain]').toggle();
       }
     });
+
+
   </script>
 
 </dom-module>

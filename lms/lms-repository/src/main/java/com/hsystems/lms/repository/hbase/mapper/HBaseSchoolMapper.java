@@ -11,7 +11,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +26,7 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult);
     String locale = getLocale(mainResult);
-    String dateFormat= getDateFormat(mainResult);
+    String dateFormat = getDateFormat(mainResult);
     String dateTimeFormat = getDateTimmeFormat(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
 
@@ -39,9 +38,9 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
     Optional<Result> modifiedByResultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = modifiedByResultOptional.isPresent()
-      ? getModifiedBy(modifiedByResultOptional.get()) : null;
+        ? getModifiedBy(modifiedByResultOptional.get()) : null;
     LocalDateTime modifiedDateTime = modifiedByResultOptional.isPresent()
-      ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
+        ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
 
     return new School(
         id,

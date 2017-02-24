@@ -1,8 +1,7 @@
 package com.hsystems.lms.service.mapper;
 
 import com.hsystems.lms.common.util.ReflectionUtils;
-
-import org.apache.commons.lang.StringUtils;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;

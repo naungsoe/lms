@@ -9,23 +9,23 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-  <head>
-    <title>neon-animated-pages demo: tiles</title>
+<head>
+  <title>neon-animated-pages demo: tiles</title>
 
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
 
-    <link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
-    <link rel="import" href="../../neon-animated-pages.html">
-    <link rel="import" href="../../neon-animations.html">
-    <link rel="import" href="../../../paper-styles/color.html">
-    <link rel="import" href="circles-page.html">
-    <link rel="import" href="squares-page.html">
+  <link rel="import" href="../../../iron-flex-layout/iron-flex-layout.html">
+  <link rel="import" href="../../neon-animated-pages.html">
+  <link rel="import" href="../../neon-animations.html">
+  <link rel="import" href="../../../paper-styles/color.html">
+  <link rel="import" href="circles-page.html">
+  <link rel="import" href="squares-page.html">
 
-    <style is="custom-style">
+  <style is="custom-style">
       body {
         overflow: hidden;
         @apply(--layout-fullbleed);
@@ -38,21 +38,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         --color-one: var(--paper-cyan-300);
         --color-two: var(--paper-orange-500);
       }
-    </style>
 
-  </head>
-  <body>
+  </style>
 
-    <template is="dom-bind">
+</head>
+<body>
 
-      <neon-animated-pages id="pages" selected="0">
-        <circles-page on-circle-click="_onCircleClick"></circles-page>
-        <squares-page on-click="_onSquaresClick"></squares-page>
-      </neon-animated-pages>
+<template is="dom-bind">
 
-    </template>
+  <neon-animated-pages id="pages" selected="0">
+    <circles-page on-circle-click="_onCircleClick"></circles-page>
+    <squares-page on-click="_onSquaresClick"></squares-page>
+  </neon-animated-pages>
 
-    <script>
+</template>
+
+<script>
 
       var scope = document.querySelector('template[is="dom-bind"]');
 
@@ -64,7 +65,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.pages.selected = 0;
       };
 
-    </script>
 
-  </body>
+</script>
+
+</body>
 </html>

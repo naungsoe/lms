@@ -140,6 +140,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
 
+
     </style>
 
     <!-- setup routes -->
@@ -234,7 +235,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <!-- category page (lazy-loaded) -->
               <template is="dom-if" if="[[_equal(category, [[categoryData.category.name]])]]">
                 <section class="category-page" name="[[category.name]]">
-  
+
                   <!-- 2-columns grid -->
                   <two-columns-grid column-width="396" gutter="4">
                     <template is="dom-repeat" items="[[category.items]]" as="article">
@@ -244,7 +245,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                           article="[[article]]"></a>
                     </template>
                   </two-columns-grid>
-                  
+
                 </section>
               </template>
             </template>
@@ -325,6 +326,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
     });
+
 
   </script>
 

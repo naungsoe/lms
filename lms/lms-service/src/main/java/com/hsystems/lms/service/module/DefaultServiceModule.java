@@ -6,17 +6,21 @@ import com.google.inject.Singleton;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
+import com.hsystems.lms.repository.hbase.HBaseMutateLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuizRepository;
 import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
 import com.hsystems.lms.repository.hbase.HBaseShareLogRepository;
+import com.hsystems.lms.repository.hbase.HBaseSignInLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import com.hsystems.lms.repository.hbase.provider.HBaseClientProvider;
@@ -38,6 +42,8 @@ public class DefaultServiceModule extends AbstractModule {
   protected void configure() {
     bind(HBaseClient.class).toProvider(HBaseClientProvider.class)
         .in(Singleton.class);
+    bind(MutateLogRepository.class).to(HBaseMutateLogRepository.class)
+        .in(Singleton.class);
     bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)
         .in(Singleton.class);
     bind(ShareLogRepository.class).to(HBaseShareLogRepository.class)
@@ -51,6 +57,8 @@ public class DefaultServiceModule extends AbstractModule {
     bind(QuizRepository.class).to(HBaseQuizRepository.class)
         .in(Singleton.class);
     bind(QuestionRepository.class).to(HBaseQuestionRepository.class)
+        .in(Singleton.class);
+    bind(SignInLogRepository.class).to(HBaseSignInLogRepository.class)
         .in(Singleton.class);
     bind(SolrClient.class).toProvider(SolrClientProvider.class)
         .in(Singleton.class);

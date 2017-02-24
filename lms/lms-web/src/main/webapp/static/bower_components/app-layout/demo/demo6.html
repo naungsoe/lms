@@ -63,55 +63,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       overflow: auto;
     }
 
+
   </style>
 
 </head>
 <body unresolved>
 
-  <app-header-layout>
+<app-header-layout>
 
-    <app-header fixed effects="waterfall">
-      <app-toolbar>
-        <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
-        <div main-title>Inbox</div>
-      </app-toolbar>
-    </app-header>
+  <app-header fixed effects="waterfall">
+    <app-toolbar>
+      <paper-icon-button id="toggle" icon="menu"></paper-icon-button>
+      <div main-title>Inbox</div>
+    </app-toolbar>
+  </app-header>
 
-    <app-drawer-layout id="drawerLayout">
+  <app-drawer-layout id="drawerLayout">
 
-      <app-drawer>
-        <div class="drawer-content">
-          <paper-icon-item>
-            <iron-icon icon="inbox" item-icon></iron-icon> <span>Inbox</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="query-builder" item-icon></iron-icon> <span>Snoozed</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="done" item-icon></iron-icon> <span>Done</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="drafts" item-icon></iron-icon> <span>Drafts</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="send" item-icon></iron-icon> <span>Sent</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="delete" item-icon></iron-icon> <span>Trash</span>
-          </paper-icon-item>
-          <paper-icon-item>
-            <iron-icon icon="report" item-icon></iron-icon> <span>Spam</span>
-          </paper-icon-item>
-        </div>
-      </app-drawer>
-      
-      <sample-content size="100"></sample-content>
+    <app-drawer>
+      <div class="drawer-content">
+        <paper-icon-item>
+          <iron-icon icon="inbox" item-icon></iron-icon>
+          <span>Inbox</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="query-builder" item-icon></iron-icon>
+          <span>Snoozed</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="done" item-icon></iron-icon>
+          <span>Done</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="drafts" item-icon></iron-icon>
+          <span>Drafts</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="send" item-icon></iron-icon>
+          <span>Sent</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="delete" item-icon></iron-icon>
+          <span>Trash</span>
+        </paper-icon-item>
+        <paper-icon-item>
+          <iron-icon icon="report" item-icon></iron-icon>
+          <span>Spam</span>
+        </paper-icon-item>
+      </div>
+    </app-drawer>
 
-    </app-drawer-layout>
+    <sample-content size="100"></sample-content>
 
-  </app-header-layout>
+  </app-drawer-layout>
 
-  <script>
+</app-header-layout>
+
+<script>
     var drawerLayout = document.getElementById('drawerLayout');
     document.getElementById('toggle').addEventListener('tap', function() {
       if (drawerLayout.forceNarrow || !drawerLayout.narrow) {
@@ -120,7 +128,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         drawerLayout.drawer.toggle();
       }
     });
-  </script>
+
+</script>
 
 </body>
 </html>

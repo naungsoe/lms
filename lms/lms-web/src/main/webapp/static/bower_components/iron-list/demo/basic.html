@@ -37,24 +37,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       border-bottom: 1px solid #ccc;
     }
 
+
   </style>
 
 </head>
 <body>
 
-  <template is="dom-bind">
-    <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
+<template is="dom-bind">
+  <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
 
-    <iron-list items="[[data]]" as="item">
-      <template>
-        <div class="item">
+  <iron-list items="[[data]]" as="item">
+    <template>
+      <div class="item">
         <b>#[[index]] - [[item.name]]</b>
         <p>[[item.longText]]</p>
-        </div>
-      </template>
-    </iron-list>
+      </div>
+    </template>
+  </iron-list>
 
-  </template>
+</template>
 
 </body>
 </html>

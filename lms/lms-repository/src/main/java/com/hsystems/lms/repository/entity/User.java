@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.repository.annotation.Groups;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -83,6 +82,7 @@ public class User extends Auditable implements Entity, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
+      List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -102,6 +102,7 @@ public class User extends Auditable implements Entity, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
+    this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -121,7 +122,9 @@ public class User extends Auditable implements Entity, Serializable {
     return password;
   }
 
-  public String getSalt() { return salt; }
+  public String getSalt() {
+    return salt;
+  }
 
   public String getFirstName() {
     return firstName;
@@ -163,7 +166,6 @@ public class User extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
-  @Groups
   public List<Group> getGroups() {
     return Collections.unmodifiableList(groups);
   }

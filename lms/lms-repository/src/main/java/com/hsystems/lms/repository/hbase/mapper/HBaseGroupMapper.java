@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;

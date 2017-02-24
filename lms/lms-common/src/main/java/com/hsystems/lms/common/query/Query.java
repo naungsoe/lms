@@ -1,6 +1,6 @@
 package com.hsystems.lms.common.query;
 
-import org.apache.commons.lang3.StringUtils;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ public class Query {
     }
 
     String[] params = queryString.split("&");
-    Pattern pattern = Pattern.compile("([0-9a-z]*)(=|!=|>|>=|<|<=|%=)(.*)");
+    Pattern pattern = Pattern.compile("([a-z0-9]*)(=|!=|>|>=|<|<=|%=)(.*)");
 
     for (String param : params) {
       Matcher matcher = pattern.matcher(param);

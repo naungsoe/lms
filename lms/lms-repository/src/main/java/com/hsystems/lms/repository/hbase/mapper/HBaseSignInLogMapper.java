@@ -20,10 +20,11 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
   @Override
   public SignInLog getEntity(List<Result> results) {
     Result mainResult = results.get(0);
-    String id = Bytes.toString(mainResult.getRow());
+    String sessionId = Bytes.toString(mainResult.getRow());
+    String id = getId(mainResult);
     String ipAddress = getIpAddress(mainResult);
     LocalDateTime dateTime = getDateTime(mainResult);
-    return new SignInLog(id, ipAddress, dateTime);
+    return new SignInLog(id, sessionId, ipAddress, dateTime);
   }
 
   @Override

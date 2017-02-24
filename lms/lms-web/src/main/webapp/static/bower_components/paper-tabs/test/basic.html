@@ -10,41 +10,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <html>
-  <head>
+<head>
 
-    <title>paper-tabs-basic</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+  <title>paper-tabs-basic</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    <script src="../../web-component-tester/browser.js"></script>
+  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+  <script src="../../web-component-tester/browser.js"></script>
 
-    <link rel="import" href="../paper-tabs.html">
-    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
-    
-  </head>
-  <body>
+  <link rel="import" href="../paper-tabs.html">
+  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
 
-    <test-fixture id="basic">
-      <template>
-        <paper-tabs>
-          <paper-tab>ITEM ONE</paper-tab>
-          <paper-tab>ITEM TWO</paper-tab>
-          <paper-tab>ITEM THREE</paper-tab>
-        </paper-tabs>
-      </template>
-    </test-fixture>
+</head>
+<body>
 
-    <test-fixture id="HiddenTabs">
-      <template>
-        <paper-tabs hidden>
-          <paper-tab>ITEM ONE</paper-tab>
-          <paper-tab>ITEM TWO</paper-tab>
-        </paper-tabs>
-      </template>
-    </test-fixture>
+<test-fixture id="basic">
+  <template>
+    <paper-tabs>
+      <paper-tab>ITEM ONE</paper-tab>
+      <paper-tab>ITEM TWO</paper-tab>
+      <paper-tab>ITEM THREE</paper-tab>
+    </paper-tabs>
+  </template>
+</test-fixture>
 
-    <script>
+<test-fixture id="HiddenTabs">
+  <template>
+    <paper-tabs hidden>
+      <paper-tab>ITEM ONE</paper-tab>
+      <paper-tab>ITEM TWO</paper-tab>
+    </paper-tabs>
+  </template>
+</test-fixture>
+
+<script>
 
       function ensureDocumentHasFocus() {
         window.top && window.top.focus();
@@ -388,7 +388,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
       });
 
-    </script>
 
-  </body>
+</script>
+
+</body>
 </html>

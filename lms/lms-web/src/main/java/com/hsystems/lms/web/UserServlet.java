@@ -7,6 +7,8 @@ import com.hsystems.lms.service.UserService;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by naungsoe on 8/8/16.
@@ -14,6 +16,8 @@ import javax.servlet.ServletException;
 public class UserServlet extends BaseServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
+
+  private static final String JSP_PATH = "/jsp/users/index.jsp";
 
   private final UserService userService;
 
@@ -23,16 +27,17 @@ public class UserServlet extends BaseServlet {
   }
 
   @Override
-  protected void doGet()
+  protected void doGet(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    loadLocale("users");
-    loadAttribute("titlePage");
-    forwardRequest("/jsp/users/index.jsp");
+    loadLocale(request, "users");
+    forwardRequest(request, response, JSP_PATH);
   }
 
   @Override
-  protected void doPost()
+  protected void doPost(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
   }

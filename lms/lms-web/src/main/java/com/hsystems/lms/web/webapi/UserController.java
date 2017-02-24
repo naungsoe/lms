@@ -40,7 +40,8 @@ public class UserController {
   public UserModel getUser(@PathParam("id") String id)
       throws IOException {
 
-    return new UserModel("", "", "", "", "", "", "", "", "", "", new ArrayList<>(), "", "", new ArrayList<>());
+    return new UserModel("", "", "", "", "", "", "", "", "", "",
+        new ArrayList<>(), "", "", new ArrayList<>());
     //return userService.findBy(id).get();
   }
 

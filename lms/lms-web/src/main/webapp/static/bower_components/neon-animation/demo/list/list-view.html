@@ -32,6 +32,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       iron-icon {
         color: var(--google-grey-500);
       }
+
     </style>
     <paper-toolbar class="medium-tall">
       <paper-icon-button id="button" icon="arrow-back"></paper-icon-button>
@@ -39,17 +40,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class="main">
 
-        <template is="dom-repeat" items="[[data]]">
+      <template is="dom-repeat" items="[[data]]">
 
-          <paper-item>
-            <paper-item-body two-line>
-              <div>[[item.fileName]]</div>
-              <div secondary>[[item.modifiedDate]]</div>
-            </paper-item-body>
-            <iron-icon icon="info"></iron-icon>
-          </paper-item>
+        <paper-item>
+          <paper-item-body two-line>
+            <div>[[item.fileName]]</div>
+            <div secondary>[[item.modifiedDate]]</div>
+          </paper-item-body>
+          <iron-icon icon="info"></iron-icon>
+        </paper-item>
 
-        </template>
+      </template>
 
     </div>
 
@@ -120,5 +121,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
   });
+
 
 </script>

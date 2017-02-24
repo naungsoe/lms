@@ -32,36 +32,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     paper-radio-button.small {
       --paper-radio-button-size: 12px;
     }
+
   </style>
 </head>
 <body>
-  <test-fixture id="NoLabel">
-    <template>
-      <paper-radio-button id="radio1"></paper-radio-button>
-    </template>
-  </test-fixture>
+<test-fixture id="NoLabel">
+  <template>
+    <paper-radio-button id="radio1"></paper-radio-button>
+  </template>
+</test-fixture>
 
-  <test-fixture id="WithLabel">
-    <template>
-      <paper-radio-button id="radio2">Batman</paper-radio-button>
-    </template>
-  </test-fixture>
+<test-fixture id="WithLabel">
+  <template>
+    <paper-radio-button id="radio2">Batman</paper-radio-button>
+  </template>
+</test-fixture>
 
-  <test-fixture id="AriaLabel">
-    <template>
-      <paper-radio-button aria-label="Batman">Robin</paper-radio-button>
-    </template>
-  </test-fixture>
+<test-fixture id="AriaLabel">
+  <template>
+    <paper-radio-button aria-label="Batman">Robin</paper-radio-button>
+  </template>
+</test-fixture>
 
-  <test-fixture id="WithDifferentSizes">
-    <template>
-      <paper-radio-button class="small" checked></paper-radio-button>
-      <paper-radio-button class="medium" checked></paper-radio-button>
-      <paper-radio-button class="large" checked></paper-radio-button>
-    </template>
-  </test-fixture>
+<test-fixture id="WithDifferentSizes">
+  <template>
+    <paper-radio-button class="small" checked></paper-radio-button>
+    <paper-radio-button class="medium" checked></paper-radio-button>
+    <paper-radio-button class="large" checked></paper-radio-button>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
     suite('defaults', function() {
       var r1;
 
@@ -147,6 +148,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       a11ySuite('WithLabel');
       a11ySuite('AriaLabel');
     });
-  </script>
+
+</script>
 </body>
 </html>

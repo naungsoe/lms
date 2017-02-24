@@ -8,6 +8,8 @@ import com.hsystems.lms.service.QuestionService;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by naungsoe on 31/10/16.
@@ -15,6 +17,8 @@ import javax.servlet.ServletException;
 public class QuestionServlet extends BaseServlet {
 
   private static final long serialVersionUID = 4601083196372398436L;
+
+  private static final String JSP_PATH = "/jsp/questions/index.jsp";
 
   private final QuestionService questionService;
 
@@ -25,18 +29,19 @@ public class QuestionServlet extends BaseServlet {
 
   @Override
   @Requires(Permission.VIEW_QUESTIONS)
-  protected void doGet()
+  protected void doGet(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    loadLocale("questions");
-    loadAttribute("titlePage");
-    setAttribute("restUrl", "/webapi/questions");
-    forwardRequest("/jsp/questions/index.jsp");
+    loadLocale(request, "questions");
+    request.setAttribute("restUrl", "/webapi/questions");
+    forwardRequest(request, response, JSP_PATH);
   }
 
   @Override
   @Requires(Permission.EDIT_QUESTION)
-  protected void doPost()
+  protected void doPost(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
   }

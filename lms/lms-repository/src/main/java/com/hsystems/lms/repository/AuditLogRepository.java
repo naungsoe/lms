@@ -12,5 +12,5 @@ public interface AuditLogRepository
     extends EntityRepository<AuditLog> {
 
   List<AuditLog> findAllBy(String id)
-    throws IOException;
+      throws IOException;
 }

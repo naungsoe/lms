@@ -40,9 +40,13 @@ public class AuditLog implements Entity, Serializable {
   }
 
   @Override
-  public String getId() { return id; }
+  public String getId() {
+    return id;
+  }
 
-  public EntityType getType() { return type; }
+  public EntityType getType() {
+    return type;
+  }
 
   public User getUser() {
     return user;

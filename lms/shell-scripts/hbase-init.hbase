@@ -24,36 +24,14 @@ put 'schools', '6f73_cre_system', 'd:lname', 'System', 1480299712295
 put 'schools', '6f73_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
-disable 'users'
-drop 'users'
-create 'users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'users', '6f73', 'd:name', 'Open School Users', 1480299712295
-put 'users', '6f7361646d696e', 'd:loginid', 'admin', 1480299712295
-put 'users', '6f7361646d696e', 'd:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af078e8da57b4fe16bbf189', 1480299712295
-put 'users', '6f7361646d696e', 'd:salt', 'c3c704f0a67f469086e8ff50a056b3d5', 1480299712295
-put 'users', '6f7361646d696e', 'd:fname', 'Admin', 1480299712295
-put 'users', '6f7361646d696e', 'd:lname', 'User', 1480299712295
-put 'users', '6f7361646d696e', 'd:dob', '1990-11-28T05:16:31.893', 1480299712295
-put 'users', '6f7361646d696e', 'd:gender', 'Male', 1480299712295
-put 'users', '6f7361646d696e', 'd:mobile', '987654321', 1480299712295
-put 'users', '6f7361646d696e', 'd:email', 'admin@google.com', 1480299712295
-put 'users', '6f7361646d696e', 'd:locale', 'en_US', 1480299712295
-put 'users', '6f7361646d696e', 'd:dateFormat', 'yyyy-MM-dd', 1480299712295
-put 'users', '6f7361646d696e', 'd:dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
-put 'users', '6f7361646d696e', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
-put 'users', '6f7361646d696e_cre_system', 'd:fname', 'LMS', 1480299712295
-put 'users', '6f7361646d696e_cre_system', 'd:lname', 'System', 1480299712295
-put 'users', '6f7361646d696e_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
 disable 'groups'
 drop 'groups'
 create 'groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'groups', '6f73', 'd:name', 'Open School Groups', 1480299712295
 put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:name', 'Administrators', 1480299712295
 put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:permissions', 'VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
-put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_mem_61646d696e', 'd:fname', 'Admin', 1480299712295
-put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_mem_61646d696e', 'd:lname', 'User', 1480299712295
+put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_mem_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712295
+put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_mem_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712295
 put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:fname', 'LMS', 1480299712295
 put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:lname', 'System', 1480299712295
 put 'groups', '6f73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
@@ -69,6 +47,30 @@ put 'groups', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOM
 put 'groups', '6f7357bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:fname', 'LMS', 1480299712295
 put 'groups', '6f7357bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:lname', 'System', 1480299712295
 put 'groups', '6f7357bf72fe391ef22bd852d0f45db4766a_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+disable 'users'
+drop 'users'
+create 'users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
+put 'users', '6f73', 'd:name', 'Open School Users', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:loginid', 'admin', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af078e8da57b4fe16bbf189', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:salt', 'c3c704f0a67f469086e8ff50a056b3d5', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:dob', '1990-11-28T05:16:31.893', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:gender', 'Male', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:mobile', '987654321', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:email', 'admin@google.com', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:locale', 'en_US', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:dateFormat', 'yyyy-MM-dd', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8_grp_6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:name', 'Administrators', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8_grp_6f73d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:fname', 'LMS', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:lname', 'System', 1480299712295
+put 'users', '6f737e73f911532b4d664c1bf10cdc70ed3529f8_cre_system', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 disable 'questions'
@@ -95,12 +97,12 @@ put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:bo
 put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712295
 put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:correct', 'false', 1480299712295
 put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:order', '4', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_61646d696e', 'd:fname', 'Admin', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_61646d696e', 'd:lname', 'User', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_61646d696e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_61646d696e', 'd:fname', 'Admin', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_61646d696e', 'd:lname', 'User', 1480299712295
-put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_61646d696e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712295
+put 'questions', '6f731efe773c7c5f41de68effd1ce03e6d7e_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 disable 'quizzes'
@@ -130,12 +132,12 @@ put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2c
 put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712400
 put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:correct', 'false', 1480299712400
 put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_sec_1480299712110_que_49a2cc395df373a4ed06214ccb599df8_opt_1480299712294', 'd:order', '4', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_61646d696e', 'd:fname', 'Admin', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_61646d696e', 'd:lname', 'User', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_61646d696e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_61646d696e', 'd:fname', 'Admin', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_61646d696e', 'd:lname', 'User', 1480299712400
-put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_61646d696e', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_cre_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User', 1480299712400
+put 'quizzes', '6f733f47f91bede47d64045ee4841138303a_mod_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712400
 
 
 disable 'mutatelogs'
@@ -144,7 +146,7 @@ create 'mutatelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'mutatelogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION'
 put 'mutatelogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
 put 'mutatelogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
-put 'mutatelogs', '6f7361646d696e_1480299712310', 'd:id', 'admin'
+put 'mutatelogs', '6f736f737e73f911532b4d664c1bf10cdc70ed3529f8_1480299712310', 'd:id', 'admin'
 
 
 disable 'referencelogs'
@@ -160,57 +162,57 @@ drop 'sharelogs'
 create 'sharelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
 put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712310'
-put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_61646d696e', 'd:fname', 'Admin'
-put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_61646d696e', 'd:lname', 'User'
-put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_61646d696e', 'd:permission', 'EDIT_RESOURCE'
+put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
+put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
+put 'sharelogs', '6f733f47f91bede47d64045ee4841138303a_sha_6f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:permission', 'EDIT_RESOURCE'
 
 
 disable 'auditlogs'
 drop 'auditlogs'
 create 'auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
 put 'auditlogs', '6f73', 'd:type', 'SCHOOL'
-put 'auditlogs', '6f73', 'd:id', '61646d696e'
+put 'auditlogs', '6f73', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f73', 'd:fname', 'Admin'
 put 'auditlogs', '6f73', 'd:lname', 'User'
 put 'auditlogs', '6f73', 'd:timestamp', '1480299712295'
 put 'auditlogs', '6f73', 'd:action', 'CREATED'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:type', 'GROUP'
-put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:id', '61646d696e'
+put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
 put 'auditlogs', '6f73d95422d3337b0ebf5b00e01fe252939b', 'd:type', 'GROUP'
-put 'auditlogs', '6f73d95422d3337b0ebf5b00e01fe252939b', 'd:id', '61646d696e'
+put 'auditlogs', '6f73d95422d3337b0ebf5b00e01fe252939b', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:fname', 'Admin'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:lname', 'User'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:timestamp', '1480299712295'
 put 'auditlogs', '6f73f911532b4d664c1bf10cdc70ed3529f8', 'd:action', 'CREATED'
 put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:type', 'GROUP'
-put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:id', '61646d696e'
+put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
 put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
 put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
 put 'auditlogs', '6f7357bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
 put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'QUESTION'
-put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:id', '61646d696e'
+put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
 put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
 put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
 put 'auditlogs', '6f731efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:type', 'QUIZ'
-put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:id', '61646d696e'
+put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:fname', 'Admin'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:lname', 'User'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:timestamp', '1480299712400'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a', 'd:action', 'CREATED'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:type', 'QUIZ'
-put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:id', '61646d696e'
+put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:fname', 'Admin'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:lname', 'User'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712310', 'd:action', 'SHARED'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:type', 'QUIZ'
-put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:id', '61646d696e'
+put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:id', '6f737e73f911532b4d664c1bf10cdc70ed3529f8'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:fname', 'Admin'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:lname', 'User'
 put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:action', 'MODIFIED'
@@ -219,7 +221,6 @@ put 'auditlogs', '6f733f47f91bede47d64045ee4841138303a_1480299712400', 'd:action
 disable 'signinlogs'
 drop 'signinlogs'
 create 'signinlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW'}
-put 'signinlogs', '6f7361646d696e', 'd:ip', '127.0.0.1'
-put 'signinlogs', '6f7361646d696e', 'd:datetime', '2016-11-28T05:16:31.893'
-put 'signinlogs', '6f7361646d696e_1480299712310', 'd:ip', '127.0.0.1'
-put 'signinlogs', '6f7361646d696e_1480299712310', 'd:datetime', '2016-11-28T05:16:31.893'
+put 'signinlogs', '6f736f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:id', '6f736f737e73f911532b4d664c1bf10cdc70ed3529f8'
+put 'signinlogs', '6f736f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:ip', '127.0.0.1'
+put 'signinlogs', '6f736f737e73f911532b4d664c1bf10cdc70ed3529f8', 'd:datetime', '2016-11-28T05:16:31.893'

@@ -17,14 +17,14 @@ public class PropertiesProvider implements Provider<Properties> {
   private final static Logger logger
       = LogManager.getLogger(PropertiesProvider.class);
 
-  private static final String fileName = "application.properties";
+  private static final String FILE_NAME = "application.properties";
 
   private final Properties properties;
 
   PropertiesProvider() {
     this.properties = new Properties();
     InputStream inputStream = getClass().getClassLoader()
-        .getResourceAsStream(fileName);
+        .getResourceAsStream(FILE_NAME);
 
     try {
       this.properties.load(inputStream);

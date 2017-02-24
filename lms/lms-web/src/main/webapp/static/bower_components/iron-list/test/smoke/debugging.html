@@ -90,37 +90,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       height: 1000vh;
     }
 
+
   </style>
 
 </head>
 <body unresolved>
 
-  <template is="dom-bind">
-    <h1>debuging</h1>
-    <div class="group">
-      <p>100 items, 50px tall</p>
-      <div class="wrapper">
-          <div id="scroller">
-            <div class="fake-content"></div>
-          </div>
-          <iron-list id="list1" as="item" items="[[items]]" scroll-target="scroller">
-            <template>
-              <div class="item" style$="[[_getStyle(item)]]"><span>[[index]]</span> height: <span>[[item]]</span>
-              <div>
-                <paper-button raised>Test</paper-button>
-                <paper-button raised>Test</paper-button>
-                <paper-button raised>Test</paper-button>
-                <paper-button raised>Test</paper-button>
-              </div>
-              </div>
-            </template>
-          </iron-list>
-
+<template is="dom-bind">
+  <h1>debuging</h1>
+  <div class="group">
+    <p>100 items, 50px tall</p>
+    <div class="wrapper">
+      <div id="scroller">
+        <div class="fake-content"></div>
       </div>
-    </div>
-  </template>
+      <iron-list id="list1" as="item" items="[[items]]" scroll-target="scroller">
+        <template>
+          <div class="item" style$="[[_getStyle(item)]]"><span>[[index]]</span> height: <span>[[item]]</span>
+            <div>
+              <paper-button raised>Test</paper-button>
+              <paper-button raised>Test</paper-button>
+              <paper-button raised>Test</paper-button>
+              <paper-button raised>Test</paper-button>
+            </div>
+          </div>
+        </template>
+      </iron-list>
 
-  <script>
+    </div>
+  </div>
+</template>
+
+<script>
     function arrayFill(size, value) {
       return (new Array(size)).fill(value, 0, size);
     }
@@ -158,6 +159,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
     });
-  </script>
+
+</script>
 </body>
 </html>

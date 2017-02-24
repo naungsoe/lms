@@ -114,52 +114,53 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     app-toolbar.tall {
       height: 148px;
     }
+
   </style>
 
 </head>
 <body unresolved>
 
-  <template is="dom-bind">
-    <app-drawer-layout>
-      <app-drawer swipe-open>
-        <app-toolbar class="navToolbar">App name</app-toolbar>
-      </app-drawer>
-      <app-header-layout>
-        <app-header class="mainHeader" condenses fixed effects="resize-title blend-background waterfall">
-          <app-toolbar>
-            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-            <h4 condensed-title>Contacts <i>&mdash; Summary</i></h4>
-            <paper-icon-button icon="search"></paper-icon-button>
-            <paper-icon-button icon="more-vert"></paper-icon-button>
-          </app-toolbar>
-          <app-toolbar class="tall">
-            <h1 main-title>Contacts</h1>
-          </app-toolbar>
-        </app-header>
-        <iron-list items="[[data]]" as="item" scroll-target="document">
-          <template>
-            <div>
-              <div class="item" tabindex$="[[tabIndex]]">
-                <img class="avatar" src="[[item.image]]">
-                <div class="pad">
-                  <div class="primary">[[item.name]]</div>
-                  <div class="secondary">[[item.shortText]]</div>
-                  <div class="secondary dim">[[item.longText]]</div>
-                </div>
-                <iron-icon icon$="[[iconForItem(item)]]"></iron-icon>
+<template is="dom-bind">
+  <app-drawer-layout>
+    <app-drawer swipe-open>
+      <app-toolbar class="navToolbar">App name</app-toolbar>
+    </app-drawer>
+    <app-header-layout>
+      <app-header class="mainHeader" condenses fixed effects="resize-title blend-background waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+          <h4 condensed-title>Contacts <i>&mdash; Summary</i></h4>
+          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="more-vert"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar class="tall">
+          <h1 main-title>Contacts</h1>
+        </app-toolbar>
+      </app-header>
+      <iron-list items="[[data]]" as="item" scroll-target="document">
+        <template>
+          <div>
+            <div class="item" tabindex$="[[tabIndex]]">
+              <img class="avatar" src="[[item.image]]">
+              <div class="pad">
+                <div class="primary">[[item.name]]</div>
+                <div class="secondary">[[item.shortText]]</div>
+                <div class="secondary dim">[[item.longText]]</div>
               </div>
+              <iron-icon icon$="[[iconForItem(item)]]"></iron-icon>
             </div>
-          </template>
-        </iron-list>
+          </div>
+        </template>
+      </iron-list>
 
-        <iron-ajax url="contacts.json" last-response="{{data}}" auto></iron-ajax>
+      <iron-ajax url="contacts.json" last-response="{{data}}" auto></iron-ajax>
 
-      </app-header-layout>
-    </app-drawer-layout>
+    </app-header-layout>
+  </app-drawer-layout>
 
-  </template>
+</template>
 
-  <script>
+<script>
     (function(scope) {
 
       scope.iconForItem = function(item) {
@@ -167,7 +168,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       };
 
     })(document.querySelector('template[is=dom-bind]'));
-  </script>
+
+</script>
 
 </body>
 </html>

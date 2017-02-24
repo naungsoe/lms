@@ -273,156 +273,171 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     }
 
+
   </style>
 
 </head>
 <body unresolved>
 
-  <template is="dom-bind">
+<template is="dom-bind">
 
-    <iron-ajax url="site/resources.json" auto last-response="{{resources}}"></iron-ajax>
+  <iron-ajax url="site/resources.json" auto last-response="{{resources}}"></iron-ajax>
 
-    <app-header fixed>
+  <app-header fixed>
 
-      <app-toolbar class="top-toolbar">
-        <div class="heading">
-          <div class="title">App Layout</div>
-          <div class="sub-title">A collection of elements, along with guidelines and templates that can be used to structure your app’s layout.</div>
+    <app-toolbar class="top-toolbar">
+      <div class="heading">
+        <div class="title">App Layout</div>
+        <div class="sub-title">A collection of elements, along with guidelines and templates that can be used to
+          structure your app’s layout.
         </div>
-      </app-toolbar>
-
-      <app-toolbar class="bottom-toolbar">
-        <div class="bottom-tools responsive horizontal layout">
-          <a href="https://github.com/PolymerElements/app-layout" target="_blank" tabindex="-1">
-            <paper-button raised><iron-icon icon="file-download"></iron-icon>View On GitHub</paper-button>
-          </a>
-          <a href="https://elements.polymer-project.org/elements/app-layout" target="_blank" tabindex="-1">
-            <paper-button raised><iron-icon icon="subject"></iron-icon>API Docs</paper-button>
-          </a>
-        </div>
-      </app-toolbar>
-
-    </app-header>
-
-    <section>
-
-      <device-layout-viewer device="all" src="templates/publishing/"></device-layout-viewer>
-
-    </section>
-
-    <section>
-
-      <h1>Templates</h1>
-
-      <p>The templates are a means to define, illustrate and share best practices in App Layout. Select a template and customize to suit your needs.</p>
-
-      <div class="grid">
-
-        <template is="dom-repeat" items="{{resources.templates}}">
-
-          <div class="grid-item">
-            <div class="image" style$="background-image: url({{item.thumbnail}});"></div>
-            <div class="caption">
-              <h3>{{item.name}}</h3>
-              <div>
-                <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
-                  <paper-button raised>View</paper-button>
-                </a>
-                <a href="{{item.sourceUrl}}" target="_blank" tabindex="-1">
-                  <paper-button raised>Source</paper-button>
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </template>
-
       </div>
+    </app-toolbar>
 
-    </section>
-
-    <section>
-
-      <h1>Patterns</h1>
-
-      <p>Sample code for various UI patterns.</p>
-
-      <div class="grid">
-
-        <template is="dom-repeat" items="{{resources.patterns}}">
-
-          <div class="grid-item">
-            <div class="caption">
-              <h3>{{item.name}}</h3>
-              <p>{{item.desc}}</p>
-              <div>
-                <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
-                  <paper-button raised>View</paper-button>
-                </a>
-                <a href="{{item.sourceUrl}}" target="_blank" tabindex="-1">
-                  <paper-button raised>Source</paper-button>
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </template>
-
-      </div>
-
-    </section>
-
-    <section>
-
-      <h1>Users</h1>
-
-      <p>Here are some applications built with App Layout. Get started on your own and we might put it here to showcase and share your work.</p>
-
-      <div class="grid">
-
-        <template is="dom-repeat" items="{{resources.apps}}">
-
-          <div class="grid-item">
-            <div class="image" style$="background-image: url({{item.thumbnail}});"></div>
-            <div class="caption">
-              <h3>{{item.name}}</h3>
-              <div>
-                <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
-                  <paper-button raised>View</paper-button>
-                </a>
-              </div>
-            </div>
-          </div>
-
-        </template>
-
-      </div>
-
-    </section>
-
-    <section class="vertical center layout">
-
-      <h1>Tools and References</h1>
-
-      <a class="misc-link" href="https://www.polymer-project.org/1.0/toolbox/app-layout" target="_blank">Responsive App Layout</a>
-      <a class="misc-link" href="https://www.polymer-project.org/1.0/toolbox/" target="_blank">Polymer App Toolbox</a>
-      <a class="misc-link" href="https://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-patterns" target="_blank">Material Design Adaptive UI Pattern</a>
-
-    </section>
-
-    <footer>
-      <div class="footer-inner responsive horizontal center layout">
-        <a class="horizontal center layout" target="_blank" href="https://www.polymer-project.org">
-          <div class="logo"></div><div class="title">Polymer</div>
+    <app-toolbar class="bottom-toolbar">
+      <div class="bottom-tools responsive horizontal layout">
+        <a href="https://github.com/PolymerElements/app-layout" target="_blank" tabindex="-1">
+          <paper-button raised>
+            <iron-icon icon="file-download"></iron-icon>
+            View On GitHub
+          </paper-button>
         </a>
-        <div class="flex"></div>
-        <a target="_blank" href="https://polymer.github.io/LICENSE.txt" data-outbound="license-txt">&copy; 2015 Polymer Authors</a>
-        <div class="dot-separator wide-only"></div>
-        <a target="_blank" href="https://www.polymer-project.org" data-outbound="about-polymer">About Polymer</a>
+        <a href="https://elements.polymer-project.org/elements/app-layout" target="_blank" tabindex="-1">
+          <paper-button raised>
+            <iron-icon icon="subject"></iron-icon>
+            API Docs
+          </paper-button>
+        </a>
       </div>
-    </footer>
+    </app-toolbar>
 
-  </template>
+  </app-header>
+
+  <section>
+
+    <device-layout-viewer device="all" src="templates/publishing/"></device-layout-viewer>
+
+  </section>
+
+  <section>
+
+    <h1>Templates</h1>
+
+    <p>The templates are a means to define, illustrate and share best practices in App Layout. Select a template and
+      customize to suit your needs.</p>
+
+    <div class="grid">
+
+      <template is="dom-repeat" items="{{resources.templates}}">
+
+        <div class="grid-item">
+          <div class="image" style$="background-image: url({{item.thumbnail}});"></div>
+          <div class="caption">
+            <h3>{{item.name}}</h3>
+            <div>
+              <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
+                <paper-button raised>View</paper-button>
+              </a>
+              <a href="{{item.sourceUrl}}" target="_blank" tabindex="-1">
+                <paper-button raised>Source</paper-button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </template>
+
+    </div>
+
+  </section>
+
+  <section>
+
+    <h1>Patterns</h1>
+
+    <p>Sample code for various UI patterns.</p>
+
+    <div class="grid">
+
+      <template is="dom-repeat" items="{{resources.patterns}}">
+
+        <div class="grid-item">
+          <div class="caption">
+            <h3>{{item.name}}</h3>
+            <p>{{item.desc}}</p>
+            <div>
+              <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
+                <paper-button raised>View</paper-button>
+              </a>
+              <a href="{{item.sourceUrl}}" target="_blank" tabindex="-1">
+                <paper-button raised>Source</paper-button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </template>
+
+    </div>
+
+  </section>
+
+  <section>
+
+    <h1>Users</h1>
+
+    <p>Here are some applications built with App Layout. Get started on your own and we might put it here to showcase
+      and share your work.</p>
+
+    <div class="grid">
+
+      <template is="dom-repeat" items="{{resources.apps}}">
+
+        <div class="grid-item">
+          <div class="image" style$="background-image: url({{item.thumbnail}});"></div>
+          <div class="caption">
+            <h3>{{item.name}}</h3>
+            <div>
+              <a href="{{item.demoUrl}}" target="_blank" tabindex="-1">
+                <paper-button raised>View</paper-button>
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </template>
+
+    </div>
+
+  </section>
+
+  <section class="vertical center layout">
+
+    <h1>Tools and References</h1>
+
+    <a class="misc-link" href="https://www.polymer-project.org/1.0/toolbox/app-layout" target="_blank">Responsive App
+      Layout</a>
+    <a class="misc-link" href="https://www.polymer-project.org/1.0/toolbox/" target="_blank">Polymer App Toolbox</a>
+    <a class="misc-link" href="https://www.google.com/design/spec/layout/adaptive-ui.html#adaptive-ui-patterns"
+       target="_blank">Material Design Adaptive UI Pattern</a>
+
+  </section>
+
+  <footer>
+    <div class="footer-inner responsive horizontal center layout">
+      <a class="horizontal center layout" target="_blank" href="https://www.polymer-project.org">
+        <div class="logo"></div>
+        <div class="title">Polymer</div>
+      </a>
+      <div class="flex"></div>
+      <a target="_blank" href="https://polymer.github.io/LICENSE.txt" data-outbound="license-txt">&copy; 2015 Polymer
+        Authors</a>
+      <div class="dot-separator wide-only"></div>
+      <a target="_blank" href="https://www.polymer-project.org" data-outbound="about-polymer">About Polymer</a>
+    </div>
+  </footer>
+
+</template>
 
 </body>
 </html>

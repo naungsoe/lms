@@ -10,8 +10,10 @@ public class Constants {
   public static final String DATE_FORMAT = "yyyy-MM-dd";
   public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
+  public static final String GROUPS = "groups";
+
   public static final String TABLE_SCHOOLS = "schools";
-  public static final String TABLE_GROUPS = "groups";
+  public static final String TABLE_GROUPS = GROUPS;
   public static final String TABLE_USERS = "users";
   public static final String TABLE_QUIZZES = "quizzes";
   public static final String TABLE_QUESTIONS = "questions";
@@ -19,6 +21,7 @@ public class Constants {
   public static final String TABLE_REFERENCE_LOGS = "referencelogs";
   public static final String TABLE_SHARE_LOGS = "sharelogs";
   public static final String TABLE_AUDIT_LOGS = "auditlogs";
+  public static final String TABLE_SIGNIN_LOGS = "signinlogs";
 
   public static final byte[] FAMILY_DATA = Bytes.toBytes("d");
 
@@ -35,17 +38,29 @@ public class Constants {
   public static final byte[] IDENTIFIER_MOBILE = Bytes.toBytes("mobile");
   public static final byte[] IDENTIFIER_EMAIL = Bytes.toBytes("email");
   public static final byte[] IDENTIFIER_LOCALE = Bytes.toBytes("locale");
-  public static final byte[] IDENTIFIER_DATE_FORMAT = Bytes.toBytes("dateFormat");
-  public static final byte[] IDENTIFIER_DATE_TIME_FORMAT = Bytes.toBytes("dateTimeFormat");
-  public static final byte[] IDENTIFIER_PERMISSION = Bytes.toBytes("permission");
-  public static final byte[] IDENTIFIER_PERMISSIONS = Bytes.toBytes("permissions");
+  public static final byte[]
+      IDENTIFIER_DATE_FORMAT =
+      Bytes.toBytes("dateFormat");
+  public static final byte[]
+      IDENTIFIER_DATE_TIME_FORMAT =
+      Bytes.toBytes("dateTimeFormat");
+  public static final byte[]
+      IDENTIFIER_PERMISSION =
+      Bytes.toBytes("permission");
+  public static final byte[]
+      IDENTIFIER_PERMISSIONS =
+      Bytes.toBytes("permissions");
   public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes("type");
   public static final byte[] IDENTIFIER_IP_ADDRESS = Bytes.toBytes("ip");
   public static final byte[] IDENTIFIER_TITLE = Bytes.toBytes("title");
-  public static final byte[] IDENTIFIER_INSTRUCTIONS = Bytes.toBytes("instructions");
+  public static final byte[]
+      IDENTIFIER_INSTRUCTIONS =
+      Bytes.toBytes("instructions");
   public static final byte[] IDENTIFIER_BODY = Bytes.toBytes("body");
   public static final byte[] IDENTIFIER_HINT = Bytes.toBytes("hint");
-  public static final byte[] IDENTIFIER_EXPLANATION = Bytes.toBytes("explanation");
+  public static final byte[]
+      IDENTIFIER_EXPLANATION =
+      Bytes.toBytes("explanation");
   public static final byte[] IDENTIFIER_FEEDBACK = Bytes.toBytes("feedback");
   public static final byte[] IDENTIFIER_CORRECT = Bytes.toBytes("correct");
   public static final byte[] IDENTIFIER_ORDER = Bytes.toBytes("order");

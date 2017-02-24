@@ -33,17 +33,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       background-color: #fafafa;
     }
 
+
   </style>
 
 </head>
 <body unresolved>
 
-  <template is="dom-bind">
+<template is="dom-bind">
 
-    <iron-ajax url="data/articles.json" auto last-response="{{articles}}"></iron-ajax>
-    <blog-app articles="[[articles]]"></blog-app>
+  <iron-ajax url="data/articles.json" auto last-response="{{articles}}"></iron-ajax>
+  <blog-app articles="[[articles]]"></blog-app>
 
-  </template>
+</template>
 
 </body>
 </html>

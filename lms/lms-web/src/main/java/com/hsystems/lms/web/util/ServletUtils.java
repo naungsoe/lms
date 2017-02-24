@@ -1,8 +1,8 @@
 package com.hsystems.lms.web.util;
 
 import com.hsystems.lms.common.util.ReflectionUtils;
-
-import org.apache.commons.lang.StringUtils;
+import com.hsystems.lms.common.util.SecurityUtils;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.lang.reflect.Field;
 
@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
  * Created by naungsoe on 13/8/16.
  */
 public final class ServletUtils {
+
+  private static final String HEADER_XFORWARDEDFOR = "X-FORWARDED-FOR";
 
   public static String getCookie(
       HttpServletRequest request, String name) {
@@ -32,7 +34,7 @@ public final class ServletUtils {
 
     return value;
   }
-  
+
   public static <T> T getModel(
       HttpServletRequest request, Class<T> type) {
 
@@ -48,5 +50,14 @@ public final class ServletUtils {
     }
 
     return instance;
+  }
+
+  public static String createToken(
+      HttpServletRequest request, String id) {
+
+    String forwardedAddr = request.getHeader(HEADER_XFORWARDEDFOR);
+    String remoteAddr = StringUtils.isEmpty(forwardedAddr)
+        ? request.getRemoteAddr() : forwardedAddr;
+    return SecurityUtils.getMD5Hash(remoteAddr, id);
   }
 }

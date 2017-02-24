@@ -9,6 +9,8 @@ import com.hsystems.lms.web.util.ServletUtils;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * Created by naungsoe on 8/8/16.
@@ -16,6 +18,10 @@ import javax.servlet.ServletException;
 public class SignUpServlet extends BaseServlet {
 
   private static final long serialVersionUID = -528977780154917729L;
+
+  private static final String JSP_PATH = "/jsp/signup/index.jsp";
+
+  private static final String SIGNIN_PATH = "/web/signin";
 
   private final UserService userService;
 
@@ -25,22 +31,22 @@ public class SignUpServlet extends BaseServlet {
   }
 
   @Override
-  protected void doGet()
+  protected void doGet(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    loadLocale("signup");
-    loadAttribute("titlePage");
-    loadAttribute("datePattern");
-    forwardRequest("/jsp/signup/index.jsp");
+    loadLocale(request, "signup");
+    forwardRequest(request, response, JSP_PATH);
   }
 
   @Override
-  protected void doPost()
+  protected void doPost(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignUpModel model = ServletUtils.getModel(
-        getRequest(), SignUpModel.class);
+    SignUpModel model = ServletUtils.getModel(request, SignUpModel.class);
     userService.signUp(model);
-    sendRedirect("/web/signin");
+
+    redirectRequest(response, SIGNIN_PATH);
   }
 }

@@ -13,7 +13,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <title>iron-icon demo</title>
   <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
   <link rel="import" href="../iron-icon.html">
-  <link rel="import" href="../../paper-styles/demo-pages.html" >
+  <link rel="import" href="../../paper-styles/demo-pages.html">
 
   <style is="custom-style">
     #loading_message {
@@ -28,27 +28,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .vertical-section h4:hover {
       border-left-color: var(--google-blue-700);
     }
+
   </style>
 </head>
 <body>
-  <div class="vertical-section-container centered">
-    <h4>
-      This demo is for an &lt;iron-icon&gt; with an asynchronously loaded
-      iconset.
-    </h4>
+<div class="vertical-section-container centered">
+  <h4>
+    This demo is for an &lt;iron-icon&gt; with an asynchronously loaded
+    iconset.
+  </h4>
 
-    <div id='loading_message'>Waiting to load iconset...</div>
+  <div id='loading_message'>Waiting to load iconset...</div>
 
-    <div class="vertical-section">
-      <!-- iron-icon using a iron-iconset as its icon source -->
-      <iron-iconset name="example" icons="location" src="location.png" size="24" width="24"></iron-iconset>
+  <div class="vertical-section">
+    <!-- iron-icon using a iron-iconset as its icon source -->
+    <iron-iconset name="example" icons="location" src="location.png" size="24" width="24"></iron-iconset>
 
-      <h4>&lt;iron-icon icon="example:location"&gt;</h4>
-      <iron-icon icon="example:location"></iron-icon>
+    <h4>&lt;iron-icon icon="example:location"&gt;</h4>
+    <iron-icon icon="example:location"></iron-icon>
 
-    </div>
   </div>
-  <script>
+</div>
+<script>
     setTimeout(function() {
       // Import the code that powers the iron-iconset asynchronously
       var linkElem = document.createElement('link');
@@ -57,6 +58,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       document.head.appendChild(linkElem);
       document.querySelector('#loading_message').innerText = "Iconset Loaded.";
     }, 1000);
-  </script>
+
+</script>
 </body>
 </html>

@@ -9,6 +9,10 @@ import com.hsystems.lms.web.util.ServletUtils;
 import java.io.IOException;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by naungsoe on 8/8/16.
@@ -16,6 +20,8 @@ import javax.servlet.ServletException;
 public class SignOutServlet extends BaseServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
+
+  private static final String SIGNIN_PATH = "/web/signin";
 
   private final AuthenticationService authenticationService;
 
@@ -25,25 +31,48 @@ public class SignOutServlet extends BaseServlet {
   }
 
   @Override
-  protected void doGet()
+  protected void doGet(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    signOut();
+    signOut(request, response);
   }
 
   @Override
-  protected void doPost()
+  protected void doPost(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    signOut();
+    signOut(request, response);
   }
 
-  private void signOut()
+  private void signOut(
+      HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignInModel model = ServletUtils.getModel(
-        getRequest(), SignInModel.class);
+    SignInModel model = ServletUtils.getModel(request, SignInModel.class);
     authenticationService.signOut(model);
-    sendRedirect("/web/signin");
+
+    clearUserSession(request, response);
+    redirectRequest(response, SIGNIN_PATH);
+  }
+
+  private void clearUserSession(
+      HttpServletRequest request, HttpServletResponse response) {
+
+    HttpSession session = request.getSession(false);
+    Cookie[] cookies = request.getCookies();
+
+    if (session != null) {
+      session.invalidate();
+    }
+
+    if (cookies != null && cookies.length > 0) {
+      for (Cookie cookie : cookies) {
+        cookie.setValue("-");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+      }
+    }
   }
 }

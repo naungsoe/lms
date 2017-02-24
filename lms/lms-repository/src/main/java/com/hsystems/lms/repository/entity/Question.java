@@ -62,7 +62,6 @@ public class Question extends Auditable implements Entity, Serializable {
       String hint,
       String explanation,
       List<QuestionOption> options,
-      School school,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -85,15 +84,21 @@ public class Question extends Auditable implements Entity, Serializable {
     return id;
   }
 
-  public QuestionType getType() { return type; }
+  public QuestionType getType() {
+    return type;
+  }
 
   public String getBody() {
     return body;
   }
 
-  public String getHint() { return hint; }
+  public String getHint() {
+    return hint;
+  }
 
-  public String getExplanation() { return explanation; }
+  public String getExplanation() {
+    return explanation;
+  }
 
   public List<QuestionOption> getOptions() {
     return Collections.unmodifiableList(options);

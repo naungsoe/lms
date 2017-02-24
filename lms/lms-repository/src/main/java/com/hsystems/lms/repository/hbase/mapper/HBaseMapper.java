@@ -28,9 +28,9 @@ import java.util.regex.Pattern;
  */
 public abstract class HBaseMapper<T> {
 
-  public static final String SEPARATED_ID_FORMAT = "%s([0-9a-zA-Z]*)";
+  public static final String SEPARATED_ID_FORMAT = "%s([A-Za-z0-9]*)";
 
-  public static final String PREFIXED_ID_FORMAT = "%s([0-9a-zA-Z]*)$";
+  public static final String PREFIXED_ID_FORMAT = "%s([A-Za-z0-9]*)$";
 
   protected String getId(Result result) {
     return getString(result, Constants.FAMILY_DATA,
@@ -102,7 +102,7 @@ public abstract class HBaseMapper<T> {
         Constants.IDENTIFIER_DATE_TIME_FORMAT);
   }
 
-  protected <T extends Enum<T>>  T getType(Result result, Class<T> type) {
+  protected <T extends Enum<T>> T getType(Result result, Class<T> type) {
     return getEnum(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_TYPE, type);
   }
@@ -152,7 +152,7 @@ public abstract class HBaseMapper<T> {
         Constants.IDENTIFIER_TIMESTAMP);
   }
 
-  protected <T extends Enum<T>>  T getAction(Result result, Class<T> type) {
+  protected <T extends Enum<T>> T getAction(Result result, Class<T> type) {
     return getEnum(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_ACTION, type);
   }
@@ -193,7 +193,7 @@ public abstract class HBaseMapper<T> {
     return StringUtils.isEmpty(value) ? 0 : Long.parseLong(value);
   }
 
-  protected <T extends Enum<T>>  T getEnum(
+  protected <T extends Enum<T>> T getEnum(
       Result result, byte[] family, byte[] identifier, Class<T> type) {
 
     String value = getString(result, family, identifier);

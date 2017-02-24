@@ -23,44 +23,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     body {
       margin: 0;
     }
+
   </style>
 </head>
 <body>
 
-  <test-fixture id="testDrawer">
-    <template>
-      <app-drawer></app-drawer>
-    </template>
-  </test-fixture>
+<test-fixture id="testDrawer">
+  <template>
+    <app-drawer></app-drawer>
+  </template>
+</test-fixture>
 
-  <test-fixture id="rtlDrawer">
-    <template>
-      <app-drawer dir="rtl"></app-drawer>
-    </template>
-  </test-fixture>
+<test-fixture id="rtlDrawer">
+  <template>
+    <app-drawer dir="rtl"></app-drawer>
+  </template>
+</test-fixture>
 
-  <test-fixture id="focusDrawer">
-    <template>
-      <focus-drawer></focus-drawer>
-    </template>
-  </test-fixture>
+<test-fixture id="focusDrawer">
+  <template>
+    <focus-drawer></focus-drawer>
+  </template>
+</test-fixture>
 
-  <dom-module id="focus-drawer">
-    <template>
-      <app-drawer>
-        <input type="text">
-        <div tabindex="0">Div</div>
-        <span>Not focusable</span>
-      </app-drawer>
-    </template>
-    <script>
+<dom-module id="focus-drawer">
+  <template>
+    <app-drawer>
+      <input type="text">
+      <div tabindex="0">Div</div>
+      <span>Not focusable</span>
+    </app-drawer>
+  </template>
+  <script>
     HTMLImports.whenReady(function() {
       Polymer({ is: 'focus-drawer' });
     });
-    </script>
-  </dom-module>
 
-  <script>
+  </script>
+</dom-module>
+
+<script>
 
     suite('basic features', function() {
       var drawer, scrim, contentContainer, transformSpy;
@@ -718,7 +720,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>

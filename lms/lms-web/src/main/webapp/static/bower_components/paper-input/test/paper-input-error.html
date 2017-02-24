@@ -27,22 +27,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-  <paper-input-container id="container">
-    <input is="iron-input">
-    <paper-input-error>error</paper-input-error>
-  </paper-input-container>
+<paper-input-container id="container">
+  <input is="iron-input">
+  <paper-input-error>error</paper-input-error>
+</paper-input-container>
 
-  <test-fixture id="auto-validate-numbers">
-    <template>
-      <paper-input-container auto-validate attr-for-value="bind-value">
-        <label id="l">label</label>
-        <input is="iron-input" id="i" pattern="[0-9]*">
-        <paper-input-error id="e">error</paper-input-error>
-      </paper-input-container>
-    </template>
-  </test-fixture>
+<test-fixture id="auto-validate-numbers">
+  <template>
+    <paper-input-container auto-validate attr-for-value="bind-value">
+      <label id="l">label</label>
+      <input is="iron-input" id="i" pattern="[0-9]*">
+      <paper-input-error id="e">error</paper-input-error>
+    </paper-input-container>
+  </template>
+</test-fixture>
 
-  <script>
+<script>
 
     suite('basic', function() {
 
@@ -62,7 +62,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-  </script>
+
+</script>
 
 </body>
 </html>
