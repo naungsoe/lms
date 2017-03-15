@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -74,18 +75,13 @@ public class QuizSection implements Serializable {
     }
 
     QuizSection section = (QuizSection) obj;
-
     return id.equals(section.getId());
   }
 
   @Override
   public String toString() {
-    StringBuilder questionsBuilder = new StringBuilder();
-    questions.forEach(question
-        -> questionsBuilder.append(question).append(","));
-
     return String.format(
         "QuizSection{id=%s, instructions=%s, questions=%s}",
-        id, instructions, questionsBuilder);
+        id, instructions, StringUtils.join(questions, ","));
   }
 }

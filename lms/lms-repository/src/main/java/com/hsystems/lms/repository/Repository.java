@@ -8,14 +8,14 @@ import java.util.Optional;
 /**
  * Created by administrator on 6/1/17.
  */
-public interface EntityRepository<T extends Entity> {
+public interface Repository<T extends Entity> {
 
-  Optional<T> findBy(String id, long timestamp)
+  Optional<T> findBy(String id)
       throws IOException;
 
-  void save(T entity, long timestamp)
+  void save(T entity)
       throws IOException;
 
-  void delete(T entity, long timestamp)
+  void delete(T entity)
       throws IOException;
 }

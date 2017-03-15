@@ -5,9 +5,13 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 10/9/16.
  */
-public class SignUpModel extends SignInModel implements Serializable {
+public class SignUpModel implements Serializable {
 
   private static final long serialVersionUID = -6318683344722781066L;
+
+  private String id;
+
+  private String password;
 
   private String confirmPassword;
 
@@ -38,7 +42,8 @@ public class SignUpModel extends SignInModel implements Serializable {
       String mobile,
       String email) {
 
-    super(id, password);
+    this.id = id;
+    this.password = password;
     this.confirmPassword = confirmPassword;
     this.firstName = firstName;
     this.lastName = lastName;
@@ -46,6 +51,22 @@ public class SignUpModel extends SignInModel implements Serializable {
     this.gender = gender;
     this.mobile = mobile;
     this.email = email;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
 
   public String getConfirmPassword() {

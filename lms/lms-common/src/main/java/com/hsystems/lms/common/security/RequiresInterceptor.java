@@ -8,6 +8,7 @@ import com.hsystems.lms.common.util.CommonUtils;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 
+import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
@@ -25,17 +26,16 @@ public class RequiresInterceptor implements MethodInterceptor {
       throws Throwable {
 
     CommonUtils.checkNotNull(principalProvider.get(),
-        "error retrieving principalProvider");
+        "error retrieving PrincipalProvider");
 
-    Requires requires = invocation.getMethod().getAnnotation(Requires.class);
+    Method method = invocation.getMethod();
+    Requires requires = method.getAnnotation(Requires.class);
     String[] permissions = requires.value();
     Principal principal = principalProvider.get();
     boolean hasPermissions = Arrays.asList(permissions).stream()
         .allMatch(permission -> principal.hasPermission(permission));
-
     CommonUtils.checkAccessControl(hasPermissions,
-        String.format("access denied: %s",
-            invocation.getMethod().getName()));
+        String.format("access denied: %s", method.getName()));
     return invocation.proceed();
   }
 }

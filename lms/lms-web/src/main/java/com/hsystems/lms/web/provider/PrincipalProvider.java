@@ -20,23 +20,6 @@ public class PrincipalProvider implements Provider<UserModel> {
   }
 
   public UserModel get() {
-    return null;
-//    return new UserModel(
-//        "1",
-//        "Admin",
-//        "User",
-//        "01/01/1970",
-//        "Male",
-//        "987654321",
-//        "admin@hsystems.com",
-//        "en_US",
-//        "dd/MM/yyyy",
-//        "dd/MM/yyyy hh:mm:ss",
-//        Arrays.asList(Permission.VIEW_HOME,
-//            Permission.VIEW_QUESTIONS),
-//        "OS",
-//        "Open School",
-//        new ArrayList<>()
-//    );
+    return userModel;
   }
 }

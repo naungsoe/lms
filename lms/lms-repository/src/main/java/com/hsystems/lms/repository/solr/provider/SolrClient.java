@@ -8,8 +8,8 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
+import com.hsystems.lms.common.util.StringUtils;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
@@ -23,6 +23,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,8 @@ public class SolrClient {
   private static final String FIELD_ALL = "*";
   private static final String FIELD_ID = "id";
   private static final String FIELD_TYPE_NAME = "typeName_s";
+
+  private static final String FILTER_FORMAT = "%s:%s";
 
   private static final String SEPARATOR_ID = "_";
 
@@ -86,13 +89,16 @@ public class SolrClient {
     return client;
   }
 
-  private <T> SolrQuery getSolrQuery(Query query, Class<T> type) {
+  private <T> SolrQuery getSolrQuery(Query query, Class<T> type)
+      throws NoSuchFieldException {
+
     SolrQuery solrQuery = new SolrQuery();
     solrQuery.setQuery("*:*");
 
+    updateCriteriaFieldName(query, type);
     addQueryCriteria(solrQuery, query.getCriteria());
 
-    String typeNameFilterQuery = String.format("%s:%s",
+    String typeNameFilterQuery = String.format(FILTER_FORMAT,
         FIELD_TYPE_NAME, type.getTypeName());
     solrQuery.addFilterQuery(typeNameFilterQuery);
 
@@ -107,23 +113,46 @@ public class SolrClient {
     return solrQuery;
   }
 
+  private <T> void updateCriteriaFieldName(Query query, Class<T> type)
+      throws NoSuchFieldException {
+
+    for (Criterion criterion : query.getCriteria()) {
+      Optional<Field> fieldOptional
+          = ReflectionUtils.getField(type, criterion.getField());
+
+      if (fieldOptional.isPresent()) {
+        Field field = fieldOptional.get();
+        IndexField annotation = field.getAnnotation(IndexField.class);
+        String fieldName = StringUtils.isEmpty(annotation.name())
+            ? field.getName() : annotation.name();
+
+        switch (annotation.type()) {
+          case IDENTITY:
+            // Nothing to update
+            break;
+          default:
+            criterion.setField(fieldName + "_s");
+            break;
+        }
+      }
+    }
+  }
+
   private void addQueryCriteria(
       SolrQuery solrQuery, List<Criterion> criteria) {
 
-    criteria.stream()
-        .forEach(criterion -> {
-          switch (criterion.getOperator()) {
-            case EQUAL:
-              solrQuery.addFilterQuery(String.format("%s:%s",
-                  criterion.getField(), criterion.getValue()));
-              break;
-
-            default:
-              solrQuery.addFilterQuery(String.format("%s:%s",
-                  criterion.getField(), criterion.getValue()));
-              break;
-          }
-        });
+    criteria.forEach(criterion -> {
+      switch (criterion.getOperator()) {
+        case EQUAL:
+          solrQuery.addFilterQuery(String.format(FILTER_FORMAT,
+              criterion.getField(), criterion.getValue()));
+          break;
+        default:
+          solrQuery.addFilterQuery(String.format(FILTER_FORMAT,
+              criterion.getField(), criterion.getValue()));
+          break;
+      }
+    });
   }
 
   private void addQueryFields(
@@ -133,8 +162,7 @@ public class SolrClient {
       solrQuery.addField(FIELD_ALL);
 
     } else {
-      fields.stream().forEach(field
-          -> solrQuery.addField(field));
+      fields.forEach(solrQuery::addField);
     }
   }
 
@@ -197,38 +225,32 @@ public class SolrClient {
 
         if (id.contains(SEPARATOR_ID)) {
           ReflectionUtils.setValue(entity, field.getName(),
-              id.substring(id.lastIndexOf(SEPARATOR_ID)));
+              id.substring(id.lastIndexOf(SEPARATOR_ID) + 1));
 
         } else {
           ReflectionUtils.setValue(entity, field.getName(), id);
         }
         break;
-
       case BOOLEAN:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_b"));
         break;
-
       case INTEGER:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_i"));
         break;
-
       case LONG:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_l"));
         break;
-
       case FLOAT:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_f"));
         break;
-
       case DOUBLE:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_d"));
         break;
-
       case DATETIME:
         Object datetime = document.getFieldValue(fieldName + "_dt");
 
@@ -237,7 +259,6 @@ public class SolrClient {
               DateTimeUtils.toLocalDateTime((Date) datetime));
         }
         break;
-
       case STRING:
         Object value = document.getFieldValue(fieldName + "_s");
 
@@ -250,18 +271,15 @@ public class SolrClient {
           ReflectionUtils.setValue(entity, field.getName(), value);
         }
         break;
-
       case TEXT_GENERAL:
         List<String> textGenerals
             = (List<String>) document.getFieldValue(fieldName + "_t");
         ReflectionUtils.setValue(entity, field.getName(), textGenerals.get(0));
         break;
-
       case TEXT_WHITE_SPACE:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_ws"));
         break;
-
       case OBJECT:
         if (document.getChildDocuments() == null) {
           ReflectionUtils.setValue(entity, field.getName(), null);
@@ -277,9 +295,24 @@ public class SolrClient {
           }
         }
         break;
-
       case LIST:
-        if (document.getChildDocuments() == null) {
+        if (ReflectionUtils.getListType(field).isEnum()) {
+          Object childValue = document.getFieldValue(fieldName + "_s");
+
+          if (childValue == null) {
+            ReflectionUtils.setValue(entity,
+                fieldName, Collections.emptyList());
+
+          } else {
+            List<Enum> childEnums = new ArrayList<>();
+            Class<Enum> listType
+                = (Class<Enum>) ReflectionUtils.getListType(field);
+            String[] childValues = childValue.toString().split(",");
+            Arrays.asList(childValues).forEach(
+                enumValue -> childEnums.add(Enum.valueOf(listType, enumValue)));
+            ReflectionUtils.setValue(entity, fieldName, childEnums);
+          }
+        } else if (document.getChildDocuments() == null) {
           ReflectionUtils.setValue(entity,
               fieldName, Collections.emptyList());
 
@@ -299,6 +332,10 @@ public class SolrClient {
           ReflectionUtils.setValue(entity, field.getName(), childEntities);
         }
         break;
+      default:
+        ReflectionUtils.setValue(entity, field.getName(),
+            document.getFieldValue(fieldName + "_s"));
+        break;
     }
   }
 
@@ -311,6 +348,7 @@ public class SolrClient {
 
     try {
       SolrInputDocument document = getDocument(entity);
+      updateDocumentType(document, entity);
       updateChildDocumentsId(document);
 
       CloudSolrClient client = getClient(entity.getClass());
@@ -337,7 +375,6 @@ public class SolrClient {
       }
     }
 
-    document.addField(FIELD_TYPE_NAME, entity.getClass().getTypeName());
     return document;
   }
 
@@ -361,32 +398,25 @@ public class SolrClient {
       case IDENTITY:
         document.addField(FIELD_ID, fieldValue);
         break;
-
       case BOOLEAN:
         document.addField(fieldName + "_b", fieldValue);
         break;
-
       case INTEGER:
         document.addField(fieldName + "_i", fieldValue);
         break;
-
       case LONG:
         document.addField(fieldName + "_l", fieldValue);
         break;
-
       case FLOAT:
         document.addField(fieldName + "_f", fieldValue);
         break;
-
       case DOUBLE:
         document.addField(fieldName + "_d", fieldValue);
         break;
-
       case DATETIME:
         String dateTime = DateTimeUtils.toString((LocalDateTime) fieldValue);
         document.addField(fieldName + "_dt", dateTime + "Z");
         break;
-
       case STRING:
         if (field.getType().isEnum()) {
           document.addField(fieldName + "_s", fieldValue.toString());
@@ -395,33 +425,42 @@ public class SolrClient {
           document.addField(fieldName + "_s", fieldValue);
         }
         break;
-
       case TEXT_GENERAL:
         document.addField(fieldName + "_t", fieldValue);
         break;
-
       case TEXT_WHITE_SPACE:
         document.addField(fieldName + "_ws", fieldValue);
         break;
-
       case OBJECT:
         childDocument = getDocument(fieldValue);
         childDocument.addField("fieldName_s", fieldName);
         document.addChildDocument(childDocument);
         break;
-
       case LIST:
-        List<SolrInputDocument> childDocuments = new ArrayList<>();
+        if (ReflectionUtils.getListType(field).isEnum()) {
+          document.addField(fieldName + "_s",
+              StringUtils.join((List) fieldValue, ","));
 
-        for (Object item : (List) fieldValue) {
-          childDocument = getDocument(item);
-          childDocument.addField("fieldName_s", fieldName);
-          childDocuments.add(childDocument);
+        } else {
+          List<SolrInputDocument> childDocuments = new ArrayList<>();
+
+          for (Object item : (List) fieldValue) {
+            childDocument = getDocument(item);
+            childDocument.addField("fieldName_s", fieldName);
+            childDocuments.add(childDocument);
+          }
+
+          document.addChildDocuments(childDocuments);
         }
-
-        document.addChildDocuments(childDocuments);
+        break;
+      default:
+        document.addField(fieldName + "_s", fieldValue);
         break;
     }
+  }
+
+  protected <T> void updateDocumentType(SolrInputDocument document, T entity) {
+    document.addField(FIELD_TYPE_NAME, entity.getClass().getTypeName());
   }
 
   protected void updateChildDocumentsId(SolrInputDocument document) {

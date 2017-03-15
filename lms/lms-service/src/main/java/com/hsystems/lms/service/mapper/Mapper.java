@@ -85,8 +85,9 @@ public abstract class Mapper {
     List<T> list = new ArrayList<>();
 
     for (Object item : (List) obj) {
-      if (type.isEnum()) {
-        list.add((T) item);
+      if (item.getClass().isEnum()) {
+        list.add(type.equals(String.class)
+            ? type.cast(item.toString()) : (T) item);
 
       } else {
         T valueItem = map(item, type);

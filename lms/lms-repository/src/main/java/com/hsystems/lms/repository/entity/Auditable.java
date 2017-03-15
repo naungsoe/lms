@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
+import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.time.LocalDateTime;

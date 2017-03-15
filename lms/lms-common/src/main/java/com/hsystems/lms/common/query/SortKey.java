@@ -1,7 +1,7 @@
 package com.hsystems.lms.common.query;
 
 /**
- * Created by administrator on 24/11/16.
+ * Created by naungsoe on 24/11/16.
  */
 public class SortKey {
 
@@ -18,8 +18,16 @@ public class SortKey {
     return field;
   }
 
+  public void setField(String field) {
+    this.field = field;
+  }
+
   public SortOrder getOrder() {
     return order;
+  }
+
+  public void setOrder(SortOrder order) {
+    this.order = order;
   }
 
   @Override
@@ -36,7 +44,6 @@ public class SortKey {
     }
 
     SortKey sortKey = (SortKey) obj;
-
     return field.equals(sortKey.getField())
         && order.equals(sortKey.getOrder());
   }

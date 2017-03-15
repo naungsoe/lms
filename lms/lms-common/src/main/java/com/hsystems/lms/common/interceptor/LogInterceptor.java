@@ -1,5 +1,7 @@
 package com.hsystems.lms.common.interceptor;
 
+import com.hsystems.lms.common.annotation.Log;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.apache.logging.log4j.LogManager;
@@ -12,23 +14,61 @@ import java.util.Arrays;
  */
 public class LogInterceptor implements MethodInterceptor {
 
-  private final static Logger logger
-      = LogManager.getLogger(LogInterceptor.class);
+  private final static Logger rootLogger = LogManager.getRootLogger();
+
+  private final static Logger signInLogger = LogManager.getLogger("SignInLog");
 
   private final static String messageFormat
-      = "invocation of %s.%s with parameters %s";
+      = "Invocation of %s.%s with parameters %s";
 
   public Object invoke(MethodInvocation invocation)
       throws Throwable {
 
     try {
-      return invocation.proceed();
+      Object result = invocation.proceed();
+      logInfo(invocation);
+      return result;
 
-    } finally {
-      String type = invocation.getThis().getClass().getName();
-      String method = invocation.getMethod().getName();
-      String arguments = Arrays.toString(invocation.getArguments());
-      logger.info(String.format(messageFormat, type, method, arguments));
+    } catch(Exception e) {
+      logError(invocation, e);
+      throw e;
+    }
+  }
+
+  private void logError(MethodInvocation invocation, Exception e) {
+    Log annotation = invocation.getMethod()
+        .getDeclaredAnnotation(Log.class);
+    String message = getMessage(invocation);
+
+    switch (annotation.value()) {
+      case SIGNIN:
+        signInLogger.error(message, e);
+        break;
+      default:
+        rootLogger.error(message, e);
+        break;
+    }
+  }
+
+  private String getMessage(MethodInvocation invocation) {
+    String type = invocation.getThis().getClass().getName();
+    String method = invocation.getMethod().getName();
+    String arguments = Arrays.toString(invocation.getArguments());
+    return String.format(messageFormat, type, method, arguments);
+  }
+
+  private void logInfo(MethodInvocation invocation) {
+    Log annotation = invocation.getMethod()
+        .getDeclaredAnnotation(Log.class);
+    String message = getMessage(invocation);
+
+    switch (annotation.value()) {
+      case SIGNIN:
+        signInLogger.info(message);
+        break;
+      default:
+        rootLogger.info(message);
+        break;
     }
   }
 }

@@ -2,17 +2,12 @@ package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.Action;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CommonUtils;
-import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -32,18 +27,14 @@ public class QuestionService extends BaseService {
 
   private final QuestionRepository questionRepository;
 
-  private final MutateLogRepository mutateLogRepository;
-
   private final IndexRepository indexRepository;
 
   @Inject
   QuestionService(
       QuestionRepository questionRepository,
-      MutateLogRepository mutateLogRepository,
       IndexRepository indexRepository) {
 
     this.questionRepository = questionRepository;
-    this.mutateLogRepository = mutateLogRepository;
     this.indexRepository = indexRepository;
   }
 
@@ -59,15 +50,8 @@ public class QuestionService extends BaseService {
       String id, Configuration configuration)
       throws IOException {
 
-    Optional<MutateLog> mutateLogOptional = mutateLogRepository.findBy(id);
-
-    if (!mutateLogOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    MutateLog mutateLog = mutateLogOptional.get();
     Optional<Question> questionOptional
-        = questionRepository.findBy(id, mutateLog.getTimestamp());
+        = indexRepository.findBy(id, Question.class);
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
@@ -99,9 +83,8 @@ public class QuestionService extends BaseService {
           Collections.emptyList());
     }
 
-    List<QuestionModel> questionModels
-        = getQuestionModels(queryResult.getItems(), configuration);
-    return new QueryResult<>(queryResult.getElapsedTime(), questionModels);
+    return new QueryResult<>(queryResult.getElapsedTime(),
+        getQuestionModels(queryResult.getItems(), configuration));
   }
 
   private List<QuestionModel> getQuestionModels(
@@ -130,29 +113,8 @@ public class QuestionService extends BaseService {
       QuestionModel questionModel, Configuration configuration)
       throws IOException {
 
-    Question question = getEntity(questionModel,
-        Question.class, configuration);
-
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    MutateLog mutateLog = new MutateLog(question.getId(),
-        EntityType.QUESTION, Action.CREATED, timestamp);
-
-    save(question, mutateLog);
-  }
-
-  private void save(Question question, MutateLog mutateLog)
-      throws IOException {
-
-    try {
-      questionRepository.save(question, mutateLog.getTimestamp());
-      mutateLogRepository.save(mutateLog, mutateLog.getTimestamp());
-
-    } catch (IOException e) {
-      mutateLogRepository.delete(mutateLog, mutateLog.getTimestamp());
-      questionRepository.delete(question, mutateLog.getTimestamp());
-      throw e;
-    }
-
+    Question question = getEntity(questionModel, Question.class, configuration);
+    questionRepository.save(question);
     indexRepository.save(question);
   }
 
@@ -169,40 +131,24 @@ public class QuestionService extends BaseService {
       Configuration configuration)
       throws IOException {
 
-    Question question = getEntity(questionModel,
-        Question.class, configuration);
+    Question question = getEntity(questionModel, Question.class, configuration);
     checkMutatePreconditions(question, userModel);
-
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    MutateLog mutateLog = new MutateLog(question.getId(),
-        EntityType.QUESTION, Action.MODIFIED, timestamp);
-
-    save(question, mutateLog);
+    questionRepository.save(question);
+    indexRepository.save(question);
   }
 
   @Log
   public void delete(String id, UserModel userModel)
       throws IOException, IllegalAccessException {
 
-    Optional<MutateLog> mutateLogOptional
-        = mutateLogRepository.findBy(id, Long.MIN_VALUE);
-    CommonUtils.checkArgument(
-        mutateLogOptional.isPresent(),
-        "error retrieving question");
-
-    MutateLog mutateLog = mutateLogOptional.get();
     Optional<Question> questionOptional
-        = questionRepository.findBy(id, mutateLog.getTimestamp());
+        = indexRepository.findBy(id, Question.class);
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
       checkMutatePreconditions(question, userModel);
 
-      long timestamp = DateTimeUtils.getCurrentMilliseconds();
-      mutateLog = new MutateLog(question.getId(),
-          EntityType.QUESTION, Action.DELETED, timestamp);
-
-      mutateLogRepository.save(mutateLog, timestamp);
+      questionRepository.delete(question);
       indexRepository.delete(question);
     }
   }

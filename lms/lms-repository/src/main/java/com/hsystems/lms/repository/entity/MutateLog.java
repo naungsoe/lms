@@ -1,12 +1,14 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.Action;
+import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.annotation.IndexCollection;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 2/11/16.
  */
+@IndexCollection(name = "mutatelogs")
 public class MutateLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 6681526004482435421L;
@@ -15,7 +17,7 @@ public class MutateLog implements Entity, Serializable {
 
   private EntityType type;
 
-  private Action action;
+  private ActionType actionType;
 
   private long timestamp;
 
@@ -26,12 +28,12 @@ public class MutateLog implements Entity, Serializable {
   public MutateLog(
       String id,
       EntityType type,
-      Action action,
+      ActionType actionType,
       long timestamp) {
 
     this.id = id;
     this.type = type;
-    this.action = action;
+    this.actionType = actionType;
     this.timestamp = timestamp;
   }
 
@@ -44,8 +46,8 @@ public class MutateLog implements Entity, Serializable {
     return type;
   }
 
-  public Action getAction() {
-    return action;
+  public ActionType getActionType() {
+    return actionType;
   }
 
   public long getTimestamp() {
@@ -66,15 +68,13 @@ public class MutateLog implements Entity, Serializable {
     }
 
     MutateLog auditLog = (MutateLog) obj;
-
-    return id.equals(auditLog.getId())
-        && (timestamp == auditLog.getTimestamp());
+    return id.equals(auditLog.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, type=%s, timestamp=%s, action=%s}",
-        id, type, timestamp, action);
+        "AuditLog{id=%s, type=%s, timestamp=%s, actionType=%s}",
+        id, type, timestamp, actionType);
   }
 }

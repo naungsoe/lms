@@ -23,9 +23,8 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
   public ShareLog getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    String entityId = Bytes.toString(mainResult.getRow());
-    EntityType entityType = getType(mainResult, EntityType.class);
-
+    String id = Bytes.toString(mainResult.getRow());
+    EntityType type = getType(mainResult, EntityType.class);
     User sharedBy = new User(
         getId(mainResult),
         getFirstName(mainResult),
@@ -34,15 +33,15 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
     LocalDateTime sharedDateTime = getDateTime(mainResult);
 
     List<ShareLogEntry> logEntries = new ArrayList<>();
-    results.stream().filter(isShareResult(entityId))
+    results.stream().filter(isShareResult(id))
         .forEach(shareResult -> {
           ShareLogEntry logEntry = getShareLogEntry(shareResult);
           logEntries.add(logEntry);
         });
 
     return new ShareLog(
-        entityId,
-        entityType,
+        id,
+        type,
         sharedBy,
         sharedDateTime,
         logEntries

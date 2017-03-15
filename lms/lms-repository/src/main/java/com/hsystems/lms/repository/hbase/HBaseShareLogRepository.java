@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseShareLogMapper;
@@ -23,43 +22,40 @@ public class HBaseShareLogRepository
 
   private final HBaseClient client;
 
-  private final HBaseShareLogMapper mapper;
+  private final HBaseShareLogMapper shareLogMapper;
 
   @Inject
   HBaseShareLogRepository(
       HBaseClient client,
-      HBaseShareLogMapper mapper) {
+      HBaseShareLogMapper shareLogMapper) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.shareLogMapper = shareLogMapper;
   }
 
   @Override
-  public Optional<ShareLog> findBy(String id, long timestamp)
+  public Optional<ShareLog> findBy(String id)
       throws IOException {
 
     Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(timestamp);
-
-    List<Result> results = client.scan(scan,
-        Constants.TABLE_SHARE_LOGS);
+    List<Result> results = client.scan(scan, ShareLog.class);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    ShareLog shareLog = mapper.getEntity(results);
+    ShareLog shareLog = shareLogMapper.getEntity(results);
     return Optional.of(shareLog);
   }
 
   @Override
-  public void save(ShareLog entity, long timestamp)
+  public void save(ShareLog entity)
       throws IOException {
 
   }
 
   @Override
-  public void delete(ShareLog entity, long timestamp)
+  public void delete(ShareLog entity)
       throws IOException {
 
   }

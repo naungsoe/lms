@@ -14,20 +14,19 @@ import java.util.Properties;
  */
 public class PropertiesProvider implements Provider<Properties> {
 
-  private final static Logger logger
-      = LogManager.getLogger(PropertiesProvider.class);
+  private static final Logger logger = LogManager.getRootLogger();
 
   private static final String FILE_NAME = "application.properties";
 
   private final Properties properties;
 
   PropertiesProvider() {
-    this.properties = new Properties();
     InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream(FILE_NAME);
+    properties = new Properties();
 
     try {
-      this.properties.load(inputStream);
+      properties.load(inputStream);
 
     } catch (IOException e) {
       logger.error("failed to load properties", e);

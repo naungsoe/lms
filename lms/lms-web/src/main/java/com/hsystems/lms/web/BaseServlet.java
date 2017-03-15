@@ -51,8 +51,7 @@ public abstract class BaseServlet extends HttpServlet {
         .getResourceAsStream(localeFilePath);
     JsonNode localNode = JsonUtils.parseJson(stream).get(locale);
     localNode.fields().forEachRemaining(field -> {
-      request.setAttribute(field.getKey(),
-          field.getValue().textValue());
+      request.setAttribute(field.getKey(), field.getValue().textValue());
     });
   }
 }

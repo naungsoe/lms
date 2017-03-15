@@ -2,8 +2,10 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -23,43 +25,54 @@ public class HBaseUserRepository
 
   private final HBaseClient client;
 
-  private final HBaseUserMapper mapper;
+  private final HBaseUserMapper userMapper;
+
+  private final MutateLogRepository mutateLogRepository;
 
   @Inject
   HBaseUserRepository(
       HBaseClient client,
-      HBaseUserMapper mapper) {
+      HBaseUserMapper userMapper,
+      MutateLogRepository mutateLogRepository) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.userMapper = userMapper;
+    this.mutateLogRepository = mutateLogRepository;
   }
 
   @Override
-  public Optional<User> findBy(String id, long timestamp)
+  public Optional<User> findBy(String id)
       throws IOException {
 
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(timestamp);
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(id, EntityType.USER);
 
-    List<Result> results = client.scan(scan,
-        Constants.TABLE_USERS);
+    if (!mutateLogOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    MutateLog mutateLog = mutateLogOptional.get();
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(mutateLog.getTimestamp());
+
+    List<Result> results = client.scan(scan, User.class);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    User user = mapper.getEntity(results);
+    User user = userMapper.getEntity(results);
     return Optional.of(user);
   }
 
   @Override
-  public void save(User entity, long timestamp)
+  public void save(User entity)
       throws IOException {
 
   }
 
   @Override
-  public void delete(User entity, long timestamp)
+  public void delete(User entity)
       throws IOException {
 
   }

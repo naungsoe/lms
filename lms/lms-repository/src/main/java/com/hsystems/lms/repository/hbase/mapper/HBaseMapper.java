@@ -6,6 +6,7 @@ import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
 
@@ -28,18 +29,18 @@ import java.util.regex.Pattern;
  */
 public abstract class HBaseMapper<T> {
 
-  public static final String SEPARATED_ID_FORMAT = "%s([A-Za-z0-9]*)";
+  public static final String SEPARATED_ID_PATTERN = "%s([A-Za-z0-9]*)";
 
-  public static final String PREFIXED_ID_FORMAT = "%s([A-Za-z0-9]*)$";
+  public static final String PREFIXED_ID_PATTERN = "%s([A-Za-z0-9]*)$";
 
   protected String getId(Result result) {
     return getString(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_ID);
   }
 
-  protected String getSignInId(Result result) {
+  protected String getAccount(Result result) {
     return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_SIGNIN_ID);
+        Constants.IDENTIFIER_ACCOUNT);
   }
 
   protected String getPassword(Result result) {
@@ -110,6 +111,16 @@ public abstract class HBaseMapper<T> {
   protected String getIpAddress(Result result) {
     return getString(result, Constants.FAMILY_DATA,
         Constants.IDENTIFIER_IP_ADDRESS);
+  }
+
+  protected String getSessionId(Result result) {
+    return getString(result, Constants.FAMILY_DATA,
+        Constants.IDENTIFIER_SESSION_ID);
+  }
+
+  protected int getFails(Result result) {
+    return getInteger(result, Constants.FAMILY_DATA,
+        Constants.IDENTIFIER_FAILS);
   }
 
   protected String getTitle(Result result) {
@@ -221,7 +232,7 @@ public abstract class HBaseMapper<T> {
   }
 
   protected Predicate<Result> isChildResult(String prefix) {
-    String regex = String.format(PREFIXED_ID_FORMAT, prefix);
+    String regex = String.format(PREFIXED_ID_PATTERN, prefix);
     Pattern pattern = Pattern.compile(regex);
     return p -> pattern.matcher(Bytes.toString(p.getRow())).find();
   }
@@ -264,10 +275,16 @@ public abstract class HBaseMapper<T> {
 
   protected String getId(Result result, String separator) {
     String row = Bytes.toString(result.getRow());
-    String regex = String.format(SEPARATED_ID_FORMAT, separator);
+    String regex = String.format(SEPARATED_ID_PATTERN, separator);
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(row);
     return matcher.find() ? matcher.group(1) : "";
+  }
+
+  protected School getSchool(Result result) {
+    String id = getId(result, Constants.SEPARATOR_SCHOOL);
+    String name = getName(result);
+    return new School(id, name);
   }
 
   protected Group getGroup(Result result) {
@@ -303,7 +320,7 @@ public abstract class HBaseMapper<T> {
     }
 
     String[] items = value.split("\\,");
-    Arrays.asList(items).stream().forEach(item -> {
+    Arrays.asList(items).forEach(item -> {
       Permission permission = Enum.valueOf(Permission.class, item);
       permissions.add(permission);
     });
@@ -377,9 +394,19 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value.toString()));
   }
 
+  protected void addSessionIdColumn(Put put, String value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_SESSION_ID,
+        Bytes.toBytes(value));
+  }
+
   protected void addIpAddressColumn(Put put, String value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_IP_ADDRESS,
         Bytes.toBytes(value));
+  }
+
+  protected void addFailsColumn(Put put, int value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_FAILS,
+        Bytes.toBytes(Integer.toString(value)));
   }
 
   protected void addBodyColumn(Put put, String value) {
@@ -432,7 +459,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", prefix,
         Constants.SEPARATOR_OPTION, option.getId());
-
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addBodyColumn(put, option.getBody());
     addFeedbackColumn(put, option.getFeedback());
@@ -446,7 +472,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
-
     Put put = getUserPut(auditable.getCreatedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getCreatedDateTime());
     puts.add(put);
@@ -466,7 +491,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", auditable.getId(),
         Constants.SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
-
     Put put = getUserPut(auditable.getModifiedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getModifiedDateTime());
     puts.add(put);
@@ -477,7 +501,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", prefix,
         Constants.SEPARATOR_OPTION, option.getId());
-
     return new Delete(Bytes.toBytes(rowKey), timestamp);
   }
 
@@ -486,7 +509,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
-
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }
@@ -496,7 +518,6 @@ public abstract class HBaseMapper<T> {
 
     String rowKey = String.format("%s%s%s", auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
-
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }

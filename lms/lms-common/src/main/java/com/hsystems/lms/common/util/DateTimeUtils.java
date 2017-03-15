@@ -41,7 +41,10 @@ public final class DateTimeUtils {
   }
 
   public static long getCurrentMilliseconds() {
-    return LocalDateTime.now().atZone(ZoneId.systemDefault())
-        .toInstant().toEpochMilli();
+    return getMilliseconds(LocalDateTime.now());
+  }
+
+  public static long getMilliseconds(LocalDateTime dateTime) {
+    return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
   }
 }

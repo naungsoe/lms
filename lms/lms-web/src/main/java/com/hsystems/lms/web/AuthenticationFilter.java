@@ -5,8 +5,10 @@ import com.google.inject.Injector;
 
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.model.SignInModel;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.provider.PrincipalProvider;
+import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -18,7 +20,9 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -55,7 +59,7 @@ public class AuthenticationFilter
 
     String url = getRequestUrl(request);
 
-    if (!isAuthenticated() && !isPublicUrl(url)) {
+    if (!isUserAuthenticated() && !isPublicUrl(url)) {
       populateUserSession(request, response);
     }
 
@@ -64,17 +68,18 @@ public class AuthenticationFilter
 
     } else {
       if (isSignInUrl(url)) {
-        if (isAuthenticated()) {
+        if (isUserAuthenticated()) {
           forwardRequest(request, response, "/web/home");
         } else {
           chain.doFilter(request, response);
         }
-      } else if (isAuthenticated()) {
+      } else if (isUserAuthenticated()) {
         chain.doFilter(request, response);
 
       } else {
         request.getServletContext().log(
             String.format("unauthorized access to %s", url));
+        forwardRequest(request, response, "/web/signin");
       }
     }
   }
@@ -84,17 +89,23 @@ public class AuthenticationFilter
       throws IOException, ServletException {
 
     HttpServletRequest httpRequest = (HttpServletRequest) request;
+    String id = ServletUtils.getCookie(httpRequest, "id");
     String sessionId = httpRequest.getRequestedSessionId();
 
-    if (StringUtils.isEmpty(sessionId)) {
+    if (StringUtils.isEmpty(id) || StringUtils.isEmpty(sessionId)) {
       return;
     }
 
+    String remoteAddr = ServletUtils.getRemoteAddress(httpRequest);
+    SignInModel signInModel = new SignInModel(
+        id, "", "", sessionId, remoteAddr);
     Optional<UserModel> userModelOptional
-        = authenticationService.findSignedInUserBy(sessionId);
+        = authenticationService.findSignedInUserBy(signInModel);
 
     if (userModelOptional.isPresent()) {
-      createUserSession(request, userModelOptional.get());
+      UserModel userModel = userModelOptional.get();
+      authenticationService.saveSignIn(signInModel, userModel);
+      createUserSession(request, response, userModel);
     }
   }
 
@@ -105,20 +116,26 @@ public class AuthenticationFilter
   private boolean isPublicUrl(String url) {
     return url.startsWith("/web/accounthelp")
         || url.startsWith("/web/signup")
-        || url.startsWith("/web/error");
+        || url.startsWith("/web/error")
+        || url.startsWith("/web/util");
   }
 
-  private boolean isAuthenticated() {
+  private boolean isUserAuthenticated() {
     PrincipalProvider provider = injector.getInstance(PrincipalProvider.class);
     return (provider.get() != null);
   }
 
   private void createUserSession(
-      ServletRequest request, UserModel userModel) {
+      ServletRequest request, ServletResponse response, UserModel userModel) {
 
     HttpServletRequest httpRequest = (HttpServletRequest) request;
+    HttpServletResponse httpResponse = (HttpServletResponse) response;
     HttpSession session = httpRequest.getSession(true);
     session.setAttribute("userModel", userModel);
+
+    Cookie cookie = new Cookie("id", userModel.getAccount());
+    cookie.setMaxAge(30 * 60);
+    httpResponse.addCookie(cookie);
   }
 
   @Override

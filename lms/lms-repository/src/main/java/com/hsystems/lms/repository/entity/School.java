@@ -1,19 +1,19 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
+import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 
-import javax.xml.bind.annotation.XmlRootElement;
-
 /**
  * Created by naungsoe on 7/10/16.
  */
-@XmlRootElement
+@IndexCollection(name = "schools")
 public class School extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
@@ -34,6 +34,14 @@ public class School extends Auditable implements Entity, Serializable {
 
   School() {
 
+  }
+
+  public School(
+      String id,
+      String name) {
+
+    this.id = id;
+    this.name = name;
   }
 
   public School(
@@ -97,22 +105,17 @@ public class School extends Auditable implements Entity, Serializable {
     }
 
     School school = (School) obj;
-
     return id.equals(school.getId());
   }
 
   @Override
   public String toString() {
-    StringBuilder permissionsBuilder = new StringBuilder();
-    permissions.forEach(permission
-        -> permissionsBuilder.append(permission).append(","));
-
     return String.format(
-        "School{id=%s, name=%s, locale=%s, dateFormat=%s, "
-            + "dateTimeFormat=%s, permissions=%s, "
-            + "createdBy=%s, createdDateTime=%s, "
+        "School{id=%s, name=%s, locale=%s, dateFormat=%s, dateTimeFormat=%s, "
+            + "permissions=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, name, locale, dateFormat, dateTimeFormat, permissions,
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        id, name, locale, dateFormat, dateTimeFormat,
+        StringUtils.join(permissions, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

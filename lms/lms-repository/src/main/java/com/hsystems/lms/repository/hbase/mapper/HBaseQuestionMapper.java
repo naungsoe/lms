@@ -12,6 +12,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,17 +38,47 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
           options.add(option);
         });
 
+    List<Question> questions = new ArrayList<>();
+    results.stream().filter(isQuestionResult(id))
+        .forEach(questionResult -> {
+          String questionId = getQuestionId(questionResult);
+          QuestionType questionType
+              = getType(questionResult, QuestionType.class);
+          String questionBody = getBody(questionResult);
+          String questionHint = getHint(questionResult);
+          String questionExplanation = getExplanation(questionResult);
+
+          List<QuestionOption> questionOptions = new ArrayList<>();
+          results.stream().filter(isOptionResult(questionId))
+              .forEach(optionResult -> {
+                QuestionOption questionOption
+                    = getQuestionOption(optionResult);
+                questionOptions.add(questionOption);
+              });
+
+          Question question = new Question(
+              questionId,
+              questionType,
+              questionBody,
+              questionHint,
+              questionExplanation,
+              questionOptions,
+              Collections.emptyList()
+          );
+          questions.add(question);
+        });
+
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
     User createdBy = getCreatedBy(createdByResult);
     LocalDateTime createdDateTime = getDateTime(createdByResult);
 
-    Optional<Result> modifiedByResultOptional = results.stream()
+    Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
-    User modifiedBy = modifiedByResultOptional.isPresent()
-        ? getModifiedBy(modifiedByResultOptional.get()) : null;
-    LocalDateTime modifiedDateTime = modifiedByResultOptional.isPresent()
-        ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
+    User modifiedBy = resultOptional.isPresent()
+        ? getModifiedBy(resultOptional.get()) : null;
+    LocalDateTime modifiedDateTime = resultOptional.isPresent()
+        ? getDateTime(resultOptional.get()) : null;
 
     return new Question(
         id,
@@ -56,6 +87,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         hint,
         explanation,
         options,
+        questions,
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -88,7 +120,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   private void addQuestionOptionsPut(
       List<Put> puts, Question entity, long timestamp) {
 
-    entity.getOptions().stream().forEach(option -> {
+    entity.getOptions().forEach(option -> {
       String prefix = entity.getId();
       Put put = getQuestionOptionPut(option, prefix, timestamp);
       puts.add(put);
@@ -116,9 +148,9 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   private void addQuestionOptionsDelete(
       List<Delete> deletes, Question entity, long timestamp) {
 
-    entity.getOptions().stream().forEach(option -> {
-      String prefix = entity.getId();
-      Delete delete = getQuestionOptionDelete(option, prefix, timestamp);
+    entity.getOptions().forEach(option -> {
+      Delete delete = getQuestionOptionDelete(
+          option, entity.getId(), timestamp);
       deletes.add(delete);
     });
   }

@@ -36,7 +36,7 @@ import com.hsystems.lms.service.UserService;
 /**
  * Created by naungsoe on 21/8/16.
  */
-public class DefaultServiceModule extends AbstractModule {
+public class ServiceModule extends AbstractModule {
 
   @Override
   protected void configure() {
@@ -64,6 +64,7 @@ public class DefaultServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(IndexRepository.class).to(SolrIndexRepository.class)
         .in(Singleton.class);
+
     bind(AuthenticationService.class).in(Singleton.class);
     bind(SchoolService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);

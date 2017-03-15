@@ -1,7 +1,10 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
+import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,6 +14,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
+@IndexCollection(name = "groups")
 public class Group extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 2420329732282197342L;
@@ -68,11 +72,15 @@ public class Group extends Auditable implements Entity, Serializable {
   }
 
   public List<Permission> getPermissions() {
-    return Collections.unmodifiableList(permissions);
+    return ListUtils.isEmpty(permissions)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(permissions);
   }
 
   public List<User> getMembers() {
-    return Collections.unmodifiableList(members);
+    return ListUtils.isEmpty(members)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(members);
   }
 
   @Override
@@ -87,24 +95,16 @@ public class Group extends Auditable implements Entity, Serializable {
     }
 
     Group group = (Group) obj;
-
     return id.equals(group.getId());
   }
 
   @Override
   public String toString() {
-    StringBuilder permissionsBuilder = new StringBuilder();
-    permissions.forEach(permission
-        -> permissionsBuilder.append(permission).append(","));
-
-    StringBuilder membersBuilder = new StringBuilder();
-    members.forEach(member -> membersBuilder.append(member).append(","));
-
     return String.format(
-        "Group{id=%s, name=%s, permissions=%s, "
-            + "members=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, name, permissionsBuilder, membersBuilder,
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        "Group{id=%s, name=%s, permissions=%s, members=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        id, name, StringUtils.join(permissions, ","),
+        StringUtils.join(members, ""), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

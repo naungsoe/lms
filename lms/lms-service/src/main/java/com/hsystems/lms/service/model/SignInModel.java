@@ -13,13 +13,28 @@ public class SignInModel implements Serializable {
 
   private String password;
 
+  private String captcha;
+
+  private String sessionId;
+
+  private String ipAddress;
+
   SignInModel() {
 
   }
 
-  public SignInModel(String id, String password) {
+  public SignInModel(
+      String id,
+      String password,
+      String captcha,
+      String sessionId,
+      String ipAddress) {
+
     this.id = id;
     this.password = password;
+    this.captcha = captcha;
+    this.sessionId = sessionId;
+    this.ipAddress = ipAddress;
   }
 
   public String getId() {
@@ -36,5 +51,29 @@ public class SignInModel implements Serializable {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public String getCaptcha() {
+    return captcha;
+  }
+
+  public void setCaptcha(String captcha) {
+    this.captcha = captcha;
+  }
+
+  public String getSessionId() {
+    return sessionId;
+  }
+
+  public void setSessionId(String sessionId) {
+    this.sessionId = sessionId;
+  }
+
+  public String getIpAddress() {
+    return ipAddress;
+  }
+
+  public void setIpAddress(String ipAddress) {
+    this.ipAddress = ipAddress;
   }
 }

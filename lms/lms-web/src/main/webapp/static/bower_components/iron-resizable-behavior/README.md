@@ -23,7 +23,7 @@ _[Demo and API docs](https://elements.polymer-project.org/elements/iron-resizabl
 coordinate the flow of resize events between "resizers" (elements that control the
 size or hidden state of their children) and "resizables" (elements that need to be
 notified when they are resized or un-hidden by their parents in order to take
-action on their new measurements).
+actionType on their new measurements).
 
 Elements that perform measurement should add the `IronResizableBehavior` behavior to
 their element definition and listen for the `iron-resize` event on themselves.

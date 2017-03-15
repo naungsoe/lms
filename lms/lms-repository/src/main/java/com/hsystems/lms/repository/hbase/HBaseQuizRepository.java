@@ -2,8 +2,10 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.QuizRepository;
+import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuizMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -23,43 +25,54 @@ public class HBaseQuizRepository
 
   private final HBaseClient client;
 
-  private final HBaseQuizMapper mapper;
+  private final HBaseQuizMapper quizMapper;
+
+  private final MutateLogRepository mutateLogRepository;
 
   @Inject
   HBaseQuizRepository(
       HBaseClient client,
-      HBaseQuizMapper mapper) {
+      HBaseQuizMapper quizMapper,
+      MutateLogRepository mutateLogRepository) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.quizMapper = quizMapper;
+    this.mutateLogRepository = mutateLogRepository;
   }
 
   @Override
-  public Optional<Quiz> findBy(String id, long timestamp)
+  public Optional<Quiz> findBy(String id)
       throws IOException {
 
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(timestamp);
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(id, EntityType.QUIZ);
 
-    List<Result> results = client.scan(scan,
-        Constants.TABLE_QUIZZES);
+    if (mutateLogOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    MutateLog mutateLog = mutateLogOptional.get();
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(mutateLog.getTimestamp());
+
+    List<Result> results = client.scan(scan, Quiz.class);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    Quiz quiz = mapper.getEntity(results);
+    Quiz quiz = quizMapper.getEntity(results);
     return Optional.of(quiz);
   }
 
   @Override
-  public void save(Quiz entity, long timestamp)
+  public void save(Quiz entity)
       throws IOException {
 
   }
 
   @Override
-  public void delete(Quiz entity, long timestamp)
+  public void delete(Quiz entity)
       throws IOException {
 
   }

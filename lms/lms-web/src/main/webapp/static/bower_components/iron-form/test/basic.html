@@ -89,7 +89,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormGet">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="get">
+    <form is="iron-form" actionType="/responds_with_json" method="get">
       <simple-element name="zig" value="zag"></simple-element>
     </form>
   </template>
@@ -97,7 +97,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormPost">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <simple-element name="zig" value="zag"></simple-element>
     </form>
   </template>
@@ -105,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="InvalidForm">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <simple-element name="zig"></simple-element>
       <input name="foo" required>
     </form>
@@ -114,7 +114,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormWithRequiredCustomElements">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <simple-element required></simple-element>
     </form>
   </template>
@@ -122,7 +122,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormWithRequiredElements">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <input required>
     </form>
   </template>
@@ -130,7 +130,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormValidateNonRequiredCustomElements">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <paper-input label="numbers" pattern="^[0-9]$"></paper-input>
     </form>
   </template>
@@ -138,7 +138,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <test-fixture id="FormValidateNonRequiredElements">
   <template>
-    <form is="iron-form" action="/responds_with_json" method="post">
+    <form is="iron-form" actionType="/responds_with_json" method="post">
       <input type="text" name="letters" pattern="^[a-z]$">
     </form>
   </template>
@@ -715,7 +715,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     test('can relay errors', function(done) {
       form = fixture('FormPost');
-      form.action = "/responds_with_error";
+      form.actionType = "/responds_with_error";
 
       form.addEventListener('iron-form-error', function(event) {
         var error = event.detail;

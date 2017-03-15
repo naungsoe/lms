@@ -97,7 +97,6 @@ public class QuestionOption implements Serializable {
     }
 
     QuestionOption option = (QuestionOption) obj;
-
     return id.equals(option.getId());
   }
 

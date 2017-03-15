@@ -1,7 +1,9 @@
 package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
+import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
+@IndexCollection(name = "quizzes")
 public class Quiz extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 645532833693995164L;
@@ -97,18 +100,15 @@ public class Quiz extends Auditable implements Entity, Serializable {
     }
 
     Quiz quiz = (Quiz) obj;
-
     return id.equals(quiz.getId());
   }
 
   @Override
   public String toString() {
-    StringBuilder sectionsBuilder = new StringBuilder();
-    sections.forEach(section
-        -> sectionsBuilder.append(section).append(","));
-
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, sections=%s}",
-        id, title, instructions, sectionsBuilder);
+        "Quiz{id=%s, title=%s, instructions=%s, sections=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        id, title, instructions, StringUtils.join(sections, ","), createdBy,
+        createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

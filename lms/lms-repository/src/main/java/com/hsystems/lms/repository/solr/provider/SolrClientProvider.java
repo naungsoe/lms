@@ -10,13 +10,10 @@ import java.util.Properties;
  */
 public class SolrClientProvider implements Provider<SolrClient> {
 
-  private final Properties properties;
-
   private final SolrClient client;
 
   @Inject
   SolrClientProvider(Properties properties) {
-    this.properties = properties;
     this.client = new SolrClient(properties);
   }
 

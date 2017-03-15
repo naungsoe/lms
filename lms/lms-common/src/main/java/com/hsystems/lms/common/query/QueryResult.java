@@ -1,5 +1,7 @@
 package com.hsystems.lms.common.query;
 
+import com.hsystems.lms.common.util.StringUtils;
+
 import java.util.List;
 
 /**
@@ -55,11 +57,8 @@ public class QueryResult<T> {
 
   @Override
   public String toString() {
-    StringBuilder entitiesBuilder = new StringBuilder();
-    items.forEach(item -> entitiesBuilder.append(item).append(","));
-
     return String.format(
         "QueryResult{elapsedTime=%s, entities=%s}",
-        elapsedTime, entitiesBuilder);
+        elapsedTime, StringUtils.join(items, ","));
   }
 }

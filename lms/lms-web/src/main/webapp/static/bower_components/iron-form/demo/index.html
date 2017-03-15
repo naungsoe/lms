@@ -70,7 +70,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <h3>An <code>iron-form</code> can submit both custom and native elements.</h3>
   <demo-snippet>
     <template>
-      <form is="iron-form" method="get" action="/" id="basic">
+      <form is="iron-form" method="get" actionType="/" id="basic">
         <paper-input name="name" label="Name" required></paper-input>
         <br>
         <input type="checkbox" name="food" value="donuts" checked> I like donuts<br>
@@ -120,7 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       </style>
       <p>You can also submit this form by pressing "Enter" in the input</p>
-      <form is="iron-form" method="get" action="/" id="submitOptions">
+      <form is="iron-form" method="get" actionType="/" id="submitOptions">
         <paper-input name="name" label="Name" value="Batman" required></paper-input>
         <button type="submit">Submit</button>
         <button type="submit" class="no-style">
@@ -152,7 +152,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <h3>To customize the request sent to the server, you can listen to the `iron-form-presubmit` event</h3>
   <demo-snippet>
     <template>
-      <form is="iron-form" method="get" action="/" id="presubmit">
+      <form is="iron-form" method="get" actionType="/" id="presubmit">
         <paper-input name="name" label="Name" value="Batman" required></paper-input>
         <paper-button raised onclick="_submit(event)">Submit</paper-button>
         <paper-button raised onclick="_reset(event)">Reset</paper-button>
@@ -185,7 +185,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <demo-snippet>
     <template>
 
-      <form is="iron-form" method="get" action="/" id="eventsDemo">
+      <form is="iron-form" method="get" actionType="/" id="eventsDemo">
         <paper-input name="name" label="Name" required auto-validate></paper-input>
         <paper-input name="password" label="Password" type="password" required auto-validate></paper-input>
         <paper-checkbox name="read" required>You must check this box</paper-checkbox>
@@ -245,8 +245,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </form>
 
       <!-- This form is used to submit the elements. This is where you would
-        set your method, action, etc. -->
-      <form method="get" action="redirect" id="nativeForm">
+        set your method, actionType, etc. -->
+      <form method="get" actionType="redirect" id="nativeForm">
       </form>
       <script>
           function _nativeSubmit(event) {

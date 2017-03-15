@@ -16,20 +16,18 @@ public final class FileUtils {
   public static String readContent(String path)
       throws IOException {
 
-    String content = "";
     File file = new File(path);
     FileInputStream fileInputStream = null;
 
     try {
       fileInputStream = new FileInputStream(file);
-      content = readContent(fileInputStream);
+      return readContent(fileInputStream);
 
     } finally {
       if (fileInputStream != null) {
         fileInputStream.close();
       }
     }
-    return content;
   }
 
   public static String readContent(FileInputStream fileInputStream)
@@ -38,7 +36,7 @@ public final class FileUtils {
     StringBuilder stringBuilder = new StringBuilder();
     InputStreamReader streamReader = new InputStreamReader(fileInputStream);
     BufferedReader bufferedReader = new BufferedReader(streamReader);
-    String line = null;
+    String line;
 
     try {
       while ((line = bufferedReader.readLine()) != null) {

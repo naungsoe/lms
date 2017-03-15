@@ -1,8 +1,10 @@
 package com.hsystems.lms.service.model;
 
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.ListUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -14,6 +16,8 @@ public class UserModel implements Principal, Serializable {
   private static final long serialVersionUID = -8222871542135593721L;
 
   private String id;
+
+  private String account;
 
   private String firstName;
 
@@ -39,7 +43,7 @@ public class UserModel implements Principal, Serializable {
 
   private String schoolName;
 
-  private List<UserGroupModel> groups;
+  private List<GroupModel> groups;
 
   UserModel() {
 
@@ -47,6 +51,7 @@ public class UserModel implements Principal, Serializable {
 
   public UserModel(
       String id,
+      String account,
       String firstName,
       String lastName,
       String dateOfBirth,
@@ -59,9 +64,10 @@ public class UserModel implements Principal, Serializable {
       List<String> permissions,
       String schoolId,
       String schoolName,
-      List<UserGroupModel> groups) {
+      List<GroupModel> groups) {
 
     this.id = id;
+    this.account = account;
     this.firstName = firstName;
     this.lastName = lastName;
     this.dateOfBirth = dateOfBirth;
@@ -83,6 +89,14 @@ public class UserModel implements Principal, Serializable {
 
   public void setId(String id) {
     this.id = id;
+  }
+
+  public String getAccount() {
+    return account;
+  }
+
+  public void setAccount(String account) {
+    this.account = account;
   }
 
   public String getFirstName() {
@@ -158,11 +172,18 @@ public class UserModel implements Principal, Serializable {
   }
 
   public List<String> getPermissions() {
-    return Collections.unmodifiableList(permissions);
+    return ListUtils.isEmpty(permissions)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(permissions);
   }
 
   public void setPermissions(List<String> permissions) {
-    this.permissions = permissions;
+    if (ListUtils.isEmpty(permissions)) {
+      permissions = new ArrayList<>();
+    }
+
+    this.permissions.clear();
+    this.permissions.addAll(permissions);
   }
 
   public String getSchoolId() {
@@ -181,13 +202,19 @@ public class UserModel implements Principal, Serializable {
     this.schoolName = schoolName;
   }
 
-  public List<UserGroupModel> getGroups() {
-    return Collections.unmodifiableList(groups);
+  public List<GroupModel> getGroups() {
+    return ListUtils.isEmpty(groups)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(groups);
   }
 
-  public void setGroups(
-      List<UserGroupModel> groups) {
-    this.groups = groups;
+  public void setGroups(List<GroupModel> groups) {
+    if (ListUtils.isEmpty(groups)) {
+      this.groups = new ArrayList<>();
+    }
+
+    this.groups.clear();
+    this.groups.addAll(groups);
   }
 
   @Override

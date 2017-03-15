@@ -2,13 +2,19 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.util.DateTimeUtils;
+import com.hsystems.lms.repository.AuditLogRepository;
+import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.entity.AuditLog;
+import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
-import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -25,48 +31,82 @@ public class HBaseQuestionRepository
 
   private final HBaseClient client;
 
-  private final HBaseQuestionMapper mapper;
+  private final HBaseQuestionMapper questionMapper;
+
+  private final MutateLogRepository mutateLogRepository;
+
+  private final AuditLogRepository auditLogRepository;
 
   @Inject
   HBaseQuestionRepository(
       HBaseClient client,
-      HBaseQuestionMapper mapper) {
+      HBaseQuestionMapper questionMapper,
+      MutateLogRepository mutateLogRepository,
+      AuditLogRepository auditLogRepository) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.questionMapper = questionMapper;
+    this.mutateLogRepository = mutateLogRepository;
+    this.auditLogRepository = auditLogRepository;
   }
 
   @Override
-  public Optional<Question> findBy(String id, long timestamp)
+  public Optional<Question> findBy(String id)
       throws IOException {
 
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(timestamp);
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(id, EntityType.QUESTION);
 
-    List<Result> results = client.scan(scan,
-        Constants.TABLE_QUESTIONS);
+    if (mutateLogOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    MutateLog mutateLog = mutateLogOptional.get();
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setTimeStamp(mutateLog.getTimestamp());
+
+    List<Result> results = client.scan(scan, Question.class);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    Question question = mapper.getEntity(results);
+
+    Question question = questionMapper.getEntity(results);
     return Optional.of(question);
   }
 
   @Override
-  public void save(Question question, long timestamp)
+  public void save(Question entity)
       throws IOException {
 
-    List<Put> puts = mapper.getPuts(question, timestamp);
-    client.put(puts, Constants.TABLE_QUESTIONS);
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    List<Put> puts = questionMapper.getPuts(entity, timestamp);
+    client.put(puts, Question.class);
+
+    Optional<MutateLog> mutateLogOptional
+        = mutateLogRepository.findBy(entity.getId());
+    ActionType actionType = mutateLogOptional.isPresent()
+        ? ActionType.MODIFIED : ActionType.CREATED;
+    MutateLog mutateLog = getMutateLog(entity, actionType, timestamp);
+    mutateLogRepository.save(mutateLog);
+
+    User user = actionType.equals(ActionType.CREATED)
+        ? entity.getModifiedBy() : entity.getCreatedBy();
+    AuditLog auditLog = getAuditLog(entity, user, actionType, timestamp);
+    auditLogRepository.save(auditLog);
   }
 
   @Override
-  public void delete(Question question, long timestamp)
+  public void delete(Question entity)
       throws IOException {
 
-    List<Delete> deletes = mapper.getDeletes(question, timestamp);
-    client.delete(deletes, Constants.TABLE_QUESTIONS);
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    MutateLog mutateLog = getMutateLog(entity, ActionType.DELETED, timestamp);
+    mutateLogRepository.save(mutateLog);
+
+    AuditLog auditLog = getAuditLog(entity,
+        entity.getModifiedBy(), ActionType.DELETED, timestamp);
+    auditLogRepository.save(auditLog);
   }
 }

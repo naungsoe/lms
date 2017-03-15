@@ -1,5 +1,8 @@
 package com.hsystems.lms.repository.entity;
 
+import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.util.StringUtils;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
@@ -8,6 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 2/11/16.
  */
+@IndexCollection(name = "sharelogs")
 public class ShareLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 6359949551941210092L;
@@ -76,21 +80,13 @@ public class ShareLog implements Entity, Serializable {
     }
 
     ShareLog shareLog = (ShareLog) obj;
-
-    return id.equals(shareLog.getId())
-        && sharedBy.equals(shareLog.getSharedBy())
-        && sharedDateTime.equals(shareLog.getSharedDateTime());
+    return id.equals(shareLog.getId());
   }
 
   @Override
   public String toString() {
-    StringBuilder entriesBuilder = new StringBuilder();
-    logEntries.forEach(logEntry
-        -> entriesBuilder.append(logEntry).append(","));
-
     return String.format(
-        "ShareLog{entityId=%s, entityType=%s, sharedBy=%s, "
-            + "sharedDateTime=%s, entries=%s}",
-        id, type, sharedBy, sharedDateTime, entriesBuilder);
+        "ShareLog{id=%s, type=%s, sharedBy=%s, sharedDateTime=%s, entries=%s}",
+        id, type, sharedBy, sharedDateTime, StringUtils.join(logEntries, ","));
   }
 }

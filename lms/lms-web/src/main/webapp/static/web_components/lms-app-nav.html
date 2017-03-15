@@ -14,29 +14,27 @@
       [menu] paper-menu paper-item [text] {
         margin: 0 16px;
       }
-
-
     </style>
 
     <div menu>
       <paper-menu on-iron-select="handleSelect">
-        <paper-item action="/web/home">
+        <paper-item actionType="/web/home">
           <iron-icon icon="home"></iron-icon>
           <div text>{{localize('menuItemHome')}}</div>
         </paper-item>
-        <paper-item action="/web/quizzes">
+        <paper-item actionType="/web/quizzes">
           <iron-icon icon="extension"></iron-icon>
           <div text>{{localize('menuItemQuizzes')}}</div>
         </paper-item>
-        <paper-item action="/web/questions">
+        <paper-item actionType="/web/questions">
           <iron-icon icon="subject"></iron-icon>
           <div text>{{localize('menuItemQuestions')}}</div>
         </paper-item>
-        <paper-item action="/web/storage">
+        <paper-item actionType="/web/storage">
           <iron-icon icon="folder"></iron-icon>
           <div text>{{localize('menuItemStorage')}}</div>
         </paper-item>
-        <paper-item action="/web/signout">
+        <paper-item actionType="/web/signout">
           <iron-icon icon="exit-to-app"></iron-icon>
           <div text>{{localize('menuItemSignOut')}}</div>
         </paper-item>
@@ -67,22 +65,20 @@
         var root = Polymer.dom(this.root);
         var items = root.querySelectorAll('paper-item');
         var selected = items.filter(function(item) {
-          var url = item.getAttribute('action');
+          var url = item.getAttribute('actionType');
           location.pathname.indexOf(url);
         });
       },
 
       handleSelect: function(event) {
         var item = event.target.selectedItem;
-        var url = item.getAttribute('action');
+        var url = item.getAttribute('actionType');
 
         if (location.pathname.indexOf(url) === -1) {
           window.location = url;
         }
       }
     });
-
-
   </script>
 
 </dom-module>

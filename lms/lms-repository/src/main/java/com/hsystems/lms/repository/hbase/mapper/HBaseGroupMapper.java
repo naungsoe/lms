@@ -39,12 +39,12 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
     User createdBy = getCreatedBy(createdByResult);
     LocalDateTime createdDateTime = getDateTime(createdByResult);
 
-    Optional<Result> modifiedByResultOptional = results.stream()
+    Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
-    User modifiedBy = modifiedByResultOptional.isPresent()
-        ? getModifiedBy(modifiedByResultOptional.get()) : null;
-    LocalDateTime modifiedDateTime = modifiedByResultOptional.isPresent()
-        ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
+    User modifiedBy = resultOptional.isPresent()
+        ? getModifiedBy(resultOptional.get()) : null;
+    LocalDateTime modifiedDateTime = resultOptional.isPresent()
+        ? getDateTime(resultOptional.get()) : null;
 
     return new Group(
         id,
@@ -60,6 +60,7 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
 
   @Override
   public List<Put> getPuts(Group entity, long timestamp) {
+    List<Put> puts = new ArrayList<>();
     return new ArrayList<>();
   }
 

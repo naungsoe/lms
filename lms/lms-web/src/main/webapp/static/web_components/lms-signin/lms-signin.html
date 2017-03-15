@@ -33,10 +33,9 @@
       .module-actions {
         margin: 16px 0;
       }
-
     </style>
 
-    <form name="signIn" method="post" action="[[signInUrl]]">
+    <form name="signIn" method="post" actionType="[[signInUrl]]">
       <paper-card heading="[[localize('titleCard')]]"
                   alt="[[localize('titleCard')]]" signin>
         <div class="card-content">
@@ -50,6 +49,15 @@
                        error-message="[[localize('labelPasswordRequired')]]"
                        on-keydown="handleKeydown"
                        no-label-float required></paper-input>
+          <template is="dom-if" if="[[captchaRequired]]">
+            <br/>
+            <img src="[[captchaUrl]]" alt="[[localize('altCaptcha')]]"/>
+            <paper-input name="captcha" label="[[localize('labelCaptcha')]]"
+                         value="{{captcha}}" type="text" autocomplete="off"
+                         error-message="[[localize('labelCaptchaRequired')]]"
+                         on-keydown="handleKeydown"
+                         no-label-float required></paper-input>
+          </template>
           <div class="error" hidden$="[[_hideError(error, 'errorCredential')]]">
             [[localize('errorCredential')]]
           </div>
@@ -94,6 +102,18 @@
           type: String,
           notify: true
         },
+        captcha: {
+          type: String,
+          notify: true
+        },
+        captchaRequired: {
+          type: Boolean,
+          notify: true
+        },
+        captchaUrl: {
+          type: String,
+          notify: true
+        },
         signInUrl: {
           type: String,
           notify: true
@@ -122,6 +142,10 @@
         var valid = this.$$('[name=id]').validate();
         valid = this.$$('[name=password]').validate() && valid;
 
+        if (this.$$('[name=captcha]') != null) {
+          valid = this.$$('[name=captcha]').validate() && valid;
+        }
+
         if (valid) {
           this.$$('[name=signIn]').submit();
         } else {
@@ -137,7 +161,6 @@
         window.location = this.signUpUrl;
       }
     });
-
   </script>
 
 </dom-module>

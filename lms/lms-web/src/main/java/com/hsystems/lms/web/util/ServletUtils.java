@@ -1,7 +1,6 @@
 package com.hsystems.lms.web.util;
 
 import com.hsystems.lms.common.util.ReflectionUtils;
-import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.lang.reflect.Field;
@@ -20,19 +19,18 @@ public final class ServletUtils {
       HttpServletRequest request, String name) {
 
     Cookie[] cookies = request.getCookies();
-    String value = "";
 
     if (cookies == null) {
-      return value;
+      return "";
     }
 
     for (Cookie cookie : cookies) {
       if (cookie.getName().equals(name)) {
-        value = cookie.getValue();
+        return cookie.getValue();
       }
     }
 
-    return value;
+    return "";
   }
 
   public static <T> T getModel(
@@ -52,12 +50,8 @@ public final class ServletUtils {
     return instance;
   }
 
-  public static String createToken(
-      HttpServletRequest request, String id) {
-
-    String forwardedAddr = request.getHeader(HEADER_XFORWARDEDFOR);
-    String remoteAddr = StringUtils.isEmpty(forwardedAddr)
-        ? request.getRemoteAddr() : forwardedAddr;
-    return SecurityUtils.getMD5Hash(remoteAddr, id);
+  public static String getRemoteAddress(HttpServletRequest request) {
+    String address = request.getHeader(HEADER_XFORWARDEDFOR);
+    return StringUtils.isEmpty(address) ? request.getRemoteAddr() : address;
   }
 }

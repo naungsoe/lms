@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.SignInLog;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -10,6 +9,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,34 +17,31 @@ import java.util.List;
  */
 public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
+  public SignInLog getEntity(Result result) {
+    return getEntity(Arrays.asList(result));
+  }
+
   @Override
   public SignInLog getEntity(List<Result> results) {
     Result mainResult = results.get(0);
-    String sessionId = Bytes.toString(mainResult.getRow());
-    String id = getId(mainResult);
+    String id = Bytes.toString(mainResult.getRow());
+    String sessionId = getSessionId(mainResult);
     String ipAddress = getIpAddress(mainResult);
     LocalDateTime dateTime = getDateTime(mainResult);
-    return new SignInLog(id, sessionId, ipAddress, dateTime);
+    int fails = getFails(mainResult);
+    return new SignInLog(id, sessionId, ipAddress, dateTime, fails);
   }
 
   @Override
   public List<Put> getPuts(SignInLog entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
-
-    byte[] latestLogRow = Bytes.toBytes(entity.getId());
-    Put latestLogPut = new Put(latestLogRow, timestamp);
-    addIpAddressColumn(latestLogPut, entity.getIpAddress());
-    addDateTimeColumn(latestLogPut, entity.getDateTime());
-    puts.add(latestLogPut);
-
-    String logId = String.format("%s%s%s", entity.getId(),
-        Constants.SEPARATOR, timestamp);
-    byte[] logRow = Bytes.toBytes(logId);
-    Put logPut = new Put(logRow, timestamp);
-    addIpAddressColumn(logPut, entity.getIpAddress());
-    addDateTimeColumn(logPut, entity.getDateTime());
-    puts.add(logPut);
-
+    byte[] row = Bytes.toBytes(entity.getId());
+    Put put = new Put(row, timestamp);
+    addSessionIdColumn(put, entity.getSessionId());
+    addIpAddressColumn(put, entity.getIpAddress());
+    addDateTimeColumn(put, entity.getDateTime());
+    addFailsColumn(put, entity.getFails());
+    puts.add(put);
     return puts;
   }
 
@@ -55,7 +52,6 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
     byte[] row = Bytes.toBytes(entity.getId());
     Delete delete = new Delete(row, timestamp);
     deletes.add(delete);
-
     return deletes;
   }
 }

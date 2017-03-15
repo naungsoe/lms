@@ -8,6 +8,7 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -16,7 +17,7 @@ import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -90,14 +91,19 @@ public class UserService extends BaseService {
 
   private User getUser(SignUpModel signUpModel) throws IOException {
     String schoolId = properties.getProperty("app.default.school.id");
+    String groupId = properties.getProperty("app.default.group.id");
     Optional<School> schoolOptional
         = indexRepository.findBy(schoolId, School.class);
+    Optional<Group> groupOptional
+        = indexRepository.findBy(groupId, Group.class);
 
-    if (!schoolOptional.isPresent()) {
-      throw new IllegalArgumentException(
-          "error retrieving school");
-    }
+    CommonUtils.checkArgument(schoolOptional.isPresent(),
+        "error retrieving school");
+    CommonUtils.checkArgument(groupOptional.isPresent(),
+        "error retrieving group");
 
+    School school = schoolOptional.get();
+    Group group = groupOptional.get();
     String randomSalt = SecurityUtils.getRandomSalt();
     String hashedPassword = SecurityUtils.getPassword(
         signUpModel.getPassword(), randomSalt);
@@ -122,11 +128,12 @@ public class UserService extends BaseService {
         signUpModel.getGender(),
         signUpModel.getMobile(),
         signUpModel.getEmail(),
-        schoolOptional.get().getLocale(),
-        schoolOptional.get().getDateFormat(),
-        schoolOptional.get().getDateTimeFormat(),
-        Collections.emptyList(),
-        Collections.emptyList(),
+        school.getLocale(),
+        school.getDateFormat(),
+        school.getDateTimeFormat(),
+        group.getPermissions(),
+        school,
+        Arrays.asList(group),
         createdBy,
         LocalDateTime.now(),
         null,

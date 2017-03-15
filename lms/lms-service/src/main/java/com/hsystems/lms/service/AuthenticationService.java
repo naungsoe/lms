@@ -2,125 +2,205 @@ package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.LoggerType;
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.common.query.Criterion;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.SecurityUtils;
-import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
-import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.entity.SignInLog;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
-import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.SignInModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
 public class AuthenticationService extends BaseService {
 
-  private final UserRepository userRepository;
+  private final Properties properties;
 
   private final SignInLogRepository signInLogRepository;
 
-  private final MutateLogRepository mutateLogRepository;
+  private final IndexRepository indexRepository;
 
   @Inject
   AuthenticationService(
-      UserRepository userRepository,
+      Properties properties,
       SignInLogRepository signInLogRepository,
-      MutateLogRepository mutateLogRepository) {
+      IndexRepository indexRepository) {
 
-    this.userRepository = userRepository;
+    this.properties = properties;
     this.signInLogRepository = signInLogRepository;
-    this.mutateLogRepository = mutateLogRepository;
+    this.indexRepository = indexRepository;
   }
 
-  @Log
+  @Log(LoggerType.SIGNIN)
   public Optional<UserModel> signIn(SignInModel signInModel)
       throws IOException {
 
-    checkPreconditions(signInModel);
+    Optional<User> userOptional = findUserBy(signInModel.getId());
 
-    Optional<MutateLog> mutateLogOptional
-        = mutateLogRepository.findBy(signInModel.getId());
-
-    if (!mutateLogOptional.isPresent()) {
+    if (!userOptional.isPresent()) {
       return Optional.empty();
     }
 
-    MutateLog mutateLog = mutateLogOptional.get();
-    Optional<User> userOptional = userRepository.findBy(
-        signInModel.getId(), mutateLog.getTimestamp());
+    User user = userOptional.get();
 
-    if (userOptional.isPresent()) {
-      User user = userOptional.get();
-      String hashedPassword = SecurityUtils.getPassword(
-          signInModel.getPassword(), user.getSalt());
+    if (areCredentialsCorrect(user, signInModel)) {
+      saveSuccessSignIn(user, signInModel);
+      return Optional.of(getUserModel(user));
 
-      if (user.getId().equals(signInModel.getId())
-          && user.getPassword().equals(hashedPassword)) {
+    } else {
+      saveFailSignIn(user, signInModel);
+      return Optional.empty();
+    }
+  }
 
-        Configuration configuration = Configuration.create(user);
-        UserModel userModel = getModel(user, UserModel.class, configuration);
-        return Optional.of(userModel);
-      }
+  private Optional<User> findUserBy(String account)
+      throws IOException {
+
+    Query query = Query.create();
+    query.addCriterion(Criterion.createEqual("account", account));
+    QueryResult<User> queryResult
+        = indexRepository.findAllBy(query, User.class);
+
+    if (queryResult.getItems().isEmpty()) {
+      return Optional.empty();
     }
 
-    return Optional.empty();
+    User user = queryResult.getItems().get(0);
+    return Optional.of(user);
   }
 
-  private void checkPreconditions(SignInModel signInModel) {
-    CommonUtils.checkArgument(StringUtils.isNotEmpty(
-        signInModel.getId()), "id is empty");
-    CommonUtils.checkArgument(StringUtils.isNotEmpty(
-        signInModel.getPassword()), "password is empty");
+  private boolean areCredentialsCorrect(
+      User user, SignInModel signInModel) {
+
+    String hashedPassword = SecurityUtils.getPassword(
+        signInModel.getPassword(), user.getSalt());
+    return user.getAccount().equals(signInModel.getId())
+        && user.getPassword().equals(hashedPassword);
   }
 
-  @Log
+  private void saveSuccessSignIn(User user, SignInModel signInModel)
+      throws IOException {
+
+    SignInLog signInLog = new SignInLog(
+        user.getId(),
+        signInModel.getSessionId(),
+        signInModel.getIpAddress(),
+        LocalDateTime.now(),
+        0
+    );
+    signInLogRepository.save(signInLog);
+  }
+
+  private UserModel getUserModel(User user) {
+    Configuration configuration = Configuration.create(user);
+    return getModel(user, UserModel.class, configuration);
+  }
+
+  private void saveFailSignIn(User user, SignInModel signInModel)
+      throws IOException {
+
+    Optional<SignInLog> signInLogOptional
+        = signInLogRepository.findBy(user.getId());
+    SignInLog signInLog;
+
+    if (signInLogOptional.isPresent()) {
+      signInLog = new SignInLog(
+          user.getId(),
+          signInModel.getSessionId(),
+          signInModel.getIpAddress(),
+          LocalDateTime.now(),
+          (signInLogOptional.get().getFails() + 1)
+      );
+    } else {
+      signInLog = new SignInLog(
+          user.getId(),
+          signInModel.getSessionId(),
+          signInModel.getIpAddress(),
+          LocalDateTime.now(),
+          0
+      );
+    }
+
+    signInLogRepository.save(signInLog);
+  }
+
+  @Log(LoggerType.SIGNIN)
+  public boolean isCaptchaRquired(SignInModel signInModel)
+      throws IOException {
+
+    Optional<User> userOptional = findUserBy(signInModel.getId());
+
+    if (!userOptional.isPresent()) {
+      return false;
+    }
+
+    User user = userOptional.get();
+    Optional<SignInLog> signInLogOptional
+        = signInLogRepository.findBy(user.getId());
+
+    if (signInLogOptional.isPresent()) {
+      SignInLog signInLog = signInLogOptional.get();
+      int captchaMaxFails = Integer.parseInt(
+          properties.getProperty("captcha.required.max.fails"));
+      return (signInLog.getFails() >= captchaMaxFails);
+    }
+
+    return false;
+  }
+
+  @Log(LoggerType.SIGNIN)
   public void signOut(SignInModel signInModel) {
     // clear sign in
   }
 
-  @Log
-  public Optional<UserModel> findSignedInUserBy(String sessionId)
+  @Log(LoggerType.SIGNIN)
+  public Optional<UserModel> findSignedInUserBy(SignInModel signInModel)
       throws IOException {
 
+    Optional<User> userOptional = findUserBy(signInModel.getId());
+
+    if (!userOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    User user = userOptional.get();
     Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(sessionId);
+        = signInLogRepository.findBy(user.getId());
 
     if (signInLogOptional.isPresent()) {
       SignInLog signInLog = signInLogOptional.get();
-      Optional<MutateLog> mutateLogOptional
-          = mutateLogRepository.findBy(signInLog.getId());
 
-      if (!mutateLogOptional.isPresent()
-          && isSessionValid(signInLog)) {
-
-        return Optional.empty();
+      if (signInLog.getSessionId().equals(signInModel.getSessionId())) {
+        return Optional.of(getUserModel(user));
       }
-
-      MutateLog mutateLog = mutateLogOptional.get();
-      Optional<User> userOptional = userRepository.findBy(
-          signInLog.getId(), mutateLog.getTimestamp());
-
-      Configuration configuration = Configuration.create();
-      ModelMapper mapper = new ModelMapper(configuration);
-      UserModel model = mapper.map(userOptional.get(), UserModel.class);
-      return Optional.of(model);
     }
 
     return Optional.empty();
   }
 
-  private boolean isSessionValid(SignInLog signInLog) {
-    return signInLog.getDateTime().isBefore(LocalDateTime.now().plusMinutes(0));
+  @Log(LoggerType.SIGNIN)
+  public void saveSignIn(SignInModel signInModel, UserModel userModel)
+      throws IOException {
+
+    SignInLog signInLog = new SignInLog(
+        userModel.getId(),
+        signInModel.getSessionId(),
+        signInModel.getIpAddress(),
+        LocalDateTime.now(),
+        0
+    );
+    signInLogRepository.save(signInLog);
   }
 }

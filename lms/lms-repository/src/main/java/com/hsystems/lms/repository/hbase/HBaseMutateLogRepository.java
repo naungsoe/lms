@@ -2,20 +2,18 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.MutateLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseMutateLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
-import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,57 +25,52 @@ public class HBaseMutateLogRepository
 
   private final HBaseClient client;
 
-  private final HBaseMutateLogMapper mapper;
+  private final HBaseMutateLogMapper mutateLogMapper;
 
   @Inject
   HBaseMutateLogRepository(
       HBaseClient client,
-      HBaseMutateLogMapper mapper) {
+      HBaseMutateLogMapper mutateLogMapper) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.mutateLogMapper = mutateLogMapper;
+  }
+
+  @Override
+  public Optional<MutateLog> findBy(String id, EntityType type)
+      throws IOException {
+
+    String logId = String.format(HBaseMutateLogMapper.KEY_FORMAT, type, id);
+    return findBy(logId);
   }
 
   @Override
   public Optional<MutateLog> findBy(String id)
       throws IOException {
 
-    return findBy(id, Long.MIN_VALUE);
-  }
-
-  @Override
-  public Optional<MutateLog> findBy(String id, long timestamp)
-      throws IOException {
-
     Get get = new Get(Bytes.toBytes(id));
-
-    if (timestamp != Long.MIN_VALUE) {
-      get.setTimeStamp(timestamp);
-    }
-
-    Result result = client.get(get, Constants.TABLE_MUTATE_LOGS);
+    Result result = client.get(get, MutateLog.class);
 
     if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    MutateLog mutateLog = mapper.getEntity(Arrays.asList(result));
+    MutateLog mutateLog = mutateLogMapper.getEntity(result);
     return Optional.of(mutateLog);
   }
 
   @Override
-  public void save(MutateLog auditLog, long timestamp)
+  public void save(MutateLog mutateLog)
       throws IOException {
 
-    List<Put> puts = mapper.getPuts(auditLog, timestamp);
-    client.put(puts, Constants.TABLE_MUTATE_LOGS);
+    List<Put> puts = mutateLogMapper.getPuts(
+        mutateLog, mutateLog.getTimestamp());
+    client.put(puts, MutateLog.class);
   }
 
   @Override
-  public void delete(MutateLog auditLog, long timestamp)
+  public void delete(MutateLog auditLog)
       throws IOException {
 
-    List<Delete> deletes = mapper.getDeletes(auditLog, timestamp);
-    client.delete(deletes, Constants.TABLE_MUTATE_LOGS);
   }
 }

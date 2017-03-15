@@ -29,7 +29,7 @@ Example:
 <paper-card heading="Card Title">
   <div class="card-content">Some content</div>
   <div class="card-actions">
-    <paper-button>Some action</paper-button>
+    <paper-button>Some actionType</paper-button>
   </div>
 </paper-card>
 ```
@@ -59,7 +59,7 @@ The following custom properties and mixins are available for styling:
 | `--paper-card-header-image` | Mixin applied to the image in the card header section | `{}` |
 | `--paper-card-header-image-text` | Mixin applied to the text overlapping the image in the card header section | `{}` |
 | `--paper-card-content` | Mixin applied to the card content section | `{}` |
-| `--paper-card-actions` | Mixin applied to the card action section | `{}` |
+| `--paper-card-actions` | Mixin applied to the card actionType section | `{}` |
 | `--paper-card` | Mixin applied to the card | `{}` |
 
 

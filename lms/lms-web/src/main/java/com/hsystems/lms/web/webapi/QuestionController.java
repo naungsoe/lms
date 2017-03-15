@@ -75,7 +75,8 @@ public class QuestionController {
         = questionService.findBy(id, getConfiguration());
 
     if (!questionModelOptional.isPresent()) {
-      throw new WebApplicationException(Response.Status.NOT_FOUND);
+      throw new WebApplicationException(
+          Response.Status.NOT_FOUND);
     }
 
     QuestionModel questionModel = questionModelOptional.get();

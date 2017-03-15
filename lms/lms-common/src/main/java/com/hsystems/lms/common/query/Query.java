@@ -1,5 +1,6 @@
 package com.hsystems.lms.common.query;
 
+import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.util.ArrayList;
@@ -14,6 +15,11 @@ import java.util.regex.Pattern;
  * Created by naungsoe on 3/11/16.
  */
 public class Query {
+
+  private static final String PARAM_PATTERN
+      = "([a-z0-9]*)(=|!=|>|>=|<|<=|%=)(.*)";
+
+  private static final String SORT_PATTERN = "(\\+|\\-)(.*)";
 
   private List<String> fields;
 
@@ -44,7 +50,7 @@ public class Query {
     }
 
     String[] params = queryString.split("&");
-    Pattern pattern = Pattern.compile("([a-z0-9]*)(=|!=|>|>=|<|<=|%=)(.*)");
+    Pattern pattern = Pattern.compile(PARAM_PATTERN);
 
     for (String param : params) {
       Matcher matcher = pattern.matcher(param);
@@ -59,22 +65,18 @@ public class Query {
           case "fields":
             query.addFields(Arrays.asList(value.split(",")));
             break;
-
           case "sort":
             List<SortKey> sortKeys = getSortKeys(value);
             query.addSortKeys(sortKeys);
             break;
-
           case "offset":
             query.offset = Integer.valueOf(value);
             break;
-
           case "limit":
             query.limit = Integer.valueOf(value);
             break;
-
           default:
-            Criterion criterion = getCriterion(name, operator, value);
+            Criterion criterion = createCriterion(name, operator, value);
             query.addCriterion(criterion);
             break;
         }
@@ -87,7 +89,7 @@ public class Query {
   private static List<SortKey> getSortKeys(String query) {
     List<SortKey> sortKeys = new ArrayList<>();
     String[] params = query.split(",");
-    Pattern pattern = Pattern.compile("(\\+|\\-)(.*)");
+    Pattern pattern = Pattern.compile(SORT_PATTERN);
 
     for (String param : params) {
       Matcher matcher = pattern.matcher(param);
@@ -106,31 +108,24 @@ public class Query {
     return sortKeys;
   }
 
-  private static Criterion getCriterion(
+  private static Criterion createCriterion(
       String name, String operator, String value) {
 
     switch (operator) {
       case "=":
         return Criterion.createEqual(name, value);
-
       case "!=":
         return Criterion.createNotEqual(name, value);
-
       case ">":
         return Criterion.createGreaterThan(name, value);
-
       case ">=":
         return Criterion.createGreaterThanEqual(name, value);
-
       case "<":
         return Criterion.createLessThan(name, value);
-
       case "<=":
         return Criterion.createLessThanEqual(name, value);
-
       case "%=":
         return Criterion.createLike(name, value);
-
       default:
         return Criterion.createEmpty();
     }
@@ -208,38 +203,18 @@ public class Query {
     }
 
     Query query = (Query) obj;
-    long totalFields = query.getFields().stream()
-        .filter(field -> fields.stream()
-            .anyMatch(y -> field.equals(y))).count();
-    long totalCriteria = query.getCriteria().stream()
-        .filter(criterion -> criteria.stream()
-            .anyMatch(y -> y.equals(criterion))).count();
-    long totalSortKeys = query.getSortKeys().stream()
-        .filter(sortKey -> sortKeys.stream()
-            .anyMatch(y -> y.equals(sortKey))).count();
-
-    return (fields.size() == totalFields)
-        && (criteria.size() == totalCriteria)
-        && (sortKeys.size() == totalSortKeys)
+    return ListUtils.equals(fields, query.getFields())
+        && ListUtils.equals(criteria, query.getCriteria())
+        && ListUtils.equals(sortKeys, query.getSortKeys())
         && (offset == query.getOffset())
         && (limit == query.getLimit());
   }
 
   @Override
   public String toString() {
-    StringBuilder fieldsBuilder = new StringBuilder();
-    fields.forEach(field -> fieldsBuilder.append(field).append(","));
-
-    StringBuilder criteriaBuilder = new StringBuilder();
-    criteria.forEach(criterion
-        -> criteriaBuilder.append(criterion).append(","));
-
-    StringBuilder sortKeysBuilder = new StringBuilder();
-    sortKeys.forEach(sortKey
-        -> sortKeysBuilder.append(sortKey).append(","));
-
     return String.format(
         "Query{fields=%s, criteria=%s, sortKeys=%s, offset=%s, limit=%s}",
-        fieldsBuilder, criteriaBuilder, sortKeysBuilder, offset, limit);
+        StringUtils.join(fields, ","), StringUtils.join(criteria, ","),
+        StringUtils.join(sortKeys, ","), offset, limit);
   }
 }

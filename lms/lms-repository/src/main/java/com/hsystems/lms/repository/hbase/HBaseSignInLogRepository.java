@@ -2,20 +2,18 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.entity.SignInLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseSignInLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
-import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,57 +25,44 @@ public class HBaseSignInLogRepository
 
   private final HBaseClient client;
 
-  private final HBaseSignInLogMapper mapper;
+  private final HBaseSignInLogMapper signInLogMapper;
 
   @Inject
   HBaseSignInLogRepository(
       HBaseClient client,
-      HBaseSignInLogMapper mapper) {
+      HBaseSignInLogMapper signInLogMapper) {
 
     this.client = client;
-    this.mapper = mapper;
+    this.signInLogMapper = signInLogMapper;
   }
 
   @Override
   public Optional<SignInLog> findBy(String id)
       throws IOException {
 
-    return findBy(id, Long.MIN_VALUE);
-  }
-
-  @Override
-  public Optional<SignInLog> findBy(String id, long timestamp)
-      throws IOException {
-
     Get get = new Get(Bytes.toBytes(id));
-
-    if (timestamp != Long.MIN_VALUE) {
-      get.setTimeStamp(timestamp);
-    }
-
-    Result result = client.get(get, Constants.TABLE_SIGNIN_LOGS);
+    Result result = client.get(get, SignInLog.class);
 
     if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    SignInLog signInLog = mapper.getEntity(Arrays.asList(result));
+    SignInLog signInLog = signInLogMapper.getEntity(result);
     return Optional.of(signInLog);
   }
 
   @Override
-  public void save(SignInLog signInLog, long timestamp)
+  public void save(SignInLog signInLog)
       throws IOException {
 
-    List<Put> puts = mapper.getPuts(signInLog, timestamp);
-    client.put(puts, Constants.TABLE_SIGNIN_LOGS);
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    List<Put> puts = signInLogMapper.getPuts(signInLog, timestamp);
+    client.put(puts, SignInLog.class);
   }
 
   @Override
-  public void delete(SignInLog signInLog, long timestamp)
+  public void delete(SignInLog signInLog)
       throws IOException {
 
-    List<Delete> deletes = mapper.getDeletes(signInLog, timestamp);
-    client.delete(deletes, Constants.TABLE_SIGNIN_LOGS);
   }
 }

@@ -19,11 +19,11 @@ native HTML elements. For more information on which attributes are
 available on the native form element, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 
 It supports both `get` and `post` methods, and uses an `iron-ajax` element to
-submit the form data to the action URL.
+submit the form data to the actionType URL.
 
   Example:
 
-    <form is="iron-form" id="form" method="post" action="/form/handler">
+    <form is="iron-form" id="form" method="post" actionType="/form/handler">
       <paper-input name="name" label="name"></paper-input>
       <input name="address">
       ...
@@ -57,7 +57,7 @@ event and do your own custom submission:
 
     form.addEventListener('iron-form-presubmit', function(event) {
       event.preventDefault();
-      var firebase = new Firebase(form.getAttribute('action'));
+      var firebase = new Firebase(form.getAttribute('actionType'));
       firebase.set(form.serialize());
     });
 
@@ -233,7 +233,7 @@ event and do your own custom submission:
       // Native forms can also index elements magically by their name (can't make
       // this up if I tried) so we need to get the correct attributes, not the
       // elements with those names.
-      this.request.url = this.getAttribute('action');
+      this.request.url = this.getAttribute('actionType');
       this.request.method = this.getAttribute('method');
       this.request.contentType = this.contentType;
       this.request.withCredentials = this.withCredentials;

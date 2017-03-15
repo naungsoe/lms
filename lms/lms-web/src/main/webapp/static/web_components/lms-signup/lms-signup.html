@@ -40,7 +40,6 @@
       .form-actions {
         margin: 24px 16px !important;
       }
-
     </style>
 
     <app-header fixed effects="waterfall">
@@ -51,7 +50,7 @@
     </app-header>
 
     <div main-content>
-      <form id="formSignUp" method="post" action="{{signUpUrl}}" f
+      <form id="formSignUp" method="post" actionType="{{signUpUrl}}" f
             content-type="application/json" is="iron-form" flex-vertical>
         <div class="form-content" flex-horizontal>
           <section class="credentials" flex-auto>
@@ -138,7 +137,6 @@
         this.$.formSignUp.submit();
       }
     });
-
   </script>
 
 </dom-module>

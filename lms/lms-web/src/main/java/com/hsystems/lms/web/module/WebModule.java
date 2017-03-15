@@ -20,6 +20,7 @@ import com.hsystems.lms.web.SignOutServlet;
 import com.hsystems.lms.web.SignUpServlet;
 import com.hsystems.lms.web.StorageServlet;
 import com.hsystems.lms.web.UserServlet;
+import com.hsystems.lms.web.UtilServlet;
 import com.hsystems.lms.web.provider.PrincipalProvider;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -32,18 +33,17 @@ public class WebModule extends ServletModule {
 
   @Override
   protected void configureServlets() {
-    bindInterceptor(Matchers.any(),
-        Matchers.annotatedWith(Log.class),
+    bindInterceptor(Matchers.any(), Matchers.annotatedWith(Log.class),
         new LogInterceptor());
-
-    bindInterceptor(Matchers.any(),
-        Matchers.annotatedWith(Requires.class),
+    bindInterceptor(Matchers.any(), Matchers.annotatedWith(Requires.class),
         new RequiresInterceptor(getProvider(Principal.class)));
 
     bind(Properties.class).toProvider(PropertiesProvider.class)
         .in(Singleton.class);
     bind(Principal.class).toProvider(PrincipalProvider.class)
         .in(RequestScoped.class);
+
+    bind(UtilServlet.class).in(Singleton.class);
     bind(ErrorServlet.class).in(Singleton.class);
     bind(SignUpServlet.class).in(Singleton.class);
     bind(SignInServlet.class).in(Singleton.class);
@@ -54,7 +54,8 @@ public class WebModule extends ServletModule {
     bind(QuestionServlet.class).in(Singleton.class);
     bind(AuthenticationFilter.class).in(Singleton.class);
 
-    filter("/web/*").through(AuthenticationFilter.class);
+    //filter("/web/*").through(AuthenticationFilter.class);
+    serve("/web/util").with(UtilServlet.class);
     serve("/web/error").with(ErrorServlet.class);
     serve("/web/signup").with(SignUpServlet.class);
     serve("/web/signin").with(SignInServlet.class);

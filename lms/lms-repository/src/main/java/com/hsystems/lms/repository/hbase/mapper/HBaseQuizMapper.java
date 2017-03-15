@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,9 +47,13 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
                 String questionHint = getHint(questionResult);
                 String questionExplanation = getExplanation(questionResult);
 
-                List<QuestionOption> options = new ArrayList<>();
+                List<QuestionOption> questionOptions = new ArrayList<>();
                 results.stream().filter(isOptionResult(questionId))
-                    .forEach(z -> options.add(getQuestionOption(z)));
+                    .forEach(optionResult -> {
+                      QuestionOption questionOption
+                          = getQuestionOption(optionResult);
+                      questionOptions.add(questionOption);
+                    });
 
                 Question question = new Question(
                     questionId,
@@ -56,7 +61,8 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
                     questionBody,
                     questionHint,
                     questionExplanation,
-                    options
+                    questionOptions,
+                    Collections.emptyList()
                 );
                 questions.add(question);
               });
@@ -74,12 +80,12 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
     User createdBy = getCreatedBy(createdByResult);
     LocalDateTime createdDateTime = getDateTime(createdByResult);
 
-    Optional<Result> modifiedByResultOptional = results.stream()
+    Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
-    User modifiedBy = modifiedByResultOptional.isPresent()
-        ? getModifiedBy(modifiedByResultOptional.get()) : null;
-    LocalDateTime modifiedDateTime = modifiedByResultOptional.isPresent()
-        ? getDateTime(modifiedByResultOptional.get()) : LocalDateTime.MIN;
+    User modifiedBy = resultOptional.isPresent()
+        ? getModifiedBy(resultOptional.get()) : null;
+    LocalDateTime modifiedDateTime = resultOptional.isPresent()
+        ? getDateTime(resultOptional.get()) : null;
 
     return new Quiz(
         id,

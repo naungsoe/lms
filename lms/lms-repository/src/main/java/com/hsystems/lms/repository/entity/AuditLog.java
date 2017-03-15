@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.Action;
+import com.hsystems.lms.common.ActionType;
 
 import java.io.Serializable;
 
@@ -17,7 +17,7 @@ public class AuditLog implements Entity, Serializable {
 
   private User user;
 
-  private Action action;
+  private ActionType actionType;
 
   private long timestamp;
 
@@ -29,13 +29,13 @@ public class AuditLog implements Entity, Serializable {
       String id,
       EntityType type,
       User user,
-      Action action,
+      ActionType actionType,
       long timestamp) {
 
     this.id = id;
     this.type = type;
     this.user = user;
-    this.action = action;
+    this.actionType = actionType;
     this.timestamp = timestamp;
   }
 
@@ -52,8 +52,8 @@ public class AuditLog implements Entity, Serializable {
     return user;
   }
 
-  public Action getAction() {
-    return action;
+  public ActionType getActionType() {
+    return actionType;
   }
 
   public long getTimestamp() {
@@ -75,16 +75,13 @@ public class AuditLog implements Entity, Serializable {
     }
 
     AuditLog auditLog = (AuditLog) obj;
-
-    return id.equals(auditLog.getId())
-        && user.equals(auditLog.getUser())
-        && (timestamp == auditLog.getTimestamp());
+    return id.equals(auditLog.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, type=%s, user=%s, timestamp=%s, action=%s}",
-        id, type, user, timestamp, action);
+        "AuditLog{id=%s, type=%s, user=%s, timestamp=%s, actionType=%s}",
+        id, type, user, timestamp, actionType);
   }
 }

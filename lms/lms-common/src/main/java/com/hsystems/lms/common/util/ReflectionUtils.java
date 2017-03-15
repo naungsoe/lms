@@ -70,40 +70,42 @@ public final class ReflectionUtils {
   public static <T, S> void setValue(T instance, String fieldName, S value) {
     Optional<Field> fieldOptional = getField(instance.getClass(), fieldName);
 
-    if (!fieldOptional.isPresent()) {
-      return;
-    }
+    if (fieldOptional.isPresent()) {
+      try {
+        Field field = fieldOptional.get();
+        field.setAccessible(true);
+        field.set(instance, value);
 
-    try {
-      Field field = fieldOptional.get();
-      field.setAccessible(true);
-      field.set(instance, value);
-
-    } catch (IllegalAccessException e) {
-      throw new IllegalArgumentException(
-          "error setting field value", e);
+      } catch (IllegalAccessException e) {
+        throw new IllegalArgumentException(
+            "error setting field value", e);
+      }
     }
   }
 
   public static <T> Optional<Field> getField(Class<T> type, String name) {
     List<Field> fields = getFields(type);
-    return fields.stream()
-        .filter(field -> field.getName().equals(name))
-        .findFirst();
+    return fields.stream().filter(isField(name)).findFirst();
+  }
+
+  private static Predicate<Field> isField(String name) {
+    return field -> field.getName().equals(name);
   }
 
   public static <T> List<Field> getFields(Class<T> type) {
     List<Field> fields = new ArrayList<>();
     List<Field> declaredFields = Arrays.asList(type.getDeclaredFields());
-    declaredFields.stream()
-        .filter(field -> !Modifier.isStatic(field.getModifiers()))
-        .forEach(fields::add);
+    declaredFields.stream().filter(isNonStatic()).forEach(fields::add);
 
     if (type.getSuperclass() != null) {
       fields.addAll(getFields(type.getSuperclass()));
     }
 
     return fields;
+  }
+
+  private static Predicate<Field> isNonStatic() {
+    return field -> !Modifier.isStatic(field.getModifiers());
   }
 
   public static <T> Class<?> getListType(Field field) {

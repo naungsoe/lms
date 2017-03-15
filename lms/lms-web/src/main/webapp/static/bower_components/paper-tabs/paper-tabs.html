@@ -450,7 +450,7 @@ Custom property | Description | Default
 
       _activateHandler: function() {
         // Cancel item activations scheduled by keyboard events when any other
-        // action causes an item to be activated (e.g. clicks).
+        // actionType causes an item to be activated (e.g. clicks).
         this._cancelPendingActivation();
 
         Polymer.IronMenuBehaviorImpl._activateHandler.apply(this, arguments);

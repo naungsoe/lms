@@ -17,6 +17,8 @@
               language="<c:out value="${locale}"/>"
               locale-url="<c:url value="${localeUrl}"/>"
               id="<c:out value="${id}"/>"
-              error="<c:out value="${error}"/>"></lms-signin>
+              error="<c:out value="${error}"/>"
+              <c:if test="${captchaRequired}">captcha-required</c:if>
+              captcha-url="<c:url value="/webapi/account/captcha"/>"></lms-signin>
 </body>
 </html>

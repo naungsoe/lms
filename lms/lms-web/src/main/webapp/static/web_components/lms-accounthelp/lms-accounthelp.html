@@ -27,7 +27,6 @@
       .form-actions {
         margin: 24px 16px !important;
       }
-
     </style>
 
     <app-header fixed effects="waterfall">
@@ -38,7 +37,7 @@
     </app-header>
 
     <div main-content>
-      <form id="formAccountHelp" method="post" action="{{accountHelpUrl}}" flex-vertical>
+      <form id="formAccountHelp" method="post" actionType="{{accountHelpUrl}}" flex-vertical>
         <div class="form-content" flex-horizontal>
           <section class="issues" flex-auto>
             <h4 title>{{localize('labelIssues')}}</h4>
@@ -79,7 +78,6 @@
         window.location = this.signInUrl;
       }
     });
-
   </script>
 
 </dom-module>

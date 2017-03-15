@@ -60,7 +60,7 @@ public class SignOutServlet extends BaseServlet {
   private void clearUserSession(
       HttpServletRequest request, HttpServletResponse response) {
 
-    HttpSession session = request.getSession(false);
+    HttpSession session = request.getSession();
     Cookie[] cookies = request.getCookies();
 
     if (session != null) {
