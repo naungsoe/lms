@@ -1,8 +1,5 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionOption;
-import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.QuizSection;
 import com.hsystems.lms.repository.entity.User;
@@ -36,39 +33,10 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
           String sectionId = getSectionId(sectionResult);
           String sectionInstructions = getInstructions(sectionResult);
 
-          List<Question> questions = new ArrayList<>();
-          results.stream().filter(isQuestionResult(sectionId))
-              .forEach(questionResult -> {
-                String questionId = getQuestionId(questionResult);
-                QuestionType questionType
-                    = getType(questionResult, QuestionType.class);
-                String questionBody = getBody(questionResult);
-                String questionHint = getHint(questionResult);
-                String questionExplanation = getExplanation(questionResult);
-
-                List<QuestionOption> questionOptions = new ArrayList<>();
-                results.stream().filter(isOptionResult(questionId))
-                    .forEach(optionResult -> {
-                      QuestionOption questionOption
-                          = getQuestionOption(optionResult);
-                      questionOptions.add(questionOption);
-                    });
-
-                Question question = new Question(
-                    questionId,
-                    questionType,
-                    questionBody,
-                    questionHint,
-                    questionExplanation,
-                    questionOptions
-                );
-                questions.add(question);
-              });
-
           QuizSection section = new QuizSection(
               sectionId,
               sectionInstructions,
-              questions
+              getQuestion(results, sectionId)
           );
           sections.add(section);
         });

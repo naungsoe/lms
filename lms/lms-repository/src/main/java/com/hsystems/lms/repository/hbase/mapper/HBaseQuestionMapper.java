@@ -1,9 +1,8 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.question.CompositeQuestion;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionOption;
-import com.hsystems.lms.repository.entity.question.QuestionType;
+import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -13,6 +12,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -43,68 +43,31 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get()) : null;
 
+    List<QuestionOption> options;
+    List<Question> questions;
+
     if (type == QuestionType.COMPOSITE) {
-      List<Question> questions = new ArrayList<>();
-      results.stream().filter(isQuestionResult(id))
-          .forEach(questionResult -> {
-            String questionId = getQuestionId(questionResult);
-            QuestionType questionType
-                = getType(questionResult, QuestionType.class);
-            String questionBody = getBody(questionResult);
-            String questionHint = getHint(questionResult);
-            String questionExplanation = getExplanation(questionResult);
+      options = Collections.emptyList();
+      questions = getQuestion(results, id);
 
-            List<QuestionOption> questionOptions = new ArrayList<>();
-            results.stream().filter(isOptionResult(questionId))
-                .forEach(optionResult -> {
-                  QuestionOption questionOption
-                      = getQuestionOption(optionResult);
-                  questionOptions.add(questionOption);
-                });
-
-            Question question = new Question(
-                questionId,
-                questionType,
-                questionBody,
-                questionHint,
-                questionExplanation,
-                questionOptions
-            );
-            questions.add(question);
-          });
-
-      return new CompositeQuestion(
-          id,
-          body,
-          hint,
-          explanation,
-          questions,
-          createdBy,
-          createdDateTime,
-          modifiedBy,
-          modifiedDateTime
-      );
     } else {
-      List<QuestionOption> options = new ArrayList<>();
-      results.stream().filter(isOptionResult(id))
-          .forEach(optionResult -> {
-            QuestionOption option = getQuestionOption(optionResult);
-            options.add(option);
-          });
-
-      return new Question(
-          id,
-          type,
-          body,
-          hint,
-          explanation,
-          options,
-          createdBy,
-          createdDateTime,
-          modifiedBy,
-          modifiedDateTime
-      );
+      options = getQuestionOptions(results, id);
+      questions = Collections.emptyList();
     }
+
+    return new Question(
+        id,
+        type,
+        body,
+        hint,
+        explanation,
+        options,
+        questions,
+        createdBy,
+        createdDateTime,
+        modifiedBy,
+        modifiedDateTime
+    );
   }
 
   @Override

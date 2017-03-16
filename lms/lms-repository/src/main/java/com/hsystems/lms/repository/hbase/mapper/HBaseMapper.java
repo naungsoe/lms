@@ -5,7 +5,9 @@ import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
@@ -19,6 +21,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -345,6 +348,47 @@ public abstract class HBaseMapper<T> {
 
   protected String getQuestionId(Result result) {
     return getId(result, Constants.SEPARATOR_QUESTION);
+  }
+
+  protected List<Question> getQuestion(
+      List<Result> results, String prefix) {
+
+    List<Question> questions = new ArrayList<>();
+    results.stream().filter(isQuestionResult(prefix))
+        .forEach(result -> {
+          String id = getQuestionId(result);
+          QuestionType type
+              = getType(result, QuestionType.class);
+          String body = getBody(result);
+          String hint = getHint(result);
+          String explanation = getExplanation(result);
+
+          Question question = new Question(
+              id,
+              type,
+              body,
+              hint,
+              explanation,
+              getQuestionOptions(results, id),
+              Collections.emptyList()
+          );
+          questions.add(question);
+        });
+
+    return questions;
+  }
+
+  protected List<QuestionOption> getQuestionOptions(
+      List<Result> results, String prefix) {
+
+    List<QuestionOption> options = new ArrayList<>();
+    results.stream().filter(isOptionResult(prefix))
+        .forEach(result -> {
+          QuestionOption option = getQuestionOption(result);
+          options.add(option);
+        });
+
+    return options;
   }
 
   protected QuestionOption getQuestionOption(Result result) {

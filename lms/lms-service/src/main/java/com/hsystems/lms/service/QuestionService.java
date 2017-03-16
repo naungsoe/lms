@@ -8,7 +8,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;

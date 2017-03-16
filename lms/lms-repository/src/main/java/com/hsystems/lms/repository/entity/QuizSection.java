@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.entity;
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.question.Question;
 
 import java.io.Serializable;
 import java.util.Collections;

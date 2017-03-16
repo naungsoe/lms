@@ -7,7 +7,7 @@ import com.hsystems.lms.repository.MutateLogRepository;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.MutateLog;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.hbase.mapper.HBaseGroupMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 

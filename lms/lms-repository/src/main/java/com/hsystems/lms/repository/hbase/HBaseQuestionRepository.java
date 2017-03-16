@@ -10,7 +10,7 @@ import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.MutateLog;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;

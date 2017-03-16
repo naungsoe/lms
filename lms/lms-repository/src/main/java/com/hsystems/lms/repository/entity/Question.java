@@ -1,13 +1,10 @@
-package com.hsystems.lms.repository.entity.question;
+package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.Auditable;
-import com.hsystems.lms.repository.entity.Entity;
-import com.hsystems.lms.repository.entity.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,38 +14,62 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public class ChoiceQuestion extends Question {
+@IndexCollection(name = "questions")
+public class Question extends Auditable implements Entity, Serializable {
 
-  private static final long serialVersionUID = -4884225998143529748L;
+  private static final long serialVersionUID = 6004706395678775298L;
+
+  @IndexField(type = IndexFieldType.IDENTITY)
+  private String id;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private QuestionType type;
+
+  @IndexField(type = IndexFieldType.TEXT_GENERAL)
+  private String body;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private String hint;
+
+  @IndexField(type = IndexFieldType.STRING)
+  private String explanation;
 
   @IndexField(type = IndexFieldType.LIST)
   private List<QuestionOption> options;
 
-  ChoiceQuestion() {
+  @IndexField(type = IndexFieldType.LIST)
+  private List<Question> questions;
+
+  Question() {
 
   }
 
-  public ChoiceQuestion(
-      String id,
-      String body,
-      String hint,
-      String explanation,
-      List<QuestionOption> options) {
-
-    this.id = id;
-    this.body = body;
-    this.hint = hint;
-    this.explanation = explanation;
-    this.options = options;
-  }
-
-  public ChoiceQuestion(
+  public Question(
       String id,
       QuestionType type,
       String body,
       String hint,
       String explanation,
       List<QuestionOption> options,
+      List<Question> questions) {
+
+    this.id = id;
+    this.type = type;
+    this.body = body;
+    this.hint = hint;
+    this.explanation = explanation;
+    this.options = options;
+    this.questions = questions;
+  }
+
+  public Question(
+      String id,
+      QuestionType type,
+      String body,
+      String hint,
+      String explanation,
+      List<QuestionOption> options,
+      List<Question> questions,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -60,6 +81,7 @@ public class ChoiceQuestion extends Question {
     this.hint = hint;
     this.explanation = explanation;
     this.options = options;
+    this.questions = questions;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -104,7 +126,7 @@ public class ChoiceQuestion extends Question {
       return false;
     }
 
-    ChoiceQuestion question = (ChoiceQuestion) obj;
+    Question question = (Question) obj;
     return id.equals(question.getId());
   }
 

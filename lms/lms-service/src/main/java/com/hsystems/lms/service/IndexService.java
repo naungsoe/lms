@@ -7,7 +7,7 @@ import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 
 import java.io.IOException;
