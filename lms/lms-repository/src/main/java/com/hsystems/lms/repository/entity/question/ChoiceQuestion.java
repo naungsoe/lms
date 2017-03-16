@@ -1,10 +1,13 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Auditable;
+import com.hsystems.lms.repository.entity.Entity;
+import com.hsystems.lms.repository.entity.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,61 +17,38 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(name = "questions")
-public class Question extends Auditable implements Entity, Serializable {
+public class ChoiceQuestion extends Question {
 
-  private static final long serialVersionUID = 6004706395678775298L;
-
-  @IndexField(type = IndexFieldType.IDENTITY)
-  private String id;
-
-  @IndexField(type = IndexFieldType.STRING)
-  private QuestionType type;
-
-  @IndexField(type = IndexFieldType.TEXT_GENERAL)
-  private String body;
-
-  @IndexField(type = IndexFieldType.STRING)
-  private String hint;
-
-  @IndexField(type = IndexFieldType.STRING)
-  private String explanation;
+  private static final long serialVersionUID = -4884225998143529748L;
 
   @IndexField(type = IndexFieldType.LIST)
   private List<QuestionOption> options;
 
-  @IndexField(type = IndexFieldType.LIST)
-  private List<Question> questions;
-
-  Question() {
+  ChoiceQuestion() {
 
   }
 
-  public Question(
+  public ChoiceQuestion(
       String id,
-      QuestionType type,
       String body,
       String hint,
       String explanation,
-      List<QuestionOption> options,
-      List<Question> questions) {
+      List<QuestionOption> options) {
 
     this.id = id;
-    this.type = type;
     this.body = body;
     this.hint = hint;
     this.explanation = explanation;
     this.options = options;
   }
 
-  public Question(
+  public ChoiceQuestion(
       String id,
       QuestionType type,
       String body,
       String hint,
       String explanation,
       List<QuestionOption> options,
-      List<Question> questions,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -80,7 +60,6 @@ public class Question extends Auditable implements Entity, Serializable {
     this.hint = hint;
     this.explanation = explanation;
     this.options = options;
-    this.questions = questions;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -114,12 +93,6 @@ public class Question extends Auditable implements Entity, Serializable {
         : Collections.unmodifiableList(options);
   }
 
-  public List<Question> getQuestions() {
-    return ListUtils.isEmpty(questions)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(questions);
-  }
-
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -131,7 +104,7 @@ public class Question extends Auditable implements Entity, Serializable {
       return false;
     }
 
-    Question question = (Question) obj;
+    ChoiceQuestion question = (ChoiceQuestion) obj;
     return id.equals(question.getId());
   }
 
@@ -139,10 +112,9 @@ public class Question extends Auditable implements Entity, Serializable {
   public String toString() {
     return String.format(
         "Question{id=%s, type=%s, body=%s, hint=%s, explanation=%s, "
-            + "options=%s, questions=%s, createdBy=%s, createdDateTime=%s, "
+            + "options=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, type, body, hint, explanation, StringUtils.join(options, ","),
-        StringUtils.join(questions, ","), createdBy, createdDateTime,
-        modifiedBy, modifiedDateTime);
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

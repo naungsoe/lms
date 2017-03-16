@@ -21,9 +21,13 @@ import java.util.regex.Pattern;
  */
 public class HBaseMutateLogMapper extends HBaseMapper<MutateLog> {
 
-  public static final String KEY_PATTERN = "^([A-Za-z0-9]*)_([A-Za-z0-9]*)$";
+  private static final String KEY_PATTERN = "^([A-Za-z0-9]*)_([A-Za-z0-9]*)$";
 
-  public static final String KEY_FORMAT = "%s_%s";
+  private static final String KEY_FORMAT = "%s_%s";
+
+  public String getId(EntityType type, String id) {
+    return String.format(HBaseMutateLogMapper.KEY_FORMAT, type, id);
+  }
 
   public MutateLog getEntity(Result result) {
     return getEntity(Arrays.asList(result));

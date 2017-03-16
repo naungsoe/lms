@@ -1,4 +1,4 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;

@@ -7,6 +7,7 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.DateTimeUtils;
+import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
@@ -349,7 +350,7 @@ public class SolrClient {
     try {
       SolrInputDocument document = getDocument(entity);
       updateDocumentType(document, entity);
-      updateChildDocumentsId(document);
+      updateDocumentId(document, "");
 
       CloudSolrClient client = getClient(entity.getClass());
       client.add(document);
@@ -463,15 +464,25 @@ public class SolrClient {
     document.addField(FIELD_TYPE_NAME, entity.getClass().getTypeName());
   }
 
-  protected void updateChildDocumentsId(SolrInputDocument document) {
+  protected void updateDocumentId(SolrInputDocument document, String prefix) {
     Object documentId = document.getFieldValue(FIELD_ID);
-    document.getChildDocuments()
-        .forEach(childDocument -> {
-          Object childDocumentId = childDocument.getFieldValue(FIELD_ID);
-          String value = String.format("%s%s%s", documentId.toString(),
-              SEPARATOR_ID, childDocumentId.toString());
-          childDocument.setField(FIELD_ID, value);
-        });
+
+    if (StringUtils.isEmpty(prefix)) {
+      document.getChildDocuments()
+          .forEach(childDocument -> updateDocumentId(
+              childDocument, documentId.toString()));
+
+    } else {
+      String childDocumentId = String.format("%s%s%s", prefix,
+          SEPARATOR_ID, documentId.toString());
+      document.setField(FIELD_ID, childDocumentId);
+
+      if (!ListUtils.isEmpty(document.getChildDocuments())) {
+        document.getChildDocuments()
+            .forEach(childDocument -> updateDocumentId(
+                childDocument, childDocumentId));
+      }
+    }
   }
 
   public <T> void delete(T entity)

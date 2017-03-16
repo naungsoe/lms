@@ -5,7 +5,7 @@ import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.QuestionOption;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
@@ -32,6 +32,8 @@ public abstract class HBaseMapper<T> {
   public static final String SEPARATED_ID_PATTERN = "%s([A-Za-z0-9]*)";
 
   public static final String PREFIXED_ID_PATTERN = "%s([A-Za-z0-9]*)$";
+
+  public static final String ROW_KEY_FORMAT = "%s%s%s";
 
   protected String getId(Result result) {
     return getString(result, Constants.FAMILY_DATA,
@@ -457,7 +459,7 @@ public abstract class HBaseMapper<T> {
   protected Put getQuestionOptionPut(
       QuestionOption option, String prefix, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", prefix,
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
         Constants.SEPARATOR_OPTION, option.getId());
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addBodyColumn(put, option.getBody());
@@ -470,7 +472,7 @@ public abstract class HBaseMapper<T> {
   protected void addCreatedByPut(
       List<Put> puts, Auditable auditable, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", auditable.getId(),
+    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Put put = getUserPut(auditable.getCreatedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getCreatedDateTime());
@@ -489,7 +491,7 @@ public abstract class HBaseMapper<T> {
   protected void addModifiedByPut(
       List<Put> puts, Auditable auditable, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", auditable.getId(),
+    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
         Constants.SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
     Put put = getUserPut(auditable.getModifiedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getModifiedDateTime());
@@ -499,7 +501,7 @@ public abstract class HBaseMapper<T> {
   protected Delete getQuestionOptionDelete(
       QuestionOption option, String prefix, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", prefix,
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
         Constants.SEPARATOR_OPTION, option.getId());
     return new Delete(Bytes.toBytes(rowKey), timestamp);
   }
@@ -507,7 +509,7 @@ public abstract class HBaseMapper<T> {
   protected void addCreatedByDelete(
       List<Delete> deletes, Auditable auditable, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", auditable.getId(),
+    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
@@ -516,7 +518,7 @@ public abstract class HBaseMapper<T> {
   protected void addModifiedByDelete(
       List<Delete> deletes, Auditable auditable, long timestamp) {
 
-    String rowKey = String.format("%s%s%s", auditable.getId(),
+    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);

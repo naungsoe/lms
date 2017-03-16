@@ -47,7 +47,7 @@ public class HBaseSchoolRepository
     Optional<MutateLog> mutateLogOptional
         = mutateLogRepository.findBy(id, EntityType.SCHOOL);
 
-    if (mutateLogOptional.isPresent()) {
+    if (!mutateLogOptional.isPresent()) {
       return Optional.empty();
     }
 

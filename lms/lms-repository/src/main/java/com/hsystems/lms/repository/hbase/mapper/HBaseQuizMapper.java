@@ -1,8 +1,8 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionOption;
-import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.QuizSection;
 import com.hsystems.lms.repository.entity.User;
@@ -14,7 +14,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -61,8 +60,7 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
                     questionBody,
                     questionHint,
                     questionExplanation,
-                    questionOptions,
-                    Collections.emptyList()
+                    questionOptions
                 );
                 questions.add(question);
               });

@@ -47,7 +47,7 @@ public class HBaseQuizRepository
     Optional<MutateLog> mutateLogOptional
         = mutateLogRepository.findBy(id, EntityType.QUIZ);
 
-    if (mutateLogOptional.isPresent()) {
+    if (!mutateLogOptional.isPresent()) {
       return Optional.empty();
     }
 

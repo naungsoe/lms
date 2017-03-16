@@ -40,7 +40,7 @@ public class HBaseMutateLogRepository
   public Optional<MutateLog> findBy(String id, EntityType type)
       throws IOException {
 
-    String logId = String.format(HBaseMutateLogMapper.KEY_FORMAT, type, id);
+    String logId = mutateLogMapper.getId(type, id);
     return findBy(logId);
   }
 

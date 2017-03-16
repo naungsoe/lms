@@ -7,6 +7,7 @@ import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.User;
 
 import java.io.IOException;
@@ -40,15 +41,35 @@ public class IndexService extends BaseService {
 
     switch (Enum.valueOf(EntityType.class, type.toUpperCase())) {
       case USER:
-        Optional<User> userOptional = userRepository.findBy(id);
-
-        if (userOptional.isPresent()) {
-          User user = userOptional.get();
-          indexRepository.save(user);
-        }
+        indexUser(id);
+        break;
+      case QUESTION:
+        indexQuestion(id);
         break;
       default:
         break;
+    }
+  }
+
+  private void indexUser(String id)
+      throws IOException {
+
+    Optional<User> userOptional = userRepository.findBy(id);
+
+    if (userOptional.isPresent()) {
+      User user = userOptional.get();
+      indexRepository.save(user);
+    }
+  }
+
+  private void indexQuestion(String id)
+      throws IOException {
+
+    Optional<Question> questionOptional = questionRepository.findBy(id);
+
+    if (questionOptional.isPresent()) {
+      Question question = questionOptional.get();
+      indexRepository.save(question);
     }
   }
 }
