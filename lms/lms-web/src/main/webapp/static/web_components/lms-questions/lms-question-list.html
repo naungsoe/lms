@@ -25,7 +25,7 @@
     <iron-list items="[[questions]]" as="question">
       <template>
         <div class="question">
-          <template is="dom-if" if="{{_isMCQ(question)}}">
+          <template is="dom-if" if="{{_isMultipleChoice(question)}}">
             <div class="question-body">
               {{question.body}}
             </div>
@@ -68,12 +68,16 @@
         }
       },
 
-      _isMCQ: function(question) {
-        return (question.type === 'MCQ');
+      _isMultipleChoice: function(question) {
+        return (question.type === 'MULTIPLE_CHOICE');
       },
 
-      _isMRQ: function(question) {
-        return (question.type === 'MRQ');
+      _isMultipleResponse: function(question) {
+        return (question.type === 'MULTIPLE_RESPONSE');
+      },
+
+      _isComposite: function(question) {
+        return (question.type === 'COMPOSITE');
       },
 
       handleResponse: function(event) {

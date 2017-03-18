@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Quiz;
-import com.hsystems.lms.repository.entity.QuizSection;
+import com.hsystems.lms.repository.entity.Section;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -26,20 +26,7 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult);
     String instructions = getInstructions(mainResult);
-
-    List<QuizSection> sections = new ArrayList<>();
-    results.stream().filter(isSectionResult(id))
-        .forEach(sectionResult -> {
-          String sectionId = getSectionId(sectionResult);
-          String sectionInstructions = getInstructions(sectionResult);
-
-          QuizSection section = new QuizSection(
-              sectionId,
-              sectionInstructions,
-              getQuestion(results, sectionId)
-          );
-          sections.add(section);
-        });
+    List<Section> sections = getQuizSections(results, id);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();

@@ -178,11 +178,7 @@ public class UserModel implements Principal, Serializable {
   }
 
   public void setPermissions(List<String> permissions) {
-    if (ListUtils.isEmpty(permissions)) {
-      permissions = new ArrayList<>();
-    }
-
-    this.permissions.clear();
+    this.permissions = new ArrayList<>();
     this.permissions.addAll(permissions);
   }
 
@@ -209,11 +205,7 @@ public class UserModel implements Principal, Serializable {
   }
 
   public void setGroups(List<GroupModel> groups) {
-    if (ListUtils.isEmpty(groups)) {
-      this.groups = new ArrayList<>();
-    }
-
-    this.groups.clear();
+    this.groups = new ArrayList<>();
     this.groups.addAll(groups);
   }
 

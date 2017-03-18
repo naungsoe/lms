@@ -62,11 +62,7 @@ public class GroupModel implements Serializable {
   }
 
   public void setPermissions(List<String> permissions) {
-    if (ListUtils.isEmpty(permissions)) {
-      permissions = new ArrayList<>();
-    }
-
-    this.permissions.clear();
+    this.permissions = new ArrayList<>();
     this.permissions.addAll(permissions);
   }
 
@@ -77,11 +73,7 @@ public class GroupModel implements Serializable {
   }
 
   public void setMembers(List<UserModel> users) {
-    if (ListUtils.isEmpty(users)) {
-      this.members = new ArrayList<>();
-    }
-
-    this.members.clear();
+    this.members = new ArrayList<>();
     this.members.addAll(users);
   }
 

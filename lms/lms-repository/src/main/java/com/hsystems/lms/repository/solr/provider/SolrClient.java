@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
+import java.util.regex.Pattern;
 
 /**
  * Created by naungsoe on 25/9/16.
@@ -42,7 +42,11 @@ public class SolrClient {
   private static final String FIELD_ID = "id";
   private static final String FIELD_TYPE_NAME = "typeName_s";
 
+  public static final String PREFIXED_ID_PATTERN = "%s_([A-Za-z0-9]*)$";
+
   private static final String FILTER_FORMAT = "%s:%s";
+
+  public static final String ID_FORMAT = "%s_%s";
 
   private static final String SEPARATOR_ID = "_";
 
@@ -100,13 +104,13 @@ public class SolrClient {
     addQueryCriteria(solrQuery, query.getCriteria());
 
     String typeNameFilterQuery = String.format(FILTER_FORMAT,
-        FIELD_TYPE_NAME, type.getTypeName());
+        FIELD_TYPE_NAME, type.getSimpleName());
     solrQuery.addFilterQuery(typeNameFilterQuery);
 
     addQueryFields(solrQuery, query.getFields());
 
     String typeNameField = String.format("[child parentFilter=%s:%s]",
-        FIELD_TYPE_NAME, type.getTypeName());
+        FIELD_TYPE_NAME, type.getSimpleName());
     solrQuery.addField(typeNameField);
 
     solrQuery.setStart(query.getOffset());
@@ -191,23 +195,176 @@ public class SolrClient {
       SolrDocument document, Class<T> type) {
 
     Object value = document.getFieldValue(FIELD_TYPE_NAME);
-    return type.getTypeName().equals(value.toString());
+    return type.getSimpleName().equals(value.toString());
   }
 
-  protected <T> T getEntity(SolrDocument document, Class<T> type)
+  protected <T> T getEntity(
+      SolrDocument document, Class<T> type)
+      throws InstantiationException, IllegalAccessException,
+      InvocationTargetException, NoSuchFieldException {
+
+    T entity = (T) ReflectionUtils.getInstance(type);
+    List<Field> fields = ReflectionUtils.getFields(entity.getClass());
+    String id = document.getFieldValue("id").toString();
+
+    for (Field field : fields) {
+      if (field.isAnnotationPresent(IndexField.class)) {
+        IndexField annotation = field.getAnnotation(IndexField.class);
+        String fieldName = StringUtils.isEmpty(annotation.name())
+            ? field.getName() : annotation.name();
+
+        switch (annotation.type()) {
+          case OBJECT:
+            if (document.getChildDocuments() == null) {
+              ReflectionUtils.setValue(entity, fieldName, null);
+
+            } else {
+              Object childEntity = getChildEntity(document.getChildDocuments(),
+                  field.getType(), id, fieldName);
+              ReflectionUtils.setValue(entity, fieldName, childEntity);
+            }
+            break;
+          case LIST:
+            Class<?> listType = ReflectionUtils.getListType(field);
+
+            if (listType.isEnum()) {
+              Object fieldValue = document.getFieldValue(fieldName + "_s");
+
+              if (fieldValue == null) {
+                ReflectionUtils.setValue(entity,
+                    fieldName, Collections.emptyList());
+
+              } else {
+                List<Enum> childEnums = new ArrayList<>();
+                Class<Enum> listEnumType
+                    = (Class<Enum>) ReflectionUtils.getListType(field);
+                String[] childValues = fieldValue.toString().split(",");
+                Arrays.asList(childValues).forEach(
+                    enumValue -> childEnums.add(
+                        Enum.valueOf(listEnumType, enumValue)));
+                ReflectionUtils.setValue(entity, fieldName, childEnums);
+              }
+            } else if (document.getChildDocuments() == null) {
+              ReflectionUtils.setValue(entity,
+                  fieldName, Collections.emptyList());
+
+            } else {
+              List<?> childEntities = getChildEntities(
+                  document.getChildDocuments(), listType, id, fieldName);
+              ReflectionUtils.setValue(entity, fieldName, childEntities);
+            }
+            break;
+          default:
+            populateProperty(entity, document, field);
+            break;
+        }
+      }
+    }
+
+    return entity;
+  }
+
+  protected <T> List<T> getChildEntities(
+      List<SolrDocument> documents, Class<T> type,
+      String prefix, String fieldName)
+      throws InstantiationException, IllegalAccessException,
+      InvocationTargetException, NoSuchFieldException {
+
+    List<T> entities = new ArrayList<>();
+
+    for (SolrDocument document : documents) {
+      String id = document.getFieldValue("id").toString();
+      String regex = String.format(PREFIXED_ID_PATTERN, prefix);
+      Pattern pattern = Pattern.compile(regex);
+
+      if (pattern.matcher(id).find()
+          && fieldName.equals(document.getFieldValue("fieldName_s"))) {
+
+        T entity = getChildEntity(documents, type, id, fieldName);
+        entities.add(entity);
+      }
+    }
+
+    return entities;
+  }
+
+  protected <T> T getChildEntity(
+      List<SolrDocument> documents, Class<T> type,
+      String prefix, String fieldName)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     T entity = (T) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
 
+    Optional<SolrDocument> documentOptional = documents.stream().filter(
+        isChildDocument(prefix, fieldName)).findFirst();
+
+    if (!documentOptional.isPresent()) {
+      return entity;
+    }
+
+    SolrDocument document = documentOptional.get();
+    String id = document.getFieldValue("id").toString();
+
     for (Field field : fields) {
       if (field.isAnnotationPresent(IndexField.class)) {
-        populateProperty(entity, document, field);
+        IndexField annotation = field.getAnnotation(IndexField.class);
+        String childFieldName = StringUtils.isEmpty(annotation.name())
+            ? field.getName() : annotation.name();
+
+        switch (annotation.type()) {
+          case OBJECT:
+            if (document.getChildDocuments() == null) {
+              ReflectionUtils.setValue(entity, childFieldName, null);
+
+            } else {
+              Object childEntity = getChildEntity(
+                  documents, field.getType(), id, childFieldName);
+              ReflectionUtils.setValue(entity, childFieldName, childEntity);
+            }
+            break;
+          case LIST:
+            Class<?> listType = ReflectionUtils.getListType(field);
+
+            if (listType.isEnum()) {
+              Object fieldValue = document.getFieldValue(childFieldName + "_s");
+
+              if (fieldValue == null) {
+                ReflectionUtils.setValue(entity,
+                    childFieldName, Collections.emptyList());
+
+              } else {
+                List<Enum> childEnums = new ArrayList<>();
+                Class<Enum> listEnumType
+                    = (Class<Enum>) ReflectionUtils.getListType(field);
+                String[] childValues = fieldValue.toString().split(",");
+                Arrays.asList(childValues).forEach(
+                    enumValue -> childEnums.add(
+                        Enum.valueOf(listEnumType, enumValue)));
+                ReflectionUtils.setValue(entity, childFieldName, childEnums);
+              }
+            } else {
+              List<?> childEntities = getChildEntities(
+                  documents, listType, id, childFieldName);
+              ReflectionUtils.setValue(entity, childFieldName, childEntities);
+            }
+            break;
+          default:
+            populateProperty(entity, document, field);
+            break;
+        }
       }
     }
 
     return entity;
+  }
+
+  private Predicate<SolrDocument> isChildDocument(
+      String prefix, String fieldName) {
+
+    return document -> fieldName.equals(document.getFieldValue("fieldName_s"))
+        && document.getFieldValue("id").toString().startsWith(prefix);
   }
 
   protected <T> void populateProperty(
@@ -218,11 +375,10 @@ public class SolrClient {
     IndexField annotation = field.getAnnotation(IndexField.class);
     String fieldName = StringUtils.isEmpty(annotation.name())
         ? field.getName() : annotation.name();
-    Object childEntity;
 
     switch (annotation.type()) {
       case IDENTITY:
-        String id = document.getFieldValue(fieldName).toString();
+        String id = document.getFieldValue("id").toString();
 
         if (id.contains(SEPARATOR_ID)) {
           ReflectionUtils.setValue(entity, field.getName(),
@@ -281,67 +437,11 @@ public class SolrClient {
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_ws"));
         break;
-      case OBJECT:
-        if (document.getChildDocuments() == null) {
-          ReflectionUtils.setValue(entity, field.getName(), null);
-
-        } else {
-          Optional<SolrDocument> documentOptional
-              = document.getChildDocuments().stream()
-              .filter(isChildDocument(fieldName)).findFirst();
-
-          if (documentOptional.isPresent()) {
-            childEntity = getEntity(documentOptional.get(), field.getType());
-            ReflectionUtils.setValue(entity, field.getName(), childEntity);
-          }
-        }
-        break;
-      case LIST:
-        if (ReflectionUtils.getListType(field).isEnum()) {
-          Object childValue = document.getFieldValue(fieldName + "_s");
-
-          if (childValue == null) {
-            ReflectionUtils.setValue(entity,
-                fieldName, Collections.emptyList());
-
-          } else {
-            List<Enum> childEnums = new ArrayList<>();
-            Class<Enum> listType
-                = (Class<Enum>) ReflectionUtils.getListType(field);
-            String[] childValues = childValue.toString().split(",");
-            Arrays.asList(childValues).forEach(
-                enumValue -> childEnums.add(Enum.valueOf(listType, enumValue)));
-            ReflectionUtils.setValue(entity, fieldName, childEnums);
-          }
-        } else if (document.getChildDocuments() == null) {
-          ReflectionUtils.setValue(entity,
-              fieldName, Collections.emptyList());
-
-        } else {
-          List<Object> childEntities = new ArrayList<>();
-          Class<?> listType = ReflectionUtils.getListType(field);
-          List<SolrDocument> childDocuments
-              = document.getChildDocuments().stream()
-              .filter(isChildDocument(fieldName))
-              .collect(Collectors.toList());
-
-          for (SolrDocument childDocument : childDocuments) {
-            childEntity = getEntity(childDocument, listType);
-            childEntities.add(childEntity);
-          }
-
-          ReflectionUtils.setValue(entity, field.getName(), childEntities);
-        }
-        break;
       default:
         ReflectionUtils.setValue(entity, field.getName(),
             document.getFieldValue(fieldName + "_s"));
         break;
     }
-  }
-
-  private Predicate<SolrDocument> isChildDocument(String name) {
-    return document -> name.equals(document.getFieldValue("fieldName_s"));
   }
 
   public <T> void index(T entity)
@@ -461,7 +561,7 @@ public class SolrClient {
   }
 
   protected <T> void updateDocumentType(SolrInputDocument document, T entity) {
-    document.addField(FIELD_TYPE_NAME, entity.getClass().getTypeName());
+    document.addField(FIELD_TYPE_NAME, entity.getClass().getSimpleName());
   }
 
   protected void updateDocumentId(SolrInputDocument document, String prefix) {
@@ -473,8 +573,8 @@ public class SolrClient {
               childDocument, documentId.toString()));
 
     } else {
-      String childDocumentId = String.format("%s%s%s", prefix,
-          SEPARATOR_ID, documentId.toString());
+      String childDocumentId = String.format(ID_FORMAT,
+          prefix, documentId.toString());
       document.setField(FIELD_ID, childDocumentId);
 
       if (!ListUtils.isEmpty(document.getChildDocuments())) {

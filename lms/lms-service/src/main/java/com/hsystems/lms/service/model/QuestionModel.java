@@ -1,8 +1,10 @@
 package com.hsystems.lms.service.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.hsystems.lms.common.util.ListUtils;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,6 +27,8 @@ public class QuestionModel implements Serializable {
   private String explanation;
 
   private List<QuestionOptionModel> options;
+
+  private List<QuestionModel> questions;
 
   private String createdById;
 
@@ -87,12 +91,25 @@ public class QuestionModel implements Serializable {
   }
 
   public List<QuestionOptionModel> getOptions() {
-    return Collections.unmodifiableList(options);
+    return ListUtils.isEmpty(options)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(options);
   }
 
-  public void setOptions(
-      List<QuestionOptionModel> options) {
-    this.options = options;
+  public void setOptions(List<QuestionOptionModel> options) {
+    this.options = new ArrayList<>();
+    this.options.addAll(options);
+  }
+
+  public List<QuestionModel> getQuestions() {
+    return ListUtils.isEmpty(questions)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(questions);
+  }
+
+  public void setQuestions(List<QuestionModel> questions) {
+    this.questions = new ArrayList<>();
+    this.questions.addAll(questions);
   }
 
   public String getCreatedById() {

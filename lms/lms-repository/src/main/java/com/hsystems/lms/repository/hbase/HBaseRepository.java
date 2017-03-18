@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase;
 
 import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
-import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.MutateLog;

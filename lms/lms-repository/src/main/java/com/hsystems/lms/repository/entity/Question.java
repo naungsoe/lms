@@ -115,6 +115,12 @@ public class Question extends Auditable implements Entity, Serializable {
         : Collections.unmodifiableList(options);
   }
 
+  public List<Question> getQuestions() {
+    return ListUtils.isEmpty(questions)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(questions);
+  }
+
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -134,9 +140,10 @@ public class Question extends Auditable implements Entity, Serializable {
   public String toString() {
     return String.format(
         "Question{id=%s, type=%s, body=%s, hint=%s, explanation=%s, "
-            + "options=%s, createdBy=%s, createdDateTime=%s, "
+            + "options=%s, questions=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, type, body, hint, explanation, StringUtils.join(options, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(questions, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

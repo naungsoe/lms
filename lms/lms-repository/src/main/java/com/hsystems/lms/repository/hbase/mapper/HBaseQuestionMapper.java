@@ -48,7 +48,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
     if (type == QuestionType.COMPOSITE) {
       options = Collections.emptyList();
-      questions = getQuestion(results, id);
+      questions = getQuestions(results, id);
 
     } else {
       options = getQuestionOptions(results, id);

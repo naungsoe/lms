@@ -58,6 +58,7 @@ public class Constants {
   public static final String SEPARATOR_MODIFIED_BY = "_mod_";
   public static final String SEPARATOR_MEMBER = "_mem_";
   public static final String SEPARATOR_SECTION = "_sec_";
+  public static final String SEPARATOR_COMPONENT = "_com_";
   public static final String SEPARATOR_QUESTION = "_que_";
   public static final String SEPARATOR_OPTION = "_opt_";
   public static final String SEPARATOR_SHARE = "_share_";

@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
@@ -11,56 +12,56 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class QuizSection implements Serializable {
+public class Section implements Serializable, Component {
 
   private static final long serialVersionUID = -8886998378935720413L;
 
   @IndexField(type = IndexFieldType.IDENTITY)
   private String id;
 
+  @IndexField(type = IndexFieldType.INTEGER)
+  private int order;
+
   @IndexField(type = IndexFieldType.STRING)
   private String instructions;
 
   @IndexField(type = IndexFieldType.LIST)
-  private List<Question> questions;
+  private List<Component> components;
 
-  QuizSection() {
+  Section() {
 
   }
 
-  public QuizSection(
+  public Section(
       String id,
+      int order,
       String instructions,
-      List<Question> questions) {
+      List<Component> components) {
 
     this.id = id;
+    this.order = order;
     this.instructions = instructions;
-    this.questions = questions;
+    this.components = components;
   }
 
+  @Override
   public String getId() {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  @Override
+  public int getOrder() {
+    return order;
   }
 
   public String getInstructions() {
     return instructions;
   }
 
-  public void setInstructions(String instructions) {
-    this.instructions = instructions;
-  }
-
-  public List<Question> getQuestions() {
-    return Collections.unmodifiableList(questions);
-  }
-
-  public void setQuestions(
-      List<Question> questions) {
-    this.questions = questions;
+  public List<Component> getComponents() {
+    return ListUtils.isEmpty(components)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(components);
   }
 
   @Override
@@ -74,14 +75,14 @@ public class QuizSection implements Serializable {
       return false;
     }
 
-    QuizSection section = (QuizSection) obj;
+    Section section = (Section) obj;
     return id.equals(section.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "QuizSection{id=%s, instructions=%s, questions=%s}",
-        id, instructions, StringUtils.join(questions, ","));
+        "Section{id=%s, order=%s, instructions=%s, components=%s}",
+        id, order, instructions, StringUtils.join(components, ","));
   }
 }

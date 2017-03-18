@@ -28,7 +28,7 @@ public class Quiz extends Auditable implements Entity, Serializable {
   private String instructions;
 
   @IndexField(type = IndexFieldType.LIST)
-  private List<QuizSection> sections;
+  private List<Section> sections;
 
   Quiz() {
 
@@ -38,7 +38,7 @@ public class Quiz extends Auditable implements Entity, Serializable {
       String id,
       String title,
       String instructions,
-      List<QuizSection> sections,
+      List<Section> sections,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -79,12 +79,12 @@ public class Quiz extends Auditable implements Entity, Serializable {
     this.instructions = instructions;
   }
 
-  public List<QuizSection> getSections() {
+  public List<Section> getSections() {
     return Collections.unmodifiableList(sections);
   }
 
   public void setSections(
-      List<QuizSection> sections) {
+      List<Section> sections) {
     this.sections = sections;
   }
 

@@ -3,12 +3,15 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.QuestionComponent;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Section;
 import com.hsystems.lms.repository.entity.ShareLogEntry;
 import com.hsystems.lms.repository.entity.User;
 
@@ -266,6 +269,10 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_SECTION);
   }
 
+  protected Predicate<Result> isComponentResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_COMPONENT);
+  }
+
   protected Predicate<Result> isQuestionResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_QUESTION);
   }
@@ -346,36 +353,104 @@ public abstract class HBaseMapper<T> {
     return getId(result, Constants.SEPARATOR_SECTION);
   }
 
+  protected String getComponentId(Result result) {
+    return getId(result, Constants.SEPARATOR_COMPONENT);
+  }
+
   protected String getQuestionId(Result result) {
     return getId(result, Constants.SEPARATOR_QUESTION);
   }
 
-  protected List<Question> getQuestion(
+  protected List<Section> getQuizSections(
+      List<Result> results, String prefix) {
+
+    List<Section> sections = new ArrayList<>();
+    results.stream().filter(isSectionResult(prefix))
+        .forEach(result -> {
+          String id = getSectionId(result);
+          String instructions = getInstructions(result);
+          List<Component> components
+              = getQuizComponents(results, id);
+          int order = getOrder(result);
+
+          Section section = new Section(
+              id,
+              order,
+              instructions,
+              components
+          );
+          sections.add(section);
+        });
+
+    return sections;
+  }
+
+  protected List<Component> getQuizComponents(
+      List<Result> results, String prefix) {
+
+    List<Component> components = new ArrayList<>();
+    results.stream().filter(isComponentResult(prefix))
+        .forEach(result -> {
+          String id = getComponentId(result);
+          int order = getOrder(result);
+          Question question = getQuestion(results, id);
+
+          Component component = new QuestionComponent(
+              id,
+              order,
+              question
+          );
+          components.add(component);
+        });
+
+    return components;
+  }
+
+  protected List<Question> getQuestions(
       List<Result> results, String prefix) {
 
     List<Question> questions = new ArrayList<>();
     results.stream().filter(isQuestionResult(prefix))
         .forEach(result -> {
-          String id = getQuestionId(result);
-          QuestionType type
-              = getType(result, QuestionType.class);
-          String body = getBody(result);
-          String hint = getHint(result);
-          String explanation = getExplanation(result);
-
-          Question question = new Question(
-              id,
-              type,
-              body,
-              hint,
-              explanation,
-              getQuestionOptions(results, id),
-              Collections.emptyList()
-          );
+          Question question = getQuestion(results, prefix);
           questions.add(question);
         });
 
     return questions;
+  }
+
+  protected Question getQuestion(
+      List<Result> results, String prefix) {
+
+    Result result = results.stream()
+        .filter(isQuestionResult(prefix)).findFirst().get();
+    String id = getQuestionId(result);
+    QuestionType type = getType(result, QuestionType.class);
+    String body = getBody(result);
+    String hint = getHint(result);
+    String explanation = getExplanation(result);
+
+    List<QuestionOption> options;
+    List<Question> childQuestions;
+
+    if (type == QuestionType.COMPOSITE) {
+      options = Collections.emptyList();
+      childQuestions = getQuestions(results, id);
+
+    } else {
+      options = getQuestionOptions(results, id);
+      childQuestions = Collections.emptyList();
+    }
+
+    return new Question(
+        id,
+        type,
+        body,
+        hint,
+        explanation,
+        options,
+        childQuestions
+    );
   }
 
   protected List<QuestionOption> getQuestionOptions(

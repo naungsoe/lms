@@ -9,7 +9,6 @@ import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
