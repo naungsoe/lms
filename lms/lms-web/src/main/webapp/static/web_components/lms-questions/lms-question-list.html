@@ -1,5 +1,8 @@
 <link rel="import" href="../lms-default.html">
 <link rel="import" href="../lms-style.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../../bower_components/paper-radio-group/paper-radio-group.html">
 
 <dom-module id="lms-question-list">
 
@@ -9,40 +12,91 @@
         @apply(--layout-vertical);
       }
 
+      iron-list {
+        --iron-list-items-container: {
+          max-width: 800px;
+          margin: auto;
+        };
+      }
+
+      paper-radio-group {
+        display: block;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-vertical-align: top;
+      }
+
+      .list-item.active {
+        z-index: 1;
+      }
+
       .question {
-        border-bottom-width: 1px;
-        border-bottom-style: solid;
-        border-bottom-color: var(--paper-grey-200);
+        @apply(--layout-horizontal);
+        background-color: white;
+        border: 1px solid var(--paper-grey-300);
+        margin: 0 0 12px 0;
         padding: 16px;
-        @apply(--layout-flex-auto);
+      }
+
+      .question .question {
+        border: 0;
+        margin: 8px 0 0 0;
+        padding: 8px;
+      }
+
+      .question-content {
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
       }
     </style>
 
-    <iron-ajax auto url="{{restUrl}}" params="{{restParams}}" method="GET"
-               handle-as="json" content-type="application/json"
-               on-response="handleResponse"></iron-ajax>
+    <iron-ajax name="listAjax" url="[[restUrl]]" params="[[queryParams]]"
+               method="GET" handle-as="json" content-type="application/json"
+               loading="{{loading}}" on-response="_handleResponse"></iron-ajax>
 
-    <iron-list items="[[questions]]" as="question">
+    <iron-list items="[[questions]]" as="question" scroll-target="document">
       <template>
-        <div class="question">
-          <template is="dom-if" if="{{_isMultipleChoice(question)}}">
-            <div class="question-body">
-              {{question.body}}
-            </div>
-            <div class="question-options">
-              <template is="dom-repeat" items="{{question.options}}" as="option">
-                <div class="question-option">
-                  {{option.body}}
-                </div>
+        <div class="list-item" on-tap="_handleItem">
+          <div class="question">
+            <div class="question-content">
+              <div class="question-body">
+                [[question.body]]
+              </div>
+              <template is="dom-if" if="[[_hasQuestions(question)]]">
+                <template is="dom-repeat" items="[[question.questions]]" as="question">
+                  <div class="question">
+                    <div class="question-body">
+                      [[question.body]]
+                    </div>
+                  </div>
+                </template>
               </template>
             </div>
             <div class="question-actions">
-              Some actions
+              <paper-menu-button horizontal-align="right">
+                <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
+                <paper-menu class="dropdown-content">
+                  <paper-item>Edit</paper-item>
+                  <paper-item>Share</paper-item>
+                  <paper-item>Delete</paper-item>
+                </paper-menu>
+              </paper-menu-button>
             </div>
-          </template>
+          </div>
         </div>
       </template>
     </iron-list>
+
+    <div class="loading-status" hidden$="[[!loading]]">
+      <paper-spinner active$="[[loading]]"></paper-spinner> Fetching questions
+    </div>
+
+    <iron-scroll-threshold name="scrollTheshold"
+                           lower-threshold="500"
+                           on-lower-threshold="_loadMore"
+                           scroll-target="document">
+    </iron-scroll-threshold>
   </template>
 
   <script>
@@ -58,30 +112,82 @@
           type: String,
           notify: true
         },
-        restParams: {
+        queryParams: {
           type: Object,
+          notify: true
+        },
+        resetList: {
+          type: Boolean,
+          notify: true
+        },
+        loading: {
+          type: Boolean,
+          notify: true
+        },
+        elapsedTime: {
+          type: Number,
+          notify: true
+        },
+        numFound: {
+          type: Number,
           notify: true
         },
         questions: {
           type: Array,
+          notify: true,
+          value: []
+        },
+        loading: {
+          type: Boolean,
           notify: true
         }
       },
 
-      _isMultipleChoice: function(question) {
-        return (question.type === 'MULTIPLE_CHOICE');
+      attached: function() {
+        this.$$('[name=listAjax]').auto = true;
       },
 
-      _isMultipleResponse: function(question) {
-        return (question.type === 'MULTIPLE_RESPONSE');
+      _handleResponse: function(event) {
+        var response = event.detail.response;
+
+        if (this.resetList) {
+          this.set('questions', []);
+        }
+
+        response.items.forEach(function(item) {
+          this.push('questions', item);
+        }, this);
+
+        this.numFound = response.numFound;
+        this.resetList = true;
+        this.$$('[name=scrollTheshold]').clearTriggers();
       },
 
-      _isComposite: function(question) {
-        return (question.type === 'COMPOSITE');
+      _loadMore: function() {
+        var offset = this.queryParams.offset;
+        var limit = this.queryParams.limit;
+        var count = (offset + 1) * limit;
+
+        if (this.numFound && (count < this.numFound)) {
+          this.resetList = false;
+          this.set('queryParams.offset', offset + 1);
+
+        } else {
+          this.$$('[name=scrollTheshold]').clearTriggers();
+        }
       },
 
-      handleResponse: function(event) {
-        this.questions = event.detail.response.entities;
+      _hasQuestions: function(question) {
+        return question.questions && (question.questions.length > 0);
+      },
+
+      _handleItem: function(event) {
+        Polymer.dom(this.root).querySelectorAll('.list-item')
+          .forEach(function(item) {
+            item.classList.remove('active');
+          });
+
+        event.currentTarget.classList.add('active');
       }
     });
   </script>

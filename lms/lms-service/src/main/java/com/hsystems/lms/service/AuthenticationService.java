@@ -56,11 +56,11 @@ public class AuthenticationService extends BaseService {
     User user = userOptional.get();
 
     if (areCredentialsCorrect(user, signInModel)) {
-      saveSuccessSignIn(user, signInModel);
+      //saveSuccessSignIn(user, signInModel);
       return Optional.of(getUserModel(user));
 
     } else {
-      saveFailSignIn(user, signInModel);
+      //saveFailSignIn(user, signInModel);
       return Optional.empty();
     }
   }
@@ -176,6 +176,8 @@ public class AuthenticationService extends BaseService {
     }
 
     User user = userOptional.get();
+    return Optional.of(getUserModel(user));
+    /*User user = userOptional.get();
     Optional<SignInLog> signInLogOptional
         = signInLogRepository.findBy(user.getId());
 
@@ -187,7 +189,7 @@ public class AuthenticationService extends BaseService {
       }
     }
 
-    return Optional.empty();
+    return Optional.empty();*/
   }
 
   @Log(LoggerType.SIGNIN)

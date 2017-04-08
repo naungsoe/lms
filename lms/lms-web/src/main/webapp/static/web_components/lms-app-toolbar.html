@@ -19,13 +19,13 @@
     </style>
 
     <app-toolbar>
-      <paper-icon-button icon="menu" on-tap="handleMenu"></paper-icon-button>
-      <h3 main-title>{{localize('titlePage')}}</h3>
+      <paper-icon-button icon="menu" on-tap="_handleMenu"></paper-icon-button>
+      <h3 main-title>[[localize('titlePage')]]</h3>
       <paper-icon-button icon="search"></paper-icon-button>
     </app-toolbar>
 
     <app-drawer name="drawerMain" swipe-open>
-      <lms-app-nav language="{{language}}" locale-url="{{localeUrl}}"></lms-app-nav>
+      <lms-app-nav language="[[language]]" locale-url="[[localeUrl]]"></lms-app-nav>
     </app-drawer>
   </template>
 
@@ -38,7 +38,7 @@
         LMS.LocaleBehavior
       ],
 
-      handleMenu: function(event) {
+      _handleMenu: function(event) {
         this.$$('[name=drawerMain]').toggle();
       }
     });

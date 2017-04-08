@@ -79,12 +79,20 @@ public class QuestionService extends BaseService {
         = indexRepository.findAllBy(query, Question.class);
 
     if (queryResult.getItems().isEmpty()) {
-      return new QueryResult<>(queryResult.getElapsedTime(),
-          Collections.emptyList());
+      return new QueryResult<>(
+          queryResult.getElapsedTime(),
+          query.getOffset(),
+          query.getLimit(),
+          Collections.emptyList()
+      );
     }
 
-    return new QueryResult<>(queryResult.getElapsedTime(),
-        getQuestionModels(queryResult.getItems(), configuration));
+    return new QueryResult<>(
+        queryResult.getElapsedTime(),
+        queryResult.getStart(),
+        queryResult.getNumFound(),
+        getQuestionModels(queryResult.getItems(), configuration)
+    );
   }
 
   private List<QuestionModel> getQuestionModels(

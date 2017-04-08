@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Created by naungsoe on 3/11/16.
  */
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
-public class QuestionModel implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class QuestionModel extends AuditableModel implements Serializable {
 
   private static final long serialVersionUID = 553257369714695546L;
 
@@ -29,22 +29,6 @@ public class QuestionModel implements Serializable {
   private List<QuestionOptionModel> options;
 
   private List<QuestionModel> questions;
-
-  private String createdById;
-
-  private String createdByFirstName;
-
-  private String createdByLastName;
-
-  private String createdDateTime;
-
-  private String modifiedById;
-
-  private String modifiedByFirstName;
-
-  private String modifiedByLastName;
-
-  private String modifiedDateTime;
 
   public QuestionModel() {
 
@@ -110,69 +94,5 @@ public class QuestionModel implements Serializable {
   public void setQuestions(List<QuestionModel> questions) {
     this.questions = new ArrayList<>();
     this.questions.addAll(questions);
-  }
-
-  public String getCreatedById() {
-    return createdById;
-  }
-
-  public void setCreatedById(String createdById) {
-    this.createdById = createdById;
-  }
-
-  public String getCreatedByFirstName() {
-    return createdByFirstName;
-  }
-
-  public void setCreatedByFirstName(String createdByFirstName) {
-    this.createdByFirstName = createdByFirstName;
-  }
-
-  public String getCreatedByLastName() {
-    return createdByLastName;
-  }
-
-  private void setCreatedByLastName(String createdByLastName) {
-    this.createdByLastName = createdByLastName;
-  }
-
-  public String getCreatedDateTime() {
-    return createdDateTime;
-  }
-
-  public void setCreatedDateTime(String createdDateTime) {
-    this.createdDateTime = createdDateTime;
-  }
-
-  public String getModifiedById() {
-    return modifiedById;
-  }
-
-  public void setModifiedById(String modifiedById) {
-    this.modifiedById = modifiedById;
-  }
-
-  public String getModifiedByFirstName() {
-    return modifiedByFirstName;
-  }
-
-  public void setModifiedByFirstName(String modifiedByFirstName) {
-    this.modifiedByFirstName = modifiedByFirstName;
-  }
-
-  public String getModifiedByLastName() {
-    return modifiedByLastName;
-  }
-
-  public void setModifiedByLastName(String modifiedByLastName) {
-    this.modifiedByLastName = modifiedByLastName;
-  }
-
-  public String getModifiedDateTime() {
-    return modifiedDateTime;
-  }
-
-  public void setModifiedDateTime(String modifiedDateTime) {
-    this.modifiedDateTime = modifiedDateTime;
   }
 }

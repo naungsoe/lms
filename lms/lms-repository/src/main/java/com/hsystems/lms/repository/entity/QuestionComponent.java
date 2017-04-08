@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -12,13 +11,13 @@ public class QuestionComponent implements Serializable, Component {
 
   private static final long serialVersionUID = -8886998378935720413L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.INTEGER)
+  @IndexField
   private int order;
 
-  @IndexField(type = IndexFieldType.OBJECT)
+  @IndexField
   private Question question;
 
   QuestionComponent() {

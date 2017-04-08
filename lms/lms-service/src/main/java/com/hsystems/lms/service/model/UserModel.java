@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.ListUtils;
 
@@ -11,7 +12,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class UserModel implements Principal, Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class UserModel
+    extends AuditableModel implements Principal, Serializable {
 
   private static final long serialVersionUID = -8222871542135593721L;
 
@@ -39,10 +42,6 @@ public class UserModel implements Principal, Serializable {
 
   private List<String> permissions;
 
-  private String schoolId;
-
-  private String schoolName;
-
   private List<GroupModel> groups;
 
   UserModel() {
@@ -62,8 +61,6 @@ public class UserModel implements Principal, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<String> permissions,
-      String schoolId,
-      String schoolName,
       List<GroupModel> groups) {
 
     this.id = id;
@@ -78,8 +75,6 @@ public class UserModel implements Principal, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
-    this.schoolId = schoolId;
-    this.schoolName = schoolName;
     this.groups = groups;
   }
 
@@ -180,22 +175,6 @@ public class UserModel implements Principal, Serializable {
   public void setPermissions(List<String> permissions) {
     this.permissions = new ArrayList<>();
     this.permissions.addAll(permissions);
-  }
-
-  public String getSchoolId() {
-    return schoolId;
-  }
-
-  public void setSchoolId(String schoolId) {
-    this.schoolId = schoolId;
-  }
-
-  public String getSchoolName() {
-    return schoolName;
-  }
-
-  public void setSchoolName(String schoolName) {
-    this.schoolName = schoolName;
   }
 
   public List<GroupModel> getGroups() {

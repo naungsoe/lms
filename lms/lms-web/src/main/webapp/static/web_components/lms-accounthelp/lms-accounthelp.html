@@ -32,15 +32,17 @@
     <app-header fixed effects="waterfall">
       <app-toolbar>
         <h3 main-title>{{localize('titlePage')}}</h3>
-        <paper-button on-tap="handleSignIn" raised>{{localize('buttonSignIn')}}</paper-button>
+        <paper-button on-tap="_handleSignIn">
+          [[localize('buttonSignIn')]]
+        </paper-button>
       </app-toolbar>
     </app-header>
 
     <div main-content>
-      <form id="formAccountHelp" method="post" actionType="{{accountHelpUrl}}" flex-vertical>
+      <form id="formAccountHelp" method="post" actionType="[[accountHelpUrl]]" flex-vertical>
         <div class="form-content" flex-horizontal>
           <section class="issues" flex-auto>
-            <h4 title>{{localize('labelIssues')}}</h4>
+            <h4 title>[[localize('labelIssues')]]</h4>
             <paper-radio-group>
               <paper-radio-button name="id">Forgot my id</paper-radio-button>
               <paper-radio-button name="password">Forgot my password</paper-radio-button>
@@ -48,7 +50,9 @@
           </section>
         </div>
         <div class="form-actions" hidden>
-          <paper-button on-tap="handleRecoverAccount" raised>{{localize('buttonRecoverAccount')}}</paper-button>
+          <paper-button on-tap="_handleRecover" raised>
+            [[localize('buttonRecoverAccount')]]
+          </paper-button>
         </div>
       </form>
     </div>
@@ -74,7 +78,7 @@
         }
       },
 
-      handleSignIn: function(event) {
+      _handleSignIn: function(event) {
         window.location = this.signInUrl;
       }
     });

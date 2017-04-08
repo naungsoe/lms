@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -12,19 +11,19 @@ public class QuestionOption implements Serializable {
 
   private static final long serialVersionUID = -4444753561145528740L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String body;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String feedback;
 
-  @IndexField(type = IndexFieldType.BOOLEAN)
+  @IndexField
   private boolean correct;
 
-  @IndexField(type = IndexFieldType.INTEGER)
+  @IndexField
   private int order;
 
   QuestionOption() {

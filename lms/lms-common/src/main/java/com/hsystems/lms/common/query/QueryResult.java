@@ -11,15 +11,31 @@ public class QueryResult<T> {
 
   private long elapsedTime;
 
+  private long start;
+
+  private long numFound;
+
   private List<T> items;
 
-  public QueryResult(long elapsedTime, List<T> items) {
+  public QueryResult(
+      long elapsedTime, long start, long numFound, List<T> items) {
+
     this.elapsedTime = elapsedTime;
+    this.start = start;
+    this.numFound = numFound;
     this.items = items;
   }
 
   public long getElapsedTime() {
     return elapsedTime;
+  }
+
+  public long getStart() {
+    return start;
+  }
+
+  public long getNumFound() {
+    return numFound;
   }
 
   public List<T> getItems() {
@@ -31,6 +47,8 @@ public class QueryResult<T> {
     int prime = 31;
     int result = 0;
     result = result * prime + Long.hashCode(elapsedTime);
+    result = result * prime + Long.hashCode(start);
+    result = result * prime + Long.hashCode(numFound);
 
     for (T item : items) {
       result = result * prime + item.hashCode();
@@ -52,13 +70,15 @@ public class QueryResult<T> {
         .count();
 
     return (elapsedTime == queryResult.getElapsedTime())
+        && (start == queryResult.getStart())
+        && (numFound == queryResult.getNumFound())
         && (items.size() == itemCount);
   }
 
   @Override
   public String toString() {
     return String.format(
-        "QueryResult{elapsedTime=%s, entities=%s}",
-        elapsedTime, StringUtils.join(items, ","));
+        "QueryResult{elapsedTime=%s, start=%s, numFound=%s, entities=%s}",
+        elapsedTime, start, numFound, StringUtils.join(items, ","));
   }
 }

@@ -30,6 +30,8 @@ public class HBaseClient {
 
   private Configuration configuration;
 
+  private volatile Connection connection;
+
   public HBaseClient() {
     configuration = HBaseConfiguration.create();
   }
@@ -37,14 +39,35 @@ public class HBaseClient {
   public <T> Result get(Get get, Class<T> type)
       throws IOException {
 
-    try (Connection connection
-             = ConnectionFactory.createConnection(configuration)) {
+    Table table = getTable(getTableName(type));
+    Result result = table.get(get);
+    table.close();
+    return result;
+  }
 
-      Table table = connection.getTable(getTableName(type));
-      Result result = table.get(get);
-      table.close();
-      return result;
+  private Connection getConnection()
+      throws IOException {
+
+    Connection instance = connection;
+
+    if (instance == null) {
+      synchronized (this) {
+        instance = connection;
+
+        if (instance == null) {
+          connection = ConnectionFactory.createConnection(configuration);
+          instance = connection;
+        }
+      }
     }
+
+    return instance;
+  }
+
+  private Table getTable(TableName tableName)
+      throws IOException {
+
+    return getConnection().getTable(tableName);
   }
 
   private <T> TableName getTableName(Class<T> type) {
@@ -57,27 +80,23 @@ public class HBaseClient {
   public <T> List<Result> scan(Scan scan, Class<T> type)
       throws IOException {
 
-    try (Connection connection
-             = ConnectionFactory.createConnection(configuration)) {
+    Table table = getTable(getTableName(type));
+    ResultScanner scanner = table.getScanner(scan);
+    Iterator<Result> iterator = scanner.iterator();
 
-      Table table = connection.getTable(getTableName(type));
-      ResultScanner scanner = table.getScanner(scan);
-      Iterator<Result> iterator = scanner.iterator();
-
-      if (!iterator.hasNext()) {
-        return Collections.emptyList();
-      }
-
-      List<Result> results = new ArrayList<>();
-
-      while (iterator.hasNext()) {
-        results.add(iterator.next());
-      }
-
-      scanner.close();
-      table.close();
-      return results;
+    if (!iterator.hasNext()) {
+      return Collections.emptyList();
     }
+
+    List<Result> results = new ArrayList<>();
+
+    while (iterator.hasNext()) {
+      results.add(iterator.next());
+    }
+
+    scanner.close();
+    table.close();
+    return results;
   }
 
   public <T> void put(Put put, Class<T> type)
@@ -89,13 +108,9 @@ public class HBaseClient {
   public <T> void put(List<Put> puts, Class<T> type)
       throws IOException {
 
-    try (Connection connection
-             = ConnectionFactory.createConnection(configuration)) {
-
-      Table table = connection.getTable(getTableName(type));
-      table.put(puts);
-      table.close();
-    }
+    Table table = getTable(getTableName(type));
+    table.put(puts);
+    table.close();
   }
 
   public <T> void delete(Delete delete, Class<T> type)
@@ -107,12 +122,8 @@ public class HBaseClient {
   public <T> void delete(List<Delete> deletes, Class<T> type)
       throws IOException {
 
-    try (Connection connection
-             = ConnectionFactory.createConnection(configuration)) {
-
-      Table table = connection.getTable(getTableName(type));
-      table.delete(deletes);
-      table.close();
-    }
+    Table table = getTable(getTableName(type));
+    table.delete(deletes);
+    table.close();
   }
 }

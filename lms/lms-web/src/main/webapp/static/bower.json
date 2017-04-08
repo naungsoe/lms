@@ -19,6 +19,11 @@
     "paper-radio-group": "PolymerElements/paper-radio-group#^1.0.10",
     "paper-radio-button": "PolymerElements/paper-radio-button#^1.0.10",
     "quill-element": "^0.0.6",
-    "paper-fab": "PolymerElements/paper-fab#^1.2.1"
+    "paper-fab": "PolymerElements/paper-fab#^1.2.1",
+    "paper-toolbar": "PolymerElements/paper-toolbar#^1.1.7",
+    "iron-scroll-threshold": "PolymerElements/iron-scroll-threshold#^1.0.3",
+    "paper-spinner": "PolymerElements/paper-spinner#^1.2.1",
+    "iron-collapse": "PolymerElements/iron-collapse#^1.3.0",
+    "paper-chip": "WebPaperElements/paper-chip#^1.0.11"
   }
 }

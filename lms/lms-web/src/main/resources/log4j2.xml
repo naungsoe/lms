@@ -27,5 +27,4 @@
       <AppenderRef ref="SIGNIN"/>
     </Logger>
   </Loggers>
-
 </Configuration>

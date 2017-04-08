@@ -15,17 +15,21 @@
       }
 
       app-header {
+        background-color: var(--paper-teal-500);
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 64px;
-        color: var(--paper-grey-50);
-        background-color: var(--paper-teal-500);
+        z-index: 2;
       }
 
       app-header[nav] {
-        height: 112px;
+        height: 64px;
+      }
+
+      app-drawer {
+        z-index: 3;
       }
 
       app-toolbar {
@@ -33,26 +37,31 @@
       }
 
       app-toolbar [main-title] {
-        padding: 0 16px;
         @apply(--paper-font-headline);
+        color: white;
+        padding: 0 16px;
       }
 
       app-toolbar paper-button {
-        color: var(--paper-grey-900);
-        background-color: var(--paper-grey-50);
+        background-color: white;
+      }
+
+      app-toolbar paper-icon-button {
+        color: white;
       }
 
       app-toolbar paper-input-container {
+        background-color: white;
         padding: 0;
-        background-color: var(--paper-grey-50);
       }
 
-      app-toolbar paper-input-container paper-icon-button {
-        color: var(--paper-grey-900);
+      paper-toolbar {
+        --paper-toolbar-background: var(--paper-grey-50);
+        --paper-toolbar-color: var(--paper-grey-700);
       }
 
       paper-tabs {
-        --paper-tabs-selection-bar-color: var(--paper-grey-50);
+        --paper-tabs-selection-bar-color: var(--paper-grey-500);
         --paper-tabs: {
           height: 48px;
         };
@@ -67,24 +76,22 @@
 
       paper-card {
         --paper-card-header-text: {
-          color: var(--paper-grey-50);
           background-color: var(--paper-teal-500);
+          color: white;
         };
       }
 
-      paper-card[signin] {
+      paper-card[sign-in] {
         --paper-card-header-text: {
-          color: var(--paper-grey-50);
-          background-color: var(--paper-teal-500);
           @apply(--paper-font-headline);
+          background-color: var(--paper-teal-500);
+          color: white;
         };
       }
 
-      paper-card[question] {
-        --paper-card-header-text: {
-          color: var(--paper-grey-900);
-          background-color: var(--paper-grey-100);
-        };
+      paper-card[sign-in] paper-button.primary {
+        background-color: var(--paper-teal-500);
+        color: white;
       }
 
       paper-input,
@@ -127,19 +134,28 @@
         };
       }
 
-      paper-button {
-        @apply(--paper-font-body1);
+      paper-toolbar paper-icon-button {
+        color: var(--paper-grey-700);
       }
 
-      paper-button.link {
-        color: var(--paper-blue-500);
+      paper-menu-button {
+        padding: 0;
+      }
+
+      paper-menu-button paper-icon-button {
+        color: var(--paper-grey-700);
+      }
+
+      paper-button {
+        @apply(--paper-font-body1);
+        color: var(--paper-teal-500);
       }
 
       paper-fab {
         --paper-fab-background: var(--paper-teal-500);
         --paper-fab-keyboard-focus-background: var(--paper-teal-500);
         --paper-fab-disabled-background: var(--paper-teal-500);
-        color: var(--paper-grey-50);
+        color: white;
       }
 
       paper-fab[add] {
@@ -148,13 +164,25 @@
         bottom: 24px;
       }
 
+      iron-selector > * {
+        border: 1px solid var(--paper-grey-300);
+        border-radius: 16px;
+        cursor: default;
+        margin: 4px;
+        padding: 8px 12px;
+      }
+
+      iron-selector .iron-selected {
+        background-color: var(--paper-grey-300);
+      }
+
       form .form-content section {
         margin: 0;
       }
 
       form .form-content section [title] {
-        margin: 0;
         @apply(--paper-font-subhead);
+        margin: 0;
       }
 
       form .form-actions {
@@ -172,14 +200,35 @@
 
       [flex-vertical] {
         @apply(--layout-vertical);
+        @apply(--layout-flex);
       }
 
       [flex-auto] {
         @apply(--layout-flex-auto);
       }
 
+      [justified-end] {
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
+
       [main-content] {
         padding-top: 64px;
+      }
+
+      [filter-list] .filter-content {
+        max-width: 320px;
+        padding: 16px;
+      }
+
+      [filter-list] .filter-content .title {
+        @apply(--paper-font-subhead);
+        margin: 0 0 8px 0;
+      }
+
+      [filter-list] .filter-actions {
+        margin: 0 0 16px 0;
+        padding: 5px 16px;
       }
 
       .error {

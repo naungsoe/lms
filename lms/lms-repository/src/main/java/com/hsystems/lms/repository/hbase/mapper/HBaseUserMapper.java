@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -39,11 +38,6 @@ public class HBaseUserMapper extends HBaseMapper<User> {
     String dateTimeFormat = getDateTimmeFormat(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
 
-
-    Result schoolResult = results.stream()
-        .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
-
     List<Group> groups = new ArrayList<>();
     results.stream().filter(isGroupResult(id))
         .forEach(groupResult -> {
@@ -78,7 +72,6 @@ public class HBaseUserMapper extends HBaseMapper<User> {
         dateFormat,
         dateTimeFormat,
         permissions,
-        school,
         groups,
         createdBy,
         createdDateTime,

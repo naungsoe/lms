@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
@@ -18,16 +17,16 @@ public class Quiz extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 645532833693995164L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.TEXT_GENERAL)
+  @IndexField
   private String title;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String instructions;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<Section> sections;
 
   Quiz() {

@@ -6,10 +6,8 @@ package com.hsystems.lms.common.query;
 public enum Operator {
 
   EQUAL,
-  NOTEQUAL,
-  GREATERTHAN,
-  GREATETHANEQUAL,
-  LESSTHAN,
-  LESSTHANEQUAL,
+  NOT_EQUAL,
+  GREATER_THAN_EQUAL,
+  LESS_THAN_EQUAL,
   LIKE
 }

@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
@@ -18,52 +17,49 @@ public class User extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = -3039577050861410422L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String account;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String password;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String salt;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String firstName;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String lastName;
 
-  @IndexField(type = IndexFieldType.DATETIME)
+  @IndexField
   private LocalDateTime dateOfBirth;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String gender;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String mobile;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String email;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String locale;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String dateFormat;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String dateTimeFormat;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<Permission> permissions;
 
-  @IndexField(type = IndexFieldType.OBJECT)
-  private School school;
-
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<Group> groups;
 
   User() {
@@ -95,7 +91,6 @@ public class User extends Auditable implements Entity, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
-      School school,
       List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -116,7 +111,6 @@ public class User extends Auditable implements Entity, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
-    this.school = school;
     this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
@@ -181,10 +175,6 @@ public class User extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
-  public School getSchool() {
-    return school;
-  }
-
   public List<Group> getGroups() {
     return Collections.unmodifiableList(groups);
   }
@@ -210,13 +200,12 @@ public class User extends Auditable implements Entity, Serializable {
         "School{id=%s, account=%s, password=%s, salt=%s, firstName=%s, "
             + "lastName=%s, dateOfBirth=%s, gender=%s, "
             + "mobile=%s, email=%s, locale=%s, dateFormat=%s, "
-            + "dateTimeFormat=%s, permissions=%s, school=%s, groups=%s, "
+            + "dateTimeFormat=%s, permissions=%s, groups=%s, "
             + "createdBy=%s, createdDateTime=%s, modifiedBy=%s, "
             + "modifiedDateTime=%s}",
         id, account, password, salt, firstName, lastName, dateOfBirth,
         gender, mobile, email, locale, dateFormat, dateTimeFormat,
-        StringUtils.join(permissions, ","), school,
-        StringUtils.join(groups, ","), createdBy, createdDateTime,
-        modifiedBy, modifiedDateTime);
+        StringUtils.join(permissions, ","), StringUtils.join(groups, ","),
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

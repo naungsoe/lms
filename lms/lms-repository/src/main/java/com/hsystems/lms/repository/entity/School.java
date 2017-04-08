@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
@@ -18,30 +17,26 @@ public class School extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.TEXT_WHITE_SPACE)
+  @IndexField
   private String name;
 
+  @IndexField
   private String locale;
 
+  @IndexField
   private String dateFormat;
 
+  @IndexField
   private String dateTimeFormat;
 
+  @IndexField
   private List<Permission> permissions;
 
   School() {
 
-  }
-
-  public School(
-      String id,
-      String name) {
-
-    this.id = id;
-    this.name = name;
   }
 
   public School(

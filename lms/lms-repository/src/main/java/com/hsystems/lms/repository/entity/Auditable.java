@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.time.LocalDateTime;
@@ -10,16 +9,16 @@ import java.time.LocalDateTime;
  */
 public abstract class Auditable implements Entity {
 
-  @IndexField(type = IndexFieldType.OBJECT)
+  @IndexField
   protected User createdBy;
 
-  @IndexField(type = IndexFieldType.DATETIME)
+  @IndexField
   protected LocalDateTime createdDateTime;
 
-  @IndexField(type = IndexFieldType.OBJECT)
+  @IndexField
   protected User modifiedBy;
 
-  @IndexField(type = IndexFieldType.DATETIME)
+  @IndexField
   protected LocalDateTime modifiedDateTime;
 
   public User getCreatedBy() {

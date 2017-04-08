@@ -1,5 +1,13 @@
 package com.hsystems.lms.common.query;
 
+import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * Created by naungsoe on 10/8/16.
  */
@@ -9,46 +17,40 @@ public class Criterion {
 
   private String field;
 
-  private Object value;
+  private List<Object> values;
+
+  Criterion() {
+
+  }
 
   public Criterion(
-      Operator operator, String field, Object value) {
+      Operator operator, String field, Object[] values) {
 
     this.operator = operator;
     this.field = field;
-    this.value = value;
+    this.values = Arrays.asList(values);
   }
 
-  public static Criterion createEqual(String field, Object value) {
-    return new Criterion(Operator.EQUAL, field, value);
+  public static Criterion createEqual(String field, Object... values) {
+    return new Criterion(Operator.EQUAL, field, values);
   }
 
-  public static Criterion createNotEqual(String field, Object value) {
-    return new Criterion(Operator.NOTEQUAL, field, value);
+  public static Criterion createNotEqual(String field, Object... values) {
+    return new Criterion(Operator.NOT_EQUAL, field, values);
   }
 
-  public static Criterion createGreaterThan(String field, Object value) {
-    return new Criterion(Operator.GREATERTHAN, field, value);
+  public static Criterion createGreaterThanEqual(
+      String field, Object... values) {
+
+    return new Criterion(Operator.GREATER_THAN_EQUAL, field, values);
   }
 
-  public static Criterion createGreaterThanEqual(String field, Object value) {
-    return new Criterion(Operator.GREATETHANEQUAL, field, value);
+  public static Criterion createLessThanEqual(String field, Object... values) {
+    return new Criterion(Operator.LESS_THAN_EQUAL, field, values);
   }
 
-  public static Criterion createLessThan(String field, Object value) {
-    return new Criterion(Operator.LESSTHAN, field, value);
-  }
-
-  public static Criterion createLessThanEqual(String field, Object value) {
-    return new Criterion(Operator.LESSTHANEQUAL, field, value);
-  }
-
-  public static Criterion createLike(String field, Object value) {
-    return new Criterion(Operator.LIKE, field, value);
-  }
-
-  public static Criterion createEmpty() {
-    return new Criterion(null, "", null);
+  public static Criterion createLike(String field, Object... values) {
+    return new Criterion(Operator.LIKE, field, values);
   }
 
   public Operator getOperator() {
@@ -67,12 +69,14 @@ public class Criterion {
     this.field = field;
   }
 
-  public Object getValue() {
-    return value;
+  public List<Object> getValues() {
+    return ListUtils.isEmpty(values)
+        ? Collections.emptyList() : Collections.unmodifiableList(values);
   }
 
-  public void setValue(Object value) {
-    this.value = value;
+  public void setValues(List<Object> values) {
+    this.values = new ArrayList();
+    this.values.addAll(values);
   }
 
   @Override
@@ -80,7 +84,7 @@ public class Criterion {
     int prime = 31;
     int result = operator.hashCode();
     result = result * prime + field.hashCode();
-    return result * prime + value.hashCode();
+    return result * prime + values.hashCode();
   }
 
   @Override
@@ -92,13 +96,13 @@ public class Criterion {
     Criterion criterion = (Criterion) obj;
     return operator.equals(criterion.getOperator())
         && field.equals(criterion.getField())
-        && value.equals(criterion.getValue());
+        && values.equals(criterion.getValues());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "Criterion{operator=%s, field=%s, value=%s}",
-        operator, field, value);
+        "Criterion{operator=%s, field=%s, values=%s}",
+        operator, field, StringUtils.join(values, " "));
   }
 }

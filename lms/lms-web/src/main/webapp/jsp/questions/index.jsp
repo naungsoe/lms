@@ -10,7 +10,11 @@
   <title><c:out value="${titlePage}"/></title>
 </head>
 <body>
-  <lms-questions language="<c:out value="${locale}"/>"
+  <lms-questions user-id="<c:out value="${userModel.id}"/>"
+            account="<c:out value="${userModel.account}"/>"
+            first-name="<c:out value="${userModel.firstName}"/>"
+            last-name="<c:out value="${userModel.lastName}"/>"
+            language="<c:out value="${locale}"/>"
             locale-url="<c:url value="${localeUrl}"/>"
             rest-url="<c:url value="${restUrl}"/>"></lms-questions>
 </body>

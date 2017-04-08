@@ -104,7 +104,7 @@ public class AuthenticationFilter
 
     if (userModelOptional.isPresent()) {
       UserModel userModel = userModelOptional.get();
-      authenticationService.saveSignIn(signInModel, userModel);
+      //authenticationService.saveSignIn(signInModel, userModel);
       createUserSession(request, response, userModel);
     }
   }

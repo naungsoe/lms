@@ -8,9 +8,9 @@
 
     </style>
 
-    <iron-ajax auto2 url="{{restUrl}}" body="{{restBody}}" method="POST"
+    <iron-ajax auto2 url="[[restUrl]]" body="[[restBody]]" method="POST"
                handle-as="json" content-type="application/json"
-               on-response="handleResponse"></iron-ajax>
+               on-response="_handleResponse"></iron-ajax>
   </template>
 
   <script>
@@ -32,7 +32,7 @@
         }
       },
 
-      handleResponse: function(event) {
+      _handleResponse: function(event) {
 
       }
     });

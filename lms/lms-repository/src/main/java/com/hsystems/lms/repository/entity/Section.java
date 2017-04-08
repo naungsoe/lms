@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.StringUtils;
@@ -16,16 +15,16 @@ public class Section implements Serializable, Component {
 
   private static final long serialVersionUID = -8886998378935720413L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.INTEGER)
+  @IndexField
   private int order;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String instructions;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<Component> components;
 
   Section() {

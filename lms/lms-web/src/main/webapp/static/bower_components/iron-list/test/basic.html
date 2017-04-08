@@ -22,11 +22,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="trivialList">
-  <template>
-    <x-list></x-list>
-  </template>
-</test-fixture>
+  <test-fixture id="trivialList">
+    <template>
+      <x-list></x-list>
+    </template>
+  </test-fixture>
 
 <script>
 
@@ -44,6 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       assert.equal(list.indexAs, 'index', 'indexAs');
       assert.equal(list.selectedAs, 'selected', 'selectedAs');
       assert.equal(list.scrollTarget, list, 'scrollTarget');
+      assert.equal(list.scrollOffset, 0, 'scrollOffset');
       assert.isFalse(list.selectionEnabled, 'selectionEnabled');
       assert.isFalse(list.multiSelection, 'multiSelection');
     });
@@ -298,7 +299,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     });
 
   });
-
 </script>
 
 </body>

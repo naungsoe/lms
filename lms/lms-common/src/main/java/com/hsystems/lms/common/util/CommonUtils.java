@@ -38,7 +38,7 @@ public class CommonUtils {
 
   public static String genUniqueKey() {
     String uuid = UUID.randomUUID().toString();
-    return SecurityUtils.getMD5Hash(uuid, null);
+    return uuid.replaceAll("-", "");
   }
 
   public static String getHex(byte[] bytes) {

@@ -59,6 +59,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       z-index: 1;
     }
 
+    .header {
+      height: 100px;
+      background-color: blue;
+    }
+
     .wrapper .count {
       background-color: red;
       position: absolute;
@@ -76,10 +81,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     .wrapper iron-list {
       position: absolute;
-      top: 0;
+      top: 100px;
       left: 0;
       right: 0;
       bottom: 0;
+    }
+
+    iron-list::before {
+      position: absolute;
+      top: -100px;
+      left: 0px;
+      right: 0px;
+      background-color: blue;
+      height: 100px;
+      color: white;
+      content: 'HEADER';
     }
 
     .group {
@@ -90,38 +106,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       height: 1000vh;
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<template is="dom-bind">
-  <h1>debuging</h1>
-  <div class="group">
-    <p>100 items, 50px tall</p>
-    <div class="wrapper">
-      <div id="scroller">
-        <div class="fake-content"></div>
-      </div>
-      <iron-list id="list1" as="item" items="[[items]]" scroll-target="scroller">
-        <template>
-          <div class="item" style$="[[_getStyle(item)]]"><span>[[index]]</span> height: <span>[[item]]</span>
-            <div>
-              <paper-button raised>Test</paper-button>
-              <paper-button raised>Test</paper-button>
-              <paper-button raised>Test</paper-button>
-              <paper-button raised>Test</paper-button>
-            </div>
+  <template is="dom-bind">
+    <h1>debuging</h1>
+    <div class="group">
+      <p>100 items, 50px tall</p>
+      <div class="wrapper">
+          <div id="scroller">
+            <div class="fake-content"></div>
           </div>
-        </template>
-      </iron-list>
+          <iron-list id="list1" as="item" items="[[items]]" scroll-target="scroller" scroll-offset="100">
+            <template>
+              <div class="item" style$="[[_getStyle(item)]]"><span>[[index]]</span> height: <span>[[item]]</span>
+              <div>
+                <paper-button raised>Test</paper-button>
+                <paper-button raised>Test</paper-button>
+                <paper-button raised>Test</paper-button>
+                <paper-button raised>Test</paper-button>
+              </div>
+              </div>
+            </template>
+          </iron-list>
 
+      </div>
     </div>
-  </div>
-</template>
+  </template>
 
-<script>
+  <script>
     function arrayFill(size, value) {
       return (new Array(size)).fill(value, 0, size);
     }
@@ -154,12 +169,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         var scroller = document.querySelector('#scroller');
         scroller.addEventListener('scroll', function() {
-          list1.style.top = (-scroller.scrollTop) + 'px';
+          list1.style.top = (-scroller.scrollTop+100) + 'px';
         });
       });
 
     });
-
-</script>
+  </script>
 </body>
 </html>

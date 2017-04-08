@@ -25,9 +25,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       iron-list {
         overflow: hidden;
       }
-
     </style>
-
+    
     <iron-list style$="[[_computedListSize(listSize)]]" items="[[data]]" as="item" id="list" grid>
       <template>
         <div class="item">
@@ -78,5 +77,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return 'height: ' + (listHeight) + 'px;' + 'width: ' + (listHeight) + 'px;';
     }
   });
-
 </script>

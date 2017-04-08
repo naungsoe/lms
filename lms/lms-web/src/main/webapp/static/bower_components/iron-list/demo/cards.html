@@ -128,44 +128,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       @apply(--layout-flex);
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<template is="dom-bind">
-  <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
+  <template is="dom-bind">
+    <iron-ajax url="data/contacts.json" last-response="{{data}}" auto></iron-ajax>
 
-  <app-header condenses fixed effects="resize-title blend-background waterfall">
-    <app-toolbar>
-      <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-      <h4 condensed-title>iron-list <i>&mdash; Demo</i></h4>
-      <paper-icon-button icon="search"></paper-icon-button>
-      <paper-icon-button icon="more-vert"></paper-icon-button>
-    </app-toolbar>
-    <app-toolbar class="tall">
-      <h1 main-title>iron-list</h1>
-    </app-toolbar>
-  </app-header>
+      <app-header condenses fixed effects="resize-title blend-background waterfall">
+        <app-toolbar>
+          <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+          <h4 condensed-title>iron-list <i>&mdash; Demo</i></h4>
+          <paper-icon-button icon="search"></paper-icon-button>
+          <paper-icon-button icon="more-vert"></paper-icon-button>
+        </app-toolbar>
+        <app-toolbar class="tall">
+          <h1 main-title>iron-list</h1>
+        </app-toolbar>
+      </app-header>
 
-  <!-- iron-list using the document scroll -->
-  <iron-list items="[[data]]" as="item" scroll-target="html">
-    <template>
-      <div>
-        <div class="item" tabindex$="[[tabIndex]]">
-          <iron-image class="avatar" sizing="contain" src="[[item.image]]"></iron-image>
-          <div class="pad">
-            <div class="primary">[[item.name]] [[index]]</div>
-            <div class="secondary">[[item.shortText]]</div>
-            <div class="secondary dim">[[item.longText]]</div>
+      <!-- iron-list using the document scroll -->
+      <iron-list items="[[data]]" as="item" scroll-target="html">
+        <template>
+          <div>
+            <div class="item" tabindex$="[[tabIndex]]">
+              <iron-image class="avatar" sizing="contain" src="[[item.image]]"></iron-image>
+              <div class="pad">
+                <div class="primary">[[item.name]] [[index]]</div>
+                <div class="secondary">[[item.shortText]]</div>
+                <div class="secondary dim">[[item.longText]]</div>
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
-    </template>
-  </iron-list>
+        </template>
+      </iron-list>
 
-</template>
+  </template>
 
 </body>
 </html>

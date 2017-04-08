@@ -16,10 +16,17 @@ import java.util.regex.Pattern;
  */
 public class Query {
 
-  private static final String PARAM_PATTERN
-      = "([a-z0-9]*)(=|!=|>|>=|<|<=|%=)(.*)";
-
-  private static final String SORT_PATTERN = "(\\+|\\-)(.*)";
+  private static final String PARAM_PATTERN = "([a-zA-Z0-9]*)=([^\\&]*)";
+  private static final String FILTER_PATTERN
+      = "([a-zA-Z0-9\\.]*):([a-zA-Z0-9\\_\\s\\'\\\"]*)(\\s|$)";
+  private static final String SORT_PATTERN = "([a-zA-Z0-9]*)\\s([a-zA-Z]*)";
+  private static final String EQUAL_PATTERN = "MUST\\s(.*)";
+  private static final String NOT_EQUAL_PATTERN = "NOT\\s(.*)";
+  private static final String GREATER_THAN_EQUAL_PATTERN
+      = "FROM\\s([a-zA-Z0-9]*)\\sTO\\s\\*";
+  private static final String LESS_THAN_EQUAL_PATTERN
+      = "FROM\\s\\*\\sTO\\s([a-zA-Z0-9]*)";
+  private static final String LIKE_PATTERN = "LIKE\\s(.*)";
 
   private List<String> fields;
 
@@ -27,13 +34,14 @@ public class Query {
 
   private List<SortKey> sortKeys;
 
-  private int offset;
+  private long offset;
 
-  private int limit;
+  private long limit;
 
   Query() {
     this.fields = new ArrayList<>();
     this.criteria = new ArrayList<>();
+    this.sortKeys =  new ArrayList<>();
     this.offset = 0;
     this.limit = 10;
   }
@@ -49,41 +57,125 @@ public class Query {
       return query;
     }
 
-    String[] params = queryString.split("&");
     Pattern pattern = Pattern.compile(PARAM_PATTERN);
+    Matcher matcher = pattern.matcher(queryString);
 
-    for (String param : params) {
-      Matcher matcher = pattern.matcher(param);
+    while (matcher.find()) {
+      String name = matcher.group(1);
+      String value = matcher.group(2);
 
-      if (matcher.matches()) {
-        MatchResult result = matcher.toMatchResult();
-        String name = result.group(1);
-        String operator = result.group(2);
-        String value = result.group(3);
-
-        switch (name) {
-          case "fields":
-            query.addFields(Arrays.asList(value.split(",")));
-            break;
-          case "sort":
-            List<SortKey> sortKeys = getSortKeys(value);
-            query.addSortKeys(sortKeys);
-            break;
-          case "offset":
-            query.offset = Integer.valueOf(value);
-            break;
-          case "limit":
-            query.limit = Integer.valueOf(value);
-            break;
-          default:
-            Criterion criterion = createCriterion(name, operator, value);
-            query.addCriterion(criterion);
-            break;
-        }
+      switch (name) {
+        case "fields":
+          query.addField(value.split(","));
+          break;
+        case "filters":
+          List<Criterion> criteria = getCriteria(value);
+          query.addCriterion(criteria.toArray(new Criterion[0]));
+          break;
+        case "sort":
+          List<SortKey> sortKeys = getSortKeys(value);
+          query.addSortKey(sortKeys.toArray(new SortKey[0]));
+          break;
+        case "offset":
+          query.offset = Integer.valueOf(value);
+          break;
+        case "limit":
+          query.limit = Integer.valueOf(value);
+          break;
+        default:
+          break;
       }
     }
 
     return query;
+  }
+
+  private static List<Criterion> getCriteria(String query) {
+    List<Criterion> criteria = new ArrayList<>();
+    Pattern pattern = Pattern.compile(FILTER_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    while (matcher.find()) {
+      String field = matcher.group(1);
+      String value = matcher.group(2);
+      populateEqual(criteria, field, value);
+      populateNotEqual(criteria, field, value);
+      populateGreaterThanEqual(criteria, field, value);
+      populateLessThanEqual(criteria, field, value);
+      populateLike(criteria, field, value);
+    }
+
+    return criteria;
+  }
+
+  private static void populateEqual(
+      List<Criterion> criteria, String field, String query) {
+
+    Pattern pattern = Pattern.compile(EQUAL_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.matches()) {
+      MatchResult result = matcher.toMatchResult();
+      String value = result.group(1);
+      Criterion criterion = Criterion.createEqual(field, value);
+      criteria.add(criterion);
+    }
+  }
+
+  private static void populateNotEqual(
+      List<Criterion> criteria, String field, String query) {
+
+    Pattern pattern = Pattern.compile(NOT_EQUAL_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.matches()) {
+      MatchResult result = matcher.toMatchResult();
+      String value = result.group(1);
+      Criterion criterion = Criterion.createNotEqual(field, value);
+      criteria.add(criterion);
+    }
+  }
+
+  private static void populateGreaterThanEqual(
+      List<Criterion> criteria, String field, String query) {
+
+    Pattern pattern = Pattern.compile(GREATER_THAN_EQUAL_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.matches()) {
+      MatchResult result = matcher.toMatchResult();
+      String value = result.group(1);
+      Criterion criterion = Criterion.createGreaterThanEqual(field, value);
+      criteria.add(criterion);
+    }
+  }
+
+  private static void populateLessThanEqual(
+      List<Criterion> criteria, String field, String query) {
+
+    Pattern pattern = Pattern.compile(LESS_THAN_EQUAL_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.matches()) {
+      MatchResult result = matcher.toMatchResult();
+      String value = result.group(1);
+      Criterion criterion = Criterion.createLessThanEqual(field, value);
+      criteria.add(criterion);
+    }
+  }
+
+  private static void populateLike(
+      List<Criterion> criteria, String field, String query) {
+
+    Pattern pattern = Pattern.compile(LIKE_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.matches()) {
+      MatchResult result = matcher.toMatchResult();
+      String value = result.group(1);
+      Criterion criterion = Criterion.createLike(field, value);
+      criteria.add(criterion);
+    }
   }
 
   private static List<SortKey> getSortKeys(String query) {
@@ -96,10 +188,10 @@ public class Query {
 
       if (matcher.matches()) {
         MatchResult result = matcher.toMatchResult();
-        String operator = result.group(1);
-        String field = result.group(2);
+        String field = result.group(1);
+        String direction = result.group(2);
 
-        SortOrder sortOrder = "-".equals(operator)
+        SortOrder sortOrder = "desc".equals(direction)
             ? SortOrder.DESCENDING : SortOrder.ASCENDING;
         sortKeys.add(new SortKey(field, sortOrder));
       }
@@ -108,70 +200,35 @@ public class Query {
     return sortKeys;
   }
 
-  private static Criterion createCriterion(
-      String name, String operator, String value) {
-
-    switch (operator) {
-      case "=":
-        return Criterion.createEqual(name, value);
-      case "!=":
-        return Criterion.createNotEqual(name, value);
-      case ">":
-        return Criterion.createGreaterThan(name, value);
-      case ">=":
-        return Criterion.createGreaterThanEqual(name, value);
-      case "<":
-        return Criterion.createLessThan(name, value);
-      case "<=":
-        return Criterion.createLessThanEqual(name, value);
-      case "%=":
-        return Criterion.createLike(name, value);
-      default:
-        return Criterion.createEmpty();
-    }
-  }
-
   public List<String> getFields() {
     return Collections.unmodifiableList(fields);
   }
 
-  public void addField(String field) {
-    this.fields.add(field);
-  }
-
-  public void addFields(List<String> fields) {
-    this.fields.addAll(fields);
+  public void addField(String... field) {
+    this.fields.addAll(Arrays.asList(field));
   }
 
   public List<Criterion> getCriteria() {
     return Collections.unmodifiableList(criteria);
   }
 
-  public void addCriterion(Criterion criterion) {
-    this.criteria.add(criterion);
-  }
-
-  public void addCriteria(List<Criterion> criteria) {
-    this.criteria.addAll(criteria);
+  public void addCriterion(Criterion... criterion) {
+    this.criteria.addAll(Arrays.asList(criterion));
   }
 
   public List<SortKey> getSortKeys() {
     return Collections.unmodifiableList(sortKeys);
   }
 
-  public void addSortKey(SortKey sortKey) {
-    this.sortKeys.add(sortKey);
+  public void addSortKey(SortKey... sortKey) {
+    this.sortKeys.addAll(Arrays.asList(sortKey));
   }
 
-  public void addSortKeys(List<SortKey> sortKeys) {
-    this.sortKeys.addAll(sortKeys);
-  }
-
-  public int getOffset() {
+  public long getOffset() {
     return offset;
   }
 
-  public int getLimit() {
+  public long getLimit() {
     return limit;
   }
 
@@ -179,10 +236,6 @@ public class Query {
   public int hashCode() {
     int prime = 31;
     int result = 0;
-
-    for (String field : fields) {
-      result = result * prime + field.hashCode();
-    }
 
     for (Criterion criterion : criteria) {
       result = result * prime + criterion.hashCode();
@@ -192,8 +245,8 @@ public class Query {
       result = result * prime + sortKey.hashCode();
     }
 
-    result = result * prime + offset;
-    return result * prime + limit;
+    result = result * prime + Long.hashCode(offset);
+    return result * prime + Long.hashCode(limit);
   }
 
   @Override
@@ -203,8 +256,7 @@ public class Query {
     }
 
     Query query = (Query) obj;
-    return ListUtils.equals(fields, query.getFields())
-        && ListUtils.equals(criteria, query.getCriteria())
+    return ListUtils.equals(criteria, query.getCriteria())
         && ListUtils.equals(sortKeys, query.getSortKeys())
         && (offset == query.getOffset())
         && (limit == query.getLimit());
@@ -213,8 +265,8 @@ public class Query {
   @Override
   public String toString() {
     return String.format(
-        "Query{fields=%s, criteria=%s, sortKeys=%s, offset=%s, limit=%s}",
-        StringUtils.join(fields, ","), StringUtils.join(criteria, ","),
-        StringUtils.join(sortKeys, ","), offset, limit);
+        "Query{criteria=%s, sortKeys=%s, offset=%s, limit=%s}",
+        StringUtils.join(criteria, ","), StringUtils.join(sortKeys, ","),
+        offset, limit);
   }
 }

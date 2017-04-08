@@ -54,7 +54,7 @@ public class WebModule extends ServletModule {
     bind(QuestionServlet.class).in(Singleton.class);
     bind(AuthenticationFilter.class).in(Singleton.class);
 
-    //filter("/web/*").through(AuthenticationFilter.class);
+    filter("/web/*").through(AuthenticationFilter.class);
     serve("/web/util").with(UtilServlet.class);
     serve("/web/error").with(ErrorServlet.class);
     serve("/web/signup").with(SignUpServlet.class);

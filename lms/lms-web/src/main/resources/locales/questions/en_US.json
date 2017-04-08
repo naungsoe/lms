@@ -1,7 +1,16 @@
 {
   "en_US": {
     "titlePage": "Questions",
-    "tabMyQuestions": "My Questions",
-    "tabSharedWithMe": "Shared with me"
+    "labelOwnedBy": "Owned by",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelQuestionType": "Question type",
+    "labelMultipleChoice": "Multiple choice",
+    "labelMultipleResponse": "Multiple response",
+    "labelShortAnswer": "Short answer",
+    "labelEssay": "Essay",
+    "labelComposite": "Composite",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply"
   }
 }

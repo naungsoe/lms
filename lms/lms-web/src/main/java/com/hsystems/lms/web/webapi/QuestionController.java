@@ -60,13 +60,13 @@ public class QuestionController {
 
   private Configuration getConfiguration() {
     UserModel userModel = (UserModel) principalProvider.get();
-    return Configuration.create();
+    return Configuration.create(userModel);
   }
 
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  //@Requires(Permission.VIEW_QUESTIONS)
+  @Requires(Permission.VIEW_QUESTIONS)
   public QuestionModel getQuestion(
       @PathParam("id") String id)
       throws IOException {

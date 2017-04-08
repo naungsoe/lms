@@ -39,15 +39,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       font-family: 'Roboto', 'Noto', sans-serif;
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<dom-module id="x-grid">
-  <template>
-    <style>
+  <dom-module id="x-grid">
+    <template>
+      <style>
 
         :host {
           display: block;
@@ -172,47 +171,45 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           color: rgba(255, 255, 255, 0.5);
         }
 
+      </style>
 
-    </style>
+      <iron-ajax id="ajax" loading="{{loadingPhotos}}" url="[[_getAPIEndpoint(apiKey, searchText, page)]]"
+          handle-as="text" on-response="_didReceiveResponse"></iron-ajax>
 
-    <iron-ajax id="ajax" loading="{{loadingPhotos}}" url="[[_getAPIEndpoint(apiKey, searchText, page)]]"
-               handle-as="text" on-response="_didReceiveResponse"></iron-ajax>
+      <app-header fixed effects="waterfall">
+        <app-toolbar>
+          <input class="searchInput" type="search" placeholder="Search on Flikr" value="{{searchText::input}}">
+        </app-toolbar>
+      </app-header>
 
-    <app-header fixed effects="waterfall">
-      <app-toolbar>
-        <input class="searchInput" type="search" placeholder="Search on Flikr" value="{{searchText::input}}">
-      </app-toolbar>
-    </app-header>
-
-    <iron-list items="[[photos]]" as="photo" scroll-target="document" grid>
-      <template>
-        <div class="photoContainer">
-          <div class="photoContent" tabindex$="[[tabIndex]]">
-            <iron-image sizing="cover"
-                        src="//farm[[photo.farm]].staticflickr.com/[[photo.server]]/[[photo.id]]_[[photo.secret]]_n.jpg">
-            </iron-image>
-            <div class="detail">[[photo.title]]</div>
+      <iron-list items="[[photos]]" as="photo" scroll-target="document" grid>
+        <template>
+          <div class="photoContainer">
+            <div class="photoContent" tabindex$="[[tabIndex]]">
+              <iron-image sizing="cover"
+                  src="//farm[[photo.farm]].staticflickr.com/[[photo.server]]/[[photo.id]]_[[photo.secret]]_n.jpg">
+              </iron-image>
+              <div class="detail">[[photo.title]]</div>
+            </div>
           </div>
-        </div>
-      </template>
-    </iron-list>
+        </template>
+      </iron-list>
 
-    <div class="loadingIndicator" hidden$="[[!loadingPhotos]]">
-      <paper-spinner active$="[[loadingPhotos]]"></paper-spinner>
-      Fetching photos for <b>[[searchText]]</b>
-    </div>
+      <div class="loadingIndicator" hidden$="[[!loadingPhotos]]">
+        <paper-spinner active$="[[loadingPhotos]]"></paper-spinner> Fetching photos for <b>[[searchText]]</b>
+      </div>
 
-    <!-- this element loads more photos when the user scrolls down and reached the lower threshold -->
-    <iron-scroll-threshold id="scrollTheshold"
-                           lower-threshold="500"
-                           on-lower-threshold="_onLowerThreshold"
-                           scroll-target="document">
-    </iron-scroll-threshold>
+      <!-- this element loads more photos when the user scrolls down and reached the lower threshold -->
+      <iron-scroll-threshold id="scrollTheshold"
+        lower-threshold="500"
+        on-lower-threshold="_onLowerThreshold"
+        scroll-target="document">
+      </iron-scroll-threshold>
 
-  </template>
-</dom-module>
+    </template>
+  </dom-module>
 
-<script>
+  <script>
 
     HTMLImports.whenReady(function() {
 
@@ -300,10 +297,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
+  </script>
 
-</script>
-
-<x-grid></x-grid>
+  <x-grid></x-grid>
 
 </body>
 </html>

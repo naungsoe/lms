@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.ListUtils;
@@ -19,15 +18,15 @@ public class Group extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 2420329732282197342L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.TEXT_WHITE_SPACE)
+  @IndexField
   private String name;
 
   private List<Permission> permissions;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<User> members;
 
   Group() {

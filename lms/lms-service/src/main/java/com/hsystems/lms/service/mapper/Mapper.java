@@ -61,7 +61,9 @@ public abstract class Mapper {
       return null;
     }
 
-    if (fieldType.isPrimitive()) {
+    if (fieldType.isPrimitive()
+        || (fieldType == String.class)) {
+
       return fieldValue;
 
     } else if (fieldType.isEnum()) {
@@ -72,9 +74,10 @@ public abstract class Mapper {
 
     } else if (fieldType == List.class) {
       return getListValue(fieldValue, type);
-    }
 
-    return type.cast(fieldValue);
+    } else {
+      return map(fieldValue, type);
+    }
   }
 
   protected <T> List<T> getListValue(Object obj, Class<T> type) {

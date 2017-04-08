@@ -293,12 +293,6 @@ public abstract class HBaseMapper<T> {
     return matcher.find() ? matcher.group(1) : "";
   }
 
-  protected School getSchool(Result result) {
-    String id = getId(result, Constants.SEPARATOR_SCHOOL);
-    String name = getName(result);
-    return new School(id, name);
-  }
-
   protected Group getGroup(Result result) {
     String id = getId(result, Constants.SEPARATOR_GROUP);
     String name = getName(result);

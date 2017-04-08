@@ -6,37 +6,37 @@
 
   <template strip-whitespace>
     <style>
-      [menu] {
+      .menu-list {
         height: 100%;
         overflow: auto;
       }
 
-      [menu] paper-menu paper-item [text] {
+      [menu-list] paper-menu paper-item .text {
         margin: 0 16px;
       }
     </style>
 
-    <div menu>
-      <paper-menu on-iron-select="handleSelect">
+    <div menu-list>
+      <paper-menu on-iron-select="_handleSelect">
         <paper-item actionType="/web/home">
           <iron-icon icon="home"></iron-icon>
-          <div text>{{localize('menuItemHome')}}</div>
+          <div class="text">[[localize('menuItemHome')]]</div>
         </paper-item>
         <paper-item actionType="/web/quizzes">
           <iron-icon icon="extension"></iron-icon>
-          <div text>{{localize('menuItemQuizzes')}}</div>
+          <div class="text">[[localize('menuItemQuizzes')]]</div>
         </paper-item>
         <paper-item actionType="/web/questions">
-          <iron-icon icon="content-paste"></iron-icon>
-          <div text>{{localize('menuItemQuestions')}}</div>
+          <iron-icon icon="help"></iron-icon>
+          <div class="text">[[localize('menuItemQuestions')]]</div>
         </paper-item>
         <paper-item actionType="/web/storage">
           <iron-icon icon="folder"></iron-icon>
-          <div text>{{localize('menuItemStorage')}}</div>
+          <div class="text">[[localize('menuItemStorage')]]</div>
         </paper-item>
         <paper-item actionType="/web/signout">
           <iron-icon icon="exit-to-app"></iron-icon>
-          <div text>{{localize('menuItemSignOut')}}</div>
+          <div class="text">[[localize('menuItemSignOut')]]</div>
         </paper-item>
       </paper-menu>
     </div>
@@ -70,7 +70,7 @@
         });
       },
 
-      handleSelect: function(event) {
+      _handleSelect: function(event) {
         var item = event.target.selectedItem;
         var url = item.getAttribute('actionType');
 

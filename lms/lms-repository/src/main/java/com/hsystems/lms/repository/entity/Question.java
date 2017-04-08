@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.IndexFieldType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.ListUtils;
@@ -19,25 +18,25 @@ public class Question extends Auditable implements Entity, Serializable {
 
   private static final long serialVersionUID = 6004706395678775298L;
 
-  @IndexField(type = IndexFieldType.IDENTITY)
+  @IndexField
   private String id;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private QuestionType type;
 
-  @IndexField(type = IndexFieldType.TEXT_GENERAL)
+  @IndexField
   private String body;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String hint;
 
-  @IndexField(type = IndexFieldType.STRING)
+  @IndexField
   private String explanation;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<QuestionOption> options;
 
-  @IndexField(type = IndexFieldType.LIST)
+  @IndexField
   private List<Question> questions;
 
   Question() {
