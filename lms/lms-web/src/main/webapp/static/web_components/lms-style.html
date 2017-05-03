@@ -9,9 +9,9 @@
   <template>
     <style>
       :host {
-        padding: 0;
-        margin: 0;
         @apply(--paper-font-body1);
+        margin: 0;
+        padding: 0;
       }
 
       app-header {
@@ -48,11 +48,6 @@
 
       app-toolbar paper-icon-button {
         color: white;
-      }
-
-      app-toolbar paper-input-container {
-        background-color: white;
-        padding: 0;
       }
 
       paper-toolbar {
@@ -110,13 +105,8 @@
         };
       }
 
-      paper-input-container[search] {
-        --paper-input-container-underline: {
-          background-color: var(--paper-teal-900);
-        };
-        --paper-input-container-underline-focus: {
-          background-color: var(--paper-teal-900);
-        };
+      paper-input-container {
+        background-color: white;
       }
 
       paper-dropdown-menu {
@@ -134,15 +124,11 @@
         };
       }
 
-      paper-toolbar paper-icon-button {
-        color: var(--paper-grey-700);
-      }
-
       paper-menu-button {
         padding: 0;
       }
 
-      paper-menu-button paper-icon-button {
+      paper-icon-button {
         color: var(--paper-grey-700);
       }
 
@@ -212,8 +198,10 @@
         @apply(--layout-end-justified);
       }
 
-      [main-content] {
-        padding-top: 64px;
+      lms-app-search {
+        --lms-app-search-active-icon-background-color: white;
+        --lms-app-search-active-icon-color: var(--paper-grey-700);
+        --lms-app-search-icon-color: white;
       }
 
       [filter-list] .filter-content {
@@ -229,6 +217,11 @@
       [filter-list] .filter-actions {
         margin: 0 0 16px 0;
         padding: 5px 16px;
+      }
+
+      .box {
+        background-color: white;
+        border: 1px solid var(--paper-grey-300);
       }
 
       .error {

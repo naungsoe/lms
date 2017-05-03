@@ -16,8 +16,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Predicate;
-import java.util.regex.Pattern;
 
 /**
  * Created by naungse on 2/12/16.
@@ -39,14 +37,13 @@ public class EntityMapper extends Mapper<Entity> {
     return getEntity(document);
   }
 
-  protected <T> T getEntity(
-      SolrDocument document)
+  protected <T> T getEntity(SolrDocument document)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     T entity = (T) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
-    String id = document.getFieldValue("id").toString();
+    String id = document.getFieldValue(FIELD_ID).toString();
 
     for (Field field : fields) {
       if (!field.isAnnotationPresent(IndexField.class)) {
@@ -88,8 +85,8 @@ public class EntityMapper extends Mapper<Entity> {
           ReflectionUtils.setValue(entity, fieldName, childEntities);
         }
       } else {
-        Object childEntity = getChildEntity(document.getChildDocuments(),
-            field.getType(), id, fieldName);
+        Object childEntity = getChildEntity(
+            document.getChildDocuments(), field.getType(), id, fieldName);
         ReflectionUtils.setValue(entity, fieldName, childEntity);
       }
     }
@@ -105,7 +102,7 @@ public class EntityMapper extends Mapper<Entity> {
 
   protected <T> List<T> getChildEntities(
       List<SolrDocument> documents, Class<T> type,
-      String prefix, String fieldName)
+      String parentId, String fieldName)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
@@ -116,14 +113,8 @@ public class EntityMapper extends Mapper<Entity> {
     List<T> entities = new ArrayList<>();
 
     for (SolrDocument document : documents) {
-      String id = document.getFieldValue("id").toString();
-      String regex = String.format(PREFIXED_ID_PATTERN, prefix);
-      Pattern pattern = Pattern.compile(regex);
-
-      if (pattern.matcher(id).find()
-          && fieldName.equals(document.getFieldValue(FIELD_NAME))) {
-
-        T entity = getChildEntity(documents, type, id, fieldName);
+      if (isChildDocument(document, parentId, fieldName)) {
+        T entity = getChildEntity(documents, type, parentId, fieldName);
         entities.add(entity);
       }
     }
@@ -131,24 +122,33 @@ public class EntityMapper extends Mapper<Entity> {
     return entities;
   }
 
+  protected boolean isChildDocument(
+      SolrDocument document, String parentId, String fieldName) {
+
+    Object fullFieldName = document.getFieldValue(FIELD_NAME);
+    return document.getFieldValue("parentId").equals(parentId)
+        && fullFieldName.toString().endsWith(fieldName);
+  }
+
   protected <T> T getChildEntity(
       List<SolrDocument> documents, Class<T> type,
-      String prefix, String fieldName)
+      String parentId, String fieldName)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     T entity = (T) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
 
-    Optional<SolrDocument> documentOptional = documents.stream().filter(
-        isChildDocument(prefix, fieldName)).findFirst();
+    Optional<SolrDocument> documentOptional = documents.stream()
+        .filter(document -> isChildDocument(document, parentId, fieldName))
+        .findFirst();
 
     if (!documentOptional.isPresent()) {
       return entity;
     }
 
     SolrDocument document = documentOptional.get();
-    String id = document.getFieldValue("id").toString();
+    String id = document.getFieldValue(FIELD_ID).toString();
 
     for (Field field : fields) {
       if (!field.isAnnotationPresent(IndexField.class)) {
@@ -184,35 +184,19 @@ public class EntityMapper extends Mapper<Entity> {
                 Enum.valueOf(enumType, enumValue)));
             ReflectionUtils.setValue(entity, childFieldName, enums);
           }
-        } else if (document.getChildDocuments() == null) {
-          ReflectionUtils.setValue(entity,
-              childFieldName, Collections.emptyList());
-
         } else {
           List<?> childEntities = getChildEntities(
-              document.getChildDocuments(), listType, id, childFieldName);
+              documents, listType, id, childFieldName);
           ReflectionUtils.setValue(entity, childFieldName, childEntities);
         }
       } else {
-        if (document.getChildDocuments() == null) {
-          ReflectionUtils.setValue(entity, childFieldName, null);
-
-        } else {
-          Object childEntity = getChildEntity(document.getChildDocuments(),
-              field.getType(), id, childFieldName);
-          ReflectionUtils.setValue(entity, childFieldName, childEntity);
-        }
+        Object childEntity = getChildEntity(
+            documents, field.getType(), id, childFieldName);
+        ReflectionUtils.setValue(entity, childFieldName, childEntity);
       }
     }
 
     return entity;
-  }
-
-  protected Predicate<SolrDocument> isChildDocument(
-      String prefix, String fieldName) {
-
-    return document -> fieldName.equals(document.getFieldValue(FIELD_NAME))
-        && document.getFieldValue("id").toString().startsWith(prefix);
   }
 
   protected <T> void populateProperty(
@@ -223,16 +207,10 @@ public class EntityMapper extends Mapper<Entity> {
     String fieldName = getFieldName(field);
     Class<?> fieldType = field.getType();
 
-    if (fieldName.equals("id")) {
-      String id = document.getFieldValue("id").toString();
+    if (fieldName.equals(FIELD_ID)) {
+      Object id = document.getFieldValue(FIELD_ID);
+      ReflectionUtils.setValue(entity, field.getName(), id);
 
-      if (id.contains(SEPARATOR_ID)) {
-        ReflectionUtils.setValue(entity, field.getName(),
-            id.substring(id.lastIndexOf(SEPARATOR_ID) + 1));
-
-      } else {
-        ReflectionUtils.setValue(entity, field.getName(), id);
-      }
     } else if (fieldType.isPrimitive()) {
       ReflectionUtils.setValue(entity, field.getName(),
           document.getFieldValue(fieldName));

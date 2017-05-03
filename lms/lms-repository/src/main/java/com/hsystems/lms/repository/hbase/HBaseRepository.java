@@ -4,7 +4,7 @@ import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.MutateLog;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Scan;
@@ -21,6 +21,19 @@ import java.io.IOException;
 public abstract class HBaseRepository {
 
   private static final String SCAN_KEY_FORMAT = "^%s[A-Za-z0-9_]*%s$";
+
+  private static final String EXCLUSIVE_START_KEY_FORMAT = "%s0";
+  private static final String INCLUSIVE_STOP_KEY_FORMAT = "%s~";
+
+  protected static final int MAX_VERSIONS = 3;
+
+  protected String getExclusiveStartRowKey(String startRowKey) {
+    return String.format(EXCLUSIVE_START_KEY_FORMAT, startRowKey);
+  }
+
+  protected String getInclusiveStopRowKey(String stopRowKey) {
+    return String.format(INCLUSIVE_STOP_KEY_FORMAT, stopRowKey);
+  }
 
   protected Scan getRowKeyFilterScan(String prefix)
       throws IOException {
@@ -40,10 +53,10 @@ public abstract class HBaseRepository {
     return scan;
   }
 
-  protected <T extends Entity> MutateLog getMutateLog(
+  protected <T extends Entity> Mutation getMutation(
       T entity, ActionType actionType, long timestamp) {
 
-    return new MutateLog(
+    return new Mutation(
         entity.getId(),
         getEntityType(entity),
         actionType,

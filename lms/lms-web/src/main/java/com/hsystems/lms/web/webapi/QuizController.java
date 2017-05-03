@@ -12,12 +12,15 @@ import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by naungsoe on 10/9/16.
@@ -42,11 +45,23 @@ public class QuizController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
   @Requires(Permission.VIEW_QUIZZES)
-  public QuizModel getQuiz(@PathParam("id") String id)
+  public QuizModel findBy(@PathParam("id") String id)
       throws IOException {
 
+    Optional<QuizModel> quizModelOptional
+        = quizService.findBy(id, createConfiguration());
+
+    if (!quizModelOptional.isPresent()) {
+      throw new WebApplicationException(
+          Response.Status.NOT_FOUND);
+    }
+
+    QuizModel quizModel = quizModelOptional.get();
+    return quizModel;
+  }
+
+  private Configuration createConfiguration() {
     UserModel userModel = (UserModel) principalProvider.get();
-    Configuration configuration = Configuration.create(userModel);
-    return quizService.findBy(id, configuration).get();
+    return Configuration.create(userModel);
   }
 }

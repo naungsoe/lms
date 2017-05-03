@@ -1,0 +1,141 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+<link rel="import" href="../../bower_components/iron-location/iron-location.html">
+<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
+<link rel="import" href="lms-question-list.html">
+<link rel="import" href="lms-question-query-behavior.html">
+<link rel="import" href="lms-question-list-toolbar.html">
+<link rel="import" href="lms-question-list.html">
+
+<dom-module id="lms-question-list-view">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+
+    </style>
+
+    <iron-location query="{{queryString}}"></iron-location>
+
+    <lms-question-list-toolbar question-types="{{questionTypes}}" owned-by-types="{{ownedByTypes}}"
+                               language="[[language]]" resources="[[resources]]">
+      <template is="dom-if" if="[[_showNumFound(numFound)]]">
+        <div class="number-found">
+          [[numFound]] [[_showNumFoundLabel(numFound)]]
+        </div>
+      </template>
+    </lms-question-list-toolbar>
+
+    <lms-question-list user-id="[[userId]]" rest-url="[[restUrl]]" rest-params="[[params]]"
+                       on-item-tap="_onItemTap" num-found="{{numFound}}"
+                       language="[[language]]" resources="[[resources]]"></lms-question-list>
+
+    <paper-fab icon="add" add on-tap="_onCreateTap"></paper-fab>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-question-list-view',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.UserBehavior,
+        LMS.LocaleBehavior,
+        LMS.QuestionQueryBehavior
+      ],
+
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        },
+        url: {
+          type: String,
+          notify: true
+        },
+        restUrl: {
+          type: String,
+          notify: true
+        },
+        queryFields: {
+          type: String,
+          notify: true
+        },
+        queryTerm: {
+          type: String,
+          notify: true
+        },
+        questionTypes: {
+          type: Array,
+          notify: true
+        },
+        ownedByTypes: {
+          type: Array,
+          notify: true
+        },
+        queryString: {
+          type: String,
+          notify: true
+        },
+        numFound: {
+          type: Number,
+          notify: true
+        }
+      },
+
+      observers: [
+        '_updateQueryString(queryTerm, questionTypes, ownedByTypes)'
+      ],
+
+      attached: function() {
+        this.fields = 'id,type,body,questions,'
+          + 'school,createdBy,modifiedBy';
+        this.offset = 0;
+        this.limit = 20;
+
+        this.queryFields = 'body,hint,'
+          + 'questions.body,questions.hint';
+        this.queryTerm = '';
+        this.questionTypes = [];
+        this.ownedByTypes = [];
+      },
+
+      _updateQueryString: function(queryTerm, questionTypes, ownedByTypes) {
+        var criteria = [];
+
+        if (queryTerm && (queryTerm.trim() !== '')) {
+          criteria.push('query=' + queryTerm.trim());
+        }
+
+        if (questionTypes && (questionTypes.length > 0)) {
+          criteria.push('type=' + questionTypes.join(','));
+        }
+
+        if (ownedByTypes && (ownedByTypes.length > 0)) {
+          criteria.push('ownedBy=' + ownedByTypes.join(','));
+        }
+
+        this.queryString = criteria.join('&');
+      },
+
+      _showNumFound: function(numFound) {
+        return numFound > 0;
+      },
+
+      _showNumFoundLabel: function(numFound) {
+        return (numFound > 1)
+          ? this.localize('labelQuestions')
+          : this.localize('labelQuestion');
+      },
+
+      _onItemTap: function(event) {
+        console.log(event);
+        this.set('route.path', this.url + '/detail');
+      },
+
+      _onCreateTap: function(event) {
+
+      }
+    });
+  </script>
+
+</dom-module>

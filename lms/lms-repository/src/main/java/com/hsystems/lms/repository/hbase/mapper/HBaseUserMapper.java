@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -11,6 +12,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +22,20 @@ import java.util.Optional;
 public class HBaseUserMapper extends HBaseMapper<User> {
 
   @Override
-  public User getEntity(List<Result> results) {
-    Result mainResult = results.stream()
-        .filter(isMainResult()).findFirst().get();
+  public List<User> getEntities(List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<User> users = new ArrayList<>();
+    results.stream().filter(isMainResult()).forEach(result -> {
+      User user = getEntity(result, results);
+      users.add(user);
+    });
+    return users;
+  }
+
+  private User getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
     String account = getAccount(mainResult);
     String password = getPassword(mainResult);
@@ -37,6 +50,10 @@ public class HBaseUserMapper extends HBaseMapper<User> {
     String dateFormat = getDateFormat(mainResult);
     String dateTimeFormat = getDateTimmeFormat(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
+
+    Result schoolResult = results.stream()
+        .filter(isSchoolResult(id)).findFirst().get();
+    School school = getSchool(schoolResult);
 
     List<Group> groups = new ArrayList<>();
     results.stream().filter(isGroupResult(id))
@@ -72,12 +89,20 @@ public class HBaseUserMapper extends HBaseMapper<User> {
         dateFormat,
         dateTimeFormat,
         permissions,
+        school,
         groups,
         createdBy,
         createdDateTime,
         modifiedBy,
         modifiedDateTime
     );
+  }
+
+  @Override
+  public User getEntity(List<Result> results) {
+    Result mainResult = results.stream()
+        .filter(isMainResult()).findFirst().get();
+    return getEntity(mainResult, results);
   }
 
   @Override

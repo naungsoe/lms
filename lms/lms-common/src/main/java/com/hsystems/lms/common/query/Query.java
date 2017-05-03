@@ -18,7 +18,7 @@ public class Query {
 
   private static final String PARAM_PATTERN = "([a-zA-Z0-9]*)=([^\\&]*)";
   private static final String FILTER_PATTERN
-      = "([a-zA-Z0-9\\.]*):([a-zA-Z0-9\\_\\s\\'\\\"]*)(\\s|$)";
+      = "([a-zA-Z0-9\\.\\,]*):([a-zA-Z0-9\\_\\s\\'\\\"]*)(\\s|$)";
   private static final String SORT_PATTERN = "([a-zA-Z0-9]*)\\s([a-zA-Z]*)";
   private static final String EQUAL_PATTERN = "MUST\\s(.*)";
   private static final String NOT_EQUAL_PATTERN = "NOT\\s(.*)";
@@ -68,9 +68,13 @@ public class Query {
         case "fields":
           query.addField(value.split(","));
           break;
+        case "query":
+          List<Criterion> queryCriteria = getQueryCriteria(value);
+          query.addCriterion(queryCriteria.toArray(new Criterion[0]));
+          break;
         case "filters":
-          List<Criterion> criteria = getCriteria(value);
-          query.addCriterion(criteria.toArray(new Criterion[0]));
+          List<Criterion> filterCriteria = getFilterCriteria(value);
+          query.addCriterion(filterCriteria.toArray(new Criterion[0]));
           break;
         case "sort":
           List<SortKey> sortKeys = getSortKeys(value);
@@ -90,7 +94,23 @@ public class Query {
     return query;
   }
 
-  private static List<Criterion> getCriteria(String query) {
+  private static List<Criterion> getQueryCriteria(String query) {
+    List<Criterion> criteria = new ArrayList<>();
+    Pattern pattern = Pattern.compile(FILTER_PATTERN);
+    Matcher matcher = pattern.matcher(query);
+
+    if (matcher.find()) {
+      String[] fields = matcher.group(1).split(",");
+      String value = matcher.group(2);
+
+      Arrays.asList(fields).forEach(
+          field -> populateLike(criteria, field, value));
+    }
+
+    return criteria;
+  }
+
+  private static List<Criterion> getFilterCriteria(String query) {
     List<Criterion> criteria = new ArrayList<>();
     Pattern pattern = Pattern.compile(FILTER_PATTERN);
     Matcher matcher = pattern.matcher(query);
@@ -102,7 +122,6 @@ public class Query {
       populateNotEqual(criteria, field, value);
       populateGreaterThanEqual(criteria, field, value);
       populateLessThanEqual(criteria, field, value);
-      populateLike(criteria, field, value);
     }
 
     return criteria;

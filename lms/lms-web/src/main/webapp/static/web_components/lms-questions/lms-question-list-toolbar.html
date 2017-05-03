@@ -1,0 +1,109 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="lms-question-list-toolbar">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      paper-dropdown-menu {
+        width: 320px;
+      }
+    </style>
+
+    <paper-toolbar>
+      <paper-menu-button horizontal-align="left" vertical-align="top" ignore-select>
+        <paper-icon-button class="dropdown-trigger" icon="filter-list"></paper-icon-button>
+        <div class="dropdown-content" filter-list>
+          <div class="filter-content">
+            <div class="title">[[localize('labelQuestionType')]]</div>
+            <iron-selector attr-for-selected="value" multi flex-horizontal
+                           selected-values="{{selectedQuestionTypes}}">
+              <div value="MULTIPLE_CHOICE">[[localize('labelMultipleChoice')]]</div>
+              <div value="MULTIPLE_RESPONSE">[[localize('labelMultipleResponse')]]</div>
+              <div value="SHORT_ANSWER">[[localize('labelShortAnswer')]]</div>
+              <div value="ESSAY">[[localize('labelEssay')]]</div>
+              <div value="COMPOSITE">[[localize('labelComposite')]]</div>
+            </iron-selector>
+            <br/>
+            <div class="title">[[localize('labelOwnedBy')]]</div>
+            <iron-selector attr-for-selected="value" multi flex-horizontal
+                           selected-values="{{selectedOwnedByTypes}}">
+              <div value="OWNED_BY_ME">[[localize('labelOwnedByMe')]]</div>
+              <div value="OWNED_BY_OTHERS">[[localize('labelNotOwnerByMe')]]</div>
+            </iron-selector>
+          </div>
+          <div class="filter-actions" justified-end>
+            <paper-button on-tap="_onResetTap">
+              [[localize('buttonResetFilter')]]
+            </paper-button>
+            <paper-button on-tap="_onApplyTap">
+              [[localize('buttonApplyFilter')]]
+            </paper-button>
+          </div>
+        </div>
+      </paper-menu-button>
+      <div class="title"></div>
+      <content></content>
+    </paper-toolbar>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-question-list-toolbar',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.UserBehavior,
+        LMS.LocaleBehavior
+      ],
+      
+      properties: {
+        selectedQuestionTypes: {
+          type: Array,
+          notify: true
+        },
+        selectedOwnedByTypes: {
+          type: Array,
+          notify: true
+        },
+        questionTypes: {
+          type: Array,
+          notify: true
+        },
+        ownedByTypes: {
+          type: Array,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        this.selectedQuestionTypes = this.questionTypes || [];
+        this.selectedOwnedByTypes = this.ownedByTypes || [];
+      },
+
+      resetFilters: function() {
+        this.selectedQuestionTypes = [];
+        this.selectedOwnedByTypes = [];
+        this.questionTypes = [];
+        this.ownedByTypes = [];
+      },
+
+      _onResetTap: function(event) {
+        this.resetFilters();
+        this.$$('paper-menu-button').close();
+      },
+
+      _onApplyTap: function(event) {
+        this.questionTypes = Array.from(this.selectedQuestionTypes);
+        this.ownedByTypes = Array.from(this.selectedOwnedByTypes);
+        this.$$('paper-menu-button').close();
+      }
+    });
+  </script>
+
+</dom-module>

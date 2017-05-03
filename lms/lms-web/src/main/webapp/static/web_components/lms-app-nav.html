@@ -1,4 +1,5 @@
 <link rel="import" href="lms-default.html">
+<link rel="import" href="lms-style.html">
 <link rel="import" href="../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../bower_components/paper-menu/paper-menu.html">
 
@@ -7,7 +8,7 @@
   <template strip-whitespace>
     <style>
       .menu-list {
-        height: 100%;
+        height: 100vh;
         overflow: auto;
       }
 
@@ -17,26 +18,26 @@
     </style>
 
     <div menu-list>
-      <paper-menu on-iron-select="_handleSelect">
+      <paper-menu on-iron-select="_onMenuSelect">
         <paper-item actionType="/web/home">
           <iron-icon icon="home"></iron-icon>
-          <div class="text">[[localize('menuItemHome')]]</div>
+          <div class="text">[[localize('menuHome')]]</div>
         </paper-item>
         <paper-item actionType="/web/quizzes">
           <iron-icon icon="extension"></iron-icon>
-          <div class="text">[[localize('menuItemQuizzes')]]</div>
+          <div class="text">[[localize('menuQuizzes')]]</div>
         </paper-item>
         <paper-item actionType="/web/questions">
           <iron-icon icon="help"></iron-icon>
-          <div class="text">[[localize('menuItemQuestions')]]</div>
+          <div class="text">[[localize('menuQuestions')]]</div>
         </paper-item>
         <paper-item actionType="/web/storage">
           <iron-icon icon="folder"></iron-icon>
-          <div class="text">[[localize('menuItemStorage')]]</div>
+          <div class="text">[[localize('menuStorage')]]</div>
         </paper-item>
         <paper-item actionType="/web/signout">
           <iron-icon icon="exit-to-app"></iron-icon>
-          <div class="text">[[localize('menuItemSignOut')]]</div>
+          <div class="text">[[localize('menuSignOut')]]</div>
         </paper-item>
       </paper-menu>
     </div>
@@ -47,18 +48,12 @@
       is: 'lms-app-nav',
 
       behaviors: [
-        Polymer.AppLocalizeBehavior
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
       ],
 
       properties: {
-        language: {
-          type: String,
-          notify: true
-        },
-        resources: {
-          type: Object,
-          notify: true
-        }
+
       },
 
       attached: function() {
@@ -70,7 +65,7 @@
         });
       },
 
-      _handleSelect: function(event) {
+      _onMenuSelect: function(event) {
         var item = event.target.selectedItem;
         var url = item.getAttribute('actionType');
 

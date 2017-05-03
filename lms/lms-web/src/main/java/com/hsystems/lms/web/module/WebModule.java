@@ -55,15 +55,15 @@ public class WebModule extends ServletModule {
     bind(AuthenticationFilter.class).in(Singleton.class);
 
     filter("/web/*").through(AuthenticationFilter.class);
+    serve("/webapi/*").with(GuiceContainer.class);
     serve("/web/util").with(UtilServlet.class);
     serve("/web/error").with(ErrorServlet.class);
     serve("/web/signup").with(SignUpServlet.class);
     serve("/web/signin").with(SignInServlet.class);
     serve("/web/signout").with(SignOutServlet.class);
-    serve("/web/users").with(UserServlet.class);
-    serve("/web/home").with(HomeServlet.class);
-    serve("/web/storage").with(StorageServlet.class);
-    serve("/web/questions").with(QuestionServlet.class);
-    serve("/webapi/*").with(GuiceContainer.class);
+    serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
+    serveRegex("/web/home(\\/\\w+)*").with(HomeServlet.class);
+    serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);
+    serveRegex("/web/questions(\\/\\w+)*").with(QuestionServlet.class);
   }
 }

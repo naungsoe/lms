@@ -41,6 +41,14 @@ public class School extends Auditable implements Entity, Serializable {
 
   public School(
       String id,
+      String name) {
+
+    this.id = id;
+    this.name = name;
+  }
+
+  public School(
+      String id,
       String name,
       String locale,
       String dateFormat,

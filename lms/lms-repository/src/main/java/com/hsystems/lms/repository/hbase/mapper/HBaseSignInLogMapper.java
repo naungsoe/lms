@@ -9,7 +9,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,19 +17,33 @@ import java.util.List;
  */
 public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
-  public SignInLog getEntity(Result result) {
-    return getEntity(Arrays.asList(result));
+  @Override
+  public List<SignInLog> getEntities(List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<SignInLog> signInLogs = new ArrayList<>();
+    results.forEach(result -> {
+      SignInLog signInLog = getEntity(result);
+      signInLogs.add(signInLog);
+    });
+    return signInLogs;
+  }
+
+  private SignInLog getEntity(Result result) {
+    String id = Bytes.toString(result.getRow());
+    String sessionId = getSessionId(result);
+    String ipAddress = getIpAddress(result);
+    LocalDateTime dateTime = getDateTime(result);
+    int fails = getFails(result);
+    return new SignInLog(id, sessionId, ipAddress, dateTime, fails);
   }
 
   @Override
   public SignInLog getEntity(List<Result> results) {
     Result mainResult = results.get(0);
-    String id = Bytes.toString(mainResult.getRow());
-    String sessionId = getSessionId(mainResult);
-    String ipAddress = getIpAddress(mainResult);
-    LocalDateTime dateTime = getDateTime(mainResult);
-    int fails = getFails(mainResult);
-    return new SignInLog(id, sessionId, ipAddress, dateTime, fails);
+    return getEntity(mainResult);
   }
 
   @Override

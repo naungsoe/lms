@@ -3,6 +3,7 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -22,14 +23,29 @@ import java.util.Optional;
 public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
   @Override
-  public Question getEntity(List<Result> results) {
-    Result mainResult = results.stream()
-        .filter(isMainResult()).findFirst().get();
+  public List<Question> getEntities(List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Question> questions = new ArrayList<>();
+    results.stream().filter(isMainResult()).forEach(result -> {
+      Question question = getEntity(result, results);
+      questions.add(question);
+    });
+    return questions;
+  }
+
+  private Question getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
     QuestionType type = getType(mainResult, QuestionType.class);
     String body = getBody(mainResult);
     String hint = getHint(mainResult);
     String explanation = getExplanation(mainResult);
+
+    Result schoolResult = results.stream()
+        .filter(isSchoolResult(id)).findFirst().get();
+    School school = getSchool(schoolResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -63,11 +79,19 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         explanation,
         options,
         questions,
+        school,
         createdBy,
         createdDateTime,
         modifiedBy,
         modifiedDateTime
     );
+  }
+
+  @Override
+  public Question getEntity(List<Result> results) {
+    Result mainResult = results.stream()
+        .filter(isMainResult()).findFirst().get();
+    return getEntity(mainResult, results);
   }
 
   @Override

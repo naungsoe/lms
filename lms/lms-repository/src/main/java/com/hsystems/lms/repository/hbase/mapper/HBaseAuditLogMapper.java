@@ -11,7 +11,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,26 +20,37 @@ import java.util.List;
  */
 public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
 
-  public AuditLog getEntity(Result result) {
-    return getEntity(Arrays.asList(result));
+  @Override
+  public List<AuditLog> getEntities(List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<AuditLog> auditLogs = new ArrayList<>();
+    results.forEach(result -> {
+      AuditLog auditLog = getEntity(result);
+      auditLogs.add(auditLog);
+    });
+    return auditLogs;
   }
 
-  @Override
-  public AuditLog getEntity(List<Result> results) {
-    Result mainResult = results.get(0);
-    String row = Bytes.toString(mainResult.getRow());
+  private AuditLog getEntity(Result result) {
+    String row = Bytes.toString(result.getRow());
     int endIndex = row.indexOf(Constants.SEPARATOR);
 
     String id = (endIndex == -1) ? row : row.substring(0, endIndex);
-    EntityType type = getType(mainResult, EntityType.class);
-    User user = new User(getId(
-        mainResult),
-        getFirstName(mainResult),
-        getLastName(mainResult)
+    EntityType type = getType(result, EntityType.class);
+
+    User user = new User(
+        getId(result),
+        getFirstName(result),
+        getLastName(result)
     );
-    ActionType actionType = getAction(mainResult, ActionType.class);
+
+    ActionType actionType = getAction(result, ActionType.class);
     long timestamp = (endIndex == -1)
-        ? getTimestamp(mainResult) : Long.parseLong(row.substring(endIndex));
+        ? getTimestamp(result)
+        : Long.parseLong(row.substring(endIndex));
 
     return new AuditLog(
         id,
@@ -48,6 +59,12 @@ public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
         actionType,
         timestamp
     );
+  }
+
+  @Override
+  public AuditLog getEntity(List<Result> results) {
+    Result mainResult = results.get(0);
+    return getEntity(mainResult);
   }
 
   @Override

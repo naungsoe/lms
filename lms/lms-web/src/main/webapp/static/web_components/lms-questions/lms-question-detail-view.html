@@ -1,0 +1,100 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+<link rel="import" href="../../bower_components/paper-spinner/paper-spinner.html">
+<link rel="import" href="lms-question-detail-toolbar.html">
+<link rel="import" href="lms-question-detail-multiple-choice.html">
+
+<dom-module id="lms-question-detail-view">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+
+    </style>
+
+    <app-route route="{{route}}" pattern="/:questionId"
+               data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <iron-ajax name="ajax" url="[[restUrl]]" params="[[routeData.questionId]]"
+               method="GET" handle-as="json" content-type="application/json"
+               loading="{{loading}}" on-response="_onAjaxResponse"></iron-ajax>
+
+    <lms-question-detail-toolbar></lms-question-detail-toolbar>
+
+    <template dom-if="[[_isMultipleChoice(question)]]">
+      <lms-question-detail-multiple-choice question="[[question]]">
+      </lms-question-detail-multiple-choice>
+    </template>
+
+    <template dom-if="[[_isMultipleResponse(question)]]">
+      <lms-question-detail-multiple-choice question="[[question]]">
+      </lms-question-detail-multiple-choice>
+    </template>
+
+    <template dom-if="[[_isShortAnswer(question)]]">
+      <lms-question-detail-multiple-choice question="[[question]]">
+      </lms-question-detail-multiple-choice>
+    </template>
+
+    <template dom-if="[[_isEssay(question)]]">
+      <lms-question-detail-multiple-choice question="[[question]]">
+      </lms-question-detail-multiple-choice>
+    </template>
+
+    <template dom-if="[[_isComposite(question)]]">
+      <lms-question-detail-multiple-choice question="[[question]]">
+      </lms-question-detail-multiple-choice>
+    </template>
+
+    <div class="loading-status" hidden$="[[!loading]]">
+      <paper-spinner active$="[[loading]]"></paper-spinner>
+      [[localize('labelFetchingQuestion')]]
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-question-detail-view',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
+      ],
+      
+      properties: {
+        restUrl: {
+          type: String,
+          notify: true
+        },
+        loading: {
+          type: Boolean,
+          notify: true
+        }
+      },
+
+      _isMultipleChoice: function(question) {
+
+      },
+
+      _isMultipleResponse: function(question) {
+
+      },
+
+      _isShortAnswer: function(question) {
+
+      },
+
+      _isEssay: function(question) {
+
+      },
+
+      _isComposite: function(question) {
+
+      },
+
+      _onAjaxResponse: function(event) {
+
+      }
+    });
+  </script>
+
+</dom-module>

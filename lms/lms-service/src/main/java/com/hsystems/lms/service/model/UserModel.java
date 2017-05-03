@@ -42,6 +42,8 @@ public class UserModel
 
   private List<String> permissions;
 
+  private SchoolModel school;
+
   private List<GroupModel> groups;
 
   UserModel() {
@@ -61,6 +63,7 @@ public class UserModel
       String dateFormat,
       String dateTimeFormat,
       List<String> permissions,
+      SchoolModel school,
       List<GroupModel> groups) {
 
     this.id = id;
@@ -75,6 +78,7 @@ public class UserModel
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
+    this.school = school;
     this.groups = groups;
   }
 
@@ -175,6 +179,14 @@ public class UserModel
   public void setPermissions(List<String> permissions) {
     this.permissions = new ArrayList<>();
     this.permissions.addAll(permissions);
+  }
+
+  public SchoolModel getSchool() {
+    return school;
+  }
+
+  public void setSchool(SchoolModel school) {
+    this.school = school;
   }
 
   public List<GroupModel> getGroups() {

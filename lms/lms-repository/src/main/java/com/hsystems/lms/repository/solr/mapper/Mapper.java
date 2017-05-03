@@ -11,10 +11,6 @@ public abstract class Mapper<T> {
   protected static final String FIELD_NAME = "fieldName";
   protected static final String FIELD_TYPE_NAME = "typeName";
 
-  protected static final String PREFIXED_ID_PATTERN = "%s_([A-Za-z0-9]*)$";
-
-  protected static final String SEPARATOR_ID = "_";
-
   abstract  <S> T map(S source)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException;

@@ -43,11 +43,12 @@ public class UserController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public UserModel getUser(
+  public UserModel findBy(
       @PathParam("id") String id)
       throws IOException {
 
-    Optional<UserModel> userModelOptional = userService.findBy(id);
+    Optional<UserModel> userModelOptional
+        = userService.findBy(id, createConfiguration());
 
     if (!userModelOptional.isPresent()) {
       throw new WebApplicationException(
@@ -58,14 +59,14 @@ public class UserController {
     return userModel;
   }
 
-  private Configuration getConfiguration() {
+  private Configuration createConfiguration() {
     UserModel userModel = (UserModel) principalProvider.get();
     return Configuration.create(userModel);
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public List<UserModel> getUsers()
+  public List<UserModel> findAllBy()
       throws IOException {
 
     return Collections.emptyList();

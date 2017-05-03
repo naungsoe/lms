@@ -132,6 +132,7 @@ public class UserService extends BaseService {
         school.getDateFormat(),
         school.getDateTimeFormat(),
         group.getPermissions(),
+        school,
         Arrays.asList(group),
         createdBy,
         LocalDateTime.now(),

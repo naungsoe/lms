@@ -20,9 +20,11 @@
     },
 
     attached: function() {
-      var url = this.resolveUrl(this.localeUrl);
-      url = url + '?' + (new Date()).getTime();
-      this.loadResources(url);
+      if (this.localeUrl && (this.localeUrl !== '')) {
+        var url = this.resolveUrl(this.localeUrl);
+        url = url + '?' + (new Date()).getTime();
+        this.loadResources(url);
+      }
     }
   };
 </script>

@@ -11,6 +11,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +21,20 @@ import java.util.Optional;
 public class HBaseSchoolMapper extends HBaseMapper<School> {
 
   @Override
-  public School getEntity(List<Result> results) {
-    Result mainResult = results.stream()
-        .filter(isMainResult()).findFirst().get();
+  public List<School> getEntities(List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<School> schools = new ArrayList<>();
+    results.stream().filter(isMainResult()).forEach(result -> {
+      School school = getEntity(result, results);
+      schools.add(school);
+    });
+    return schools;
+  }
+
+  private School getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult);
     String locale = getLocale(mainResult);
@@ -54,6 +66,13 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
         modifiedBy,
         modifiedDateTime
     );
+  }
+
+  @Override
+  public School getEntity(List<Result> results) {
+    Result mainResult = results.stream()
+        .filter(isMainResult()).findFirst().get();
+    return getEntity(mainResult, results);
   }
 
   @Override

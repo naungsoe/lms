@@ -38,7 +38,7 @@ public class LocaleController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{module}")
-  public String getLocale(
+  public String findBy(
       @PathParam("module") String module,
       @Context HttpServletRequest request)
       throws IOException {
@@ -48,6 +48,8 @@ public class LocaleController {
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     String navigationFilePath = String.format(
         "locales/navigation/%s.json", locale);
+    String commonFilePath = String.format(
+        "locales/common/%s.json", locale);
     String moduleFilePath = String.format(
         "locales/%s/%s.json", module, locale);
 
@@ -55,11 +57,16 @@ public class LocaleController {
         .getResourceAsStream(navigationFilePath);
     JsonNode navNode = JsonUtils.parseJson(navInputStream);
 
+    InputStream commonInputStream = getClass().getClassLoader()
+        .getResourceAsStream(commonFilePath);
+    JsonNode commonNode = JsonUtils.parseJson(commonInputStream);
+
     InputStream moduleInputStream = getClass().getClassLoader()
         .getResourceAsStream(moduleFilePath);
     JsonNode moduleNode = JsonUtils.parseJson(moduleInputStream);
 
     populateProperties(moduleNode.get(locale), navNode.get(locale));
+    populateProperties(moduleNode.get(locale), commonNode.get(locale));
     return moduleNode.toString();
   }
 

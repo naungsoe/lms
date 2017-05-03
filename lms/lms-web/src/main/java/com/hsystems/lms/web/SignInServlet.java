@@ -141,7 +141,7 @@ public class SignInServlet extends BaseServlet {
 
   private void loadCaptchaAttributes(HttpServletRequest request) {
     HttpSession session = request.getSession();
-    String captcha = SecurityUtils.genCaptcha();
+    String captcha = SecurityUtils.getCaptcha();
     session.setAttribute("captcha", captcha);
     request.setAttribute("captchaRequired", true);
   }

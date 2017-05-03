@@ -8,41 +8,24 @@
 
   <template strip-whitespace>
     <style include="lms-style">
-      :host {
-        @apply(--layout-vertical);
-      }
-
-      iron-list {
-        --iron-list-items-container: {
-          max-width: 800px;
-          margin: auto;
-        };
-      }
-
-      paper-radio-group {
-        display: block;
-      }
-
-      paper-radio-button {
-        --paper-radio-button-vertical-align: top;
-      }
-
       .list-item.active {
         z-index: 1;
       }
 
       .question {
         @apply(--layout-horizontal);
-        background-color: white;
-        border: 1px solid var(--paper-grey-300);
         margin: 0 0 12px 0;
         padding: 16px;
       }
 
       .question .question {
-        border: 0;
-        margin: 8px 0 0 0;
-        padding: 8px;
+        margin: 8px 0 0 8px;
+        padding: 0;
+      }
+
+      .question .question-type {
+        font-weight: bold;
+        margin-bottom: 8px;
       }
 
       .question-content {
@@ -51,15 +34,19 @@
       }
     </style>
 
-    <iron-ajax name="listAjax" url="[[restUrl]]" params="[[queryParams]]"
-               method="GET" handle-as="json" content-type="application/json"
-               loading="{{loading}}" on-response="_handleResponse"></iron-ajax>
+    <iron-ajax url="[[restUrl]]" params="[[restParams]]" method="GET"
+               handle-as="json" content-type="application/json"
+               loading="{{loading}}" on-response="_onAjaxResponse"></iron-ajax>
 
-    <iron-list items="[[questions]]" as="question" scroll-target="document">
+    <iron-list items="[[questions]]" as="question" selected-item={{selectedQuestion}}
+               scroll-target="document" selection-enabled>
       <template>
-        <div class="list-item" on-tap="_handleItem">
-          <div class="question">
+        <div class="list-item" on-tap="_onItemTap">
+          <div class="box question">
             <div class="question-content">
+              <div class="question-type">
+                [[question.type]]
+              </div>
               <div class="question-body">
                 [[question.body]]
               </div>
@@ -77,7 +64,6 @@
               <paper-menu-button horizontal-align="right">
                 <paper-icon-button icon="more-vert" class="dropdown-trigger"></paper-icon-button>
                 <paper-menu class="dropdown-content">
-                  <paper-item>Edit</paper-item>
                   <paper-item>Share</paper-item>
                   <paper-item>Delete</paper-item>
                 </paper-menu>
@@ -89,14 +75,12 @@
     </iron-list>
 
     <div class="loading-status" hidden$="[[!loading]]">
-      <paper-spinner active$="[[loading]]"></paper-spinner> Fetching questions
+      <paper-spinner active$="[[loading]]"></paper-spinner>
+      [[localize('labelFetchingQuestions')]]
     </div>
 
-    <iron-scroll-threshold name="scrollTheshold"
-                           lower-threshold="500"
-                           on-lower-threshold="_loadMore"
-                           scroll-target="document">
-    </iron-scroll-threshold>
+    <iron-scroll-threshold lower-threshold="500" on-lower-threshold="_onLoadMore"
+                           scroll-target="document"></iron-scroll-threshold>
   </template>
 
   <script>
@@ -104,7 +88,9 @@
       is: 'lms-question-list',
 
       behaviors: [
-        Polymer.AppLocalizeBehavior
+        Polymer.AppLocalizeBehavior,
+        LMS.UserBehavior,
+        LMS.LocaleBehavior
       ],
       
       properties: {
@@ -112,7 +98,7 @@
           type: String,
           notify: true
         },
-        queryParams: {
+        restParams: {
           type: Object,
           notify: true
         },
@@ -134,21 +120,30 @@
         },
         questions: {
           type: Array,
-          notify: true,
-          value: []
+          notify: true
         },
         loading: {
           type: Boolean,
+          notify: true
+        },
+        selectedQuestion: {
+          type: Object,
           notify: true
         }
       },
 
       attached: function() {
-        this.$$('[name=listAjax]').auto = true;
+        this.$$('iron-ajax').auto = true;
       },
 
-      _handleResponse: function(event) {
+      _hasQuestions: function(question) {
+        return question.questions
+          && (question.questions.length > 0);
+      },
+
+      _onAjaxResponse: function(event) {
         var response = event.detail.response;
+        this.questions = this.questions || [];
 
         if (this.resetList) {
           this.set('questions', []);
@@ -160,34 +155,31 @@
 
         this.numFound = response.numFound;
         this.resetList = true;
-        this.$$('[name=scrollTheshold]').clearTriggers();
+        this.$$('iron-scroll-threshold').clearTriggers();
       },
 
-      _loadMore: function() {
-        var offset = this.queryParams.offset;
-        var limit = this.queryParams.limit;
+      _onLoadMore: function() {
+        var offset = this.offset;
+        var limit = this.limit;
         var count = (offset + 1) * limit;
 
-        if (this.numFound && (count < this.numFound)) {
+        if (this.numFound && (count < 1000)) {
           this.resetList = false;
-          this.set('queryParams.offset', offset + 1);
+          this.offset = offset + 1;
 
         } else {
-          this.$$('[name=scrollTheshold]').clearTriggers();
+          this.$$('iron-scroll-threshold').clearTriggers();
         }
       },
 
-      _hasQuestions: function(question) {
-        return question.questions && (question.questions.length > 0);
-      },
-
-      _handleItem: function(event) {
+      _onItemTap: function(event) {
         Polymer.dom(this.root).querySelectorAll('.list-item')
           .forEach(function(item) {
             item.classList.remove('active');
           });
 
         event.currentTarget.classList.add('active');
+        //this.fire('item-tap');
       }
     });
   </script>

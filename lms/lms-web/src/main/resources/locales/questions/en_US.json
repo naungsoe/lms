@@ -10,6 +10,10 @@
     "labelShortAnswer": "Short answer",
     "labelEssay": "Essay",
     "labelComposite": "Composite",
+    "labelFetchingQuestion": "Fetching question",
+    "labelFetchingQuestions": "Fetching questions",
+    "labelQuestion": "question",
+    "labelQuestions": "questions",
     "buttonResetFilter": "Reset",
     "buttonApplyFilter": "Apply"
   }

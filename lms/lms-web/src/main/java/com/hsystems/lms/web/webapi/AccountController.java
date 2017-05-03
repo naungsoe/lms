@@ -43,7 +43,7 @@ public class AccountController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public String getAccount(String id) {
+  public String findBy(String id) {
     return "Get request";
   }
 
@@ -61,7 +61,7 @@ public class AccountController {
   @GET
   @Produces(APPLICATION_PNG)
   @Path("/captcha")
-  public Response getCaptcha(@Context HttpServletRequest request) {
+  public Response generateCaptcha(@Context HttpServletRequest request) {
     HttpSession session = request.getSession();
     String captcha = (String) session.getAttribute("captcha");
     CommonUtils.checkArgument(StringUtils.isNotEmpty(captcha),
@@ -71,7 +71,7 @@ public class AccountController {
         properties.getProperty("captcha.image.width"));
     int height = Integer.parseInt(
         properties.getProperty("captcha.image.height"));
-    byte[] image = SecurityUtils.getCaptchaPng(captcha, width, height);
+    byte[] image = SecurityUtils.createCaptchaPng(captcha, width, height);
     return Response.ok(image).build();
   }
 }

@@ -1,21 +1,15 @@
 <link rel="import" href="../lms-default.html">
 <link rel="import" href="../lms-style.html">
 <link rel="import" href="../lms-app-nav.html">
-<link rel="import" href="../../bower_components/paper-toolbar/paper-toolbar.html">
-<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
-<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
-<link rel="import" href="../../bower_components/paper-item/paper-item.html">
-<link rel="import" href="../../bower_components/paper-input/paper-input.html">
-<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
-<link rel="import" href="../../bower_components/paper-tabs/paper-tabs.html">
-<link rel="import" href="../../bower_components/paper-fab/paper-fab.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../lms-app-search.html">
 <link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-scroll-effects/app-scroll-effects.html">
 <link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
 <link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="lms-question-list.html">
-<link rel="import" href="lms-question-create.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="lms-question-list-view.html">
+<link rel="import" href="lms-question-detail-view.html">
 
 <dom-module id="lms-questions">
 
@@ -36,84 +30,43 @@
         z-index: 1;
       }
 
-      [main-content] {
-        padding-top: 64px;
-      }
-
-      [main-content] iron-collapse,
-      [main-content] paper-tabs,
-      [main-content] paper-toolbar {
+      .main-content {
         max-width: 800px;
-        margin: auto;
-      }
-
-      [main-content] paper-tabs {
-        border-bottom: 1px solid var(--paper-grey-300);
-        margin: 16px auto;
+        width: 100%;
+        margin: 0 auto;
+        padding-top: 64px;
       }
     </style>
 
+    <app-location route="{{route}}"></app-location>
+
+    <app-route route="{{route}}" pattern="[[url]]/:view"
+               data="{{routeData}}" tail="{{subroute}}"></app-route>
+
     <app-header nav condenses fixed effects="waterfall">
       <app-toolbar>
-        <paper-icon-button icon="menu" on-tap="_handleMenu"></paper-icon-button>
+        <paper-icon-button icon="menu" on-tap="_onMenuTap"></paper-icon-button>
         <h3 main-title>[[localize('titlePage')]]</h3>
-        <paper-input-container id="inputContainerSearch" no-label-float search hidden>
-          <input id="inputSearch" is="iron-input" type="text">
-          <paper-icon-button suffix icon="search"></paper-icon-button>
-        </paper-input-container>
-        <paper-icon-button id="buttonSearchToggle" icon="search"
-                           on-tap="_handleSearchToggle"></paper-icon-button>
-        </paper-input>
+        <lms-app-search query-term="{{queryTerm}}" hidden$="[[_hideList(routeData)]]"
+                        language="[[language]]" resources="[[resources]]"></lms-app-search>
       </app-toolbar>
     </app-header>
 
-    <div main-content>
-      <paper-toolbar>
-        <paper-menu-button name="filterMenu" horizontal-align="left"
-                           vertical-align="top" ignore-select>
-          <paper-icon-button class="dropdown-trigger" icon="filter-list"
-                             on-tap="_handleFilter"></paper-icon-button>
-          <div class="dropdown-content" filter-list>
-            <div class="filter-content">
-              <div class="title">[[localize('labelQuestionType')]]</div>
-              <iron-selector attr-for-selected="value" multi flex-horizontal
-                             selected-values="{{questionTypes}}">
-                <div value="MULTIPLE_CHOICE">[[localize('labelMultipleChoice')]]</div>
-                <div value="MULTIPLE_RESPONSE">[[localize('labelMultipleResponse')]]</div>
-                <div value="SHORT_ANSWER">[[localize('labelShortAnswer')]]</div>
-                <div value="ESSAY">[[localize('labelEssay')]]</div>
-                <div value="COMPOSITE">[[localize('labelComposite')]]</div>
-              </iron-selector>
-              <br/>
-              <div class="title">[[localize('labelOwnedBy')]]</div>
-              <iron-selector attr-for-selected="value" flex-horizontal
-                             selected-values="{{ownedByTypes}}">
-                <div value="OWNED_BY_ME">[[localize('labelOwnedByMe')]]</div>
-                <div value="OWNED_BY_OTHERS">[[localize('labelNotOwnerByMe')]]</div>
-              </iron-selector>
-            </div>
-            <div class="filter-actions" justified-end>
-              <paper-button on-tap="_handleReset">
-                [[localize('buttonResetFilter')]]
-              </paper-button>
-              <paper-button on-tap="_handleApply">
-                [[localize('buttonApplyFilter')]]
-              </paper-button>
-            </div>
-          </div>
-        </paper-menu-button>
-        <div class="title"></div>
-        <div class="number-found">[[numFound]] questions</div>
-      </paper-toolbar>
-      <lms-question-list rest-url="[[restUrl]]" query-params="[[queryParams]]"
-                         resources="[[resources]]" num-found="{{numFound}}"></lms-question-list>
-      <lms-question-create rest-url="[[restUrl]]" rest-params="{{createParams}}"
-                           resources="[[resources]]" hidden></lms-question-create>
+    <div class="main-content">
+      <lms-question-list-view route="{{route}}" userId="[[userId]]" url="[[url]]" rest-url="[[restUrl]]"
+                              query-term="[[queryTerm]]" hidden$="[[_hideList(routeData)]]"
+                              language="[[language]]" resources="[[resources]]">
+      </lms-question-list-view>
+
+      <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
+        <lms-question-detail-view name="detail" route="{{subroute}}"
+                                  userId="[[userId]]" rest-url="[[restUrl]]"
+                                  language="[[language]]" resources="[[resources]]">
+        </lms-question-detail-view>
+      </iron-pages>
     </div>
 
-    <paper-fab icon="add" add on-tap="_handleCreate"></paper-fab>
-
-    <app-drawer id="drawerMain" swipe-open>
+    <app-drawer swipe-open>
       <lms-app-nav language="[[language]]" resources="[[resources]]"></lms-app-nav>
     </app-drawer>
   </template>
@@ -133,76 +86,42 @@
           type: String,
           notify: true
         },
-        questionTypes: {
-          type: Array,
-          notify: true
-        },
-        ownedByTypes: {
-          type: Array,
+        url: {
+          type: String,
           notify: true
         },
         restUrl: {
           type: String,
           notify: true
         },
-        queryParams: {
+        route: {
           type: Object,
           notify: true
         },
-        numFound: {
-          type: Number,
+        routeData: {
+          type: Object,
           notify: true
         },
-        createParams: {
+        subroute: {
           type: Object,
+          notify: true
+        },
+        queryTerm: {
+          type: String,
           notify: true
         }
       },
 
       attached: function() {
-        var fields = ['id','type','body',
-          'createdBy','modifiedBy','questions']
-        this.queryParams = {
-          fields: fields.join(','),
-          offset: 0,
-          limit: 20
-        };
+
       },
 
-      _handleMenu: function(event) {
-        this.$.drawerMain.toggle();
+      _hideList: function(routeData) {
+        return !!routeData.view && (routeData.view !== '');
       },
 
-      _handleSearchToggle: function(event) {
-        this.$.buttonSearchToggle.hidden = true;
-        this.$.inputContainerSearch.hidden = false;
-        this.$.inputSearch.focus();
-      },
-
-      _handleApply: function(event) {
-        var typeFilter = this.questionTypes.join(' OR ');
-        var filters = 'type:MUST ' + typeFilter;
-
-        if (this.ownedByTypes && (this.ownedByTypes.length === 1)) {
-          var ownedByType = this.ownedByTypes[0];
-          var ownedByFilter = '';
-
-          if (ownedByType === "OWNED_BY_ME") {
-            ownedByFilter = '.id:MUST ' + this.userId;
-
-          } else if (ownedByType === "OWNED_BY_ME") {
-            ownedByFilter = '.id:NOT ' + this.userId;
-          }
-
-          filters = filters + ' ' + ownedByFilter;
-        }
-
-        this.set('queryParams.filters', filters);
-        this.$$('[name=filterMenu]').close();
-      },
-
-      _handleCreate: function(event) {
-
+      _onMenuTap: function(event) {
+        this.$$('app-drawer').toggle();
       }
     });
   </script>

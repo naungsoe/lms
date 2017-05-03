@@ -1,0 +1,114 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="lms-style.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animations.html">
+<link rel="import" href="../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../bower_components/paper-icon-button/paper-icon-button.html">
+
+<dom-module id="lms-app-search">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+      :host {
+        @apply(--layout-horizontal);
+      }
+
+      :host([active]) paper-icon-button {
+        background-color: var(--lms-app-search-active-icon-background-color);
+        color: var(--lms-app-search-active-icon-color);
+      }
+
+      paper-icon-button {
+        color: var(--lms-app-search-icon-color);
+      }
+
+      input {
+        border: 0;
+        display: none;
+        outline: none;
+        padding: 8px 0 8px 8px;
+      }
+    </style>
+
+    <input is="iron-input" type="text" bind-value="{{searchTerm}}">
+    <paper-icon-button icon="search" on-tap="_onSearchTap"></paper-icon-button>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-app-search',
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior,
+        Polymer.AppLocalizeBehavior,
+        LMS.LocaleBehavior
+      ],
+
+      properties: {
+        searchTerm: {
+          type: String,
+          notify: true
+        },
+        queryTerm: {
+          type: String,
+          notify: true
+        },
+        showing: {
+          type: Boolean,
+          value: false
+        },
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'scale-up-animation',
+                node: this.$$('input'),
+                axis: 'x',
+                transformOrigin: '100% 0',
+                timing: {
+                  duration: 100
+                }
+              }],
+              'exit': [{
+                name: 'scale-down-animation',
+                node: this.$$('input'),
+                axis: 'x',
+                transformOrigin: '100% 0',
+                timing: {
+                  duration: 100
+                }
+              }]
+            }
+          }
+        }
+      },
+
+      listeners: {
+        'neon-animation-finish': '_onAnimationFinish'
+      },
+
+      _onAnimationFinish: function() {
+        if (this.showing) {
+          this.$$('input').focus();
+
+        } else {
+          this.$$('input').style.display = '';
+        }
+      },
+
+      _onSearchTap: function(event) {
+        if (this.showing) {
+          this.queryTerm = this.searchTerm;
+
+        } else {
+          this.setAttribute('active', '');
+          this.$$('input').style.display = 'inline-block';
+          this.showing = true;
+          this.playAnimation('entry');
+        }
+      }
+    });
+  </script>
+
+</dom-module>

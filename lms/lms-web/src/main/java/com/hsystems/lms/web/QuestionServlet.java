@@ -46,7 +46,6 @@ public class QuestionServlet extends BaseServlet {
 
     loadLocale(request, "questions");
     request.setAttribute("userModel", userModel);
-    request.setAttribute("restUrl", "/webapi/questions");
     forwardRequest(request, response, JSP_PATH);
   }
 

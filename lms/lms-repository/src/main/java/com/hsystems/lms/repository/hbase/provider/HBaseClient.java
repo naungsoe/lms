@@ -36,6 +36,15 @@ public class HBaseClient {
     configuration = HBaseConfiguration.create();
   }
 
+  public <T> List<Result> get(List<Get> gets, Class<T> type)
+      throws IOException {
+
+    Table table = getTable(getTableName(type));
+    Result[] results = table.get(gets);
+    table.close();
+    return Arrays.asList(results);
+  }
+
   public <T> Result get(Get get, Class<T> type)
       throws IOException {
 

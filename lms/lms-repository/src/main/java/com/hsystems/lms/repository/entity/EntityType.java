@@ -7,6 +7,7 @@ public enum EntityType {
 
   UNKNOWN,
   SCHOOL,
+  SUBJECT,
   GROUP,
   USER,
   QUESTION,

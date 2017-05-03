@@ -1,0 +1,9 @@
+{
+  "en_US": {
+    "MULTIPLE_CHOICE": "Multiple choice",
+    "MULTIPLE_RESPONSE": "Multiple response",
+    "SHORT_ANSWER": "Short answer",
+    "ESSAY": "Essay",
+    "COMPOSITE": "Composite"
+  }
+}

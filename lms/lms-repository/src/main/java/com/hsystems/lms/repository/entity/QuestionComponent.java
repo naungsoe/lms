@@ -59,8 +59,8 @@ public class QuestionComponent implements Serializable, Component {
       return false;
     }
 
-    QuestionComponent section = (QuestionComponent) obj;
-    return id.equals(section.getId());
+    QuestionComponent component = (QuestionComponent) obj;
+    return id.equals(component.getId());
   }
 
   @Override

@@ -45,4 +45,18 @@ public class StringUtils {
 
     return builder.toString();
   }
+
+  public static <T> String prepend(List<T> items, String prefix) {
+    if ((items == null) || items.isEmpty()) {
+      return "";
+    }
+
+    StringBuilder builder = new StringBuilder();
+    IntStream.range(0, items.size()).forEach(i -> {
+      builder.append(prefix);
+      builder.append(items.get(i));
+    });
+
+    return builder.toString();
+  }
 }

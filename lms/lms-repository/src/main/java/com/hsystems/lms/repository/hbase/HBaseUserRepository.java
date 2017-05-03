@@ -2,16 +2,17 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.MutateLog;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.List;
@@ -27,33 +28,34 @@ public class HBaseUserRepository
 
   private final HBaseUserMapper userMapper;
 
-  private final MutateLogRepository mutateLogRepository;
+  private final MutationRepository mutationRepository;
 
   @Inject
   HBaseUserRepository(
       HBaseClient client,
       HBaseUserMapper userMapper,
-      MutateLogRepository mutateLogRepository) {
+      MutationRepository mutationRepository) {
 
     this.client = client;
     this.userMapper = userMapper;
-    this.mutateLogRepository = mutateLogRepository;
+    this.mutationRepository = mutationRepository;
   }
 
   @Override
   public Optional<User> findBy(String id)
       throws IOException {
 
-    Optional<MutateLog> mutateLogOptional
-        = mutateLogRepository.findBy(id, EntityType.USER);
+    Optional<Mutation> mutationOptional
+        = mutationRepository.findBy(id, EntityType.USER);
 
-    if (!mutateLogOptional.isPresent()) {
+    if (!mutationOptional.isPresent()) {
       return Optional.empty();
     }
 
-    MutateLog mutateLog = mutateLogOptional.get();
+    Mutation mutation = mutationOptional.get();
     Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(mutateLog.getTimestamp());
+    scan.setStartRow(Bytes.toBytes(id));
+    scan.setTimeStamp(mutation.getTimestamp());
 
     List<Result> results = client.scan(scan, User.class);
 

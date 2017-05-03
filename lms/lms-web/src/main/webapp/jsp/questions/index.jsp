@@ -16,6 +16,7 @@
             last-name="<c:out value="${userModel.lastName}"/>"
             language="<c:out value="${locale}"/>"
             locale-url="<c:url value="${localeUrl}"/>"
-            rest-url="<c:url value="${restUrl}"/>"></lms-questions>
+            url="<c:url value="/web/questions"/>"
+            rest-url="<c:url value="/webapi/questions"/>"></lms-questions>
 </body>
 </html>

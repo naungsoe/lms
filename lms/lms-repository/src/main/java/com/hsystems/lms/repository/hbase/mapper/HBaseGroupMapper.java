@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Permission;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -11,6 +12,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,9 +22,20 @@ import java.util.Optional;
 public class HBaseGroupMapper extends HBaseMapper<Group> {
 
   @Override
-  public Group getEntity(List<Result> results) {
-    Result mainResult = results.stream()
-        .filter(isMainResult()).findFirst().get();
+  public List<Group> getEntities (List<Result> results) {
+    if (results.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    List<Group> groups = new ArrayList<>();
+    results.stream().filter(isMainResult()).forEach(result -> {
+      Group group = getEntity(result, results);
+      groups.add(group);
+    });
+    return groups;
+  }
+
+  public Group getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult);
     List<Permission> permissions = getPermissions(mainResult, ",");
@@ -33,6 +46,10 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
           User member = getMember(memberResult);
           members.add(member);
         });
+
+    Result schoolResult = results.stream()
+        .filter(isSchoolResult(id)).findFirst().get();
+    School school = getSchool(schoolResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -51,11 +68,19 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
         name,
         permissions,
         members,
+        school,
         createdBy,
         createdDateTime,
         modifiedBy,
         modifiedDateTime
     );
+  }
+
+  @Override
+  public Group getEntity(List<Result> results) {
+    Result mainResult = results.stream()
+        .filter(isMainResult()).findFirst().get();
+    return getEntity(mainResult, results);
   }
 
   @Override

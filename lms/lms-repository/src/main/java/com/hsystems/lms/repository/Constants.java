@@ -61,5 +61,5 @@ public class Constants {
   public static final String SEPARATOR_COMPONENT = "_com_";
   public static final String SEPARATOR_QUESTION = "_que_";
   public static final String SEPARATOR_OPTION = "_opt_";
-  public static final String SEPARATOR_SHARE = "_share_";
+  public static final String SEPARATOR_SHARE = "_sha_";
 }

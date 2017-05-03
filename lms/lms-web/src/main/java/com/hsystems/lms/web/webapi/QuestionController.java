@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
@@ -50,33 +51,29 @@ public class QuestionController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public QueryResult<QuestionModel> getQuestions(
+  public QueryResult<QuestionModel> findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
-    Query query = Query.create(uriInfo.getRequestUri().getQuery());
-    return questionService.findAllBy(query, getConfiguration());
-  }
-
-  private Configuration getConfiguration() {
     UserModel userModel = (UserModel) principalProvider.get();
-    return Configuration.create(userModel);
+    Query query = Query.create(uriInfo.getRequestUri().getQuery());
+    return questionService.findAllBy(query, userModel);
   }
 
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public QuestionModel getQuestion(
+  public QuestionModel findBy(
       @PathParam("id") String id)
       throws IOException {
 
+    UserModel userModel = (UserModel) principalProvider.get();
     Optional<QuestionModel> questionModelOptional
-        = questionService.findBy(id, getConfiguration());
+        = questionService.findBy(id, userModel);
 
     if (!questionModelOptional.isPresent()) {
-      throw new WebApplicationException(
-          Response.Status.NOT_FOUND);
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     QuestionModel questionModel = questionModelOptional.get();
@@ -86,8 +83,7 @@ public class QuestionController {
   @POST
   @Consumes(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public Response saveQuestion(
-      QuestionModel questionModel)
+  public Response save(QuestionModel questionModel)
       throws IOException {
 
     return Response.ok(questionModel).build();

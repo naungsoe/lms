@@ -77,11 +77,13 @@ public final class SecurityUtils {
     }
   }
 
-  public static String genCaptcha() {
+  public static String getCaptcha() {
     return new StringTokenizer(UUID.randomUUID().toString(), "-").nextToken();
   }
 
-  public static byte[] getCaptchaPng(String captcha, int width, int height) {
+  public static byte[] createCaptchaPng(
+      String captcha, int width, int height) {
+
     BufferedImage image = new BufferedImage(width, height,
         BufferedImage.TYPE_INT_RGB);
     Graphics2D graphics = image.createGraphics();

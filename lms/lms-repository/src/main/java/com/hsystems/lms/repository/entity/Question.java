@@ -39,6 +39,9 @@ public class Question extends Auditable implements Entity, Serializable {
   @IndexField
   private List<Question> questions;
 
+  @IndexField
+  private School school;
+
   Question() {
 
   }
@@ -69,6 +72,7 @@ public class Question extends Auditable implements Entity, Serializable {
       String explanation,
       List<QuestionOption> options,
       List<Question> questions,
+      School school,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -81,6 +85,7 @@ public class Question extends Auditable implements Entity, Serializable {
     this.explanation = explanation;
     this.options = options;
     this.questions = questions;
+    this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -120,6 +125,10 @@ public class Question extends Auditable implements Entity, Serializable {
         : Collections.unmodifiableList(questions);
   }
 
+  public School getSchool() {
+    return school;
+  }
+
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -139,10 +148,11 @@ public class Question extends Auditable implements Entity, Serializable {
   public String toString() {
     return String.format(
         "Question{id=%s, type=%s, body=%s, hint=%s, explanation=%s, "
-            + "options=%s, questions=%s, createdBy=%s, createdDateTime=%s, "
+            + "options=%s, questions=%s, school=%s, "
+            + "createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, type, body, hint, explanation, StringUtils.join(options, ","),
-        StringUtils.join(questions, ","), createdBy, createdDateTime,
-        modifiedBy, modifiedDateTime);
+        StringUtils.join(questions, ","), school,
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

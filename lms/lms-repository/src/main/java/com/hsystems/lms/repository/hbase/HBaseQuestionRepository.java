@@ -5,11 +5,11 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
-import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.MutateLog;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
@@ -18,6 +18,7 @@ import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
+import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,7 +34,7 @@ public class HBaseQuestionRepository
 
   private final HBaseQuestionMapper questionMapper;
 
-  private final MutateLogRepository mutateLogRepository;
+  private final MutationRepository mutationRepository;
 
   private final AuditLogRepository auditLogRepository;
 
@@ -41,12 +42,12 @@ public class HBaseQuestionRepository
   HBaseQuestionRepository(
       HBaseClient client,
       HBaseQuestionMapper questionMapper,
-      MutateLogRepository mutateLogRepository,
+      MutationRepository mutationRepository,
       AuditLogRepository auditLogRepository) {
 
     this.client = client;
     this.questionMapper = questionMapper;
-    this.mutateLogRepository = mutateLogRepository;
+    this.mutationRepository = mutationRepository;
     this.auditLogRepository = auditLogRepository;
   }
 
@@ -54,16 +55,17 @@ public class HBaseQuestionRepository
   public Optional<Question> findBy(String id)
       throws IOException {
 
-    Optional<MutateLog> mutateLogOptional
-        = mutateLogRepository.findBy(id, EntityType.QUESTION);
+    Optional<Mutation> mutationOptional
+        = mutationRepository.findBy(id, EntityType.QUESTION);
 
-    if (!mutateLogOptional.isPresent()) {
+    if (!mutationOptional.isPresent()) {
       return Optional.empty();
     }
 
-    MutateLog mutateLog = mutateLogOptional.get();
+    Mutation mutation = mutationOptional.get();
     Scan scan = getRowKeyFilterScan(id);
-    scan.setTimeStamp(mutateLog.getTimestamp());
+    scan.setStartRow(Bytes.toBytes(id));
+    scan.setTimeStamp(mutation.getTimestamp());
 
     List<Result> results = client.scan(scan, Question.class);
 
@@ -84,12 +86,12 @@ public class HBaseQuestionRepository
     List<Put> puts = questionMapper.getPuts(entity, timestamp);
     client.put(puts, Question.class);
 
-    Optional<MutateLog> mutateLogOptional
-        = mutateLogRepository.findBy(entity.getId());
-    ActionType actionType = mutateLogOptional.isPresent()
+    Optional<Mutation> mutationOptional
+        = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
+    ActionType actionType = mutationOptional.isPresent()
         ? ActionType.MODIFIED : ActionType.CREATED;
-    MutateLog mutateLog = getMutateLog(entity, actionType, timestamp);
-    mutateLogRepository.save(mutateLog);
+    Mutation mutation = getMutation(entity, actionType, timestamp);
+    mutationRepository.save(mutation);
 
     User user = actionType.equals(ActionType.CREATED)
         ? entity.getModifiedBy() : entity.getCreatedBy();
@@ -102,8 +104,8 @@ public class HBaseQuestionRepository
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    MutateLog mutateLog = getMutateLog(entity, ActionType.DELETED, timestamp);
-    mutateLogRepository.save(mutateLog);
+    Mutation mutation = getMutation(entity, ActionType.DELETED, timestamp);
+    mutationRepository.save(mutation);
 
     AuditLog auditLog = getAuditLog(entity,
         entity.getModifiedBy(), ActionType.DELETED, timestamp);

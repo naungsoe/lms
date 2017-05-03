@@ -6,21 +6,23 @@ import com.google.inject.Singleton;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.MutateLogRepository;
+import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SchoolRepository;
-import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.ShareRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
+import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
-import com.hsystems.lms.repository.hbase.HBaseMutateLogRepository;
+import com.hsystems.lms.repository.hbase.HBaseMutationRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuizRepository;
 import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
-import com.hsystems.lms.repository.hbase.HBaseShareLogRepository;
+import com.hsystems.lms.repository.hbase.HBaseShareRepository;
 import com.hsystems.lms.repository.hbase.HBaseSignInLogRepository;
+import com.hsystems.lms.repository.hbase.HBaseSubjectRepository;
 import com.hsystems.lms.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import com.hsystems.lms.repository.hbase.provider.HBaseClientProvider;
@@ -31,6 +33,7 @@ import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.SchoolService;
+import com.hsystems.lms.service.SubjectService;
 import com.hsystems.lms.service.UserService;
 
 /**
@@ -42,13 +45,15 @@ public class ServiceModule extends AbstractModule {
   protected void configure() {
     bind(HBaseClient.class).toProvider(HBaseClientProvider.class)
         .in(Singleton.class);
-    bind(MutateLogRepository.class).to(HBaseMutateLogRepository.class)
+    bind(MutationRepository.class).to(HBaseMutationRepository.class)
         .in(Singleton.class);
     bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)
         .in(Singleton.class);
-    bind(ShareLogRepository.class).to(HBaseShareLogRepository.class)
+    bind(ShareRepository.class).to(HBaseShareRepository.class)
         .in(Singleton.class);
     bind(SchoolRepository.class).to(HBaseSchoolRepository.class)
+        .in(Singleton.class);
+    bind(SubjectRepository.class).to(HBaseSubjectRepository.class)
         .in(Singleton.class);
     bind(GroupRepository.class).to(HBaseGroupRepository.class)
         .in(Singleton.class);
@@ -67,6 +72,7 @@ public class ServiceModule extends AbstractModule {
 
     bind(AuthenticationService.class).in(Singleton.class);
     bind(SchoolService.class).in(Singleton.class);
+    bind(SubjectService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);
     bind(QuizService.class).in(Singleton.class);
     bind(QuestionService.class).in(Singleton.class);

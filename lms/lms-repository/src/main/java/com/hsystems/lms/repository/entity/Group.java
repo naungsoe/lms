@@ -24,10 +24,14 @@ public class Group extends Auditable implements Entity, Serializable {
   @IndexField
   private String name;
 
+  @IndexField
   private List<Permission> permissions;
 
   @IndexField
   private List<User> members;
+
+  @IndexField
+  private School school;
 
   Group() {
 
@@ -46,6 +50,7 @@ public class Group extends Auditable implements Entity, Serializable {
       String name,
       List<Permission> permissions,
       List<User> members,
+      School school,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -55,6 +60,7 @@ public class Group extends Auditable implements Entity, Serializable {
     this.name = name;
     this.permissions = permissions;
     this.members = members;
+    this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -82,6 +88,10 @@ public class Group extends Auditable implements Entity, Serializable {
         : Collections.unmodifiableList(members);
   }
 
+  public School getSchool() {
+    return school;
+  }
+
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -100,10 +110,11 @@ public class Group extends Auditable implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Group{id=%s, name=%s, permissions=%s, members=%s, createdBy=%s, "
-            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        "Group{id=%s, name=%s, permissions=%s, members=%s, "
+            + "school=%s, createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, StringUtils.join(permissions, ","),
-        StringUtils.join(members, ""), createdBy, createdDateTime,
-        modifiedBy, modifiedDateTime);
+        StringUtils.join(members, ","), school,
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

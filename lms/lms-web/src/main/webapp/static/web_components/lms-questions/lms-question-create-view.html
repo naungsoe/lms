@@ -1,0 +1,41 @@
+<link rel="import" href="../lms-default.html">
+<link rel="import" href="../lms-style.html">
+
+<dom-module id="lms-question-create-view">
+
+  <template strip-whitespace>
+    <style include="lms-style">
+
+    </style>
+
+    <iron-ajax url="[[restUrl]]" body="[[restBody]]" method="POST"
+               handle-as="json" content-type="application/json"
+               on-response="_onAjaxResponse"></iron-ajax>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-question-create-view',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+      
+      properties: {
+        restUrl: {
+          type: String,
+          notify: true
+        },
+        restBody: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _onAjaxResponse: function(event) {
+
+      }
+    });
+  </script>
+
+</dom-module>

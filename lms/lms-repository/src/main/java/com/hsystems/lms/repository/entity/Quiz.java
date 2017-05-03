@@ -29,6 +29,9 @@ public class Quiz extends Auditable implements Entity, Serializable {
   @IndexField
   private List<Section> sections;
 
+  @IndexField
+  private School school;
+
   Quiz() {
 
   }
@@ -38,6 +41,7 @@ public class Quiz extends Auditable implements Entity, Serializable {
       String title,
       String instructions,
       List<Section> sections,
+      School school,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -47,6 +51,7 @@ public class Quiz extends Auditable implements Entity, Serializable {
     this.title = title;
     this.instructions = instructions;
     this.sections = sections;
+    this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -58,33 +63,20 @@ public class Quiz extends Auditable implements Entity, Serializable {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getTitle() {
     return title;
-  }
-
-  public void setTitle(String title) {
-    this.title = title;
   }
 
   public String getInstructions() {
     return instructions;
   }
 
-  public void setInstructions(String instructions) {
-    this.instructions = instructions;
-  }
-
   public List<Section> getSections() {
     return Collections.unmodifiableList(sections);
   }
 
-  public void setSections(
-      List<Section> sections) {
-    this.sections = sections;
+  public School getSchool() {
+    return school;
   }
 
   @Override
@@ -105,9 +97,10 @@ public class Quiz extends Auditable implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, sections=%s, createdBy=%s, "
-            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
-        id, title, instructions, StringUtils.join(sections, ","), createdBy,
-        createdDateTime, modifiedBy, modifiedDateTime);
+        "Quiz{id=%s, title=%s, instructions=%s, sections=%s, school=%s, "
+            + "createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
+        id, title, instructions, StringUtils.join(sections, ","), school,
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

@@ -60,6 +60,9 @@ public class User extends Auditable implements Entity, Serializable {
   private List<Permission> permissions;
 
   @IndexField
+  private School school;
+
+  @IndexField
   private List<Group> groups;
 
   User() {
@@ -91,6 +94,7 @@ public class User extends Auditable implements Entity, Serializable {
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
+      School school,
       List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -111,6 +115,7 @@ public class User extends Auditable implements Entity, Serializable {
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
+    this.school =  school;
     this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
@@ -175,6 +180,10 @@ public class User extends Auditable implements Entity, Serializable {
     return Collections.unmodifiableList(permissions);
   }
 
+  public School getSchool() {
+    return school;
+  }
+
   public List<Group> getGroups() {
     return Collections.unmodifiableList(groups);
   }
@@ -200,12 +209,13 @@ public class User extends Auditable implements Entity, Serializable {
         "School{id=%s, account=%s, password=%s, salt=%s, firstName=%s, "
             + "lastName=%s, dateOfBirth=%s, gender=%s, "
             + "mobile=%s, email=%s, locale=%s, dateFormat=%s, "
-            + "dateTimeFormat=%s, permissions=%s, groups=%s, "
+            + "dateTimeFormat=%s, permissions=%s, school=%s, groups=%s, "
             + "createdBy=%s, createdDateTime=%s, modifiedBy=%s, "
             + "modifiedDateTime=%s}",
         id, account, password, salt, firstName, lastName, dateOfBirth,
         gender, mobile, email, locale, dateFormat, dateTimeFormat,
-        StringUtils.join(permissions, ","), StringUtils.join(groups, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(permissions, ","), school,
+        StringUtils.join(groups, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

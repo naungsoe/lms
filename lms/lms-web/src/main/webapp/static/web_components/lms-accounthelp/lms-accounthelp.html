@@ -16,6 +16,10 @@
         padding: 0;
       }
 
+      .main-content {
+        padding-top: 64px;
+      }
+
       .issues {
         max-width: 300px;
       }
@@ -32,13 +36,13 @@
     <app-header fixed effects="waterfall">
       <app-toolbar>
         <h3 main-title>{{localize('titlePage')}}</h3>
-        <paper-button on-tap="_handleSignIn">
+        <paper-button on-tap="_onSignInTap">
           [[localize('buttonSignIn')]]
         </paper-button>
       </app-toolbar>
     </app-header>
 
-    <div main-content>
+    <div class="main-content">
       <form id="formAccountHelp" method="post" actionType="[[accountHelpUrl]]" flex-vertical>
         <div class="form-content" flex-horizontal>
           <section class="issues" flex-auto>
@@ -50,7 +54,7 @@
           </section>
         </div>
         <div class="form-actions" hidden>
-          <paper-button on-tap="_handleRecover" raised>
+          <paper-button on-tap="_onRecoverTap" raised>
             [[localize('buttonRecoverAccount')]]
           </paper-button>
         </div>
@@ -78,7 +82,7 @@
         }
       },
 
-      _handleSignIn: function(event) {
+      _onSignInTap: function(event) {
         window.location = this.signInUrl;
       }
     });

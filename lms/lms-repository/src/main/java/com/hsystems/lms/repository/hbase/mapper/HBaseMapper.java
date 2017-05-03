@@ -12,7 +12,7 @@ import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Section;
-import com.hsystems.lms.repository.entity.ShareLogEntry;
+import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.lang3.StringUtils;
@@ -235,8 +235,7 @@ public abstract class HBaseMapper<T> {
   }
 
   protected Predicate<Result> isMainResult() {
-    return p -> !Bytes.toString(p.getRow())
-        .contains(Constants.SEPARATOR);
+    return p -> !Bytes.toString(p.getRow()).contains(Constants.SEPARATOR);
   }
 
   protected Predicate<Result> isChildResult(String prefix) {
@@ -291,6 +290,12 @@ public abstract class HBaseMapper<T> {
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(row);
     return matcher.find() ? matcher.group(1) : "";
+  }
+
+  protected School getSchool(Result result) {
+    String id = getId(result, Constants.SEPARATOR_SCHOOL);
+    String name = getName(result);
+    return new School(id, name);
   }
 
   protected Group getGroup(Result result) {
@@ -469,7 +474,7 @@ public abstract class HBaseMapper<T> {
     return new QuestionOption(id, body, feedback, correct, order);
   }
 
-  protected ShareLogEntry getShareLogEntry(Result result) {
+  protected ShareEntry getShareEntry(Result result) {
     String id = getId(result, Constants.SEPARATOR_SHARE);
     String firstName = getFirstName(result);
     String lastName = getLastName(result);
@@ -477,7 +482,7 @@ public abstract class HBaseMapper<T> {
     User user = new User(id, firstName, lastName);
     Permission permission = getPermission(result);
 
-    return new ShareLogEntry(
+    return new ShareEntry(
         user,
         permission
     );
@@ -636,6 +641,8 @@ public abstract class HBaseMapper<T> {
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }
+
+  abstract List<T> getEntities(List<Result> results);
 
   abstract T getEntity(List<Result> results);
 

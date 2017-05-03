@@ -29,7 +29,7 @@ public class SchoolController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public SchoolModel getSchool(@PathParam("id") String id)
+  public SchoolModel findBy(@PathParam("id") String id)
       throws IOException {
 
     return schoolService.findBy(id).get();

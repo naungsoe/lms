@@ -3,12 +3,14 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
@@ -16,6 +18,7 @@ import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -39,15 +42,8 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public Optional<QuestionModel> findBy(String id)
-      throws IOException {
-
-    return findBy(id, Configuration.create());
-  }
-
-  @Log
   public Optional<QuestionModel> findBy(
-      String id, Configuration configuration)
+      String id, UserModel userModel)
       throws IOException {
 
     Optional<Question> questionOptional
@@ -55,6 +51,7 @@ public class QuestionService extends BaseService {
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
+      Configuration configuration = Configuration.create(userModel);
       QuestionModel model = getModel(question,
           QuestionModel.class, configuration);
       return Optional.of(model);
@@ -64,16 +61,12 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public QueryResult<QuestionModel> findAllBy(Query query)
-      throws IOException {
-
-    return findAllBy(query, Configuration.create());
-  }
-
-  @Log
   public QueryResult<QuestionModel> findAllBy(
-      Query query, Configuration configuration)
+      Query query, UserModel userModel)
       throws IOException {
+
+    String schoolId = userModel.getSchool().getId();
+    query.addCriterion(Criterion.createEqual("school.id", schoolId));
 
     QueryResult<Question> queryResult
         = indexRepository.findAllBy(query, Question.class);
@@ -87,11 +80,13 @@ public class QuestionService extends BaseService {
       );
     }
 
+    Configuration configuration = Configuration.create(userModel);
+    List<Question> questions = queryResult.getItems();
     return new QueryResult<>(
         queryResult.getElapsedTime(),
         queryResult.getStart(),
         queryResult.getNumFound(),
-        getQuestionModels(queryResult.getItems(), configuration)
+        getQuestionModels(questions, configuration)
     );
   }
 
@@ -110,35 +105,22 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public void create(QuestionModel questionModel)
-      throws IOException {
-
-    create(questionModel, Configuration.create());
-  }
-
-  @Log
   public void create(
-      QuestionModel questionModel, Configuration configuration)
+      QuestionModel questionModel, UserModel userModel)
       throws IOException {
 
+    Configuration configuration = Configuration.create(userModel);
     Question question = getEntity(questionModel, Question.class, configuration);
     questionRepository.save(question);
     indexRepository.save(question);
   }
 
   @Log
-  public void save(QuestionModel questionModel, UserModel userModel)
-      throws IOException {
-
-    save(questionModel, userModel, Configuration.create());
-  }
-
-  @Log
   public void save(
-      QuestionModel questionModel, UserModel userModel,
-      Configuration configuration)
+      QuestionModel questionModel, UserModel userModel)
       throws IOException {
 
+    Configuration configuration = Configuration.create(userModel);
     Question question = getEntity(questionModel, Question.class, configuration);
     checkMutatePreconditions(question, userModel);
     questionRepository.save(question);
@@ -168,5 +150,10 @@ public class QuestionService extends BaseService {
     CommonUtils.checkArgument(
         createdBy.getId().equals(userModel.getId()),
         "error mutating question");
+  }
+
+  @Log
+  public List<QuestionType> findAllTypes() {
+    return Arrays.asList(QuestionType.values());
   }
 }

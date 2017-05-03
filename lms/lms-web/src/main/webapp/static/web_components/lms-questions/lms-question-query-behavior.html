@@ -1,0 +1,72 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../lms-query-behavior.html">
+
+<script>
+  window.LMS = window.LMS || {};
+
+  LMS.QuestionQueryBehaviorImpl = {
+    properties: {
+      queryFields: {
+        type: String,
+        notify: true
+      },
+      queryTerm: {
+        type: String,
+        notify: true
+      },
+      questionTypes: {
+        type: Array,
+        notify: true
+      },
+      ownedByTypes: {
+        type: Array,
+        notify: true
+      }
+    },
+
+    observers: [
+      '_updateQuery(queryTerm)',
+      '_updateFilters(questionTypes, ownedByTypes)'
+    ],
+
+    _updateQuery: function(queryTerm) {
+      var query = '';
+
+      if (queryTerm && (queryTerm.trim() !== '')) {
+        query = this.queryFields + ':LIKE ' + queryTerm;
+      }
+
+      this.query = query;
+      this.filters = '';
+      this.offset = 0;
+    },
+
+    _updateFilters: function(questionTypes, ownedByTypes) {
+      var filters = [];
+
+      if (questionTypes.length > 0) {
+        var typeFilter = questionTypes.join(' OR ');
+        filters.push('type:MUST ' + typeFilter);
+      }
+
+      if (ownedByTypes.length === 1) {
+        ownedByTypes.forEach(function(ownedByType) {
+          if (ownedByType === "OWNED_BY_ME") {
+            filters.push('createdBy.id:MUST ' + this.userId);
+
+          } else if (ownedByType === "OWNED_BY_OTHERS") {
+            filters.push('createdBy.id:NOT ' + this.userId);
+          }
+        }, this);
+      }
+
+      this.filters = filters.join(' ');
+      this.offset = 0;
+    }
+  };
+
+  LMS.QuestionQueryBehavior = [
+    LMS.QueryBehavior,
+    LMS.QuestionQueryBehaviorImpl
+  ];
+</script>

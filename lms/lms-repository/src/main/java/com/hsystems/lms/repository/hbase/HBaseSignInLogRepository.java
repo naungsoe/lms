@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,7 +48,7 @@ public class HBaseSignInLogRepository
       return Optional.empty();
     }
 
-    SignInLog signInLog = signInLogMapper.getEntity(result);
+    SignInLog signInLog = signInLogMapper.getEntity(Arrays.asList(result));
     return Optional.of(signInLog);
   }
 
