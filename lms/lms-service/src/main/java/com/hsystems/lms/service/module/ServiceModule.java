@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
@@ -16,6 +17,7 @@ import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
+import com.hsystems.lms.repository.hbase.HBaseLevelRepository;
 import com.hsystems.lms.repository.hbase.HBaseMutationRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuizRepository;
@@ -30,6 +32,7 @@ import com.hsystems.lms.repository.solr.SolrIndexRepository;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.SchoolService;
@@ -53,6 +56,8 @@ public class ServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(SchoolRepository.class).to(HBaseSchoolRepository.class)
         .in(Singleton.class);
+    bind(LevelRepository.class).to(HBaseLevelRepository.class)
+        .in(Singleton.class);
     bind(SubjectRepository.class).to(HBaseSubjectRepository.class)
         .in(Singleton.class);
     bind(GroupRepository.class).to(HBaseGroupRepository.class)
@@ -72,6 +77,7 @@ public class ServiceModule extends AbstractModule {
 
     bind(AuthenticationService.class).in(Singleton.class);
     bind(SchoolService.class).in(Singleton.class);
+    bind(LevelService.class).in(Singleton.class);
     bind(SubjectService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);
     bind(QuizService.class).in(Singleton.class);

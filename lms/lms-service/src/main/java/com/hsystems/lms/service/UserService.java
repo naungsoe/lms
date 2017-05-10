@@ -3,6 +3,7 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
@@ -40,32 +41,25 @@ public class UserService extends BaseService {
   }
 
   @Log
-  public Optional<UserModel> findBy(String id)
+  public Optional<UserModel> findBy(String id, Principal principal)
       throws IOException {
 
-    return findBy(id, Configuration.create());
-  }
-
-  @Log
-  public Optional<UserModel> findBy(
-      String id, Configuration configuration)
-      throws IOException {
-
-    Optional<User> userOptional
-        = indexRepository.findBy(id, User.class);
+    Optional<User> userOptional = indexRepository.findBy(id, User.class);
 
     if (userOptional.isPresent()) {
       User user = userOptional.get();
-      UserModel model = getModel(user,
-          UserModel.class, configuration);
-      return Optional.of(model);
+      Configuration configuration = Configuration.create(principal);
+      UserModel userModel = getModel(user, UserModel.class, configuration);
+      return Optional.of(userModel);
     }
 
     return Optional.empty();
   }
 
   @Log
-  public void signUp(SignUpModel signUpModel) throws IOException {
+  public void signUp(SignUpModel signUpModel)
+      throws IOException {
+
     checkSignUpPreconditions(signUpModel);
 
     User user = getUser(signUpModel);

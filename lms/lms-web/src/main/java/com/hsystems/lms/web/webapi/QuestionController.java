@@ -4,14 +4,11 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuestionService;
-import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
-import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
@@ -55,9 +52,8 @@ public class QuestionController {
       @Context UriInfo uriInfo)
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
-    return questionService.findAllBy(query, userModel);
+    return questionService.findAllBy(query, principalProvider.get());
   }
 
   @GET
@@ -68,9 +64,8 @@ public class QuestionController {
       @PathParam("id") String id)
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
     Optional<QuestionModel> questionModelOptional
-        = questionService.findBy(id, userModel);
+        = questionService.findBy(id, principalProvider.get());
 
     if (!questionModelOptional.isPresent()) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);

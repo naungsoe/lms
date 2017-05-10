@@ -8,9 +8,9 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.repository.SubjectRepository;
-import com.hsystems.lms.repository.entity.Subject;
-import com.hsystems.lms.service.model.SubjectModel;
+import com.hsystems.lms.repository.LevelRepository;
+import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.service.model.LevelModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -21,23 +21,23 @@ import java.util.List;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class SubjectService extends BaseService {
+public class LevelService extends BaseService {
 
-  private final SubjectRepository subjectRepository;
+  private final LevelRepository levelRepository;
 
   private final IndexRepository indexRepository;
 
   @Inject
-  SubjectService(
-      SubjectRepository subjectRepository,
+  LevelService(
+      LevelRepository levelRepository,
       IndexRepository indexRepository) {
 
-    this.subjectRepository = subjectRepository;
+    this.levelRepository = levelRepository;
     this.indexRepository = indexRepository;
   }
 
   @Log
-  public List<SubjectModel> findAllBy(String schoolId, Principal principal)
+  public List<LevelModel> findAllBy(String schoolId, Principal principal)
       throws IOException {
 
     UserModel userModel = (UserModel) principal;
@@ -49,38 +49,38 @@ public class SubjectService extends BaseService {
     Query query = Query.create();
     query.addCriterion(Criterion.createEqual("school.id", schoolId));
 
-    QueryResult<Subject> queryResult
-        = indexRepository.findAllBy(query, Subject.class);
+    QueryResult<Level> queryResult
+        = indexRepository.findAllBy(query, Level.class);
 
     if (queryResult.getItems().isEmpty()) {
       return Collections.emptyList();
     }
 
-    List<Subject> subjects = queryResult.getItems();
-    return getSubjectModels(subjects);
+    List<Level> levels = queryResult.getItems();
+    return getLevelModels(levels);
   }
 
-  private List<SubjectModel> getSubjectModels(List<Subject> subjects) {
-    List<SubjectModel> subjectModels = new ArrayList<>();
+  private List<LevelModel> getLevelModels(List<Level> levels) {
+    List<LevelModel> levelModels = new ArrayList<>();
 
-    for (Subject subject : subjects) {
-      SubjectModel subjectModel = getModel(subject, SubjectModel.class);
-      subjectModels.add(subjectModel);
+    for (Level level : levels) {
+      LevelModel levelModel = getModel(level, LevelModel.class);
+      levelModels.add(levelModel);
     }
 
-    return subjectModels;
+    return levelModels;
   }
 
   @Log
   public void create(
-      SubjectModel subjectModel, Principal principal)
+      LevelModel levelModel, Principal principal)
       throws IOException {
 
     UserModel userModel = (UserModel) principal;
-    subjectModel.setSchool(userModel.getSchool());
+    levelModel.setSchool(userModel.getSchool());
 
-    Subject subject = getEntity(subjectModel, Subject.class);
-    subjectRepository.save(subject);
-    indexRepository.save(subject);
+    Level level = getEntity(levelModel, Level.class);
+    levelRepository.save(level);
+    indexRepository.save(level);
   }
 }

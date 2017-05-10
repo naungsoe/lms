@@ -1,8 +1,8 @@
 package com.hsystems.lms.service.mapper;
 
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.service.model.UserModel;
 
 /**
  * Created by naungsoe on 4/11/16.
@@ -35,10 +35,10 @@ public class Configuration {
     );
   }
 
-  public static Configuration create(UserModel userModel) {
+  public static Configuration create(Principal principal) {
     return new Configuration(
-        userModel.getDateFormat(),
-        userModel.getDateTimeFormat()
+        principal.getDateFormat(),
+        principal.getDateTimeFormat()
     );
   }
 

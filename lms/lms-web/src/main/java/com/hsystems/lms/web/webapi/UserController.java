@@ -5,7 +5,6 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -48,20 +47,13 @@ public class UserController {
       throws IOException {
 
     Optional<UserModel> userModelOptional
-        = userService.findBy(id, createConfiguration());
+        = userService.findBy(id, principalProvider.get());
 
     if (!userModelOptional.isPresent()) {
-      throw new WebApplicationException(
-          Response.Status.NOT_FOUND);
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    UserModel userModel = userModelOptional.get();
-    return userModel;
-  }
-
-  private Configuration createConfiguration() {
-    UserModel userModel = (UserModel) principalProvider.get();
-    return Configuration.create(userModel);
+    return userModelOptional.get();
   }
 
   @GET

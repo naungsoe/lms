@@ -3,23 +3,23 @@ package com.hsystems.lms.web.provider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.Principal;
 
 import javax.servlet.http.HttpSession;
 
 /**
  * Created by naungsoe on 30/11/16.
  */
-public class PrincipalProvider implements Provider<UserModel> {
+public class PrincipalProvider implements Provider<Principal> {
 
-  private UserModel userModel;
+  private Principal principal;
 
   @Inject
   PrincipalProvider(HttpSession session) {
-    this.userModel = (UserModel) session.getAttribute("userModel");
+    this.principal = (Principal) session.getAttribute("principal");
   }
 
-  public UserModel get() {
-    return userModel;
+  public Principal get() {
+    return principal;
   }
 }

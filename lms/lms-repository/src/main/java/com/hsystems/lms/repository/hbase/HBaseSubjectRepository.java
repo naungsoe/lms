@@ -83,12 +83,12 @@ public class HBaseSubjectRepository
     Mutation startMutation = mutations.get(0);
     Mutation stopMutation = mutations.get(mutations.size() - 1);
     String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
-    Scan scan = getRowKeyFilterScan(startMutation.getId());
+    Scan scan = getRowKeyFilterScan(schoolId);
     scan.setStartRow(Bytes.toBytes(startMutation.getId()));
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, School.class);
+    List<Result> results = client.scan(scan, Subject.class);
     return subjectMapper.getEntities(results);
   }
 

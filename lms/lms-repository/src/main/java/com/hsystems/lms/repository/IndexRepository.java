@@ -2,8 +2,10 @@ package com.hsystems.lms.repository;
 
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.repository.entity.Entity;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -11,15 +13,18 @@ import java.util.Optional;
  */
 public interface IndexRepository {
 
-  <T> Optional<T> findBy(String id, Class<T> type)
+  <T extends Entity> Optional<T> findBy(String id, Class<T> type)
       throws IOException;
 
-  <T> QueryResult findAllBy(Query query, Class<T> type)
+  <T extends Entity> QueryResult findAllBy(Query query, Class<T> type)
       throws IOException;
 
-  <T> void save(T entity)
+  <T extends Entity> void save(T entity)
       throws IOException;
 
-  <T> void delete(T entity)
+  <T extends Entity> void save(List<T> entities)
+      throws IOException;
+
+  <T extends Entity> void delete(T entity)
       throws IOException;
 }

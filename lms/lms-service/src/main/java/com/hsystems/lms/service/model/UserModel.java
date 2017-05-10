@@ -146,6 +146,7 @@ public class UserModel
     this.email = email;
   }
 
+  @Override
   public String getLocale() {
     return locale;
   }
@@ -154,6 +155,7 @@ public class UserModel
     this.locale = locale;
   }
 
+  @Override
   public String getDateFormat() {
     return dateFormat;
   }
@@ -162,6 +164,7 @@ public class UserModel
     this.dateFormat = dateFormat;
   }
 
+  @Override
   public String getDateTimeFormat() {
     return dateTimeFormat;
   }

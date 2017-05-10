@@ -7,5 +7,11 @@ public interface Principal {
 
   String getName();
 
+  String getLocale();
+
+  String getDateFormat();
+
+  String getDateTimeFormat();
+
   boolean hasPermission(String permission);
 }

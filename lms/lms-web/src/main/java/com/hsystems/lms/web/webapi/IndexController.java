@@ -1,8 +1,13 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
+import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.IndexService;
+import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
 
@@ -17,21 +22,40 @@ import javax.ws.rs.core.Response;
 @Path("index")
 public class IndexController {
 
+  private final Provider<Principal> principalProvider;
+
   private final IndexService indexService;
 
   @Inject
-  IndexController(IndexService indexService) {
+  IndexController(
+      Provider<Principal> principalProvider,
+      IndexService indexService) {
+
+    this.principalProvider = principalProvider;
     this.indexService = indexService;
   }
 
   @POST
-  @Path("/{type}/{id}")
+  @Path("/{collection}")
+  @Requires(Permission.ADMINISTRATION)
+  public Response indexAll(
+      @PathParam("collection") String collection)
+      throws IOException {
+
+    UserModel userModel = (UserModel) principalProvider.get();
+    indexService.indexAll(collection, userModel.getSchool().getId());
+    return Response.ok().build();
+  }
+
+  @POST
+  @Path("/{collection}/{id}")
+  //@Requires(Permission.ADMINISTRATION)
   public Response index(
-      @PathParam("type") String type,
+      @PathParam("collection") String collection,
       @PathParam("id") String id)
       throws IOException {
 
-    indexService.index(type, id);
+    indexService.index(collection, id);
     return Response.ok().build();
   }
 }

@@ -6,9 +6,11 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,7 +26,7 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T> Optional<T> findBy(String id, Class<T> type)
+  public <T extends Entity> Optional<T> findBy(String id, Class<T> type)
       throws IOException {
 
     Query query = Query.create();
@@ -40,21 +42,28 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T> QueryResult<T> findAllBy(Query query, Class<T> type)
+  public <T extends Entity> QueryResult<T> findAllBy(Query query, Class<T> type)
       throws IOException {
 
     return client.query(query, type);
   }
 
   @Override
-  public <T> void save(T entity)
+  public <T extends Entity> void save(T entity)
       throws IOException {
 
     client.index(entity);
   }
 
   @Override
-  public <T> void delete(T entity)
+  public <T extends Entity> void save(List<T> entity)
+      throws IOException {
+
+    client.index(entity);
+  }
+
+  @Override
+  public <T extends Entity> void delete(T entity)
       throws IOException {
 
     client.delete(entity);

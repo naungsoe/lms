@@ -1,7 +1,6 @@
 package com.hsystems.lms.service.model;
 
 import com.hsystems.lms.common.util.ListUtils;
-import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -75,27 +74,5 @@ public class GroupModel implements Serializable {
   public void setMembers(List<UserModel> users) {
     this.members = new ArrayList<>();
     this.members.addAll(users);
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    GroupModel model = (GroupModel) obj;
-    return id.equals(model.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "Group{id=%s, name=%s, users=%s}",
-        id, name, StringUtils.join(members, ","));
   }
 }

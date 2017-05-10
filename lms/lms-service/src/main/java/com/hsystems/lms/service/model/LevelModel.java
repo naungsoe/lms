@@ -8,9 +8,9 @@ import java.io.Serializable;
  * Created by naungsoe on 7/10/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SubjectModel extends AuditableModel implements Serializable {
+public class LevelModel extends AuditableModel implements Serializable {
 
-  private static final long serialVersionUID = -7346338122798568748L;
+  private static final long serialVersionUID = -989914470279244543L;
 
   private String id;
 
@@ -18,7 +18,7 @@ public class SubjectModel extends AuditableModel implements Serializable {
 
   private SchoolModel school;
 
-  public SubjectModel() {
+  public LevelModel() {
 
   }
 

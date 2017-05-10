@@ -17,6 +17,6 @@ public interface MutationRepository
       throws IOException;
 
   List<Mutation> findAllBy(
-      String schoolId, String startId, int limit, EntityType type)
+      String schoolId, String lastId, int limit, EntityType type)
       throws IOException;
 }

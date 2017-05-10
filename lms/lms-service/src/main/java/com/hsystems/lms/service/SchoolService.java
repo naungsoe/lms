@@ -33,8 +33,8 @@ public class SchoolService extends BaseService {
 
     if (schoolOptional.isPresent()) {
       School school = schoolOptional.get();
-      SchoolModel model = getModel(school, SchoolModel.class);
-      return Optional.of(model);
+      SchoolModel schoolModel = getModel(school, SchoolModel.class);
+      return Optional.of(schoolModel);
     }
 
     return Optional.empty();

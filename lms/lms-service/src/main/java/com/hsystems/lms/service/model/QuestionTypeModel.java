@@ -40,24 +40,4 @@ public class QuestionTypeModel implements Serializable {
   public void setName(String name) {
     this.name = name;
   }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    QuestionTypeModel model = (QuestionTypeModel) obj;
-    return id.equals(model.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format("QuestionTypeModel{id=%s, name=%s}", id, name);
-  }
 }

@@ -21,6 +21,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -79,17 +80,42 @@ public class HBaseQuestionRepository
   }
 
   @Override
-  public void save(Question entity)
+  public List<Question> findAllBy(
+      String schoolId, String lastId, int limit)
       throws IOException {
 
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    List<Put> puts = questionMapper.getPuts(entity, timestamp);
-    client.put(puts, Question.class);
+    List<Mutation> mutations = mutationRepository.findAllBy(
+        schoolId, lastId, limit, EntityType.QUESTION);
+
+    if (mutations.isEmpty()) {
+      return Collections.emptyList();
+    }
+
+    Mutation startMutation = mutations.get(0);
+    Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
+    scan.setStopRow(Bytes.toBytes(stopRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    List<Result> results = client.scan(scan, Question.class);
+    return questionMapper.getEntities(results);
+  }
+
+  @Override
+  public void save(Question entity)
+      throws IOException {
 
     Optional<Mutation> mutationOptional
         = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
     ActionType actionType = mutationOptional.isPresent()
         ? ActionType.MODIFIED : ActionType.CREATED;
+
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    List<Put> puts = questionMapper.getPuts(entity, timestamp);
+    client.put(puts, Question.class);
+
     Mutation mutation = getMutation(entity, actionType, timestamp);
     mutationRepository.save(mutation);
 

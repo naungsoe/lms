@@ -79,6 +79,7 @@ public class AuthenticationFilter
       } else {
         request.getServletContext().log(
             String.format("unauthorized access to %s", url));
+
         forwardRequest(request, response, "/web/signin");
       }
     }
@@ -131,7 +132,7 @@ public class AuthenticationFilter
     HttpServletRequest httpRequest = (HttpServletRequest) request;
     HttpServletResponse httpResponse = (HttpServletResponse) response;
     HttpSession session = httpRequest.getSession(true);
-    session.setAttribute("userModel", userModel);
+    session.setAttribute("principal", userModel);
 
     Cookie cookie = new Cookie("id", userModel.getAccount());
     cookie.setMaxAge(30 * 60);

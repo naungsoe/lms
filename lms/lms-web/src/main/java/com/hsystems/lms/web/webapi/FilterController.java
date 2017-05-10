@@ -10,8 +10,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.service.IndexService;
+import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.SubjectService;
+import com.hsystems.lms.service.model.LevelModel;
 import com.hsystems.lms.service.model.SubjectModel;
 import com.hsystems.lms.service.model.UserModel;
 
@@ -36,6 +38,8 @@ public class FilterController {
 
   private final IndexService indexService;
 
+  private final LevelService levelService;
+
   private final SubjectService subjectService;
 
   private final QuestionService questionService;
@@ -44,11 +48,13 @@ public class FilterController {
   FilterController(
       Provider<Principal> principalProvider,
       IndexService indexService,
+      LevelService levelService,
       SubjectService subjectService,
       QuestionService questionService) {
 
     this.principalProvider = principalProvider;
     this.indexService = indexService;
+    this.levelService = levelService;
     this.subjectService = subjectService;
     this.questionService = questionService;
   }
@@ -82,6 +88,9 @@ public class FilterController {
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
 
+    ArrayNode levelsNode = moduleNode.putArray("levels");
+    populateLevels(levelsNode);
+
     ArrayNode subjectsNode = moduleNode.putArray("subjects");
     populateSubjects(subjectsNode);
 
@@ -91,18 +100,36 @@ public class FilterController {
     return moduleNode;
   }
 
+  private void populateLevels(ArrayNode levelsNode)
+      throws IOException {
+
+    UserModel userModel = (UserModel) principalProvider.get();
+    String schoolId = userModel.getSchool().getId();
+    List<LevelModel> levelModels = levelService.findAllBy(schoolId, userModel);
+
+    ObjectMapper mapper = new ObjectMapper();
+    levelModels.forEach(levelModel -> {
+      ObjectNode levelNode = mapper.createObjectNode();
+      levelNode.put("name", levelModel.getName());
+      levelNode.put("value", levelModel.getId());
+      levelsNode.add(levelNode);
+    });
+  }
+
   private void populateSubjects(ArrayNode subjectsNode)
       throws IOException {
 
-    ObjectMapper mapper = new ObjectMapper();
     UserModel userModel = (UserModel) principalProvider.get();
     String schoolId = userModel.getSchool().getId();
-    List<SubjectModel> subjectModels = subjectService.findAllBy(schoolId);
+    List<SubjectModel> subjectModels
+        = subjectService.findAllBy(schoolId, userModel);
+
+    ObjectMapper mapper = new ObjectMapper();
     subjectModels.forEach(subjectModel -> {
-      ObjectNode typeNode = mapper.createObjectNode();
-      typeNode.put("name", subjectModel.getName());
-      typeNode.put("value", subjectModel.getId());
-      subjectsNode.add(typeNode);
+      ObjectNode subjectNode = mapper.createObjectNode();
+      subjectNode.put("name", subjectModel.getName());
+      subjectNode.put("value", subjectModel.getId());
+      subjectsNode.add(subjectNode);
     });
   }
 

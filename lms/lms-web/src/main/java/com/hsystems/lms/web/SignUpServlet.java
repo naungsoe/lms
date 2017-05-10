@@ -44,8 +44,8 @@ public class SignUpServlet extends BaseServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignUpModel model = ServletUtils.getModel(request, SignUpModel.class);
-    userService.signUp(model);
+    SignUpModel signUpModel = ServletUtils.getModel(request, SignUpModel.class);
+    userService.signUp(signUpModel);
 
     redirectRequest(response, SIGNIN_PATH);
   }

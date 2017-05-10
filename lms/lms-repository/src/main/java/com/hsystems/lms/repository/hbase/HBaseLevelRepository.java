@@ -2,12 +2,14 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.MutationRepository;
-import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.EntityType;
+import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Subject;
+import com.hsystems.lms.repository.hbase.mapper.HBaseLevelMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
 import org.apache.hadoop.hbase.client.Result;
@@ -20,34 +22,34 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Created by naungsoe on 8/8/16.
+ * Created by naungsoe on 12/10/16.
  */
-public class HBaseUserRepository
-    extends HBaseRepository implements UserRepository {
+public class HBaseLevelRepository
+    extends HBaseRepository implements LevelRepository {
 
   private final HBaseClient client;
 
-  private final HBaseUserMapper userMapper;
+  private final HBaseLevelMapper levelMapper;
 
   private final MutationRepository mutationRepository;
 
   @Inject
-  HBaseUserRepository(
+  HBaseLevelRepository(
       HBaseClient client,
-      HBaseUserMapper userMapper,
+      HBaseLevelMapper levelMapper,
       MutationRepository mutationRepository) {
 
     this.client = client;
-    this.userMapper = userMapper;
+    this.levelMapper = levelMapper;
     this.mutationRepository = mutationRepository;
   }
 
   @Override
-  public Optional<User> findBy(String id)
+  public Optional<Level> findBy(String id)
       throws IOException {
 
     Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.USER);
+        = mutationRepository.findBy(id, EntityType.SUBJECT);
 
     if (!mutationOptional.isPresent()) {
       return Optional.empty();
@@ -58,23 +60,22 @@ public class HBaseUserRepository
     scan.setStartRow(Bytes.toBytes(id));
     scan.setTimeStamp(mutation.getTimestamp());
 
-    List<Result> results = client.scan(scan, User.class);
+    List<Result> results = client.scan(scan, School.class);
 
     if (results.isEmpty()) {
       return Optional.empty();
     }
 
-    User user = userMapper.getEntity(results);
-    return Optional.of(user);
+    Level level = levelMapper.getEntity(results);
+    return Optional.of(level);
   }
 
   @Override
-  public List<User> findAllBy(
-      String schoolId, String lastId, int limit)
-      throws IOException {
+  public List<Level> findAllBy(String schoolId)
+    throws IOException {
 
     List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, lastId, limit, EntityType.USER);
+        schoolId, schoolId, Integer.MAX_VALUE, EntityType.SUBJECT);
 
     if (mutations.isEmpty()) {
       return Collections.emptyList();
@@ -88,18 +89,18 @@ public class HBaseUserRepository
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, User.class);
-    return userMapper.getEntities(results);
+    List<Result> results = client.scan(scan, Subject.class);
+    return levelMapper.getEntities(results);
   }
 
   @Override
-  public void save(User entity)
+  public void save(Level entity)
       throws IOException {
 
   }
 
   @Override
-  public void delete(User entity)
+  public void delete(Level entity)
       throws IOException {
 
   }

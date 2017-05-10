@@ -14,6 +14,7 @@ import com.hsystems.lms.common.security.RequiresInterceptor;
 import com.hsystems.lms.web.AuthenticationFilter;
 import com.hsystems.lms.web.ErrorServlet;
 import com.hsystems.lms.web.HomeServlet;
+import com.hsystems.lms.web.IndexServlet;
 import com.hsystems.lms.web.QuestionServlet;
 import com.hsystems.lms.web.SignInServlet;
 import com.hsystems.lms.web.SignOutServlet;
@@ -48,6 +49,7 @@ public class WebModule extends ServletModule {
     bind(SignUpServlet.class).in(Singleton.class);
     bind(SignInServlet.class).in(Singleton.class);
     bind(SignOutServlet.class).in(Singleton.class);
+    bind(IndexServlet.class).in(Singleton.class);
     bind(UserServlet.class).in(Singleton.class);
     bind(HomeServlet.class).in(Singleton.class);
     bind(StorageServlet.class).in(Singleton.class);
@@ -61,6 +63,7 @@ public class WebModule extends ServletModule {
     serve("/web/signup").with(SignUpServlet.class);
     serve("/web/signin").with(SignInServlet.class);
     serve("/web/signout").with(SignOutServlet.class);
+    serve("/web/index").with(IndexServlet.class);
     serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
     serveRegex("/web/home(\\/\\w+)*").with(HomeServlet.class);
     serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);

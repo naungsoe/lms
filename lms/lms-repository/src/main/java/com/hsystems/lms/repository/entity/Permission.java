@@ -5,6 +5,7 @@ package com.hsystems.lms.repository.entity;
  */
 public enum Permission {
 
+  ADMINISTRATION,
   VIEW_RESOURCE,
   CREATE_RESOURCE,
   VIEW_HOME,

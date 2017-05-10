@@ -63,12 +63,14 @@ public class HBaseMutationRepository
 
   @Override
   public List<Mutation> findAllBy(
-      String schoolId, String startId, int limit, EntityType type)
+      String schoolId, String lastId, int limit, EntityType type)
       throws IOException {
 
-    String id = mutationMapper.getId(type, schoolId);
-    String startRowKey = getExclusiveStartRowKey(id);
-    Scan scan = getRowKeyFilterScan(id);
+    String prefix = mutationMapper.getId(type, schoolId);
+    String startRowKey = mutationMapper.getId(type, lastId);
+    startRowKey = getExclusiveStartRowKey(startRowKey);
+
+    Scan scan = getRowKeyFilterScan(prefix);
     scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setCaching(limit);
 

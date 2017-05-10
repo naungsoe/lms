@@ -11,7 +11,6 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
-import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 
@@ -27,14 +26,6 @@ public abstract class HBaseRepository {
 
   protected static final int MAX_VERSIONS = 3;
 
-  protected String getExclusiveStartRowKey(String startRowKey) {
-    return String.format(EXCLUSIVE_START_KEY_FORMAT, startRowKey);
-  }
-
-  protected String getInclusiveStopRowKey(String stopRowKey) {
-    return String.format(INCLUSIVE_STOP_KEY_FORMAT, stopRowKey);
-  }
-
   protected Scan getRowKeyFilterScan(String prefix)
       throws IOException {
 
@@ -44,13 +35,20 @@ public abstract class HBaseRepository {
   protected Scan getRowKeyFilterScan(String prefix, String suffix)
       throws IOException {
 
+    Scan scan = new Scan();
     String keyRegex = String.format(SCAN_KEY_FORMAT, prefix, suffix);
-    Scan scan = new Scan(Bytes.toBytes(prefix));
-
     RegexStringComparator comparator = new RegexStringComparator(keyRegex);
     RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, comparator);
     scan.setFilter(filter);
     return scan;
+  }
+
+  protected String getExclusiveStartRowKey(String startRowKey) {
+    return String.format(EXCLUSIVE_START_KEY_FORMAT, startRowKey);
+  }
+
+  protected String getInclusiveStopRowKey(String stopRowKey) {
+    return String.format(INCLUSIVE_STOP_KEY_FORMAT, stopRowKey);
   }
 
   protected <T extends Entity> Mutation getMutation(

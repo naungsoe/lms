@@ -49,7 +49,7 @@ public class QuizController {
       throws IOException {
 
     Optional<QuizModel> quizModelOptional
-        = quizService.findBy(id, createConfiguration());
+        = quizService.findBy(id, principalProvider.get());
 
     if (!quizModelOptional.isPresent()) {
       throw new WebApplicationException(
@@ -58,10 +58,5 @@ public class QuizController {
 
     QuizModel quizModel = quizModelOptional.get();
     return quizModel;
-  }
-
-  private Configuration createConfiguration() {
-    UserModel userModel = (UserModel) principalProvider.get();
-    return Configuration.create(userModel);
   }
 }

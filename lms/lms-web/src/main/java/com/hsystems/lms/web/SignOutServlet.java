@@ -50,8 +50,8 @@ public class SignOutServlet extends BaseServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignInModel model = ServletUtils.getModel(request, SignInModel.class);
-    authenticationService.signOut(model);
+    SignInModel signInModel = ServletUtils.getModel(request, SignInModel.class);
+    authenticationService.signOut(signInModel);
 
     clearUserSession(request, response);
     redirectRequest(response, SIGNIN_PATH);

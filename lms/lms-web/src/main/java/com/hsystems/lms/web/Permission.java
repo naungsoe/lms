@@ -5,6 +5,7 @@ package com.hsystems.lms.web;
  */
 public class Permission {
 
+  public static final String ADMINISTRATION = "ADMINISTRATION";
   public static final String VIEW_RESOURCE = "VIEW_RESOURCE";
   public static final String CREATE_RESOURCE = "CREATE_RESOURCE";
   public static final String VIEW_HOME = "VIEW_HOME";

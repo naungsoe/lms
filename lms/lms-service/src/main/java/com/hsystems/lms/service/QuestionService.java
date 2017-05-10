@@ -6,6 +6,7 @@ import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
@@ -42,8 +43,7 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public Optional<QuestionModel> findBy(
-      String id, UserModel userModel)
+  public Optional<QuestionModel> findBy(String id, Principal principal)
       throws IOException {
 
     Optional<Question> questionOptional
@@ -51,20 +51,20 @@ public class QuestionService extends BaseService {
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
-      Configuration configuration = Configuration.create(userModel);
-      QuestionModel model = getModel(question,
+      Configuration configuration = Configuration.create(principal);
+      QuestionModel questionModel = getModel(question,
           QuestionModel.class, configuration);
-      return Optional.of(model);
+      return Optional.of(questionModel);
     }
 
     return Optional.empty();
   }
 
   @Log
-  public QueryResult<QuestionModel> findAllBy(
-      Query query, UserModel userModel)
+  public QueryResult<QuestionModel> findAllBy(Query query, Principal principal)
       throws IOException {
 
+    UserModel userModel = (UserModel) principal;
     String schoolId = userModel.getSchool().getId();
     query.addCriterion(Criterion.createEqual("school.id", schoolId));
 
@@ -80,7 +80,7 @@ public class QuestionService extends BaseService {
       );
     }
 
-    Configuration configuration = Configuration.create(userModel);
+    Configuration configuration = Configuration.create(principal);
     List<Question> questions = queryResult.getItems();
     return new QueryResult<>(
         queryResult.getElapsedTime(),
@@ -106,10 +106,10 @@ public class QuestionService extends BaseService {
 
   @Log
   public void create(
-      QuestionModel questionModel, UserModel userModel)
+      QuestionModel questionModel, Principal principal)
       throws IOException {
 
-    Configuration configuration = Configuration.create(userModel);
+    Configuration configuration = Configuration.create(principal);
     Question question = getEntity(questionModel, Question.class, configuration);
     questionRepository.save(question);
     indexRepository.save(question);
@@ -117,18 +117,18 @@ public class QuestionService extends BaseService {
 
   @Log
   public void save(
-      QuestionModel questionModel, UserModel userModel)
+      QuestionModel questionModel, Principal principal)
       throws IOException {
 
-    Configuration configuration = Configuration.create(userModel);
+    Configuration configuration = Configuration.create(principal);
     Question question = getEntity(questionModel, Question.class, configuration);
-    checkMutatePreconditions(question, userModel);
+    checkMutatePreconditions(question, principal);
     questionRepository.save(question);
     indexRepository.save(question);
   }
 
   @Log
-  public void delete(String id, UserModel userModel)
+  public void delete(String id, Principal principal)
       throws IOException, IllegalAccessException {
 
     Optional<Question> questionOptional
@@ -136,7 +136,7 @@ public class QuestionService extends BaseService {
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
-      checkMutatePreconditions(question, userModel);
+      checkMutatePreconditions(question, principal);
 
       questionRepository.delete(question);
       indexRepository.delete(question);
@@ -144,9 +144,10 @@ public class QuestionService extends BaseService {
   }
 
   private void checkMutatePreconditions(
-      Question question, UserModel userModel) {
+      Question question, Principal principal) {
 
     User createdBy = question.getCreatedBy();
+    UserModel userModel = (UserModel) principal;
     CommonUtils.checkArgument(
         createdBy.getId().equals(userModel.getId()),
         "error mutating question");

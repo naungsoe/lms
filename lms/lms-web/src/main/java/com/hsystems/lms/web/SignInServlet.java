@@ -27,6 +27,8 @@ public class SignInServlet extends BaseServlet {
 
   private static final String JSP_PATH = "/jsp/signin/index.jsp";
 
+  private static final String SIGNIN_PATH = "/web/signin";
+
   private static final String HOME_PATH = "/web/home";
 
   private final AuthenticationService authenticationService;
@@ -95,9 +97,14 @@ public class SignInServlet extends BaseServlet {
         = authenticationService.signIn(signInModel);
 
     if (userModelOptional.isPresent()) {
+      String refererPath = getRefererPath(request);
       createUserSession(request, response, userModelOptional.get());
-      redirectRequest(response, HOME_PATH);
 
+      if (SIGNIN_PATH.equals(refererPath)) {
+        redirectRequest(response, HOME_PATH);
+      } else {
+        redirectRequest(response, refererPath);
+      }
     } else {
       if (authenticationService.isCaptchaRquired(signInModel)) {
         loadCaptchaAttributes(request);

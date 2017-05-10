@@ -7,6 +7,8 @@ import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -18,6 +20,10 @@ import javax.servlet.http.HttpServletResponse;
  * Created by naungsoe on 8/8/16.
  */
 public abstract class BaseServlet extends HttpServlet {
+
+  private static final String REFERER_PATTERN = "^[^/]*\\//[^/]*(\\/.*)$";
+
+  private static final String REFERER_HEADER = "referer";
 
   protected void forwardRequest(
       HttpServletRequest request, HttpServletResponse response, String path)
@@ -53,5 +59,12 @@ public abstract class BaseServlet extends HttpServlet {
     localNode.fields().forEachRemaining(field -> {
       request.setAttribute(field.getKey(), field.getValue().textValue());
     });
+  }
+
+  protected String getRefererPath(HttpServletRequest request) {
+    String referer = request.getHeader(REFERER_HEADER);
+    Pattern pattern = Pattern.compile(REFERER_PATTERN);
+    Matcher matcher = pattern.matcher(referer);
+    return matcher.find() ? matcher.group(1) : "";
   }
 }

@@ -1,11 +1,14 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.SchoolService;
 import com.hsystems.lms.service.model.SchoolModel;
 
 import java.io.IOException;
+import java.util.Optional;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -19,10 +22,16 @@ import javax.ws.rs.core.MediaType;
 @Path("schools")
 public class SchoolController {
 
+  private final Provider<Principal> principalProvider;
+
   private final SchoolService schoolService;
 
   @Inject
-  SchoolController(SchoolService schoolService) {
+  SchoolController(
+      Provider<Principal> principalProvider,
+      SchoolService schoolService) {
+
+    this.principalProvider = principalProvider;
     this.schoolService = schoolService;
   }
 
@@ -32,6 +41,7 @@ public class SchoolController {
   public SchoolModel findBy(@PathParam("id") String id)
       throws IOException {
 
-    return schoolService.findBy(id).get();
+    Optional<SchoolModel> schoolModelOptional = schoolService.findBy(id);
+    return schoolModelOptional.get();
   }
 }

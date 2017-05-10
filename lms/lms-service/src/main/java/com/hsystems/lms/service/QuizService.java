@@ -3,6 +3,7 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.entity.Quiz;
@@ -31,23 +32,16 @@ public class QuizService extends BaseService {
   }
 
   @Log
-  public Optional<QuizModel> findBy(String id)
-      throws IOException {
-
-    return findBy(id, Configuration.create());
-  }
-
-  @Log
-  public Optional<QuizModel> findBy(
-      String id, Configuration configuration)
+  public Optional<QuizModel> findBy(String id, Principal principal)
       throws IOException {
 
     Optional<Quiz> quizOptional = indexRepository.findBy(id, Quiz.class);
 
     if (quizOptional.isPresent()) {
       Quiz quiz = quizOptional.get();
-      QuizModel model = getModel(quiz, QuizModel.class, configuration);
-      return Optional.of(model);
+      Configuration configuration = Configuration.create(principal);
+      QuizModel quizModel = getModel(quiz, QuizModel.class, configuration);
+      return Optional.of(quizModel);
     }
 
     return Optional.empty();
