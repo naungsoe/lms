@@ -53,7 +53,8 @@
     </app-header>
 
     <div class="main-content">
-      <lms-question-list-view route="{{route}}" userId="[[userId]]" url="[[url]]" rest-url="[[restUrl]]"
+      <lms-question-list-view route="{{route}}" userId="[[userId]]" url="[[url]]"
+                              filters-url="[[filtersUrl]]" rest-url="[[restUrl]]"
                               query-term="[[queryTerm]]" hidden$="[[_hideList(routeData)]]"
                               language="[[language]]" resources="[[resources]]">
       </lms-question-list-view>
@@ -86,11 +87,15 @@
           type: String,
           notify: true
         },
-        url: {
+        filtersUrl: {
           type: String,
           notify: true
         },
         restUrl: {
+          type: String,
+          notify: true
+        },
+        url: {
           type: String,
           notify: true
         },

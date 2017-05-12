@@ -6,9 +6,7 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuizService;
-import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuizModel;
-import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
@@ -45,7 +43,7 @@ public class QuizController {
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
   @Requires(Permission.VIEW_QUIZZES)
-  public QuizModel findBy(@PathParam("id") String id)
+  public Response findBy(@PathParam("id") String id)
       throws IOException {
 
     Optional<QuizModel> quizModelOptional
@@ -57,6 +55,6 @@ public class QuizController {
     }
 
     QuizModel quizModel = quizModelOptional.get();
-    return quizModel;
+    return Response.ok(quizModel).build();
   }
 }

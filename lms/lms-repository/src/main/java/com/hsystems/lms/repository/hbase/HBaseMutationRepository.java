@@ -16,6 +16,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -75,7 +76,7 @@ public class HBaseMutationRepository
     scan.setCaching(limit);
 
     List<Result> results = client.scan(scan, Mutation.class);
-    return mutationMapper.getEntities(results);
+    return mutationMapper.getEntities(results, Collections.emptyList());
   }
 
   @Override

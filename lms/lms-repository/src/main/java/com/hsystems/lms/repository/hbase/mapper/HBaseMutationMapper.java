@@ -29,7 +29,9 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   }
 
   @Override
-  public List<Mutation> getEntities(List<Result> results) {
+  public List<Mutation> getEntities(
+      List<Result> results, List<Mutation> list) {
+
     if (results.isEmpty()) {
       return Collections.emptyList();
     }
@@ -54,8 +56,8 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
       type = EntityType.valueOf(matcher.group(1));
     }
 
-    ActionType actionType = getAction(result, ActionType.class);
-    long timestamp = getTimestamp(result);
+    ActionType actionType = getAction(result, 0, ActionType.class);
+    long timestamp = getTimestamp(result, 0);
     return new Mutation(id, type, actionType, timestamp);
   }
 

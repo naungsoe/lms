@@ -14,7 +14,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by naungsoe on 15/10/16.
@@ -38,10 +40,16 @@ public class SchoolController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  public SchoolModel findBy(@PathParam("id") String id)
+  public Response findBy(@PathParam("id") String id)
       throws IOException {
 
     Optional<SchoolModel> schoolModelOptional = schoolService.findBy(id);
-    return schoolModelOptional.get();
+
+    if (!schoolModelOptional.isPresent()) {
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    SchoolModel schoolModel = schoolModelOptional.get();
+    return Response.ok(schoolModel).build();
   }
 }

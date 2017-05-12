@@ -48,19 +48,21 @@ public class QuestionController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public QueryResult<QuestionModel> findAllBy(
+  public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
-    return questionService.findAllBy(query, principalProvider.get());
+    QueryResult<QuestionModel> queryResult
+        = questionService.findAllBy(query, principalProvider.get());
+    return Response.ok(queryResult).build();
   }
 
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public QuestionModel findBy(
+  public Response findBy(
       @PathParam("id") String id)
       throws IOException {
 
@@ -72,7 +74,7 @@ public class QuestionController {
     }
 
     QuestionModel questionModel = questionModelOptional.get();
-    return questionModel;
+    return Response.ok(questionModel).build();
   }
 
   @POST

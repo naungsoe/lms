@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
@@ -22,57 +23,67 @@ import java.util.Optional;
 public class HBaseUserMapper extends HBaseMapper<User> {
 
   @Override
-  public List<User> getEntities(List<Result> results) {
+  public List<User> getEntities(
+      List<Result> results, List<Mutation> mutations) {
+
     if (results.isEmpty()) {
       return Collections.emptyList();
     }
 
     List<User> users = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      User user = getEntity(result, results);
-      users.add(user);
+      String id = Bytes.toString(result.getRow());
+      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+
+      if (mutationOptional.isPresent()) {
+        long timestamp = mutationOptional.get().getTimestamp();
+        User user = getEntity(result, results, timestamp);
+        users.add(user);
+      }
     });
     return users;
   }
 
-  private User getEntity(Result mainResult, List<Result> results) {
+  private User getEntity(
+      Result mainResult, List<Result> results, long timestamp) {
+
     String id = Bytes.toString(mainResult.getRow());
-    String account = getAccount(mainResult);
-    String password = getPassword(mainResult);
-    String salt = getSalt(mainResult);
-    String firstName = getFirstName(mainResult);
-    String lastName = getLastName(mainResult);
-    LocalDateTime dateOfBirth = getDateOfBirth(mainResult);
-    String gender = getGender(mainResult);
-    String mobile = getMobile(mainResult);
-    String email = getEmail(mainResult);
-    String locale = getLocale(mainResult);
-    String dateFormat = getDateFormat(mainResult);
-    String dateTimeFormat = getDateTimmeFormat(mainResult);
-    List<Permission> permissions = getPermissions(mainResult, ",");
+    String account = getAccount(mainResult, timestamp);
+    String password = getPassword(mainResult, timestamp);
+    String salt = getSalt(mainResult, timestamp);
+    String firstName = getFirstName(mainResult, timestamp);
+    String lastName = getLastName(mainResult, timestamp);
+    LocalDateTime dateOfBirth = getDateOfBirth(mainResult, timestamp);
+    String gender = getGender(mainResult, timestamp);
+    String mobile = getMobile(mainResult, timestamp);
+    String email = getEmail(mainResult, timestamp);
+    String locale = getLocale(mainResult, timestamp);
+    String dateFormat = getDateFormat(mainResult, timestamp);
+    String dateTimeFormat = getDateTimeFormat(mainResult, timestamp);
+    List<Permission> permissions = getPermissions(mainResult, ",", timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
+    School school = getSchool(schoolResult, timestamp);
 
     List<Group> groups = new ArrayList<>();
     results.stream().filter(isGroupResult(id))
         .forEach(groupResult -> {
-          Group group = getGroup(groupResult);
+          Group group = getGroup(groupResult, timestamp);
           groups.add(group);
         });
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult);
-    LocalDateTime createdDateTime = getDateTime(createdByResult);
+    User createdBy = getCreatedBy(createdByResult, timestamp);
+    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get()) : null;
+        ? getModifiedBy(resultOptional.get(), timestamp) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get()) : null;
+        ? getDateTime(resultOptional.get(), timestamp) : null;
 
     return new User(
         id,
@@ -102,7 +113,7 @@ public class HBaseUserMapper extends HBaseMapper<User> {
   public User getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results);
+    return getEntity(mainResult, results, 0);
   }
 
   @Override

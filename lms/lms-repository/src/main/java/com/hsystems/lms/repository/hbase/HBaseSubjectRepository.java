@@ -89,7 +89,7 @@ public class HBaseSubjectRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, Subject.class);
-    return subjectMapper.getEntities(results);
+    return subjectMapper.getEntities(results, mutations);
   }
 
   @Override

@@ -89,7 +89,7 @@ public class HBaseUserRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, User.class);
-    return userMapper.getEntities(results);
+    return userMapper.getEntities(results, mutations);
   }
 
   @Override

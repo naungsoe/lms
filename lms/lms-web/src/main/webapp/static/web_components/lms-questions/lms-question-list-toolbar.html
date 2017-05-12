@@ -3,39 +3,60 @@
 <link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
-<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
 
 <dom-module id="lms-question-list-toolbar">
 
   <template strip-whitespace>
     <style include="lms-style">
       paper-dropdown-menu {
-        width: 320px;
+        margin-top: 8px;
       }
     </style>
+
+    <iron-ajax url="[[filtersUrl]]" method="GET"
+               handle-as="json" content-type="application/json"
+               on-response="_onAjaxResponse"></iron-ajax>
 
     <paper-toolbar>
       <paper-menu-button horizontal-align="left" vertical-align="top" ignore-select>
         <paper-icon-button class="dropdown-trigger" icon="filter-list"></paper-icon-button>
         <div class="dropdown-content" filter-list>
-          <div class="filter-content">
-            <div class="title">[[localize('labelQuestionType')]]</div>
-            <iron-selector attr-for-selected="value" multi flex-horizontal
-                           selected-values="{{selectedQuestionTypes}}">
-              <div value="MULTIPLE_CHOICE">[[localize('labelMultipleChoice')]]</div>
-              <div value="MULTIPLE_RESPONSE">[[localize('labelMultipleResponse')]]</div>
-              <div value="SHORT_ANSWER">[[localize('labelShortAnswer')]]</div>
-              <div value="ESSAY">[[localize('labelEssay')]]</div>
-              <div value="COMPOSITE">[[localize('labelComposite')]]</div>
-            </iron-selector>
-            <br/>
-            <div class="title">[[localize('labelOwnedBy')]]</div>
-            <iron-selector attr-for-selected="value" multi flex-horizontal
-                           selected-values="{{selectedOwnedByTypes}}">
-              <div value="OWNED_BY_ME">[[localize('labelOwnedByMe')]]</div>
-              <div value="OWNED_BY_OTHERS">[[localize('labelNotOwnerByMe')]]</div>
-            </iron-selector>
+          <div class="filter-content" flex-vertical>
+            <template is="dom-if" if="[[_isNotEmpty(filters)]]">
+              <paper-dropdown-menu no-label-float flex-auto>
+                <paper-listbox selected="0" class="dropdown-content">
+                  <paper-item>[[localize('labelAllLevels')]]</paper-item>
+                  <template is="dom-repeat" items="[[filters.levels]]" as="level">
+                    <paper-item value="[[level.value]]">[[level.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu no-label-float flex-auto>
+                <paper-listbox selected="0" class="dropdown-content">
+                  <paper-item>[[localize('labelAllSubjects')]]</paper-item>
+                  <template is="dom-repeat" items="[[filters.subjects]]" as="subject">
+                    <paper-item value="[[subject.value]]">[[subject.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu no-label-float flex-auto>
+                <paper-listbox selected="0" class="dropdown-content">
+                  <paper-item>[[localize('labelAllQuestionTypes')]]</paper-item>
+                  <template is="dom-repeat" items="[[filters.types]]" as="type">
+                    <paper-item value="[[type.value]]">[[type.name]]</paper-item>
+                  </template>
+                </paper-listbox>
+              </paper-dropdown-menu>
+              <paper-dropdown-menu no-label-float flex-auto>
+                <paper-listbox selected="0" class="dropdown-content">
+                  <paper-item>[[localize('labelOwnedByAnyone')]]</paper-item>
+                  <paper-item>[[localize('labelOwnedByMe')]]</paper-item>
+                  <paper-item>[[localize('labelNotOwnerByMe')]]</paper-item>
+                </paper-listbox>
+              </paper-dropdown-menu>
+            </template>
           </div>
           <div class="filter-actions" justified-end>
             <paper-button on-tap="_onResetTap">
@@ -63,12 +84,16 @@
       ],
       
       properties: {
-        selectedQuestionTypes: {
-          type: Array,
+        filtersUrl: {
+          type: String,
           notify: true
         },
-        selectedOwnedByTypes: {
-          type: Array,
+        filtersParams: {
+          type: Object,
+          notify: true
+        },
+        filters: {
+          type: Object,
           notify: true
         },
         questionTypes: {
@@ -78,12 +103,21 @@
         ownedByTypes: {
           type: Array,
           notify: true
+        },
+        selectedQuestionTypes: {
+          type: Array,
+          notify: true
+        },
+        selectedOwnedByTypes: {
+          type: Array,
+          notify: true
         }
       },
 
       attached: function() {
         this.selectedQuestionTypes = this.questionTypes || [];
         this.selectedOwnedByTypes = this.ownedByTypes || [];
+        this.$$('iron-ajax').generateRequest();
       },
 
       resetFilters: function() {
@@ -91,6 +125,14 @@
         this.selectedOwnedByTypes = [];
         this.questionTypes = [];
         this.ownedByTypes = [];
+      },
+
+      _onAjaxResponse: function(event) {
+        this.filters = event.detail.response;
+      },
+
+      _isNotEmpty: function(value) {
+        return !!value;
       },
 
       _onResetTap: function(event) {

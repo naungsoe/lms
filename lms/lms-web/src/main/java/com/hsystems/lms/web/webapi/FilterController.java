@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.entity.QuestionType;
-import com.hsystems.lms.service.IndexService;
 import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.SubjectService;
@@ -27,6 +26,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by naungsoe on 10/9/16.
@@ -35,8 +35,6 @@ import javax.ws.rs.core.MediaType;
 public class FilterController {
 
   private final Provider<Principal> principalProvider;
-
-  private final IndexService indexService;
 
   private final LevelService levelService;
 
@@ -47,13 +45,11 @@ public class FilterController {
   @Inject
   FilterController(
       Provider<Principal> principalProvider,
-      IndexService indexService,
       LevelService levelService,
       SubjectService subjectService,
       QuestionService questionService) {
 
     this.principalProvider = principalProvider;
-    this.indexService = indexService;
     this.levelService = levelService;
     this.subjectService = subjectService;
     this.questionService = questionService;
@@ -62,7 +58,7 @@ public class FilterController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{module}")
-  public String findFiltersBy(
+  public Response findFiltersBy(
       @PathParam("module") String module,
       @Context HttpServletRequest request)
       throws IOException {
@@ -70,7 +66,7 @@ public class FilterController {
     JsonNode moduleNode;
 
     switch (module) {
-      case "question":
+      case "questions":
         moduleNode = findQuestionFilters();
         break;
       default:
@@ -79,7 +75,8 @@ public class FilterController {
         break;
     }
 
-    return moduleNode.toString();
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
   }
 
   private JsonNode findQuestionFilters()
@@ -94,7 +91,7 @@ public class FilterController {
     ArrayNode subjectsNode = moduleNode.putArray("subjects");
     populateSubjects(subjectsNode);
 
-    ArrayNode typesNode = moduleNode.putArray("questionTypes");
+    ArrayNode typesNode = moduleNode.putArray("types");
     populateQuestionTypes(typesNode);
 
     return moduleNode;

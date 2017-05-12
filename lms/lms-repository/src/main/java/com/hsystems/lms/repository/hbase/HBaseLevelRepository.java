@@ -8,7 +8,6 @@ import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLevelMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -49,7 +48,7 @@ public class HBaseLevelRepository
       throws IOException {
 
     Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.SUBJECT);
+        = mutationRepository.findBy(id, EntityType.LEVEL);
 
     if (!mutationOptional.isPresent()) {
       return Optional.empty();
@@ -75,7 +74,7 @@ public class HBaseLevelRepository
     throws IOException {
 
     List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, schoolId, Integer.MAX_VALUE, EntityType.SUBJECT);
+        schoolId, schoolId, Integer.MAX_VALUE, EntityType.LEVEL);
 
     if (mutations.isEmpty()) {
       return Collections.emptyList();
@@ -89,8 +88,8 @@ public class HBaseLevelRepository
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, Subject.class);
-    return levelMapper.getEntities(results);
+    List<Result> results = client.scan(scan, Level.class);
+    return levelMapper.getEntities(results, mutations);
   }
 
   @Override

@@ -14,7 +14,7 @@
   <lms-signup sign-in-url="<c:url value="/web/signin"/>"
               sign-up-url="<c:url value="/webapi/account"/>"
               language="<c:out value="${locale}"/>"
-              locale-url="<c:url value="${localeUrl}"/>"
+              locale-url="<c:url value="/webapi/locales/signup"/>"
               date-pattern="<c:out value="${datePattern}"/>"></lms-signup>
 </body>
 </html>

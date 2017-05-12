@@ -21,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 /**
  * Created by naungsoe on 15/10/16.
@@ -38,7 +39,7 @@ public class LocaleController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{module}")
-  public String findBy(
+  public Response findBy(
       @PathParam("module") String module,
       @Context HttpServletRequest request)
       throws IOException {
@@ -48,8 +49,6 @@ public class LocaleController {
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     String navigationFilePath = String.format(
         "locales/navigation/%s.json", locale);
-    String commonFilePath = String.format(
-        "locales/common/%s.json", locale);
     String moduleFilePath = String.format(
         "locales/%s/%s.json", module, locale);
 
@@ -57,17 +56,16 @@ public class LocaleController {
         .getResourceAsStream(navigationFilePath);
     JsonNode navNode = JsonUtils.parseJson(navInputStream);
 
-    InputStream commonInputStream = getClass().getClassLoader()
-        .getResourceAsStream(commonFilePath);
-    JsonNode commonNode = JsonUtils.parseJson(commonInputStream);
-
     InputStream moduleInputStream = getClass().getClassLoader()
         .getResourceAsStream(moduleFilePath);
     JsonNode moduleNode = JsonUtils.parseJson(moduleInputStream);
 
-    populateProperties(moduleNode.get(locale), navNode.get(locale));
-    populateProperties(moduleNode.get(locale), commonNode.get(locale));
-    return moduleNode.toString();
+    JsonNode moduleLocaleNode = moduleNode.get(locale);
+    JsonNode navLocaleNode = navNode.get(locale);
+    populateProperties(moduleLocaleNode, navLocaleNode);
+
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
   }
 
   private void populateProperties(JsonNode primary, JsonNode source) {

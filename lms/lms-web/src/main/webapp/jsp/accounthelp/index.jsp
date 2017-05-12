@@ -14,6 +14,6 @@
   <lms-accounthelp sign-in-url="<c:url value="/web/signin"/>"
                    account-help-url="<c:url value="/web/accounthelp"/>"
                    language="<c:out value="${locale}"/>"
-                   locale-url="<c:url value="${localeUrl}"/>"></lms-accounthelp>
+                   locale-url="<c:url value="/webapi/locales/accounthelp"/>"></lms-accounthelp>
 </body>
 </html>

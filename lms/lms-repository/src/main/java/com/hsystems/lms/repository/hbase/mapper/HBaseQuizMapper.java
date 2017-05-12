@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Section;
@@ -22,40 +23,50 @@ import java.util.Optional;
 public class HBaseQuizMapper extends HBaseMapper<Quiz> {
 
   @Override
-  public List<Quiz> getEntities(List<Result> results) {
+  public List<Quiz> getEntities(
+      List<Result> results, List<Mutation> mutations) {
+
     if (results.isEmpty()) {
       Collections.emptyList();
     }
 
     List<Quiz> quizzes = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      Quiz quiz = getEntity(result, results);
-      quizzes.add(quiz);
+      String id = Bytes.toString(result.getRow());
+      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+
+      if (mutationOptional.isPresent()) {
+        long timestamp = mutationOptional.get().getTimestamp();
+        Quiz quiz = getEntity(result, results, timestamp);
+        quizzes.add(quiz);
+      }
     });
     return quizzes;
   }
 
-  private Quiz getEntity(Result mainResult, List<Result> results) {
+  private Quiz getEntity(
+      Result mainResult, List<Result> results, long timestamp) {
+
     String id = Bytes.toString(mainResult.getRow());
-    String title = getTitle(mainResult);
-    String instructions = getInstructions(mainResult);
-    List<Section> sections = getQuizSections(results, id);
+    String title = getTitle(mainResult, timestamp);
+    String instructions = getInstructions(mainResult, timestamp);
+    List<Section> sections = getQuizSections(results, id, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
+    School school = getSchool(schoolResult, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult);
-    LocalDateTime createdDateTime = getDateTime(createdByResult);
+    User createdBy = getCreatedBy(createdByResult, timestamp);
+    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get()) : null;
+        ? getModifiedBy(resultOptional.get(), timestamp) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get()) : null;
+        ? getDateTime(resultOptional.get(), timestamp) : null;
 
     return new Quiz(
         id,
@@ -74,7 +85,7 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
   public Quiz getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results);
+    return getEntity(mainResult, results, 0);
   }
 
   @Override

@@ -15,7 +15,7 @@
               account-help-url="<c:url value="/web/accounthelp"/>"
               sign-up-url="<c:url value="/web/signup"/>"
               language="<c:out value="${locale}"/>"
-              locale-url="<c:url value="${localeUrl}"/>"
+              locale-url="<c:url value="/webapi/locales/signin"/>"
               id="<c:out value="${id}"/>"
               error="<c:out value="${error}"/>"
               <c:if test="${captchaRequired}">captcha-required</c:if>

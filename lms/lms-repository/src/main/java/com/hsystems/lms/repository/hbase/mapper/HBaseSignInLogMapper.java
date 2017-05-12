@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.SignInLog;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -18,7 +19,9 @@ import java.util.List;
 public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
   @Override
-  public List<SignInLog> getEntities(List<Result> results) {
+  public List<SignInLog> getEntities(
+      List<Result> results, List<Mutation> list) {
+
     if (results.isEmpty()) {
       return Collections.emptyList();
     }
@@ -33,10 +36,10 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
   private SignInLog getEntity(Result result) {
     String id = Bytes.toString(result.getRow());
-    String sessionId = getSessionId(result);
-    String ipAddress = getIpAddress(result);
-    LocalDateTime dateTime = getDateTime(result);
-    int fails = getFails(result);
+    String sessionId = getSessionId(result, 0);
+    String ipAddress = getIpAddress(result, 0);
+    LocalDateTime dateTime = getDateTime(result, 0);
+    int fails = getFails(result, 0);
     return new SignInLog(id, sessionId, ipAddress, dateTime, fails);
   }
 

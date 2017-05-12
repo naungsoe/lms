@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
@@ -23,51 +24,61 @@ import java.util.Optional;
 public class HBaseQuestionMapper extends HBaseMapper<Question> {
 
   @Override
-  public List<Question> getEntities(List<Result> results) {
+  public List<Question> getEntities(
+      List<Result> results, List<Mutation> mutations) {
+
     if (results.isEmpty()) {
       return Collections.emptyList();
     }
 
     List<Question> questions = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      Question question = getEntity(result, results);
-      questions.add(question);
+      String id = Bytes.toString(result.getRow());
+      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+
+      if (mutationOptional.isPresent()) {
+        long timestamp = mutationOptional.get().getTimestamp();
+        Question question = getEntity(result, results, timestamp);
+        questions.add(question);
+      }
     });
     return questions;
   }
 
-  private Question getEntity(Result mainResult, List<Result> results) {
+  private Question getEntity(
+      Result mainResult, List<Result> results, long timestamp) {
+
     String id = Bytes.toString(mainResult.getRow());
-    QuestionType type = getType(mainResult, QuestionType.class);
-    String body = getBody(mainResult);
-    String hint = getHint(mainResult);
-    String explanation = getExplanation(mainResult);
+    QuestionType type = getType(mainResult, timestamp, QuestionType.class);
+    String body = getBody(mainResult, timestamp);
+    String hint = getHint(mainResult, timestamp);
+    String explanation = getExplanation(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult);
+    School school = getSchool(schoolResult, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult);
-    LocalDateTime createdDateTime = getDateTime(createdByResult);
+    User createdBy = getCreatedBy(createdByResult, timestamp);
+    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get()) : null;
+        ? getModifiedBy(resultOptional.get(), timestamp) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get()) : null;
+        ? getDateTime(resultOptional.get(), timestamp) : null;
 
     List<QuestionOption> options;
     List<Question> questions;
 
     if (type == QuestionType.COMPOSITE) {
       options = Collections.emptyList();
-      questions = getQuestions(results, id);
+      questions = getQuestions(results, id, timestamp);
 
     } else {
-      options = getQuestionOptions(results, id);
+      options = getQuestionOptions(results, id, timestamp);
       questions = Collections.emptyList();
     }
 
@@ -91,7 +102,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   public Question getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results);
+    return getEntity(mainResult, results, 0);
   }
 
   @Override

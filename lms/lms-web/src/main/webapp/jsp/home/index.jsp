@@ -11,6 +11,6 @@
 </head>
 <body>
   <lms-home language="<c:out value="${locale}"/>"
-            locale-url="<c:url value="${localeUrl}"/>"></lms-home>
+            locale-url="<c:url value="/webapi/locales/home"/>"></lms-home>
 </body>
 </html>

@@ -16,7 +16,8 @@
 
     <iron-location query="{{queryString}}"></iron-location>
 
-    <lms-question-list-toolbar question-types="{{questionTypes}}" owned-by-types="{{ownedByTypes}}"
+    <lms-question-list-toolbar filters-url="[[filtersUrl]]"
+                               question-types="{{questionTypes}}" owned-by-types="{{ownedByTypes}}"
                                language="[[language]]" resources="[[resources]]">
       <template is="dom-if" if="[[_showNumFound(numFound)]]">
         <div class="number-found">
@@ -48,11 +49,15 @@
           type: Object,
           notify: true
         },
-        url: {
+        filtersUrl: {
           type: String,
           notify: true
         },
         restUrl: {
+          type: String,
+          notify: true
+        },
+        url: {
           type: String,
           notify: true
         },

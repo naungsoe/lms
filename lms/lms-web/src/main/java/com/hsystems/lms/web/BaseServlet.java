@@ -48,9 +48,6 @@ public abstract class BaseServlet extends HttpServlet {
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     request.setAttribute("locale", locale);
 
-    String localeUrl = String.format("/webapi/locales/%s", module);
-    request.setAttribute("localeUrl", localeUrl);
-
     String localeFilePath = String.format(
         "locales/%s/%s.json", module, locale);
     InputStream stream = getClass().getClassLoader()

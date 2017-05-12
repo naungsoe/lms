@@ -5,6 +5,7 @@ import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionComponent;
@@ -16,6 +17,7 @@ import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,154 +44,377 @@ public abstract class HBaseMapper<T> {
 
   public static final String ROW_KEY_FORMAT = "%s%s%s";
 
-  protected String getId(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_ID);
+  protected Optional<Mutation> getMutationById(
+      List<Mutation> mutations, String id) {
+
+    return mutations.stream().filter(mutation -> mutation.getId().equals(id))
+        .findFirst();
   }
 
-  protected String getAccount(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_ACCOUNT);
+  protected String getId(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ID);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ID);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getPassword(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_PASSWORD);
+  protected String getAccount(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ACCOUNT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACCOUNT);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getSalt(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_SALT);
+  protected String getPassword(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_PASSWORD);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_PASSWORD);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getName(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_NAME);
+  protected String getSalt(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_SALT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_SALT);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getFirstName(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_FIRST_NAME);
+  protected String getName(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_NAME);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_NAME);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getLastName(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_LAST_NAME);
+  protected String getFirstName(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_FIRST_NAME);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_FIRST_NAME);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected LocalDateTime getDateOfBirth(Result result) {
-    return getLocalDateTime(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_DATE_OF_BIRTH);
+  protected String getLastName(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_LAST_NAME);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_LAST_NAME);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getGender(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_GENDER);
+  protected LocalDateTime getDateOfBirth(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getLocalDateTime(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_DATE_OF_BIRTH);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_DATE_OF_BIRTH);
+      return getLocalDateTime(cells, timestamp);
+    }
   }
 
-  protected String getMobile(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_MOBILE);
+  protected String getGender(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_GENDER);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_GENDER);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getEmail(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_EMAIL);
+  protected String getMobile(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_MOBILE);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_MOBILE);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getLocale(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_LOCALE);
+  protected String getEmail(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_EMAIL);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_EMAIL);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getDateFormat(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_DATE_FORMAT);
+  protected String getLocale(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_LOCALE);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_LOCALE);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getDateTimmeFormat(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_DATE_TIME_FORMAT);
+  protected String getDateFormat(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_DATE_FORMAT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_DATE_FORMAT);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected <T extends Enum<T>> T getType(Result result, Class<T> type) {
-    return getEnum(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_TYPE, type);
+  protected String getDateTimeFormat(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_DATE_TIME_FORMAT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_DATE_TIME_FORMAT);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getIpAddress(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_IP_ADDRESS);
+  protected <T extends Enum<T>> T getType(
+      Result result, long timestamp, Class<T> type) {
+
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TYPE, type);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE);
+      return getEnum(cells, timestamp, type);
+    }
   }
 
-  protected String getSessionId(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_SESSION_ID);
+  protected String getIpAddress(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_IP_ADDRESS);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_IP_ADDRESS);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected int getFails(Result result) {
-    return getInteger(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_FAILS);
+  protected String getSessionId(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_SESSION_ID);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_SESSION_ID);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getTitle(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_TITLE);
+  protected int getFails(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getInteger(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_FAILS);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_FAILS);
+      return getInteger(cells, timestamp);
+    }
   }
 
-  protected String getInstructions(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_INSTRUCTIONS);
+  protected String getTitle(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TITLE);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_TITLE);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getBody(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_BODY);
+  protected String getInstructions(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_INSTRUCTIONS);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_INSTRUCTIONS);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getHint(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_HINT);
+  protected String getBody(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_BODY);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_BODY);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getExplanation(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_EXPLANATION);
+  protected String getHint(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_HINT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_HINT);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected String getFeedback(Result result) {
-    return getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_FEEDBACK);
+  protected String getExplanation(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_EXPLANATION);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_EXPLANATION);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected LocalDateTime getDateTime(Result result) {
-    return getLocalDateTime(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_DATE_TIME);
+  protected String getFeedback(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_FEEDBACK);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_FEEDBACK);
+      return getString(cells, timestamp);
+    }
   }
 
-  protected long getTimestamp(Result result) {
-    return getLong(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_TIMESTAMP);
+  protected LocalDateTime getDateTime(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getLocalDateTime(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_DATE_TIME);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_DATE_TIME);
+      return getLocalDateTime(cells, timestamp);
+    }
   }
 
-  protected <T extends Enum<T>> T getAction(Result result, Class<T> type) {
-    return getEnum(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_ACTION, type);
+  protected long getTimestamp(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getLong(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TIMESTAMP);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_TIMESTAMP);
+      return getLong(cells, timestamp);
+    }
   }
 
-  protected boolean getCorrect(Result result) {
-    return getBoolean(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_CORRECT);
+  protected <T extends Enum<T>> T getAction(
+      Result result, long timestamp, Class<T> type) {
+
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ACTION, type);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION);
+      return getEnum(cells, timestamp, type);
+    }
   }
 
-  protected int getOrder(Result result) {
-    return getInteger(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_ORDER);
+  protected boolean getCorrect(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getBoolean(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_CORRECT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_CORRECT);
+      return getBoolean(cells, timestamp);
+    }
   }
 
-  protected <T extends Enum<T>> T getStatus(Result result, Class<T> type) {
-    return getEnum(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_STATUS, type);
+  protected int getOrder(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getInteger(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ORDER);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ORDER);
+      return getInteger(cells, timestamp);
+    }
+  }
+
+  protected <T extends Enum<T>> T getStatus(
+      Result result, long timestamp, Class<T> type) {
+
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_STATUS, type);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_STATUS);
+      return getEnum(cells, timestamp, type);
+    }
   }
 
   protected boolean getBoolean(
@@ -230,6 +456,52 @@ public abstract class HBaseMapper<T> {
       Result result, byte[] family, byte[] identifier) {
 
     String datetime = getString(result, family, identifier);
+    return (StringUtils.isEmpty(datetime)) ? LocalDateTime.MIN
+        : DateTimeUtils.toLocalDateTime(datetime, Constants.DATE_TIME_FORMAT);
+  }
+
+  protected Optional<Cell> getCellByTimestamp(
+      List<Cell> cells, long timestamp) {
+
+    return cells.stream().filter(cell -> cell.getTimestamp() == timestamp)
+        .findFirst();
+  }
+
+  protected boolean getBoolean(List<Cell> cells, long timestamp) {
+    String value = getString(cells, timestamp);
+    return StringUtils.isEmpty(value) ? false : Boolean.parseBoolean(value);
+  }
+
+  protected int getInteger(List<Cell> cells, long timestamp) {
+    String value = getString(cells, timestamp);
+    return StringUtils.isEmpty(value) ? 0 : Integer.parseInt(value);
+  }
+
+  protected long getLong(List<Cell> cells, long timestamp) {
+    String value = getString(cells, timestamp);
+    return StringUtils.isEmpty(value) ? 0 : Long.parseLong(value);
+  }
+
+  protected <T extends Enum<T>> T getEnum(
+      List<Cell> cells, long timestamp, Class<T> type) {
+
+    String value = getString(cells, timestamp);
+    return StringUtils.isEmpty(value) ? null : Enum.valueOf(type, value);
+  }
+
+  protected String getString(List<Cell> cells, long timestamp) {
+    Optional<Cell> cellOptional = getCellByTimestamp(cells, timestamp);
+
+    if (!cellOptional.isPresent()) {
+      return "";
+    }
+
+    byte[] value = cellOptional.get().getValueArray();
+    return (value == null) ? "" : Bytes.toString(value);
+  }
+
+  protected LocalDateTime getLocalDateTime(List<Cell> cells, long timestamp) {
+    String datetime = getString(cells, timestamp);
     return (StringUtils.isEmpty(datetime)) ? LocalDateTime.MIN
         : DateTimeUtils.toLocalDateTime(datetime, Constants.DATE_TIME_FORMAT);
   }
@@ -292,45 +564,54 @@ public abstract class HBaseMapper<T> {
     return matcher.find() ? matcher.group(1) : "";
   }
 
-  protected School getSchool(Result result) {
+  protected School getSchool(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_SCHOOL);
-    String name = getName(result);
+    String name = getName(result, timestamp);
     return new School(id, name);
   }
 
-  protected Group getGroup(Result result) {
+  protected Group getGroup(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_GROUP);
-    String name = getName(result);
+    String name = getName(result, timestamp);
     return new Group(id, name);
   }
 
-  protected User getUser(Result result, String separator) {
+  protected User getUser(Result result, String separator, long timestamp) {
     String id = getId(result, separator);
-    String firstName = getFirstName(result);
-    String lastName = getLastName(result);
+    String firstName = getFirstName(result, timestamp);
+    String lastName = getLastName(result, timestamp);
     return new User(id, firstName, lastName);
   }
 
-  protected User getCreatedBy(Result result) {
-    return getUser(result, Constants.SEPARATOR_CREATED_BY);
+  protected User getCreatedBy(Result result, long timestamp) {
+    return getUser(result, Constants.SEPARATOR_CREATED_BY, timestamp);
   }
 
-  protected User getModifiedBy(Result result) {
-    return getUser(result, Constants.SEPARATOR_MODIFIED_BY);
+  protected User getModifiedBy(Result result, long timestamp) {
+    return getUser(result, Constants.SEPARATOR_MODIFIED_BY, timestamp);
   }
 
   protected List<Permission> getPermissions(
-      Result result, String separator) {
+      Result result, String separator, long timestamp) {
 
     List<Permission> permissions = new ArrayList<>();
-    String value = getString(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_PERMISSIONS);
+    String value;
+
+    if (timestamp == 0) {
+      value = getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_PERMISSIONS);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_PERMISSIONS);
+      value = getString(cells, timestamp);
+    }
 
     if (StringUtils.isEmpty(value)) {
       return permissions;
     }
 
-    String[] items = value.split("\\,");
+    String[] items = value.split(separator);
     Arrays.asList(items).forEach(item -> {
       Permission permission = Enum.valueOf(Permission.class, item);
       permissions.add(permission);
@@ -339,13 +620,20 @@ public abstract class HBaseMapper<T> {
     return permissions;
   }
 
-  protected Permission getPermission(Result result) {
-    return getEnum(result, Constants.FAMILY_DATA,
-        Constants.IDENTIFIER_PERMISSION, Permission.class);
+  protected Permission getPermission(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_PERMISSION, Permission.class);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_PERMISSION);
+      return getEnum(cells, timestamp, Permission.class);
+    }
   }
 
-  protected User getMember(Result result) {
-    return getUser(result, Constants.SEPARATOR_MEMBER);
+  protected User getMember(Result result, long timestamp) {
+    return getUser(result, Constants.SEPARATOR_MEMBER, timestamp);
   }
 
   protected String getSectionId(Result result) {
@@ -361,16 +649,16 @@ public abstract class HBaseMapper<T> {
   }
 
   protected List<Section> getQuizSections(
-      List<Result> results, String prefix) {
+      List<Result> results, String prefix, long timestamp) {
 
     List<Section> sections = new ArrayList<>();
     results.stream().filter(isSectionResult(prefix))
         .forEach(result -> {
           String id = getSectionId(result);
-          String instructions = getInstructions(result);
+          String instructions = getInstructions(result, timestamp);
           List<Component> components
-              = getQuizComponents(results, id);
-          int order = getOrder(result);
+              = getQuizComponents(results, id, timestamp);
+          int order = getOrder(result, timestamp);
 
           Section section = new Section(
               id,
@@ -385,14 +673,14 @@ public abstract class HBaseMapper<T> {
   }
 
   protected List<Component> getQuizComponents(
-      List<Result> results, String prefix) {
+      List<Result> results, String prefix, long timestamp) {
 
     List<Component> components = new ArrayList<>();
     results.stream().filter(isComponentResult(prefix))
         .forEach(result -> {
           String id = getComponentId(result);
-          int order = getOrder(result);
-          Question question = getQuestion(results, id);
+          int order = getOrder(result, timestamp);
+          Question question = getQuestion(results, id, timestamp);
 
           Component component = new QuestionComponent(
               id,
@@ -406,12 +694,12 @@ public abstract class HBaseMapper<T> {
   }
 
   protected List<Question> getQuestions(
-      List<Result> results, String prefix) {
+      List<Result> results, String prefix, long timestamp) {
 
     List<Question> questions = new ArrayList<>();
     results.stream().filter(isQuestionResult(prefix))
         .forEach(result -> {
-          Question question = getQuestion(results, prefix);
+          Question question = getQuestion(results, prefix, timestamp);
           questions.add(question);
         });
 
@@ -419,25 +707,25 @@ public abstract class HBaseMapper<T> {
   }
 
   protected Question getQuestion(
-      List<Result> results, String prefix) {
+      List<Result> results, String prefix, long timestamp) {
 
     Result result = results.stream()
         .filter(isQuestionResult(prefix)).findFirst().get();
     String id = getQuestionId(result);
-    QuestionType type = getType(result, QuestionType.class);
-    String body = getBody(result);
-    String hint = getHint(result);
-    String explanation = getExplanation(result);
+    QuestionType type = getType(result, timestamp, QuestionType.class);
+    String body = getBody(result, timestamp);
+    String hint = getHint(result, timestamp);
+    String explanation = getExplanation(result, timestamp);
 
     List<QuestionOption> options;
     List<Question> childQuestions;
 
     if (type == QuestionType.COMPOSITE) {
       options = Collections.emptyList();
-      childQuestions = getQuestions(results, id);
+      childQuestions = getQuestions(results, id, timestamp);
 
     } else {
-      options = getQuestionOptions(results, id);
+      options = getQuestionOptions(results, id, timestamp);
       childQuestions = Collections.emptyList();
     }
 
@@ -453,34 +741,34 @@ public abstract class HBaseMapper<T> {
   }
 
   protected List<QuestionOption> getQuestionOptions(
-      List<Result> results, String prefix) {
+      List<Result> results, String prefix, long timestamp) {
 
     List<QuestionOption> options = new ArrayList<>();
     results.stream().filter(isOptionResult(prefix))
         .forEach(result -> {
-          QuestionOption option = getQuestionOption(result);
+          QuestionOption option = getQuestionOption(result, timestamp);
           options.add(option);
         });
 
     return options;
   }
 
-  protected QuestionOption getQuestionOption(Result result) {
+  protected QuestionOption getQuestionOption(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_OPTION);
-    String body = getBody(result);
-    String feedback = getFeedback(result);
-    boolean correct = getCorrect(result);
-    int order = getOrder(result);
+    String body = getBody(result, timestamp);
+    String feedback = getFeedback(result, timestamp);
+    boolean correct = getCorrect(result, timestamp);
+    int order = getOrder(result, timestamp);
     return new QuestionOption(id, body, feedback, correct, order);
   }
 
-  protected ShareEntry getShareEntry(Result result) {
+  protected ShareEntry getShareEntry(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_SHARE);
-    String firstName = getFirstName(result);
-    String lastName = getLastName(result);
+    String firstName = getFirstName(result, timestamp);
+    String lastName = getLastName(result, timestamp);
 
     User user = new User(id, firstName, lastName);
-    Permission permission = getPermission(result);
+    Permission permission = getPermission(result, timestamp);
 
     return new ShareEntry(
         user,
@@ -642,7 +930,7 @@ public abstract class HBaseMapper<T> {
     deletes.add(delete);
   }
 
-  abstract List<T> getEntities(List<Result> results);
+  abstract List<T> getEntities(List<Result> results, List<Mutation> mutations);
 
   abstract T getEntity(List<Result> results);
 

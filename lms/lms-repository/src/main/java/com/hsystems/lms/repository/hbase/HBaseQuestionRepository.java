@@ -74,7 +74,6 @@ public class HBaseQuestionRepository
       return Optional.empty();
     }
 
-
     Question question = questionMapper.getEntity(results);
     return Optional.of(question);
   }
@@ -100,7 +99,7 @@ public class HBaseQuestionRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, Question.class);
-    return questionMapper.getEntities(results);
+    return questionMapper.getEntities(results, mutations);
   }
 
   @Override

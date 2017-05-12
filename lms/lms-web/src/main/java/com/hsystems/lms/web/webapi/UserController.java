@@ -8,8 +8,6 @@ import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.GET;
@@ -42,7 +40,7 @@ public class UserController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  public UserModel findBy(
+  public Response findBy(
       @PathParam("id") String id)
       throws IOException {
 
@@ -53,14 +51,7 @@ public class UserController {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    return userModelOptional.get();
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  public List<UserModel> findAllBy()
-      throws IOException {
-
-    return Collections.emptyList();
+    UserModel userModel = userModelOptional.get();
+    return Response.ok(userModel).build();
   }
 }

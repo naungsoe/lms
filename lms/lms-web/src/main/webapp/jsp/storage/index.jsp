@@ -11,6 +11,6 @@
 </head>
 <body>
   <lms-storage language="<c:out value="${locale}"/>"
-               locale-url="<c:url value="${localeUrl}"/>"></lms-storage>
+               locale-url="<c:url value="/webapi/locales/storage"/>"></lms-storage>
 </body>
 </html>
