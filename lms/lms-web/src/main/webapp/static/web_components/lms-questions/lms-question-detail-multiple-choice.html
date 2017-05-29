@@ -8,20 +8,30 @@
 
   <template strip-whitespace>
     <style include="lms-style">
-      
+      .question {
+        margin: 0 0 12px 0;
+        padding: 16px 16px 8px 16px;
+      }
+
+      .question paper-radio-button {
+        padding: 8px 0;
+      }
     </style>
 
-    <div class="box question">
+    <div class="question">
       <div class="question-content">
         <div class="question-body">
           [[question.body]]
         </div>
         <div class="question-options">
-          <paper-radio-group>
+          <paper-radio-group selected="[[_getCorrectId(question.options)]]"
+                             attr-for-selected="name" flex-vertical>
             <template is="dom-repeat" items="[[question.options]]" as="option">
-              <div class="question-option">
-                [[option.body]]
-              </div>
+              <paper-radio-button name="[[option.id]]" disabled>
+                <div class="question-option">
+                  [[option.id]]-[[option.body]]
+                </div>
+              </paper-radio-button>
             </template>
           </paper-radio-group>
         </div>
@@ -44,6 +54,13 @@
           type: Object,
           notify: true
         }
+      },
+
+      _getCorrectId: function(options) {
+        var option = options.find(function(option) {
+          return option.correct;
+        });
+        return option.id;
       }
     });
   </script>

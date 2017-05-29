@@ -81,14 +81,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       }
 
-
     </style>
 
     <shrine-featured-item item="[[featuredItem]]"></shrine-featured-item>
 
     <div class="grid">
       <template is="dom-repeat" items="[[items]]" sort="_sortItems" initial-count="1">
-        <a href$="#[[section]]/[[item.id]]" class="item">
+        <a href$="#[[section]]/[[item.id]]" class="item" aria-label$="More information about [[item.title]]">
           <shrine-item item="[[item]]"></shrine-item>
         </a>
       </template>
@@ -122,7 +121,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
 
   });
-
 
   </script>
 

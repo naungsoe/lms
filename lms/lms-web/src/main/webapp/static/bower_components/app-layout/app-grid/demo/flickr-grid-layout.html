@@ -38,14 +38,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
     }
 
-
   </style>
 
 </head>
 <body>
-<dom-module id="x-grid">
-  <template>
-    <style include="app-grid-style">
+  <dom-module id="x-grid">
+    <template>
+      <style include="app-grid-style">
 
         :host {
           display: block;
@@ -121,41 +120,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         }
 
+      </style>
 
-    </style>
+      <app-header-layout>
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <div spacer main-title>Flickr grid layout</div>
+          </app-toolbar>
+        </app-header>
+        <div class="centered-container">
+          <ul class="app-grid">
+            <template is="dom-repeat" items="[[photos]]" as="photo">
+              <li class="item" style$="[[_getItemStyle(photo)]]"></li>
+            </template>
+          </ul>
+        </div>
+      </app-header-layout>
 
-    <app-header-layout>
-      <app-header condenses reveals effects="waterfall">
-        <app-toolbar>
-          <div spacer main-title>Flickr grid layout</div>
-        </app-toolbar>
-      </app-header>
-      <div class="centered-container">
-        <ul class="app-grid">
-          <template is="dom-repeat" items="[[photos]]" as="photo">
-            <li class="item" style$="[[_getItemStyle(photo)]]"></li>
-          </template>
-        </ul>
+      <div class="loadingIndicator" hidden$="[[!loadingPhotos]]">
+        <paper-spinner active$="[[loadingPhotos]]"></paper-spinner> Fetching photos
       </div>
-    </app-header-layout>
 
-    <div class="loadingIndicator" hidden$="[[!loadingPhotos]]">
-      <paper-spinner active$="[[loadingPhotos]]"></paper-spinner>
-      Fetching photos
-    </div>
+      <iron-ajax id="ajax" loading="{{loadingPhotos}}" handle-as="text" on-response="_didReceiveResponse"></iron-ajax>
 
-    <iron-ajax id="ajax" loading="{{loadingPhotos}}" handle-as="text" on-response="_didReceiveResponse"></iron-ajax>
+      <!-- this element loads more photos when the user scrolls down and reached the lower threshold -->
+      <iron-scroll-threshold id="scrollTheshold"
+        lower-threshold="500"
+        on-lower-threshold="_loadMorePhotos"
+        scroll-target="document">
+      </iron-scroll-threshold>
 
-    <!-- this element loads more photos when the user scrolls down and reached the lower threshold -->
-    <iron-scroll-threshold id="scrollTheshold"
-                           lower-threshold="500"
-                           on-lower-threshold="_loadMorePhotos"
-                           scroll-target="document">
-    </iron-scroll-threshold>
+    </template>
 
-  </template>
-
-  <script>
+    <script>
 
       HTMLImports.whenReady(function() {
 
@@ -258,11 +255,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       
       });
 
+    </script>
+  </dom-module>
 
-  </script>
-</dom-module>
-
-<x-grid></x-grid>
+  <x-grid></x-grid>
 
 </body>
 </html>

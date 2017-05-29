@@ -1,13 +1,16 @@
 package com.hsystems.lms.service.model;
 
+import com.hsystems.lms.common.util.CollectionUtils;
+
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 /**
  * Created by naungsoe on 3/11/16.
  */
-public class QuizModel implements Serializable {
+public class QuizModel extends ResourceModel implements Serializable {
 
   private static final long serialVersionUID = -1599914890983126737L;
 
@@ -17,27 +20,7 @@ public class QuizModel implements Serializable {
 
   private String instructions;
 
-  private List<QuizSectionModel> sections;
-
-  private String schoolId;
-
-  private String schoolName;
-
-  private String createdById;
-
-  private String createdByFirstName;
-
-  private String createdByLastName;
-
-  private String createdDateTime;
-
-  private String modifiedById;
-
-  private String modifiedByFirstName;
-
-  private String modifiedByLastName;
-
-  private String modifiedDateTime;
+  private List<ComponentModel> components;
 
   public QuizModel() {
 
@@ -67,92 +50,14 @@ public class QuizModel implements Serializable {
     this.instructions = instructions;
   }
 
-  public List<QuizSectionModel> getSections() {
-    return Collections.unmodifiableList(sections);
+  public List<ComponentModel> getComponents() {
+    return CollectionUtils.isEmpty(components)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(components);
   }
 
-  public void setSections(
-      List<QuizSectionModel> sections) {
-    this.sections = sections;
-  }
-
-  public String getSchoolId() {
-    return schoolId;
-  }
-
-  public void setSchoolId(String schoolId) {
-    this.schoolId = schoolId;
-  }
-
-  public String getSchoolName() {
-    return schoolName;
-  }
-
-  public void setSchoolName(String schoolName) {
-    this.schoolName = schoolName;
-  }
-
-  public String getCreatedById() {
-    return createdById;
-  }
-
-  public void setCreatedById(String createdById) {
-    this.createdById = createdById;
-  }
-
-  public String getCreatedByFirstName() {
-    return createdByFirstName;
-  }
-
-  public void setCreatedByFirstName(String createdByFirstName) {
-    this.createdByFirstName = createdByFirstName;
-  }
-
-  public String getCreatedByLastName() {
-    return createdByLastName;
-  }
-
-  public void setCreatedByLastName(String createdByLastName) {
-    this.createdByLastName = createdByLastName;
-  }
-
-  public String getCreatedDateTime() {
-    return createdDateTime;
-  }
-
-  public void setCreatedDateTime(String createdDateTime) {
-    this.createdDateTime = createdDateTime;
-  }
-
-  public String getModifiedById() {
-    return modifiedById;
-  }
-
-  public void setModifiedById(String modifiedById) {
-    this.modifiedById = modifiedById;
-  }
-
-  public String getModifiedByFirstName() {
-    return modifiedByFirstName;
-  }
-
-  public void setModifiedByFirstName(String modifiedByFirstName) {
-    this.modifiedByFirstName = modifiedByFirstName;
-  }
-
-  public String getModifiedByLastName() {
-    return modifiedByLastName;
-  }
-
-  public void setModifiedByLastName(String modifiedByLastName) {
-    this.modifiedByLastName = modifiedByLastName;
-  }
-
-  public String getModifiedDateTime() {
-    return modifiedDateTime;
-  }
-
-  public void setModifiedDateTime(String modifiedDateTime) {
-    this.modifiedDateTime = modifiedDateTime;
+  public void setComponents(List<ComponentModel> components) {
+    this.components = new ArrayList<>();
+    this.components.addAll(components);
   }
 }

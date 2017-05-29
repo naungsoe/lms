@@ -1,6 +1,6 @@
 package com.hsystems.lms.service.model;
 
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,20 +22,8 @@ public class GroupModel implements Serializable {
 
   private List<UserModel> members;
 
-  GroupModel() {
+  public GroupModel() {
 
-  }
-
-  public GroupModel(
-      String id,
-      String name,
-      List<String> permissions,
-      List<UserModel> members) {
-
-    this.id = id;
-    this.name = name;
-    this.permissions = permissions;
-    this.members = members;
   }
 
   public String getId() {
@@ -55,7 +43,7 @@ public class GroupModel implements Serializable {
   }
 
   public List<String> getPermissions() {
-    return ListUtils.isEmpty(permissions)
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(permissions);
   }
@@ -66,7 +54,7 @@ public class GroupModel implements Serializable {
   }
 
   public List<UserModel> getMembers() {
-    return ListUtils.isEmpty(members)
+    return CollectionUtils.isEmpty(members)
         ? Collections.emptyList()
         : Collections.unmodifiableList(members);
   }

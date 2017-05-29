@@ -1,10 +1,13 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
 import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -27,7 +30,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   public List<Question> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
@@ -53,10 +56,13 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     String body = getBody(mainResult, timestamp);
     String hint = getHint(mainResult, timestamp);
     String explanation = getExplanation(mainResult, timestamp);
+    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
+    List<Level> levels = getLevels(results, id, timestamp);
+    List<Subject> subjects = getSubjects(results, id, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -78,7 +84,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
       questions = getQuestions(results, id, timestamp);
 
     } else {
-      options = getQuestionOptions(results, id, timestamp);
+      options = getOptions(results, id, timestamp);
       questions = Collections.emptyList();
     }
 
@@ -91,6 +97,9 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         options,
         questions,
         school,
+        levels,
+        subjects,
+        keywords,
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -109,7 +118,12 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   public List<Put> getPuts(Question entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
     addQuestionPut(puts, entity, timestamp);
-    addQuestionOptionsPut(puts, entity, timestamp);
+    addOptionsPut(puts, entity, timestamp);
+
+    if (CollectionUtils.isNotEmpty(entity.getQuestions())) {
+      addQuestionsPut(puts, entity, timestamp);
+    }
+
     addCreatedByPut(puts, entity, timestamp);
     addModifiedByPut(puts, entity, timestamp);
     return puts;
@@ -127,12 +141,22 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     puts.add(put);
   }
 
-  private void addQuestionOptionsPut(
+  private void addOptionsPut(
       List<Put> puts, Question entity, long timestamp) {
 
     entity.getOptions().forEach(option -> {
       String prefix = entity.getId();
-      Put put = getQuestionOptionPut(option, prefix, timestamp);
+      Put put = getOptionPut(option, prefix, timestamp);
+      puts.add(put);
+    });
+  }
+
+  private void addQuestionsPut(
+      List<Put> puts, Question entity, long timestamp) {
+
+    entity.getQuestions().forEach(question -> {
+      String prefix = entity.getId();
+      Put put = getQuestionPut(question, prefix, timestamp);
       puts.add(put);
     });
   }
@@ -145,7 +169,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     Delete delete = new Delete(row, timestamp);
     deletes.add(delete);
 
-    addQuestionOptionsDelete(deletes, entity, timestamp);
+    addOptionsDelete(deletes, entity, timestamp);
     addCreatedByDelete(deletes, entity, timestamp);
 
     if (entity.getModifiedBy() != null) {
@@ -155,11 +179,11 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     return deletes;
   }
 
-  private void addQuestionOptionsDelete(
+  private void addOptionsDelete(
       List<Delete> deletes, Question entity, long timestamp) {
 
     entity.getOptions().forEach(option -> {
-      Delete delete = getQuestionOptionDelete(
+      Delete delete = getOptionDelete(
           option, entity.getId(), timestamp);
       deletes.add(delete);
     });

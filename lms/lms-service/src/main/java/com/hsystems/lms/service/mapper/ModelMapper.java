@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 
@@ -33,12 +34,14 @@ public class ModelMapper extends Mapper {
     String fieldNameToken = fieldNameTokens.poll();
     Optional<Field> fieldOptional = getField(sourceFields, fieldNameToken);
 
-    while (!fieldNameTokens.isEmpty() && !fieldOptional.isPresent()) {
+    while (CollectionUtils.isNotEmpty(fieldNameTokens)
+        && !fieldOptional.isPresent()) {
+
       fieldNameToken = fieldNameToken + fieldNameTokens.poll();
       fieldOptional = getField(sourceFields, fieldNameToken);
     }
 
-    if (fieldNameTokens.isEmpty()) {
+    if (CollectionUtils.isEmpty(fieldNameTokens)) {
       return (S) getFieldValue(source, fieldOptional.get(), type);
     }
 
@@ -53,7 +56,7 @@ public class ModelMapper extends Mapper {
         = ReflectionUtils.getFields(compositeInstance.getClass());
     String compositeFieldName = fieldNameTokens.poll();
 
-    while (!fieldNameTokens.isEmpty()) {
+    while (CollectionUtils.isNotEmpty(fieldNameTokens)) {
       compositeFieldName = String.format("%s%s",
           compositeFieldName, fieldNameTokens.poll());
     }

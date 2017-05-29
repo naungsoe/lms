@@ -30,7 +30,7 @@ public class StringUtils {
   }
 
   public static <T> String join(List<T> items, String separator) {
-    if ((items == null) || items.isEmpty()) {
+    if (CollectionUtils.isEmpty(items)) {
       return "";
     }
 
@@ -47,7 +47,7 @@ public class StringUtils {
   }
 
   public static <T> String prepend(List<T> items, String prefix) {
-    if ((items == null) || items.isEmpty()) {
+    if (CollectionUtils.isEmpty(items)) {
       return "";
     }
 

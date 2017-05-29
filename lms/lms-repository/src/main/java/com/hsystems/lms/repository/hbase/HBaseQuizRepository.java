@@ -2,10 +2,13 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.QuestionComponent;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuizMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -30,15 +33,19 @@ public class HBaseQuizRepository
 
   private final MutationRepository mutationRepository;
 
+  private final AuditLogRepository auditLogRepository;
+
   @Inject
   HBaseQuizRepository(
       HBaseClient client,
       HBaseQuizMapper quizMapper,
-      MutationRepository mutationRepository) {
+      MutationRepository mutationRepository,
+      AuditLogRepository auditLogRepository) {
 
     this.client = client;
     this.quizMapper = quizMapper;
     this.mutationRepository = mutationRepository;
+    this.auditLogRepository = auditLogRepository;
   }
 
   @Override
@@ -53,13 +60,19 @@ public class HBaseQuizRepository
     }
 
     Mutation mutation = mutationOptional.get();
+    return findBy(id, mutation.getTimestamp());
+  }
+
+  private Optional<Quiz> findBy(String id, long timestamp)
+      throws IOException {
+
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, Quiz.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
@@ -69,6 +82,12 @@ public class HBaseQuizRepository
 
   @Override
   public void save(Quiz entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void save(QuestionComponent entity)
       throws IOException {
 
   }

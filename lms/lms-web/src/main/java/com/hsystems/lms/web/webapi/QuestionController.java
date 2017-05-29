@@ -83,6 +83,7 @@ public class QuestionController {
   public Response save(QuestionModel questionModel)
       throws IOException {
 
+    questionService.save(questionModel, principalProvider.get());
     return Response.ok(questionModel).build();
   }
 }

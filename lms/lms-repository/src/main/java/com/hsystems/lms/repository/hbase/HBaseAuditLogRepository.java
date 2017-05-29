@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseAuditLogMapper;
@@ -50,7 +51,7 @@ public class HBaseAuditLogRepository
     scan.setStartRow(Bytes.toBytes(entityId));
     List<Result> results = client.scan(scan, AuditLog.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

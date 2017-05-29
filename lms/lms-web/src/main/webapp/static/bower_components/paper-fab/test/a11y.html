@@ -23,15 +23,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="A11yFabs">
-  <template>
-    <paper-fab id="fab1" icon="add"></paper-fab>
-    <paper-fab id="fab2" icon="add" disabled></paper-fab>
-    <paper-fab id="fab3" icon="add" aria-label="custom"></paper-fab>
-  </template>
-</test-fixture>
+  <test-fixture id="A11yFabs">
+    <template>
+      <paper-fab id="fab1" icon="add"></paper-fab>
+      <paper-fab id="fab2" icon="add" disabled></paper-fab>
+      <paper-fab id="fab3" icon="add" aria-label="custom"></paper-fab>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
 
     var f1;
     var f2;
@@ -61,8 +61,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       assert.strictEqual(f3.getAttribute('aria-label'), 'custom');
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

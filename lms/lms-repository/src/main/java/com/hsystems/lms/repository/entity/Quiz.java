@@ -2,10 +2,13 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,7 +16,7 @@ import java.util.List;
  * Created by naungsoe on 19/12/16.
  */
 @IndexCollection(name = "quizzes")
-public class Quiz extends Auditable implements Entity, Serializable {
+public class Quiz extends Resource implements Serializable {
 
   private static final long serialVersionUID = 645532833693995164L;
 
@@ -27,10 +30,7 @@ public class Quiz extends Auditable implements Entity, Serializable {
   private String instructions;
 
   @IndexField
-  private List<Section> sections;
-
-  @IndexField
-  private School school;
+  protected List<Component> components;
 
   Quiz() {
 
@@ -40,8 +40,23 @@ public class Quiz extends Auditable implements Entity, Serializable {
       String id,
       String title,
       String instructions,
-      List<Section> sections,
+      List<Component> components) {
+
+    this.id = id;
+    this.title = title;
+    this.instructions = instructions;
+    this.components = components;
+  }
+
+  public Quiz(
+      String id,
+      String title,
+      String instructions,
+      List<Component> components,
       School school,
+      List<Level> levels,
+      List<Subject> subjects,
+      List<String> keywords,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -50,8 +65,11 @@ public class Quiz extends Auditable implements Entity, Serializable {
     this.id = id;
     this.title = title;
     this.instructions = instructions;
-    this.sections = sections;
+    this.components = components;
     this.school = school;
+    this.levels = levels;
+    this.subjects = subjects;
+    this.keywords = keywords;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -71,12 +89,18 @@ public class Quiz extends Auditable implements Entity, Serializable {
     return instructions;
   }
 
-  public List<Section> getSections() {
-    return Collections.unmodifiableList(sections);
+  public List<Component> getComponents() {
+    return CollectionUtils.isEmpty(components)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(components);
   }
 
-  public School getSchool() {
-    return school;
+  public void addComponent(Component... component) {
+    if (CollectionUtils.isEmpty(components)) {
+      components = new ArrayList<>();
+    }
+
+    components.addAll(Arrays.asList(component));
   }
 
   @Override
@@ -97,10 +121,12 @@ public class Quiz extends Auditable implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, sections=%s, school=%s, "
-            + "createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, title, instructions, StringUtils.join(sections, ","), school,
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        "Quiz{id=%s, title=%s, instructions=%s, components=%s, school=%s, "
+            + "levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        id, title, instructions, StringUtils.join(components, ","), school,
+        StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

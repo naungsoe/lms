@@ -10,64 +10,64 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <html>
-<head>
+  <head>
 
-  <title>paper-tabs-links</title>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <title>paper-tabs-links</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-  <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
 
-  <link rel="import" href="../paper-tabs.html">
-  <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
+    <link rel="import" href="../paper-tabs.html">
+    <link rel="import" href="../../iron-test-helpers/iron-test-helpers.html">
 
-</head>
-<body>
+  </head>
+  <body>
 
-<test-fixture id="links">
-  <template>
-    <paper-tabs>
-      <paper-tab link><a href="#one" tabindex="-1">ONE</a></paper-tab>
-      <paper-tab link><a href="#two" tabindex="-1">TWO</a></paper-tab>
-      <paper-tab link><a href="#three" tabindex="-1">THREE</a></paper-tab>
-    </paper-tabs>
-  </template>
-</test-fixture>
+    <test-fixture id="links">
+      <template>
+        <paper-tabs>
+          <paper-tab link><a href="#one" tabindex="-1">ONE</a></paper-tab>
+          <paper-tab link><a href="#two" tabindex="-1">TWO</a></paper-tab>
+          <paper-tab link><a href="#three" tabindex="-1">THREE</a></paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
 
-<test-fixture id="not-links">
-  <template>
-    <paper-tabs>
-      <paper-tab><a href="#one" tabindex="-1">ONE</a></paper-tab>
-      <paper-tab><a href="#two" tabindex="-1">TWO</a></paper-tab>
-      <paper-tab><a href="#three" tabindex="-1">THREE</a></paper-tab>
-    </paper-tabs>
-  </template>
-</test-fixture>
+    <test-fixture id="not-links">
+      <template>
+        <paper-tabs>
+          <paper-tab><a href="#one" tabindex="-1">ONE</a></paper-tab>
+          <paper-tab><a href="#two" tabindex="-1">TWO</a></paper-tab>
+          <paper-tab><a href="#three" tabindex="-1">THREE</a></paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
 
-<test-fixture id="not-first-child">
-  <template>
-    <paper-tabs>
-      <paper-tab>
-        <div>
-          <a href="#one" tabindex="-1">ONE</a>
-        </div>
-      </paper-tab>
-      <paper-tab>
-        <div>
-          <a href="#two" tabindex="-1">TWO</a>
-        </div>
-      </paper-tab>
-      <paper-tab>
-        <div>
-          <a href="#three" tabindex="-1">THREE</a>
-        </div>
-      </paper-tab>
-    </paper-tabs>
-  </template>
-</test-fixture>
+    <test-fixture id="not-first-child">
+      <template>
+        <paper-tabs>
+          <paper-tab>
+            <div>
+              <a href="#one" tabindex="-1">ONE</a>
+            </div>
+          </paper-tab>
+          <paper-tab>
+            <div>
+              <a href="#two" tabindex="-1">TWO</a>
+            </div>
+          </paper-tab>
+          <paper-tab>
+            <div>
+              <a href="#three" tabindex="-1">THREE</a>
+            </div>
+          </paper-tab>
+        </paper-tabs>
+      </template>
+    </test-fixture>
 
-<script>
+    <script>
 
       suite('links', function() {
 
@@ -157,8 +157,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       });
 
+    </script>
 
-</script>
-
-</body>
+  </body>
 </html>

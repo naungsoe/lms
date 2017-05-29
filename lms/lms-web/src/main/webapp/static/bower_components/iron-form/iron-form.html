@@ -19,11 +19,11 @@ native HTML elements. For more information on which attributes are
 available on the native form element, see https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form
 
 It supports both `get` and `post` methods, and uses an `iron-ajax` element to
-submit the form data to the actionType URL.
+submit the form data to the action URL.
 
   Example:
 
-    <form is="iron-form" id="form" method="post" actionType="/form/handler">
+    <form is="iron-form" id="form" method="post" action="/form/handler">
       <paper-input name="name" label="name"></paper-input>
       <input name="address">
       ...
@@ -57,7 +57,7 @@ event and do your own custom submission:
 
     form.addEventListener('iron-form-presubmit', function(event) {
       event.preventDefault();
-      var firebase = new Firebase(form.getAttribute('actionType'));
+      var firebase = new Firebase(form.getAttribute('action'));
       firebase.set(form.serialize());
     });
 
@@ -233,7 +233,7 @@ event and do your own custom submission:
       // Native forms can also index elements magically by their name (can't make
       // this up if I tried) so we need to get the correct attributes, not the
       // elements with those names.
-      this.request.url = this.getAttribute('actionType');
+      this.request.url = this.getAttribute('action');
       this.request.method = this.getAttribute('method');
       this.request.contentType = this.contentType;
       this.request.withCredentials = this.withCredentials;
@@ -306,7 +306,7 @@ event and do your own custom submission:
       for (var el, i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
         // If this custom element is inside a custom element that has already
         // registered to this form, skip it.
-        if (!this._isChildOfRegisteredParent(el) && this._useValue(el)) {
+        if (!this._isChildOfRegisteredParent(el, true) && this._useValue(el)) {
           addSerializedElement(el.name, el.value);
         }
       }
@@ -315,7 +315,7 @@ event and do your own custom submission:
       for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
         // If this native element is inside a custom element that has already
         // registered to this form, skip it.
-        if (this._isChildOfRegisteredParent(el) || !this._useValue(el)) {
+        if (this._isChildOfRegisteredParent(el, true) || !this._useValue(el)) {
           continue;
         }
 
@@ -375,7 +375,7 @@ event and do your own custom submission:
       // Validate all the custom elements.
       var validatable;
       for (var el, i = 0; el = this._customElements[i], i < this._customElements.length; i++) {
-        if (!el.disabled) {
+        if (!this._isChildOfRegisteredParent(el, false) && !el.disabled) {
           validatable = /** @type {{validate: (function() : boolean)}} */ (el);
           // Some elements may not have correctly defined a validate method.
           if (validatable.validate)
@@ -385,6 +385,12 @@ event and do your own custom submission:
 
       // Validate the form's native elements.
       for (var el, i = 0; el = this.elements[i], i < this.elements.length; i++) {
+        // If this native element is inside a custom element that has already
+        // registered to this form, skip it.
+        if (this._isChildOfRegisteredParent(el, false)) {
+          continue;
+        }
+
         // Custom elements that extend a native element will also appear in
         // this list, but they've already been validated.
         if (!el.hasAttribute('is') && el.willValidate && el.checkValidity) {
@@ -453,7 +459,11 @@ event and do your own custom submission:
           } else {
             // The native input/textarea displays literal "undefined" when its
             // its value is set to undefined, so default to null instead.
-            el.value = this._customElementsInitialValues[i] || null;
+            var value = this._customElementsInitialValues[i];
+            if (value === undefined) {
+              value = null;
+            }
+            el.value = value;
 
             // In the shady DOM, the native form is all-seeing, and will
             // reset the nested inputs inside <paper-input> and <paper-textarea>.
@@ -477,9 +487,10 @@ event and do your own custom submission:
     /**
      * Returns true if `node` is in the shadow DOM of a different element,
      * that has also implemented IronFormElementBehavior and is registered
-     * to this form.
+     * to this form. The second parameter specifies if the parent must have a
+     * name to be considered.
      */
-    _isChildOfRegisteredParent: function(node) {
+    _isChildOfRegisteredParent: function(node, checkHasName) {
       var parent = node;
 
       // At some point going up the tree we'll find either this form or the document.
@@ -488,7 +499,9 @@ event and do your own custom submission:
         parent = Polymer.dom(parent).parentNode || parent.host;
 
         // Check if the parent was registered and submittable.
-        if (parent && parent.name && parent._parentForm === this) {
+        if (parent &&
+            (!checkHasName || parent.name) &&
+            parent._parentForm === this) {
           return true;
         }
       }
@@ -496,6 +509,5 @@ event and do your own custom submission:
     }
 
   });
-
 
 </script>

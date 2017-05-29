@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 1/11/16.
  */
 @IndexCollection(name = "subjects")
-public class Subject extends Auditable implements Entity, Serializable {
+public class Subject extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 297170263440474153L;
 
@@ -25,6 +25,14 @@ public class Subject extends Auditable implements Entity, Serializable {
 
   Subject() {
 
+  }
+
+  public Subject(
+      String id,
+      String name) {
+
+    this.id = id;
+    this.name = name;
   }
 
   public Subject(

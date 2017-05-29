@@ -7,6 +7,7 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.entity.Level;
@@ -52,7 +53,7 @@ public class LevelService extends BaseService {
     QueryResult<Level> queryResult
         = indexRepository.findAllBy(query, Level.class);
 
-    if (queryResult.getItems().isEmpty()) {
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return Collections.emptyList();
     }
 

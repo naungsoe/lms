@@ -14,36 +14,39 @@
     <app-route route="{{route}}" pattern="/:questionId"
                data="{{routeData}}" tail="{{subroute}}"></app-route>
 
-    <iron-ajax name="ajax" url="[[restUrl]]" params="[[routeData.questionId]]"
+    <iron-ajax auto name="ajax" url="[[_updateRestUrl(restUrl, routeData)]]"
                method="GET" handle-as="json" content-type="application/json"
                loading="{{loading}}" on-response="_onAjaxResponse"></iron-ajax>
 
-    <lms-question-detail-toolbar></lms-question-detail-toolbar>
+    <lms-question-detail-toolbar user-id="[[userId]]" user-model="[[userModel]]"
+                                 route="{{route}}"></lms-question-detail-toolbar>
 
-    <template dom-if="[[_isMultipleChoice(question)]]">
-      <lms-question-detail-multiple-choice question="[[question]]">
-      </lms-question-detail-multiple-choice>
-    </template>
+    <div class="box">
+      <template is="dom-if" if="[[_equals(question.type, 'MULTIPLE_CHOICE')]]">
+        <lms-question-detail-multiple-choice question="[[question]]">
+        </lms-question-detail-multiple-choice>
+      </template>
 
-    <template dom-if="[[_isMultipleResponse(question)]]">
-      <lms-question-detail-multiple-choice question="[[question]]">
-      </lms-question-detail-multiple-choice>
-    </template>
+      <template is="dom-if" if="[[_equals(question.type, 'MULTIPLE_RESPONSE')]]">
+        <lms-question-detail-multiple-choice question="[[question]]">
+        </lms-question-detail-multiple-choice>
+      </template>
 
-    <template dom-if="[[_isShortAnswer(question)]]">
-      <lms-question-detail-multiple-choice question="[[question]]">
-      </lms-question-detail-multiple-choice>
-    </template>
+      <template is="dom-if" if="[[_equals(question.type, 'SHORT_ANSWER')]]">
+        <lms-question-detail-multiple-choice question="[[question]]">
+        </lms-question-detail-multiple-choice>
+      </template>
 
-    <template dom-if="[[_isEssay(question)]]">
-      <lms-question-detail-multiple-choice question="[[question]]">
-      </lms-question-detail-multiple-choice>
-    </template>
+      <template is="dom-if" if="[[_equals(question.type, 'ESSAY')]]">
+        <lms-question-detail-multiple-choice question="[[question]]">
+        </lms-question-detail-multiple-choice>
+      </template>
 
-    <template dom-if="[[_isComposite(question)]]">
-      <lms-question-detail-multiple-choice question="[[question]]">
-      </lms-question-detail-multiple-choice>
-    </template>
+      <template is="dom-if" if="[[_equals(question.type, 'COMPOSITE')]]">
+        <lms-question-detail-multiple-choice question="[[question]]">
+        </lms-question-detail-multiple-choice>
+      </template>
+    </div>
 
     <div class="loading-status" hidden$="[[!loading]]">
       <paper-spinner active$="[[loading]]"></paper-spinner>
@@ -57,6 +60,8 @@
 
       behaviors: [
         Polymer.AppLocalizeBehavior,
+        LMS.UtilBehavior,
+        LMS.UserBehavior,
         LMS.LocaleBehavior
       ],
       
@@ -68,31 +73,31 @@
         loading: {
           type: Boolean,
           notify: true
+        },
+        route: {
+          type: Object,
+          notify: true
+        },
+        routeData: {
+          type: Object,
+          notify: true
+        },
+        question: {
+          type: Object,
+          notify: true
         }
       },
 
-      _isMultipleChoice: function(question) {
+      _updateRestUrl: function(restUrl, routeData) {
+        if (!!restUrl && !!routeData.questionId) {
+          return restUrl + '/' + routeData.questionId;
+        }
 
-      },
-
-      _isMultipleResponse: function(question) {
-
-      },
-
-      _isShortAnswer: function(question) {
-
-      },
-
-      _isEssay: function(question) {
-
-      },
-
-      _isComposite: function(question) {
-
+        return null;
       },
 
       _onAjaxResponse: function(event) {
-
+        this.question = event.detail.response;
       }
     });
   </script>

@@ -35,7 +35,7 @@
       <div class="main-content">
         <h1>Indexing entities</h1>
         <paper-button on-tap="_onIndexLevelsTap" raised disabled$="[[loading]]">Index Levels</paper-button>
-        <paper-button on-tap="_onIndexSubjectsTap" raised disabled$="[[loading]]">Index Subject</paper-button>
+        <paper-button on-tap="_onIndexSubjectsTap" raised disabled$="[[loading]]">Index Subjects</paper-button>
         <paper-button on-tap="_onIndexUsersTap" raised disabled$="[[loading]]">Index Users</paper-button>
         <paper-button on-tap="_onIndexQuestionTap" raised disabled$="[[loading]]">Index Questions</paper-button>
 

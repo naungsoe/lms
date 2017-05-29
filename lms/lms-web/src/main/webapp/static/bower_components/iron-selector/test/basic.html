@@ -31,39 +31,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .my-selected {
       background: red;
     }
-
   </style>
 
 </head>
 <body>
 
-<test-fixture id="defaults">
-  <template>
-    <iron-selector>
-      <div>Item 0</div>
-      <div>Item 1</div>
-      <div>Item 2</div>
-      <div>Item 3</div>
-      <div>Item 4</div>
-    </iron-selector>
-  </template>
-</test-fixture>
+  <test-fixture id="defaults">
+    <template>
+      <iron-selector>
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
 
-<br><br>
+  <br><br>
 
-<test-fixture id="basic">
-  <template>
-    <iron-selector selected="item2" attr-for-selected="id">
-      <div id="item0">Item 0</div>
-      <div id="item1">Item 1</div>
-      <div id="item2">Item 2</div>
-      <div id="item3">Item 3</div>
-      <div id="item4">Item 4</div>
-    </iron-selector>
-  </template>
-</test-fixture>
+  <test-fixture id="basic">
+    <template>
+      <iron-selector selected="item2" attr-for-selected="id">
+        <div id="item0">Item 0</div>
+        <div id="item1">Item 1</div>
+        <div id="item2">Item 2</div>
+        <div id="item3">Item 3</div>
+        <div id="item4">Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
 
     suite('defaults', function() {
 
@@ -258,8 +257,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

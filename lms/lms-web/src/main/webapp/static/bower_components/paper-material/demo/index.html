@@ -30,36 +30,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       padding: 16px;
       border-radius: 2px;
     }
-
   </style>
 </head>
 <body unresolved>
-<div class="vertical-section-container centered">
-  <h3>Paper-materials can have different elevations</h3>
-  <demo-snippet class="centered-demo">
-    <template>
-      <paper-material elevation="0">0</paper-material>
-      <paper-material elevation="1">1</paper-material>
-      <paper-material elevation="2">2</paper-material>
-      <paper-material elevation="3">3</paper-material>
-      <paper-material elevation="4">4</paper-material>
-      <paper-material elevation="5">5</paper-material>
-    </template>
-  </demo-snippet>
+  <div class="vertical-section-container centered">
+    <h3>Paper-materials can have different elevations</h3>
+    <demo-snippet class="centered-demo">
+      <template>
+        <paper-material elevation="0">0</paper-material>
+        <paper-material elevation="1">1</paper-material>
+        <paper-material elevation="2">2</paper-material>
+        <paper-material elevation="3">3</paper-material>
+        <paper-material elevation="4">4</paper-material>
+        <paper-material elevation="5">5</paper-material>
+      </template>
+    </demo-snippet>
 
-  <h3>Changes in elevation can be animated</h3>
-  <demo-snippet class="centered-demo">
-    <template>
-      <style>
+    <h3>Changes in elevation can be animated</h3>
+    <demo-snippet class="centered-demo">
+      <template>
+        <style>
           #a1, #a2 { cursor: pointer; }
-
-      </style>
-      Tap each of these boxes!
-      <div>
-        <paper-material elevation="0" animated id="a1">animated</paper-material>
-        <paper-material elevation="3" id="a2">not animated</paper-material>
-      </div>
-      <script>
+        </style>
+        Tap each of these boxes!
+        <div>
+          <paper-material elevation="0" animated id="a1">animated</paper-material>
+          <paper-material elevation="3" id="a2">not animated</paper-material>
+        </div>
+        <script>
           document.addEventListener('WebComponentsReady', function() {
             a1.addEventListener('click', _onTap);
             a2.addEventListener('click', _onTap);
@@ -78,10 +76,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               }
             }
           };
-
-      </script>
-    </template>
-  </demo-snippet>
-</div>
+        </script>
+      </template>
+    </demo-snippet>
+  </div>
 </body>
 </html>

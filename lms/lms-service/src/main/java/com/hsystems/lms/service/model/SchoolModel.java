@@ -1,6 +1,6 @@
 package com.hsystems.lms.service.model;
 
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class SchoolModel implements Serializable {
   }
 
   public List<String> getPermissions() {
-    return ListUtils.isEmpty(permissions)
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(permissions);
   }

@@ -2,12 +2,7 @@
 <link rel="import" href="../lms-style.html">
 <link rel="import" href="../lms-app-nav.html">
 <link rel="import" href="../lms-app-search.html">
-<link rel="import" href="../../bower_components/app-layout/app-header/app-header.html">
-<link rel="import" href="../../bower_components/app-layout/app-toolbar/app-toolbar.html">
-<link rel="import" href="../../bower_components/app-layout/app-drawer/app-drawer.html">
-<link rel="import" href="../../bower_components/app-route/app-location.html">
-<link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../lms-app-list.html">
 <link rel="import" href="lms-question-list-view.html">
 <link rel="import" href="lms-question-detail-view.html">
 
@@ -40,14 +35,21 @@
 
     <app-location route="{{route}}"></app-location>
 
+    <app-route route="{{route}}" pattern="[[url]]"
+               data="{{routeData}}" tail="{{subroute}}"></app-route>
+
     <app-route route="{{route}}" pattern="[[url]]/:view"
                data="{{routeData}}" tail="{{subroute}}"></app-route>
+
+    <iron-ajax auto url="[[userRestUrl]]" method="GET"
+               handle-as="json" content-type="application/json"
+               loading="{{loading}}" on-response="_onAjaxResponse"></iron-ajax>
 
     <app-header nav condenses fixed effects="waterfall">
       <app-toolbar>
         <paper-icon-button icon="menu" on-tap="_onMenuTap"></paper-icon-button>
         <h3 main-title>[[localize('titlePage')]]</h3>
-        <lms-app-search query-term="{{queryTerm}}" hidden$="[[_hideList(routeData)]]"
+        <lms-app-search query-term="{{queryTerm}}" hidden$="[[_hasRoute(routeData)]]"
                         language="[[language]]" resources="[[resources]]"></lms-app-search>
       </app-toolbar>
     </app-header>
@@ -55,13 +57,13 @@
     <div class="main-content">
       <lms-question-list-view route="{{route}}" userId="[[userId]]" url="[[url]]"
                               filters-url="[[filtersUrl]]" rest-url="[[restUrl]]"
-                              query-term="[[queryTerm]]" hidden$="[[_hideList(routeData)]]"
+                              query-term="[[queryTerm]]" hidden$="[[_hasRoute(routeData)]]"
                               language="[[language]]" resources="[[resources]]">
       </lms-question-list-view>
 
       <iron-pages selected="[[routeData.view]]" attr-for-selected="name">
-        <lms-question-detail-view name="detail" route="{{subroute}}"
-                                  userId="[[userId]]" rest-url="[[restUrl]]"
+        <lms-question-detail-view name="detail" route="{{subroute}}" user-id="[[userId]]"
+                                  user-model="[[userModel]]" rest-url="[[restUrl]]"
                                   language="[[language]]" resources="[[resources]]">
         </lms-question-detail-view>
       </iron-pages>
@@ -114,15 +116,19 @@
         queryTerm: {
           type: String,
           notify: true
+        },
+        loading: {
+          type: Boolean,
+          notify: true
         }
       },
 
-      attached: function() {
-
+      _hasRoute: function(routeData) {
+        return !!routeData.view && (routeData.view !== '');
       },
 
-      _hideList: function(routeData) {
-        return !!routeData.view && (routeData.view !== '');
+      _onAjaxResponse: function(event) {
+        var response = event.detail.response;
       },
 
       _onMenuTap: function(event) {

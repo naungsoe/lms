@@ -2,9 +2,9 @@
 
 ##&lt;paper-fab&gt;
 
-Material design: [Floating Action Button](https://www.google.com/design/spec/components/buttons-floating-actionType-button.html)
+Material design: [Floating Action Button](https://www.google.com/design/spec/components/buttons-floating-action-button.html)
 
-`paper-fab` is a floating actionType button. It contains an image placed in the center and
+`paper-fab` is a floating action button. It contains an image placed in the center and
 comes in two sizes: regular size and a smaller size by applying the attribute `mini`. When
 the user touches the button, a ripple effect emanates from the center of the button.
 

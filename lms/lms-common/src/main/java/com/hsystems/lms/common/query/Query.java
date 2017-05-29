@@ -1,6 +1,6 @@
 package com.hsystems.lms.common.query;
 
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.util.ArrayList;
@@ -275,8 +275,8 @@ public class Query {
     }
 
     Query query = (Query) obj;
-    return ListUtils.equals(criteria, query.getCriteria())
-        && ListUtils.equals(sortKeys, query.getSortKeys())
+    return CollectionUtils.equals(criteria, query.getCriteria())
+        && CollectionUtils.equals(sortKeys, query.getSortKeys())
         && (offset == query.getOffset())
         && (limit == query.getLimit());
   }

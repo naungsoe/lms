@@ -1,0 +1,44 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+  window.LMS = window.LMS || {};
+
+  LMS.UtilBehavior = {
+    _isReady: function() {
+      var args = Array.prototype.slice.call(arguments);
+      var readyArgs = args.filter(function(arg) {
+        return !!arg;
+      });
+      return args.length === readyArgs.length;
+    },
+
+    _contains: function(array, item) {
+      return array.indexOf(item) >= 0;
+    },
+
+    _equals: function(value1, value2) {
+      return value1 === value2;
+    },
+
+    _empty: function(value) {
+      switch (typeof value) {
+        case "string":
+          return value.length === 0;
+        case "object":
+          return Array.isArray(value)
+            ? value.length === 0
+            : Object.keys(value).length === 0;
+        case "boolean":
+        case "number":
+        case "function":
+          return false;
+        default:
+          return true;
+      }
+    },
+
+    _notEmpty: function(value) {
+      return !this._empty(value);
+    }
+  };
+</script>

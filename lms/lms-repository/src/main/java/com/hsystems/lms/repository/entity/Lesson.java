@@ -2,10 +2,12 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(name = "lessons")
-public class Lesson extends Auditable implements Entity, Serializable {
+public class Lesson extends Resource implements Serializable {
 
   private static final long serialVersionUID = 885954460906982717L;
 
@@ -24,7 +26,10 @@ public class Lesson extends Auditable implements Entity, Serializable {
   private String title;
 
   @IndexField
-  private List<Section> sections;
+  private String instructions;
+
+  @IndexField
+  protected List<Component> components;
 
   Lesson() {
 
@@ -33,17 +38,24 @@ public class Lesson extends Auditable implements Entity, Serializable {
   public Lesson(
       String id,
       String title,
-      List<Section> sections) {
+      String instructions,
+      List<Component> components) {
 
     this.id = id;
     this.title = title;
-    this.sections = sections;
+    this.instructions = instructions;
+    this.components = components;
   }
 
   public Lesson(
       String id,
       String title,
-      List<Section> sections,
+      String instructions,
+      List<Component> components,
+      School school,
+      List<Level> levels,
+      List<Subject> subjects,
+      List<String> keywords,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -51,7 +63,12 @@ public class Lesson extends Auditable implements Entity, Serializable {
 
     this.id = id;
     this.title = title;
-    this.sections = sections;
+    this.instructions = instructions;
+    this.components = components;
+    this.school = school;
+    this.levels = levels;
+    this.subjects = subjects;
+    this.keywords = keywords;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -67,8 +84,18 @@ public class Lesson extends Auditable implements Entity, Serializable {
     return title;
   }
 
-  public List<Section> getSections() {
-    return Collections.unmodifiableList(sections);
+  public String getInstructions() {
+    return instructions;
+  }
+
+  public List<Component> getComponents() {
+    return CollectionUtils.isEmpty(components)
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(components);
+  }
+
+  public void addComponent(Component... component) {
+    components.addAll(Arrays.asList(component));
   }
 
   @Override
@@ -89,9 +116,12 @@ public class Lesson extends Auditable implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Lesson{id=%s, title=%s, sections=%s, createdBy=%s, "
+        "Lesson{id=%s, title=%s, instructions=%s, components=%s, school=%s, "
+            + "levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
             + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
-        id, title, StringUtils.join(sections, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        id, title, instructions, StringUtils.join(components, ","), school,
+        StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

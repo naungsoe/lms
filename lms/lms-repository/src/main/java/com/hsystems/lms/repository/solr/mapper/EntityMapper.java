@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.solr.mapper;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
@@ -61,9 +62,10 @@ public class EntityMapper extends Mapper<Entity> {
 
       } else if (fieldType == List.class) {
         Class<?> listType = ReflectionUtils.getListType(field);
+        Object fieldValue;
 
         if (listType.isEnum()) {
-          Object fieldValue = document.getFieldValue(fieldName);
+          fieldValue = document.getFieldValue(fieldName);
 
           if (fieldValue == null) {
             ReflectionUtils.setValue(entity,
@@ -78,6 +80,17 @@ public class EntityMapper extends Mapper<Entity> {
             enumValues.forEach(enumValue -> enums.add(
                 Enum.valueOf(enumType, enumValue)));
             ReflectionUtils.setValue(entity, fieldName, enums);
+          }
+        } else if (listType == String.class) {
+          fieldValue = document.getFieldValue(fieldName);
+
+          if (fieldValue == null) {
+            ReflectionUtils.setValue(entity,
+                fieldName, Collections.emptyList());
+
+          } else {
+            List<String> values = (List<String>) fieldValue;
+            ReflectionUtils.setValue(entity, fieldName, values);
           }
         } else {
           List<?> childEntities = getChildEntities(
@@ -106,7 +119,7 @@ public class EntityMapper extends Mapper<Entity> {
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    if ((documents == null) || documents.isEmpty()) {
+    if (CollectionUtils.isEmpty(documents)) {
       return Collections.emptyList();
     }
 
@@ -127,7 +140,8 @@ public class EntityMapper extends Mapper<Entity> {
 
     Object fullFieldName = document.getFieldValue(FIELD_NAME);
     return document.getFieldValue("parentId").equals(parentId)
-        && fullFieldName.toString().endsWith(fieldName);
+        && fullFieldName.toString().endsWith(fieldName)
+        && !"true".equals(document.getFieldValue("processed"));
   }
 
   protected <T> T getChildEntity(
@@ -166,9 +180,10 @@ public class EntityMapper extends Mapper<Entity> {
 
       } else if (childFieldType == List.class) {
         Class<?> listType = ReflectionUtils.getListType(field);
+        Object fieldValue;
 
         if (listType.isEnum()) {
-          Object fieldValue = document.getFieldValue(childFieldName);
+          fieldValue = document.getFieldValue(childFieldName);
 
           if (fieldValue == null) {
             ReflectionUtils.setValue(entity,
@@ -184,6 +199,17 @@ public class EntityMapper extends Mapper<Entity> {
                 Enum.valueOf(enumType, enumValue)));
             ReflectionUtils.setValue(entity, childFieldName, enums);
           }
+        } else if (listType == String.class) {
+          fieldValue = document.getFieldValue(childFieldName);
+
+          if (fieldValue == null) {
+            ReflectionUtils.setValue(entity,
+                childFieldName, Collections.emptyList());
+
+          } else {
+            List<String> values = (List<String>) fieldValue;
+            ReflectionUtils.setValue(entity, childFieldName, values);
+          }
         } else {
           List<?> childEntities = getChildEntities(
               documents, listType, id, childFieldName);
@@ -196,6 +222,7 @@ public class EntityMapper extends Mapper<Entity> {
       }
     }
 
+    document.setField("processed", "true");
     return entity;
   }
 

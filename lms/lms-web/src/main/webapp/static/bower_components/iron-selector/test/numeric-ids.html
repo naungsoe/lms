@@ -25,21 +25,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .iron-selected {
       background: #ccc;
     }
-
   </style>
 
 </head>
 <body>
 
-<template is="dom-bind">
-  <iron-selector id="selector" attr-for-selected="name">
-    <template id="t" is="dom-repeat">
-      <div name="[[item.id]]">{{item.name}}</div>
-    </template>
-  </iron-selector>
-</template>
+  <template is="dom-bind">
+    <iron-selector id="selector" attr-for-selected="name">
+      <template id="t" is="dom-repeat">
+        <div name="[[item.id]]">{{item.name}}</div>
+      </template>
+    </iron-selector>
+  </template>
 
-<script>
+  <script>
 
     suite('select by a numeric property', function() {
 
@@ -68,8 +67,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

@@ -38,14 +38,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       margin: 0;
     }
 
-
   </style>
 
 </head>
 <body>
-<dom-module id="x-grid">
-  <template>
-    <style include="app-grid-style">
+  <dom-module id="x-grid">
+    <template>
+      <style include="app-grid-style">
 
         :host {
           display: block;
@@ -109,29 +108,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         }
 
+      </style>
 
-    </style>
+      <app-header-layout>
+        <app-header condenses reveals effects="waterfall">
+          <app-toolbar>
+            <div spacer main-title>Material responsive grid</div>
+          </app-toolbar>
+        </app-header>
+        <div class="centered-container">
+          <ul class="app-grid">
+            <template is="dom-repeat" items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
+              <li class="item" style="background-image: url(//lorempixel.com/800/800/nature/?i=[[item]]);">
+                <div class="item-title">Nature [[item]]</div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </app-header-layout>
 
-    <app-header-layout>
-      <app-header condenses reveals effects="waterfall">
-        <app-toolbar>
-          <div spacer main-title>Material responsive grid</div>
-        </app-toolbar>
-      </app-header>
-      <div class="centered-container">
-        <ul class="app-grid">
-          <template is="dom-repeat" items="[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]">
-            <li class="item" style="background-image: url(//lorempixel.com/800/800/nature/?i=[[item]]);">
-              <div class="item-title">Nature [[item]]</div>
-            </li>
-          </template>
-        </ul>
-      </div>
-    </app-header-layout>
+    </template>
 
-  </template>
-
-  <script>
+    <script>
 
       HTMLImports.whenReady(function() {
 
@@ -152,11 +150,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       });
 
+    </script>
+  </dom-module>
 
-  </script>
-</dom-module>
-
-<x-grid></x-grid>
+  <x-grid></x-grid>
 
 </body>
 </html>

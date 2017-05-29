@@ -17,7 +17,8 @@
     <iron-location query="{{queryString}}"></iron-location>
 
     <lms-question-list-toolbar filters-url="[[filtersUrl]]"
-                               question-types="{{questionTypes}}" owned-by-types="{{ownedByTypes}}"
+                               selected-levels="{{selectedLevels}}" selected-subjects="{{selectedSubjects}}"
+                               selected-types="{{selectedTypes}}" selected-owners="{{selectedOwners}}"
                                language="[[language]]" resources="[[resources]]">
       <template is="dom-if" if="[[_showNumFound(numFound)]]">
         <div class="number-found">
@@ -27,7 +28,7 @@
     </lms-question-list-toolbar>
 
     <lms-question-list user-id="[[userId]]" rest-url="[[restUrl]]" rest-params="[[params]]"
-                       on-item-tap="_onItemTap" num-found="{{numFound}}"
+                       num-found="{{numFound}}" selected-question="{{selectedQuestion}}"
                        language="[[language]]" resources="[[resources]]"></lms-question-list>
 
     <paper-fab icon="add" add on-tap="_onCreateTap"></paper-fab>
@@ -69,14 +70,6 @@
           type: String,
           notify: true
         },
-        questionTypes: {
-          type: Array,
-          notify: true
-        },
-        ownedByTypes: {
-          type: Array,
-          notify: true
-        },
         queryString: {
           type: String,
           notify: true
@@ -84,11 +77,17 @@
         numFound: {
           type: Number,
           notify: true
-        }
+        },
+        selectedQuestion: {
+          type: Object,
+          notify: true
+        },
       },
 
       observers: [
-        '_updateQueryString(queryTerm, questionTypes, ownedByTypes)'
+        '_updateQueryString(queryTerm, selectedLevels, '
+          + 'selectedSubjects, selectedTypes, selectedOwners)',
+        '_showDetailView(selectedQuestion)'
       ],
 
       attached: function() {
@@ -100,23 +99,36 @@
         this.queryFields = 'body,hint,'
           + 'questions.body,questions.hint';
         this.queryTerm = '';
-        this.questionTypes = [];
-        this.ownedByTypes = [];
+        this.selectedLevels = [];
+        this.selectedSubjects = [];
+        this.selectedTypes = [];
+        this.selectedOwners = [];
       },
 
-      _updateQueryString: function(queryTerm, questionTypes, ownedByTypes) {
+      _updateQueryString: function(
+          queryTerm, selectedLevels, selectedSubjects,
+          selectedTypes, selectedOwners) {
+
         var criteria = [];
 
         if (queryTerm && (queryTerm.trim() !== '')) {
           criteria.push('query=' + queryTerm.trim());
         }
 
-        if (questionTypes && (questionTypes.length > 0)) {
-          criteria.push('type=' + questionTypes.join(','));
+        if (selectedLevels && (selectedLevels.length > 0)) {
+          criteria.push('level=' + selectedLevels.join(','));
         }
 
-        if (ownedByTypes && (ownedByTypes.length > 0)) {
-          criteria.push('ownedBy=' + ownedByTypes.join(','));
+        if (selectedSubjects && (selectedSubjects.length > 0)) {
+          criteria.push('subject=' + selectedSubjects.join(','));
+        }
+
+        if (selectedTypes && (selectedTypes.length > 0)) {
+          criteria.push('type=' + selectedTypes.join(','));
+        }
+
+        if (selectedOwners && (selectedOwners.length > 0)) {
+          criteria.push('ownedBy=' + selectedOwners.join(','));
         }
 
         this.queryString = criteria.join('&');
@@ -132,9 +144,11 @@
           : this.localize('labelQuestion');
       },
 
-      _onItemTap: function(event) {
-        console.log(event);
-        this.set('route.path', this.url + '/detail');
+      _showDetailView: function(selectedQuestion) {
+        if (!!selectedQuestion) {
+          var path = this.url + '/detail/' + selectedQuestion.id;
+          this.set('route.path', path);
+        }
       },
 
       _onCreateTap: function(event) {

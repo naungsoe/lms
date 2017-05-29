@@ -13,7 +13,6 @@
       }
 
       .question {
-        @apply(--layout-horizontal);
         margin: 0 0 12px 0;
         padding: 16px;
       }
@@ -42,10 +41,24 @@
                scroll-target="document" selection-enabled>
       <template>
         <div class="list-item" on-tap="_onItemTap">
-          <div class="box question">
+          <div class="box question" flex-horizontal>
             <div class="question-content">
               <div class="question-type">
-                [[question.type]]
+                <template is="dom-if" if="[[_equals(question.type, 'MULTIPLE_CHOICE')]]">
+                  [[localize('labelMultipleChoice')]]
+                </template>
+                <template is="dom-if" if="[[_equals(question.type, 'MULTIPLE_RESPONSE')]]">
+                  [[localize('labelMultipleResponse')]]
+                </template>
+                <template is="dom-if" if="[[_equals(question.type, 'SHORT_ANSWER')]]">
+                  [[localize('labelShortAnswer')]]
+                </template>
+                <template is="dom-if" if="[[_equals(question.type, 'ESSAY')]]">
+                  [[localize('labelEssay')]]
+                </template>
+                <template is="dom-if" if="[[_equals(question.type, 'COMPOSITE')]]">
+                  [[localize('labelComposite')]]
+                </template>
               </div>
               <div class="question-body">
                 [[question.body]]
@@ -89,6 +102,7 @@
 
       behaviors: [
         Polymer.AppLocalizeBehavior,
+        LMS.UtilBehavior,
         LMS.UserBehavior,
         LMS.LocaleBehavior
       ],
@@ -122,12 +136,12 @@
           type: Array,
           notify: true
         },
-        loading: {
-          type: Boolean,
-          notify: true
-        },
         selectedQuestion: {
           type: Object,
+          notify: true
+        },
+        loading: {
+          type: Boolean,
           notify: true
         }
       },
@@ -179,7 +193,6 @@
           });
 
         event.currentTarget.classList.add('active');
-        //this.fire('item-tap');
       }
     });
   </script>

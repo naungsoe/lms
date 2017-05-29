@@ -39,18 +39,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       background-color: #f5f5f5;
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<template is="dom-bind">
+  <template is="dom-bind">
 
-  <iron-ajax url="data/recipes.json" auto last-response="{{recipes}}"></iron-ajax>
-  <recipe-app recipes="[[recipes]]"></recipe-app>
+    <iron-ajax url="data/recipes.json" auto last-response="{{recipes}}"></iron-ajax>
+    <recipe-app recipes="[[recipes]]"></recipe-app>
 
-</template>
+  </template>
 
 </body>
 </html>

@@ -1,8 +1,10 @@
 package com.hsystems.lms.service;
 
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.mapper.EntityMapper;
 import com.hsystems.lms.service.mapper.ModelMapper;
+import com.hsystems.lms.service.model.UserModel;
 
 /**
  * Created by naungsoe on 28/11/16.

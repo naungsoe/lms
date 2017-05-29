@@ -12,5 +12,7 @@ public enum EntityType {
   GROUP,
   USER,
   QUESTION,
-  QUIZ
+  COMPONENT,
+  QUIZ,
+  LESSON
 }

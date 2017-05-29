@@ -66,6 +66,12 @@ The following imports are available:
         flex-wrap: wrap;
       }
 
+      .layout.no-wrap {
+        -ms-flex-wrap: nowrap;
+        -webkit-flex-wrap: nowrap;
+        flex-wrap: nowrap;
+      }
+
       .layout.center,
       .layout.center-center {
         -ms-flex-align: center;
@@ -99,7 +105,6 @@ The following imports are available:
         -webkit-flex: none;
         flex: none;
       }
-
     </style>
   </template>
 </dom-module>
@@ -132,7 +137,6 @@ The following imports are available:
         -webkit-flex-wrap: wrap-reverse;
         flex-wrap: wrap-reverse;
       }
-
     </style>
   </template>
 </dom-module>
@@ -234,7 +238,7 @@ The following imports are available:
         -ms-align-self: baseline;
         -webkit-align-self: baseline;
         align-self: baseline;
-      };
+      }
 
       /**
        * multi-line alignment in main axis.
@@ -273,7 +277,6 @@ The following imports are available:
         -webkit-align-content: space-around;
         align-content: space-around;
       }
-
     </style>
   </template>
 </dom-module>
@@ -355,7 +358,6 @@ The following imports are available:
         -webkit-flex: 12;
         flex: 12;
       }
-
     </style>
   </template>
 </dom-module>
@@ -430,7 +432,6 @@ The following imports are available:
         bottom: 0;
         left: 0;
       }
-
     </style>
   </template>
 </dom-module>

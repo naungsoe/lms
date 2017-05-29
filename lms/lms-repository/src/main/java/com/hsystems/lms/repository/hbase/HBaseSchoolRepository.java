@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -53,13 +54,19 @@ public class HBaseSchoolRepository
     }
 
     Mutation mutation = mutationOptional.get();
+    return findBy(id, mutation.getTimestamp());
+  }
+
+  private Optional<School> findBy(String id, long timestamp)
+      throws IOException {
+
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, School.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 

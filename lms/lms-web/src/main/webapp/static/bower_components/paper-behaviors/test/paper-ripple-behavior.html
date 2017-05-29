@@ -24,10 +24,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<dom-module id="test-ripple">
-  <template>
-  </template>
-  <script>
+  <dom-module id="test-ripple">
+    <template>
+    </template>
+    <script>
     HTMLImports.whenReady(function() {
       Polymer({
         is: 'test-ripple',
@@ -38,37 +38,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ]
       });
     });
+    </script>
+  </dom-module>
 
-  </script>
-</dom-module>
+  <test-fixture id="basic">
+    <template>
+      <test-ripple></test-ripple>
+    </template>
+  </test-fixture>
 
-<test-fixture id="basic">
-  <template>
-    <test-ripple></test-ripple>
-  </template>
-</test-fixture>
+  <test-fixture id="ShadowBasic">
+    <template>
+      <sd-ripple></sd-ripple>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ShadowBasic">
-  <template>
-    <sd-ripple></sd-ripple>
-  </template>
-</test-fixture>
+  <test-fixture id="ShadowText">
+    <template>
+      <sd-ripple>Howdy!</sd-ripple>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ShadowText">
-  <template>
-    <sd-ripple>Howdy!</sd-ripple>
-  </template>
-</test-fixture>
+  <test-fixture id="ShadowElement">
+    <template>
+      <sd-ripple>
+        <div id="source">source!</div>
+      </sd-ripple>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ShadowElement">
-  <template>
-    <sd-ripple>
-      <div id="source">source!</div>
-    </sd-ripple>
-  </template>
-</test-fixture>
-
-<script>
+  <script>
     suite('PaperRippleBehavior', function() {
       var ripple;
 
@@ -151,7 +150,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             });
           });
 
-          suite('container = separate', function(done) {
+          suite('container = separate', function() {
 
             setup(function() {
               ripple = fixture('ShadowBasic');
@@ -330,8 +329,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       });
     });
-
-</script>
+  </script>
 
 </body>
 </html>

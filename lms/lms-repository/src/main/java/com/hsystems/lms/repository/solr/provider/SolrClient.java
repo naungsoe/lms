@@ -3,6 +3,7 @@ package com.hsystems.lms.repository.solr.provider;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.solr.mapper.DocumentMapper;
@@ -101,7 +102,7 @@ public class SolrClient {
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    if (documents.isEmpty()) {
+    if (CollectionUtils.isEmpty(documents)) {
       Collections.emptyList();
     }
 
@@ -113,28 +114,6 @@ public class SolrClient {
     }
 
     return entities;
-  }
-
-  public <T extends Entity> void index(T entity)
-      throws IOException {
-
-    try {
-      String collection = getCollection(entity.getClass());
-      CloudSolrClient client = getCloudClient();
-      client.setDefaultCollection(collection);
-
-      DocumentMapper mapper = new DocumentMapper();
-      SolrInputDocument document = mapper.map(entity);
-      client.add(document);
-      client.commit();
-
-    } catch (NoSuchFieldException | IllegalAccessException
-        | InstantiationException | InvocationTargetException
-        | SolrServerException e) {
-
-      throw new IOException(
-          "error indexing entity", e);
-    }
   }
 
   public <T extends Entity> void index(List<T> entities)
@@ -163,19 +142,25 @@ public class SolrClient {
     }
   }
 
-  public <T extends Entity> void delete(T entity)
+  public <T extends Entity> void index(T entity)
       throws IOException {
 
     try {
       String collection = getCollection(entity.getClass());
       CloudSolrClient client = getCloudClient();
       client.setDefaultCollection(collection);
-      client.deleteById(entity.getId());
+
+      DocumentMapper mapper = new DocumentMapper();
+      SolrInputDocument document = mapper.map(entity);
+      client.add(document);
       client.commit();
 
-    } catch (SolrServerException e) {
+    } catch (NoSuchFieldException | IllegalAccessException
+        | InstantiationException | InvocationTargetException
+        | SolrServerException e) {
+
       throw new IOException(
-          "error deleting entity", e);
+          "error indexing entity", e);
     }
   }
 
@@ -190,6 +175,22 @@ public class SolrClient {
         client.deleteById(collection, entity.getId());
       }
 
+      client.commit();
+
+    } catch (SolrServerException e) {
+      throw new IOException(
+          "error deleting entity", e);
+    }
+  }
+
+  public <T extends Entity> void delete(T entity)
+      throws IOException {
+
+    try {
+      String collection = getCollection(entity.getClass());
+      CloudSolrClient client = getCloudClient();
+      client.setDefaultCollection(collection);
+      client.deleteById(entity.getId());
       client.commit();
 
     } catch (SolrServerException e) {

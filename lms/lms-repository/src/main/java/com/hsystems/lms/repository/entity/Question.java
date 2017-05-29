@@ -2,7 +2,7 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(name = "questions")
-public class Question extends Auditable implements Entity, Serializable {
+public class Question extends Resource implements Serializable {
 
   private static final long serialVersionUID = 6004706395678775298L;
 
@@ -38,9 +38,6 @@ public class Question extends Auditable implements Entity, Serializable {
 
   @IndexField
   private List<Question> questions;
-
-  @IndexField
-  private School school;
 
   Question() {
 
@@ -73,6 +70,9 @@ public class Question extends Auditable implements Entity, Serializable {
       List<QuestionOption> options,
       List<Question> questions,
       School school,
+      List<Level> levels,
+      List<Subject> subjects,
+      List<String> keywords,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -86,6 +86,9 @@ public class Question extends Auditable implements Entity, Serializable {
     this.options = options;
     this.questions = questions;
     this.school = school;
+    this.levels = levels;
+    this.subjects = subjects;
+    this.keywords = keywords;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -114,19 +117,15 @@ public class Question extends Auditable implements Entity, Serializable {
   }
 
   public List<QuestionOption> getOptions() {
-    return ListUtils.isEmpty(options)
+    return CollectionUtils.isEmpty(options)
         ? Collections.emptyList()
         : Collections.unmodifiableList(options);
   }
 
   public List<Question> getQuestions() {
-    return ListUtils.isEmpty(questions)
+    return CollectionUtils.isEmpty(questions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(questions);
-  }
-
-  public School getSchool() {
-    return school;
   }
 
   @Override
@@ -148,11 +147,13 @@ public class Question extends Auditable implements Entity, Serializable {
   public String toString() {
     return String.format(
         "Question{id=%s, type=%s, body=%s, hint=%s, explanation=%s, "
-            + "options=%s, questions=%s, school=%s, "
-            + "createdBy=%s, createdDateTime=%s, "
+            + "options=%s, questions=%s, school=%s, levels=%s, subjects=%s, "
+            + "keywords=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, type, body, hint, explanation, StringUtils.join(options, ","),
         StringUtils.join(questions, ","), school,
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

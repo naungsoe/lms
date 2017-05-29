@@ -26,85 +26,85 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="basic">
-  <template>
-    <input is="iron-input">
+  <test-fixture id="basic">
+    <template>
+      <input is="iron-input">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-value">
+    <template>
+      <input is="iron-input" value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-bind-value">
+    <template>
+      <input is="iron-input" bind-value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input">
+    <template>
+      <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-with-pattern">
+    <template>
+      <input is="iron-input" prevent-invalid-input pattern="[a-zA-Z]{3}[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-has-value">
+    <template>
+      <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]" value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="prevent-invalid-input-has-bind-value">
+    <template>
+      <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]" bind-value="foobar">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="automatically-prevent-invalid-input-if-allowed-pattern">
+    <template>
+      <input is="iron-input" allowed-pattern="[0-9]">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="no-validator">
+    <template>
+      <input is="iron-input" pattern="[a-zA-Z]{3}[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="has-validator">
+    <template>
+      <letters-only></letters-only>
+      <input is="iron-input" validator="letters-only" pattern="[0-9]*">
+    </template>
+  </test-fixture>
+
+  <test-fixture id="native-and-custom-validator">
+    <template>
+      <letters-only></letters-only>
+      <input is="iron-input" validator="letters-only" pattern="[a-c]*">
+    </template>
+  </test-fixture>
+
+  <template is="dom-bind" id="bind-to-object">
+    <input is="iron-input" id="input" bind-value="{{foo}}">
   </template>
-</test-fixture>
 
-<test-fixture id="has-value">
-  <template>
-    <input is="iron-input" value="foobar">
-  </template>
-</test-fixture>
+  <test-fixture id="disabled-input">
+    <template>
+      <disabled-input></disabled-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="has-bind-value">
-  <template>
-    <input is="iron-input" bind-value="foobar">
-  </template>
-</test-fixture>
-
-<test-fixture id="prevent-invalid-input">
-  <template>
-    <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]">
-  </template>
-</test-fixture>
-
-<test-fixture id="prevent-invalid-input-with-pattern">
-  <template>
-    <input is="iron-input" prevent-invalid-input pattern="[a-zA-Z]{3}[0-9]*">
-  </template>
-</test-fixture>
-
-<test-fixture id="prevent-invalid-input-has-value">
-  <template>
-    <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]" value="foobar">
-  </template>
-</test-fixture>
-
-<test-fixture id="prevent-invalid-input-has-bind-value">
-  <template>
-    <input is="iron-input" prevent-invalid-input allowed-pattern="[0-9]" bind-value="foobar">
-  </template>
-</test-fixture>
-
-<test-fixture id="automatically-prevent-invalid-input-if-allowed-pattern">
-  <template>
-    <input is="iron-input" allowed-pattern="[0-9]">
-  </template>
-</test-fixture>
-
-<test-fixture id="no-validator">
-  <template>
-    <input is="iron-input" pattern="[a-zA-Z]{3}[0-9]*">
-  </template>
-</test-fixture>
-
-<test-fixture id="has-validator">
-  <template>
-    <letters-only></letters-only>
-    <input is="iron-input" validator="letters-only" pattern="[0-9]*">
-  </template>
-</test-fixture>
-
-<test-fixture id="native-and-custom-validator">
-  <template>
-    <letters-only></letters-only>
-    <input is="iron-input" validator="letters-only" pattern="[a-c]*">
-  </template>
-</test-fixture>
-
-<template is="dom-bind" id="bind-to-object">
-  <input is="iron-input" id="input" bind-value="{{foo}}">
-</template>
-
-<test-fixture id="disabled-input">
-  <template>
-    <disabled-input></disabled-input>
-  </template>
-</test-fixture>
-
-<script>
+  <script>
 
     suite('basic', function() {
 
@@ -275,8 +275,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         input.dispatchEvent(event);
       });
     });
-
-</script>
+  </script>
 
 </body>
 </html>

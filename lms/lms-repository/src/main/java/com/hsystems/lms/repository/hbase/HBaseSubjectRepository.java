@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -55,13 +56,19 @@ public class HBaseSubjectRepository
     }
 
     Mutation mutation = mutationOptional.get();
+    return findBy(id, mutation.getTimestamp());
+  }
+
+  private Optional<Subject> findBy(String id, long timestamp)
+      throws IOException {
+
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, School.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
@@ -76,15 +83,16 @@ public class HBaseSubjectRepository
     List<Mutation> mutations = mutationRepository.findAllBy(
         schoolId, schoolId, Integer.MAX_VALUE, EntityType.SUBJECT);
 
-    if (mutations.isEmpty()) {
+    if (CollectionUtils.isEmpty(mutations)) {
       return Collections.emptyList();
     }
 
     Mutation startMutation = mutations.get(0);
     Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String startRowKey = startMutation.getId();
     String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
     Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
+    scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 

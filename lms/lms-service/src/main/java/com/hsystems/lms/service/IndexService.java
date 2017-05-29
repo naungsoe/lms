@@ -3,13 +3,18 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
@@ -26,6 +31,9 @@ public class IndexService extends BaseService {
   private static final String COLLECTION_SUBJECT = "subjects";
   private static final String COLLECTION_USER = "users";
   private static final String COLLECTION_QUESTION = "questions";
+  private static final String COLLECTION_QUIZ = "quizzes";
+  private static final String COLLECTION_LESSON = "lessons";
+
   private static final int INDEX_LIMIT = 50;
 
   private final IndexRepository indexRepository;
@@ -36,6 +44,12 @@ public class IndexService extends BaseService {
 
   private final UserRepository userRepository;
 
+  private final LessonRepository lessonRepository;
+
+  private final QuizRepository quizRepository;
+
+  private final ComponentRepository componentRepository;
+
   private final QuestionRepository questionRepository;
 
   @Inject
@@ -44,12 +58,18 @@ public class IndexService extends BaseService {
       LevelRepository levelRepository,
       SubjectRepository subjectRepository,
       UserRepository userRepository,
+      LessonRepository lessonRepository,
+      QuizRepository quizRepository,
+      ComponentRepository componentRepository,
       QuestionRepository questionRepository) {
 
     this.indexRepository = indexRepository;
     this.levelRepository = levelRepository;
     this.subjectRepository = subjectRepository;
     this.userRepository = userRepository;
+    this.lessonRepository = lessonRepository;
+    this.quizRepository = quizRepository;
+    this.componentRepository = componentRepository;
     this.questionRepository = questionRepository;
   }
 
@@ -143,6 +163,12 @@ public class IndexService extends BaseService {
       case COLLECTION_USER:
         indexUser(id);
         break;
+      case COLLECTION_LESSON:
+        indexLesson(id);
+        break;
+      case COLLECTION_QUIZ:
+        indexQuiz(id);
+        break;
       case COLLECTION_QUESTION:
         indexQuestion(id);
         break;
@@ -181,6 +207,34 @@ public class IndexService extends BaseService {
     if (userOptional.isPresent()) {
       User user = userOptional.get();
       indexRepository.save(user);
+    }
+  }
+
+  private void indexLesson(String id)
+      throws IOException {
+
+    Optional<Quiz> quizOptional = quizRepository.findBy(id);
+
+    if (quizOptional.isPresent()) {
+      Quiz quiz = quizOptional.get();
+      List<Component> components = componentRepository.findAllBy(
+          quiz.getSchool().getId(), quiz.getId());
+      quiz.addComponent(components.toArray(new Component[0]));
+      indexRepository.save(quiz);
+    }
+  }
+
+  private void indexQuiz(String id)
+      throws IOException {
+
+    Optional<Quiz> quizOptional = quizRepository.findBy(id);
+
+    if (quizOptional.isPresent()) {
+      Quiz quiz = quizOptional.get();
+      List<Component> components = componentRepository.findAllBy(
+          quiz.getSchool().getId(), quiz.getId());
+      quiz.addComponent(components.toArray(new Component[0]));
+      indexRepository.save(quiz);
     }
   }
 

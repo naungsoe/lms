@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
@@ -24,7 +25,7 @@ public class HBaseLevelMapper extends HBaseMapper<Level> {
   public List<Level> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

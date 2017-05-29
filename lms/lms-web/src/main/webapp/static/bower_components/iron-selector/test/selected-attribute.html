@@ -27,47 +27,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     .iron-selected {
       background: #ccc;
     }
-
   </style>
 
 </head>
 <body>
 
-<test-fixture id="test">
-  <template>
-    <iron-selector id="selector">
-      <div>Item 0</div>
-      <div>Item 1</div>
-      <div>Item 2</div>
-      <div>Item 3</div>
-      <div>Item 4</div>
-    </iron-selector>
-  </template>
-</test-fixture>
+  <test-fixture id="test">
+    <template>
+      <iron-selector id="selector">
+        <div>Item 0</div>
+        <div>Item 1</div>
+        <div>Item 2</div>
+        <div>Item 3</div>
+        <div>Item 4</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
 
-<test-fixture id="test-attr-change">
-  <template>
-    <iron-selector id="selector" attr-for-selected="data-x" selected="x-1">
-      <div data-x="x-1" data-y="y-1">1</div>
-      <div data-x="x-2" data-y="y-2">2</div>
-      <div data-x="x-3" data-y="y-3">3</div>
-    </iron-selector>
-  </template>
-</test-fixture>
+  <test-fixture id="test-attr-change">
+    <template>
+      <iron-selector id="selector" attr-for-selected="data-x" selected="x-1">
+        <div data-x="x-1" data-y="y-1">1</div>
+        <div data-x="x-2" data-y="y-2">2</div>
+        <div data-x="x-3" data-y="y-3">3</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
 
-<test-fixture id="test-attr-change-multi">
-  <template>
-    <iron-selector multi id="selector"
-                   attr-for-selected="data-x"
-                   selected-values='["x-1","x-2"]'>
-      <div data-x="x-1" data-y="y-1">1</div>
-      <div data-x="x-2" data-y="y-2">2</div>
-      <div data-x="x-3" data-y="y-3">3</div>
-    </iron-selector>
-  </template>
-</test-fixture>
+  <test-fixture id="test-attr-change-multi">
+    <template>
+      <iron-selector multi id="selector"
+                     attr-for-selected="data-x"
+                     selected-values='["x-1","x-2"]'>
+        <div data-x="x-1" data-y="y-1">1</div>
+        <div data-x="x-2" data-y="y-2">2</div>
+        <div data-x="x-3" data-y="y-3">3</div>
+      </iron-selector>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
 
     suite('selected attributes', function() {
 
@@ -124,8 +123,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

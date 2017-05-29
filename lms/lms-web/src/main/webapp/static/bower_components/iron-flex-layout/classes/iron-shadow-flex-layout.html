@@ -10,7 +10,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <script>
   console.warn('This file is deprecated. Please use `iron-flex-layout/iron-flex-layout-classes.html`, and one of the specific dom-modules instead');
-
 </script>
 
 <style>
@@ -62,6 +61,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     -ms-flex-wrap: wrap;
     -webkit-flex-wrap: wrap;
     flex-wrap: wrap;
+  }
+  
+  html /deep/ .layout-no-wrap {
+    -ms-flex-wrap: nowrap;
+    -webkit-flex-wrap: nowrap;
+    flex-wrap: nowrap;
   }
 
   html /deep/ .layout.wrap-reverse {
@@ -304,6 +309,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     bottom: 0;
     left: 0;
   }
-
 
 </style>

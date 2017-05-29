@@ -18,24 +18,23 @@
     section {
       margin: 24px;
     }
-
   </style>
 </head>
 <body unresolved>
-<template is="dom-bind" id="scope">
-  <section>
-    <h1>{{dateFormat(date, 'LL')}}</h1>
-    <paper-button class="btn" on-tap="showDialog" raised>Change Date</paper-button>
-    <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog">
-      <paper-date-picker id="picker" date="[[date]]"></paper-date-picker>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm>OK</paper-button>
-      </div>
-    </paper-dialog>
-  </section>
-</template>
-<script>
+  <template is="dom-bind" id="scope">
+    <section>
+      <h1>{{dateFormat(date, 'LL')}}</h1>
+      <paper-button class="btn" on-tap="showDialog" raised>Change Date</paper-button>
+      <paper-dialog id="dialog" class="paper-date-picker-dialog" modal on-iron-overlay-closed="dismissDialog">
+        <paper-date-picker id="picker" date="[[date]]"></paper-date-picker>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm>OK</paper-button>
+        </div>
+      </paper-dialog>
+    </section>
+  </template>
+  <script>
     HTMLImports.whenReady(function() {
       var scope = Polymer.dom(document).querySelector('#scope');
       scope.dateFormat = function(date, format) {
@@ -54,7 +53,6 @@
         scope.showDialog();
       });
     });
-
-</script>
+  </script>
 </body>
 </html>

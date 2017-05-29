@@ -1,7 +1,7 @@
 package com.hsystems.lms.service.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.List;
  * Created by naungsoe on 3/11/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QuestionModel extends AuditableModel implements Serializable {
+public class QuestionModel extends ResourceModel implements Serializable {
 
   private static final long serialVersionUID = 553257369714695546L;
 
@@ -75,7 +75,7 @@ public class QuestionModel extends AuditableModel implements Serializable {
   }
 
   public List<QuestionOptionModel> getOptions() {
-    return ListUtils.isEmpty(options)
+    return CollectionUtils.isEmpty(options)
         ? Collections.emptyList()
         : Collections.unmodifiableList(options);
   }
@@ -86,7 +86,7 @@ public class QuestionModel extends AuditableModel implements Serializable {
   }
 
   public List<QuestionModel> getQuestions() {
-    return ListUtils.isEmpty(questions)
+    return CollectionUtils.isEmpty(questions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(questions);
   }

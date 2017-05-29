@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 
@@ -32,7 +33,7 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   public List<Mutation> getEntities(
       List<Result> results, List<Mutation> list) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

@@ -1,6 +1,6 @@
 package com.hsystems.lms.common.query;
 
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.util.ArrayList;
@@ -70,7 +70,7 @@ public class Criterion {
   }
 
   public List<Object> getValues() {
-    return ListUtils.isEmpty(values)
+    return CollectionUtils.isEmpty(values)
         ? Collections.emptyList() : Collections.unmodifiableList(values);
   }
 

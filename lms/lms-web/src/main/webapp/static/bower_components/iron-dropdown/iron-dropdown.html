@@ -57,7 +57,6 @@ method is called on the element.
       #contentWrapper.animating ::content > * {
         overflow: hidden;
       }
-
     </style>
 
     <div id="contentWrapper">
@@ -104,7 +103,9 @@ method is called on the element.
 
           /**
            * An animation config. If provided, this will be used to animate the
-           * opening of the dropdown.
+           * opening of the dropdown. Pass an Array for multiple animations.
+           * See `neon-animation` documentation for more animation configuration
+           * details.
            */
           openAnimationConfig: {
             type: Object
@@ -112,7 +113,9 @@ method is called on the element.
 
           /**
            * An animation config. If provided, this will be used to animate the
-           * closing of the dropdown.
+           * closing of the dropdown. Pass an Array for multiple animations.
+           * See `neon-animation` documentation for more animation configuration
+           * details.
            */
           closeAnimationConfig: {
             type: Object
@@ -190,8 +193,15 @@ method is called on the element.
           this._refitOnScrollRAF = null;
         },
 
+        attached: function () {
+          if (!this.sizingTarget || this.sizingTarget === this) {
+            this.sizingTarget = this.containedElement || this;
+          }
+        },
+
         detached: function() {
           this.cancelAnimation();
+          document.removeEventListener('scroll', this._boundOnCaptureScroll);
           Polymer.IronDropdownScrollManager.removeScrollLock(this);
         },
 
@@ -204,7 +214,6 @@ method is called on the element.
             this.cancel();
           } else {
             this.cancelAnimation();
-            this.sizingTarget = this.containedElement || this.sizingTarget;
             this._updateAnimationConfig();
             this._saveScrollPosition();
             if (this.opened) {
@@ -234,6 +243,7 @@ method is called on the element.
          * Overridden from `IronOverlayBehavior`.
          */
         _renderClosed: function() {
+
           if (!this.noAnimations && this.animationConfig.close) {
             this.$.contentWrapper.classList.add('animating');
             this.playAnimation('close');
@@ -303,9 +313,11 @@ method is called on the element.
          * to configure specific parts of the opening and closing animations.
          */
         _updateAnimationConfig: function() {
-          var animations = (this.openAnimationConfig || []).concat(this.closeAnimationConfig || []);
+          // Update the animation node to be the containedElement.
+          var animationNode = this.containedElement;
+          var animations = [].concat(this.openAnimationConfig || []).concat(this.closeAnimationConfig || []);
           for (var i = 0; i < animations.length; i++) {
-            animations[i].node = this.containedElement;
+            animations[i].node = animationNode;
           }
           this.animationConfig = {
             open: this.openAnimationConfig,
@@ -337,6 +349,5 @@ method is called on the element.
         }
       });
     })();
-
   </script>
 </dom-module>

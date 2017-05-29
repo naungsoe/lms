@@ -19,17 +19,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: inline-block;
         margin: 1em;
       }
-
     </style>
     <div on-tap="open">
       <content select=".dropdown-trigger"></content>
     </div>
     <iron-dropdown id="dropdown"
-                   vertical-align="[[verticalAlign]]"
-                   horizontal-align="[[horizontalAlign]]"
-                   disabled="[[disabled]]"
-                   open-animation-config="[[openAnimationConfig]]"
-                   close-animation-config="[[closeAnimationConfig]]">
+      vertical-align="[[verticalAlign]]"
+      horizontal-align="[[horizontalAlign]]"
+      disabled="[[disabled]]"
+      open-animation-config="[[openAnimationConfig]]"
+      close-animation-config="[[closeAnimationConfig]]">
       <content select=".dropdown-content"></content>
     </iron-dropdown>
   </template>
@@ -77,6 +76,5 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.dropdown.open();
       }
     });
-
   </script>
 </dom-module>

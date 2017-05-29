@@ -1,11 +1,14 @@
 package com.hsystems.lms.repository.entity;
 
+import com.hsystems.lms.common.annotation.IndexCollection;
+
 /**
  * Created by naungsoe on 6/1/17.
  */
-public interface Component {
-
-  String getId();
+@IndexCollection(name = "components")
+public interface Component extends Entity {
 
   int getOrder();
+
+  ComponentType getType();
 }

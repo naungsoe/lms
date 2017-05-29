@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -54,13 +55,19 @@ public class HBaseUserRepository
     }
 
     Mutation mutation = mutationOptional.get();
+    return findBy(id, mutation.getTimestamp());
+  }
+
+  private Optional<User> findBy(String id, long timestamp)
+      throws IOException {
+
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, User.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
@@ -76,7 +83,7 @@ public class HBaseUserRepository
     List<Mutation> mutations = mutationRepository.findAllBy(
         schoolId, lastId, limit, EntityType.USER);
 
-    if (mutations.isEmpty()) {
+    if (CollectionUtils.isEmpty(mutations)) {
       return Collections.emptyList();
     }
 

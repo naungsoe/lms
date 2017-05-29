@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Share;
@@ -26,7 +27,7 @@ public class HBaseShareMapper extends HBaseMapper<Share> {
   public List<Share> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

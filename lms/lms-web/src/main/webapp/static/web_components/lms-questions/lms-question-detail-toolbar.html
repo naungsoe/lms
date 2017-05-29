@@ -11,10 +11,18 @@
     </style>
 
     <paper-toolbar>
-      <paper-icon-button icon="create" on-tap="_onEditTap"></paper-icon-button>
-      <paper-icon-button icon="social:person-add" on-tap="_onShareTap"></paper-icon-button>
-      <paper-icon-button icon="content-copy" on-tap="_onDuplicateTap"></paper-icon-button>
-      <paper-icon-button icon="delete" on-tap="_onDeleteTap"></paper-icon-button>
+      <template is="dom-if" if="[[_contains(userModel.permissions, )]]">
+        <paper-icon-button icon="create" on-tap="_onEditTap"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="[[_contains(userModel.permissions)]]">
+        <paper-icon-button icon="social:person-add" on-tap="_onShareTap"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="[[_contains(userModel.permissions)]]">
+        <paper-icon-button icon="content-copy" on-tap="_onDuplicateTap"></paper-icon-button>
+      </template>
+      <template is="dom-if" if="[[_contains(userModel.permissions)]]">
+        <paper-icon-button icon="delete" on-tap="_onDeleteTap"></paper-icon-button>
+      </template>
       <div class="title"></div>
       <paper-icon-button icon="close" on-tap="_onCloseTap"></paper-icon-button>
     </paper-toolbar>
@@ -26,12 +34,20 @@
 
       behaviors: [
         Polymer.AppLocalizeBehavior,
+        LMS.UtilBehavior,
         LMS.UserBehavior,
         LMS.LocaleBehavior
       ],
-      
-      properties: {
 
+      properties: {
+        route: {
+          type: Object,
+          notify: true
+        }
+      },
+
+      _onCloseTap: function(event) {
+        this.route = '';
       }
     });
   </script>

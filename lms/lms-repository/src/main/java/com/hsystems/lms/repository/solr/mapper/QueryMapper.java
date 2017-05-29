@@ -3,6 +3,7 @@ package com.hsystems.lms.repository.solr.mapper;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Operator;
 import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
@@ -76,7 +77,7 @@ public class QueryMapper extends Mapper<SolrQuery> {
     List<Criterion> queryCriteria = new ArrayList<>();
     criteria.stream().filter(isQueryCriteria()).forEach(queryCriteria::add);
 
-    if (queryCriteria.isEmpty()) {
+    if (CollectionUtils.isEmpty(queryCriteria)) {
       solrQuery.setQuery(DEFAULT_QUERY);
       return;
     }
@@ -122,16 +123,16 @@ public class QueryMapper extends Mapper<SolrQuery> {
     criteria.stream().filter(isBlockJoinQueryCriteria())
         .forEach(queryCriteria::add);
 
-    if (queryCriteria.isEmpty()) {
+    if (CollectionUtils.isEmpty(queryCriteria)) {
       return;
     }
 
     List<String> fieldQueries = new ArrayList<>();
 
     for (Criterion criterion : queryCriteria) {
-      int lastIndexOf = criterion.getField().lastIndexOf('.');
-      String typeFieldName = criterion.getField().substring(0, lastIndexOf);
-      String fieldName = criterion.getField().substring(lastIndexOf + 1);
+      int lastIndex = criterion.getField().lastIndexOf('.');
+      String typeFieldName = criterion.getField().substring(0, lastIndex);
+      String fieldName = criterion.getField().substring(lastIndex + 1);
       String fieldValue = criterion.getValues().get(0).toString();
       String fieldQuery = String.format(QUERY_FORMAT, fieldValue, fieldValue);
       fieldQueries.add(String.format(BLOCK_JOIN_QUERY_FORMAT,
@@ -230,7 +231,7 @@ public class QueryMapper extends Mapper<SolrQuery> {
 
     List<String> childFieldNames = new ArrayList<>();
 
-    if (fieldNames.isEmpty()) {
+    if (CollectionUtils.isEmpty(fieldNames)) {
       solrQuery.addField(FIELD_ALL);
 
     } else {
@@ -255,7 +256,7 @@ public class QueryMapper extends Mapper<SolrQuery> {
       }
     }
 
-    String childFieldFilter = childFieldNames.isEmpty()
+    String childFieldFilter = CollectionUtils.isEmpty(childFieldNames)
         ? "" : String.format(FILTER_FORMAT, FIELD_NAME,
         StringUtils.join(childFieldNames, OR_SEPARATOR));
     String typeNameField = String.format(TRANSFORM_FORMAT,

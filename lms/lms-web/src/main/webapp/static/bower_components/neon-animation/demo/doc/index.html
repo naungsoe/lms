@@ -9,41 +9,40 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-<head>
-  <title>neon-animation demo: basic</title>
+  <head>
+    <title>neon-animation demo: basic</title>
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-  <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <link rel="import" href="my-animatable.html">
-  <link rel="import" href="my-dialog.html">
+    <link rel="import" href="my-animatable.html">
+    <link rel="import" href="my-dialog.html">
 
-</head>
-<style>
+  </head>
+  <style>
     my-animatable {
       margin-top: 50px;
     }
+  </style>
+  <body>
 
-</style>
-<body>
+    <template is="dom-bind">
 
-<template is="dom-bind">
+      <button on-click="_onCircleButtonClick">toggle circle</button>
+      <button on-click="_onDialogButtonClick">toggle dialog</button>
 
-  <button on-click="_onCircleButtonClick">toggle circle</button>
-  <button on-click="_onDialogButtonClick">toggle dialog</button>
+      <div style="text-align: center">
+        <my-dialog>Hello World!</my-dialog>
+      </div>
 
-  <div style="text-align: center">
-    <my-dialog>Hello World!</my-dialog>
-  </div>
+      <my-animatable></my-animatable>
 
-  <my-animatable></my-animatable>
+    </template>
 
-</template>
-
-<script>
+    <script>
 
       var scope = document.querySelector('template[is="dom-bind"]');
 
@@ -65,8 +64,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       };
 
+    </script>
 
-</script>
-
-</body>
+  </body>
 </html>

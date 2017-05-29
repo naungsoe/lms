@@ -13,7 +13,7 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(name = "schools")
-public class School extends Auditable implements Entity, Serializable {
+public class School extends Auditable implements Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
 

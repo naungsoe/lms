@@ -19,33 +19,31 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="../../paper-input/paper-input.html">
 </head>
 <body>
-<test-fixture id="TrivialActiveState">
-  <template>
-    <test-button></test-button>
-  </template>
-</test-fixture>
+  <test-fixture id="TrivialActiveState">
+    <template>
+      <test-button></test-button>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ToggleActiveState">
-  <template>
-    <test-button toggles></test-button>
-  </template>
-</test-fixture>
+  <test-fixture id="ToggleActiveState">
+    <template>
+      <test-button toggles></test-button>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ButtonWithNativeInput">
-  <template>
-    <test-light-dom><input id="input"></test-light-dom>
-  </template>
-</test-fixture>
+  <test-fixture id="ButtonWithNativeInput">
+    <template>
+      <test-light-dom><input id="input"></test-light-dom>
+    </template>
+  </test-fixture>
 
-<test-fixture id="ButtonWithPaperInput">
-  <template>
-    <test-light-dom>
-      <paper-input id="input"></paper-input>
-    </test-light-dom>
-  </template>
-</test-fixture>
+  <test-fixture id="ButtonWithPaperInput">
+    <template>
+      <test-light-dom><paper-input id="input"></paper-input></test-light-dom>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
     suite('active-state', function() {
       var activeTarget;
 
@@ -125,6 +123,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 done(e);
               }
             });
+          });
+        });
+
+        suite('on blur', function() {
+          test('the pressed property becomes false', function() {
+            MockInteractions.focus(activeTarget);
+            MockInteractions.down(activeTarget);
+            expect(activeTarget.hasAttribute('pressed')).to.be.eql(true);
+            MockInteractions.blur(activeTarget);
+            expect(activeTarget.hasAttribute('pressed')).to.be.eql(false);
           });
         });
       });
@@ -277,7 +285,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
 
     });
-
-</script>
+  </script>
 </body>
 </html>

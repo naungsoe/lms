@@ -7,6 +7,7 @@ import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
@@ -73,7 +74,7 @@ public class AuthenticationService extends BaseService {
     QueryResult<User> queryResult
         = indexRepository.findAllBy(query, User.class);
 
-    if (queryResult.getItems().isEmpty()) {
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return Optional.empty();
     }
 

@@ -24,36 +24,54 @@
         <paper-icon-button class="dropdown-trigger" icon="filter-list"></paper-icon-button>
         <div class="dropdown-content" filter-list>
           <div class="filter-content" flex-vertical>
-            <template is="dom-if" if="[[_isNotEmpty(filters)]]">
+            <template is="dom-if" if="[[_isReady(resources, filters)]]">
               <paper-dropdown-menu no-label-float flex-auto>
-                <paper-listbox selected="0" class="dropdown-content">
-                  <paper-item>[[localize('labelAllLevels')]]</paper-item>
+                <paper-listbox name="levels" class="dropdown-content"
+                               selected="ALL" attr-for-selected="value">
+                  <paper-item value="ALL">[[localize('labelAllLevels')]]</paper-item>
                   <template is="dom-repeat" items="[[filters.levels]]" as="level">
                     <paper-item value="[[level.value]]">[[level.name]]</paper-item>
                   </template>
                 </paper-listbox>
               </paper-dropdown-menu>
               <paper-dropdown-menu no-label-float flex-auto>
-                <paper-listbox selected="0" class="dropdown-content">
-                  <paper-item>[[localize('labelAllSubjects')]]</paper-item>
+                <paper-listbox name="subjects" class="dropdown-content"
+                               selected="ALL" attr-for-selected="value">
+                  <paper-item value="ALL">[[localize('labelAllSubjects')]]</paper-item>
                   <template is="dom-repeat" items="[[filters.subjects]]" as="subject">
                     <paper-item value="[[subject.value]]">[[subject.name]]</paper-item>
                   </template>
                 </paper-listbox>
               </paper-dropdown-menu>
               <paper-dropdown-menu no-label-float flex-auto>
-                <paper-listbox selected="0" class="dropdown-content">
-                  <paper-item>[[localize('labelAllQuestionTypes')]]</paper-item>
+                <paper-listbox name="types" class="dropdown-content"
+                               selected="ALL" attr-for-selected="value">
+                  <paper-item value="ALL">[[localize('labelAllQuestionTypes')]]</paper-item>
                   <template is="dom-repeat" items="[[filters.types]]" as="type">
-                    <paper-item value="[[type.value]]">[[type.name]]</paper-item>
+                    <template is="dom-if" if="[[_equals(type.name, 'MULTIPLE_CHOICE')]]">
+                      <paper-item value="[[type.value]]">[[localize('labelMultipleChoice')]]</paper-item>
+                    </template>
+                    <template is="dom-if" if="[[_equals(type.name, 'MULTIPLE_RESPONSE')]]">
+                      <paper-item value="[[type.value]]">[[localize('labelMultipleResponse')]]</paper-item>
+                    </template>
+                    <template is="dom-if" if="[[_equals(type.name, 'SHORT_ANSWER')]]">
+                      <paper-item value="[[type.value]]">[[localize('labelShortAnswer')]]</paper-item>
+                    </template>
+                    <template is="dom-if" if="[[_equals(type.name, 'ESSAY')]]">
+                      <paper-item value="[[type.value]]">[[localize('labelEssay')]]</paper-item>
+                    </template>
+                    <template is="dom-if" if="[[_equals(type.name, 'COMPOSITE')]]">
+                      <paper-item value="[[type.value]]">[[localize('labelComposite')]]</paper-item>
+                    </template>
                   </template>
                 </paper-listbox>
               </paper-dropdown-menu>
               <paper-dropdown-menu no-label-float flex-auto>
-                <paper-listbox selected="0" class="dropdown-content">
-                  <paper-item>[[localize('labelOwnedByAnyone')]]</paper-item>
-                  <paper-item>[[localize('labelOwnedByMe')]]</paper-item>
-                  <paper-item>[[localize('labelNotOwnerByMe')]]</paper-item>
+                <paper-listbox name="owners" class="dropdown-content"
+                               selected="ANYONE" attr-for-selected="value">
+                  <paper-item value="ANYONE">[[localize('labelOwnedByAnyone')]]</paper-item>
+                  <paper-item value="ME">[[localize('labelOwnedByMe')]]</paper-item>
+                  <paper-item value="NOT_ME">[[localize('labelNotOwnerByMe')]]</paper-item>
                 </paper-listbox>
               </paper-dropdown-menu>
             </template>
@@ -79,6 +97,7 @@
 
       behaviors: [
         Polymer.AppLocalizeBehavior,
+        LMS.UtilBehavior,
         LMS.UserBehavior,
         LMS.LocaleBehavior
       ],
@@ -96,43 +115,56 @@
           type: Object,
           notify: true
         },
-        questionTypes: {
+        selectedLevels: {
           type: Array,
           notify: true
         },
-        ownedByTypes: {
+        selectedSubjects: {
           type: Array,
           notify: true
         },
-        selectedQuestionTypes: {
+        selectedTypes: {
           type: Array,
           notify: true
         },
-        selectedOwnedByTypes: {
+        selectedOwners: {
           type: Array,
           notify: true
         }
       },
 
       attached: function() {
-        this.selectedQuestionTypes = this.questionTypes || [];
-        this.selectedOwnedByTypes = this.ownedByTypes || [];
         this.$$('iron-ajax').generateRequest();
       },
 
+      applyFilters: function() {
+        var levels = this.$$('[name=levels]').selected;
+        this.selectedLevels = [].concat(levels);
+
+        var subjects = this.$$('[name=subjects]').selected;
+        this.selectedSubjects = [].concat(subjects);
+
+        var types = this.$$('[name=types]').selected;
+        this.selectedTypes = [].concat(types);
+
+        var owners = this.$$('[name=owners]').selected;
+        this.selectedOwners = [].concat(owners);
+      },
+
       resetFilters: function() {
-        this.selectedQuestionTypes = [];
-        this.selectedOwnedByTypes = [];
-        this.questionTypes = [];
-        this.ownedByTypes = [];
+        this.$$('[name=levels]').selected = 'ALL';
+        this.$$('[name=subjects]').selected = 'ALL';
+        this.$$('[name=types]').selected = 'ALL';
+        this.$$('[name=owners]').selected = 'ANYONE';
+
+        this.selectedLevels = ['ALL'];
+        this.selectedSubjects = ['ALL'];
+        this.selectedTypes = ['ALL'];
+        this.selectedOwners = ['ANYONE'];
       },
 
       _onAjaxResponse: function(event) {
         this.filters = event.detail.response;
-      },
-
-      _isNotEmpty: function(value) {
-        return !!value;
       },
 
       _onResetTap: function(event) {
@@ -141,9 +173,8 @@
       },
 
       _onApplyTap: function(event) {
-        this.questionTypes = Array.from(this.selectedQuestionTypes);
-        this.ownedByTypes = Array.from(this.selectedOwnedByTypes);
         this.$$('paper-menu-button').close();
+        this.applyFilters();
       }
     });
   </script>

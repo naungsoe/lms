@@ -2,12 +2,13 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexField;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 5/11/16.
  */
-public abstract class Auditable implements Entity {
+public abstract class Auditable implements Entity, Serializable {
 
   @IndexField
   protected User createdBy;

@@ -7,17 +7,20 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.common.util.DateTimeUtils;
+import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.entity.Question;
 import com.hsystems.lms.repository.entity.QuestionType;
-import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -51,7 +54,7 @@ public class QuestionService extends BaseService {
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
-      Configuration configuration = Configuration.create(principal);
+      Configuration configuration = Configuration.create();
       QuestionModel questionModel = getModel(question,
           QuestionModel.class, configuration);
       return Optional.of(questionModel);
@@ -71,7 +74,7 @@ public class QuestionService extends BaseService {
     QueryResult<Question> queryResult
         = indexRepository.findAllBy(query, Question.class);
 
-    if (queryResult.getItems().isEmpty()) {
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
@@ -105,8 +108,29 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public void create(
-      QuestionModel questionModel, Principal principal)
+  public void create(QuestionModel questionModel, Principal principal)
+      throws IOException {
+
+    checkSavePreconditions(questionModel);
+    questionModel.setCreatedBy((UserModel) principal);
+    questionModel.setCreatedDateTime(DateTimeUtils.toString(
+        LocalDateTime.now(), principal.getDateTimeFormat()));
+    saveQuestion(questionModel, principal);
+  }
+
+  private void checkSavePreconditions(QuestionModel questionModel) {
+    CommonUtils.checkNotNull(questionModel.getBody(),
+        "question body cannot be null");
+    CommonUtils.checkArgument(StringUtils.isNotEmpty(questionModel.getBody()),
+        "question body cannot be empty");
+    CommonUtils.checkNotNull(questionModel.getOptions(),
+        "question options cannot be null");
+    CommonUtils.checkArgument(
+        CollectionUtils.isNotEmpty(questionModel.getOptions()),
+        "question options cannot be empty");
+  }
+
+  private void saveQuestion(QuestionModel questionModel, Principal principal)
       throws IOException {
 
     Configuration configuration = Configuration.create(principal);
@@ -116,15 +140,38 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public void save(
-      QuestionModel questionModel, Principal principal)
+  public void save(QuestionModel questionModel, Principal principal)
       throws IOException {
 
-    Configuration configuration = Configuration.create(principal);
-    Question question = getEntity(questionModel, Question.class, configuration);
-    checkMutatePreconditions(question, principal);
-    questionRepository.save(question);
-    indexRepository.save(question);
+    checkSavePreconditions(questionModel);
+
+    Optional<Question> questionOptional = indexRepository.findBy(
+        questionModel.getId(), Question.class);
+
+    if (questionOptional.isPresent()) {
+      Question question = questionOptional.get();
+      QuestionModel origQuestionModel = getModel(question, QuestionModel.class);
+      origQuestionModel.setModifiedBy((UserModel) principal);
+      origQuestionModel.setModifiedDateTime(DateTimeUtils.toString(
+          LocalDateTime.now(), principal.getDateTimeFormat()));
+      copyProperties(origQuestionModel, questionModel);
+      saveQuestion(questionModel, principal);
+    }
+  }
+
+  private void copyProperties(
+      QuestionModel destModel, QuestionModel sourceModel) {
+
+    destModel.setType(sourceModel.getType());
+    destModel.setBody(sourceModel.getBody());
+    destModel.setHint(sourceModel.getHint());
+    destModel.setExplanation(sourceModel.getExplanation());
+    destModel.setOptions(sourceModel.getOptions());
+    destModel.setQuestions(sourceModel.getQuestions());
+    destModel.setSchool(sourceModel.getSchool());
+    destModel.setLevels(sourceModel.getLevels());
+    destModel.setSubjects(sourceModel.getSubjects());
+    destModel.setKeywords(sourceModel.getKeywords());
   }
 
   @Log
@@ -136,21 +183,20 @@ public class QuestionService extends BaseService {
 
     if (questionOptional.isPresent()) {
       Question question = questionOptional.get();
-      checkMutatePreconditions(question, principal);
+      checkDeletePreconditions(question, principal);
 
       questionRepository.delete(question);
       indexRepository.delete(question);
     }
   }
 
-  private void checkMutatePreconditions(
+  private void checkDeletePreconditions(
       Question question, Principal principal) {
 
-    User createdBy = question.getCreatedBy();
     UserModel userModel = (UserModel) principal;
-    CommonUtils.checkArgument(
-        createdBy.getId().equals(userModel.getId()),
-        "error mutating question");
+    CommonUtils.checkArgument(question.getCreatedBy()
+            .getId().equals(userModel.getId()),
+        "current user should be question created user");
   }
 
   @Log

@@ -29,102 +29,102 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="basic">
-  <template>
-    <paper-input></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="basic">
+    <template>
+      <paper-input></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="has-tabindex">
-  <template>
-    <paper-input tabindex="0"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="has-tabindex">
+    <template>
+      <paper-input tabindex="0"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="label">
-  <template>
-    <paper-input label="foo"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="label">
+    <template>
+      <paper-input label="foo"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="label-has-value">
-  <template>
-    <paper-input label="foo" value="bar"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="label-has-value">
+    <template>
+      <paper-input label="foo" value="bar"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="error">
-  <template>
-    <paper-input auto-validate pattern="[0-9]*" value="foobar" error-message="error"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="error">
+    <template>
+      <paper-input auto-validate pattern="[0-9]*" value="foobar" error-message="error"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="required">
-  <template>
-    <paper-input auto-validate required error-message="error"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="required">
+    <template>
+      <paper-input auto-validate required error-message="error"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="required-no-auto-validate">
-  <template>
-    <paper-input required error-message="error"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="required-no-auto-validate">
+    <template>
+      <paper-input required error-message="error"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="required-char-counter">
-  <template>
-    <paper-input auto-validate char-counter required error-message="error"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="required-char-counter">
+    <template>
+      <paper-input auto-validate char-counter required error-message="error"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="char-counter">
-  <template>
-    <paper-input char-counter value="foobar"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="char-counter">
+    <template>
+      <paper-input char-counter value="foobar"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="type-number-char-counter">
-  <template>
-    <paper-input type="number" char-counter value="1138"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="type-number-char-counter">
+    <template>
+      <paper-input type="number" char-counter value="1138"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="always-float-label">
-  <template>
-    <paper-input always-float-label label="foo"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="always-float-label">
+    <template>
+      <paper-input always-float-label label="foo"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="placeholder">
-  <template>
-    <paper-input label="foo" placeholder="bar"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="placeholder">
+    <template>
+      <paper-input label="foo" placeholder="bar"></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="date">
-  <template>
-    <paper-input label="foo" type="date"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="date">
+    <template>
+      <paper-input label="foo" type="date"></paper-input>
+    </template>
+  </test-fixture>
 
-<letters-only></letters-only>
+  <letters-only></letters-only>
 
-<test-fixture id="validator">
-  <template>
-    <paper-input value="123123" validator="letters-only" auto-validate></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="validator">
+    <template>
+      <paper-input value="123123" validator="letters-only" auto-validate></paper-input>
+    </template>
+  </test-fixture>
 
-<test-fixture id="multiple-inputs">
-  <template>
-    <paper-input label="one"></paper-input>
-    <paper-input label="two"></paper-input>
-    <paper-input label="three"></paper-input>
-    <paper-input label="four"></paper-input>
-  </template>
-</test-fixture>
+  <test-fixture id="multiple-inputs">
+    <template>
+      <paper-input label="one"></paper-input>
+      <paper-input label="two"></paper-input>
+      <paper-input label="three"></paper-input>
+      <paper-input label="four"></paper-input>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
 
     suite('basic', function() {
 
@@ -392,8 +392,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       });
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

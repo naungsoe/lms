@@ -40,6 +40,7 @@ public class Constants {
   public static final byte[] IDENTIFIER_TITLE = Bytes.toBytes("title");
   public static final byte[] IDENTIFIER_INSTRUCTIONS
       = Bytes.toBytes("instructions");
+  public static final byte[] IDENTIFIER_KEYWORDS = Bytes.toBytes("keywords");
   public static final byte[] IDENTIFIER_BODY = Bytes.toBytes("body");
   public static final byte[] IDENTIFIER_HINT = Bytes.toBytes("hint");
   public static final byte[] IDENTIFIER_EXPLANATION
@@ -50,6 +51,7 @@ public class Constants {
   public static final byte[] IDENTIFIER_STATUS = Bytes.toBytes("status");
   public static final byte[] IDENTIFIER_TIMESTAMP = Bytes.toBytes("timestamp");
   public static final byte[] IDENTIFIER_ACTION = Bytes.toBytes("action");
+  public static final byte[] IDENTIFIER_PARENT = Bytes.toBytes("parent");
 
   public static final String SEPARATOR = "_";
   public static final String SEPARATOR_SCHOOL = "_sch_";
@@ -57,8 +59,12 @@ public class Constants {
   public static final String SEPARATOR_CREATED_BY = "_cre_";
   public static final String SEPARATOR_MODIFIED_BY = "_mod_";
   public static final String SEPARATOR_MEMBER = "_mem_";
-  public static final String SEPARATOR_SECTION = "_sec_";
+  public static final String SEPARATOR_LEVEL = "_lvl_";
+  public static final String SEPARATOR_SUBJECT = "_sub_";
   public static final String SEPARATOR_COMPONENT = "_com_";
+  public static final String SEPARATOR_LESSON = "_lsn_";
+  public static final String SEPARATOR_QUIZ = "_quz_";
+  public static final String SEPARATOR_SECTION = "_sec_";
   public static final String SEPARATOR_QUESTION = "_que_";
   public static final String SEPARATOR_OPTION = "_opt_";
   public static final String SEPARATOR_SHARE = "_sha_";

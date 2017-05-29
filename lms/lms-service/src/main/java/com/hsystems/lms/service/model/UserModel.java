@@ -2,7 +2,7 @@ package com.hsystems.lms.service.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -174,7 +174,7 @@ public class UserModel
   }
 
   public List<String> getPermissions() {
-    return ListUtils.isEmpty(permissions)
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(permissions);
   }
@@ -193,7 +193,7 @@ public class UserModel
   }
 
   public List<GroupModel> getGroups() {
-    return ListUtils.isEmpty(groups)
+    return CollectionUtils.isEmpty(groups)
         ? Collections.emptyList()
         : Collections.unmodifiableList(groups);
   }
@@ -205,7 +205,13 @@ public class UserModel
 
   @Override
   public String getName() {
-    return String.format("%s %s", firstName, lastName);
+    if ((firstName != null) && (lastName != null)) {
+      return String.format("%s %s", firstName, lastName);
+    }
+
+    return (firstName != null)
+        ? firstName : (lastName != null)
+        ? lastName : "";
   }
 
   @Override

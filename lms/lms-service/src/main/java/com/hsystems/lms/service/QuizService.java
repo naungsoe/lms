@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.entity.Quiz;
@@ -20,14 +21,18 @@ public class QuizService extends BaseService {
 
   private final QuizRepository quizRepository;
 
+  private final ComponentRepository componentRepository;
+
   private final IndexRepository indexRepository;
 
   @Inject
   QuizService(
       QuizRepository quizRepository,
+      ComponentRepository componentRepository,
       IndexRepository indexRepository) {
 
     this.quizRepository = quizRepository;
+    this.componentRepository = componentRepository;
     this.indexRepository = indexRepository;
   }
 

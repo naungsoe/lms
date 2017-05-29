@@ -30,19 +30,18 @@
       padding: 5px;
       resize: both;
     }
-
   </style>
 </head>
 <body unresolved>
-<template is="dom-bind" id="scope">
-  <h3>{{dateFormat(date, 'LLL')}}</h3>
-  <section>
-    <div id="container" on-track="track">
-      <paper-calendar id="picker" date="{{date}}"></paper-calendar>
-    </div>
-  </section>
-</template>
-<script>
+  <template is="dom-bind" id="scope">
+    <h3>{{dateFormat(date, 'LLL')}}</h3>
+    <section>
+      <div id="container" on-track="track">
+        <paper-calendar id="picker" date="{{date}}"></paper-calendar>
+      </div>
+    </section>
+  </template>
+  <script>
     HTMLImports.whenReady(function() {
       var scope = Polymer.dom(document).querySelector('#scope');
       scope.dateFormat = function(date, format) {
@@ -56,7 +55,6 @@
         this.$.picker.fire('iron-resize');
       };
     });
-
-</script>
+  </script>
 </body>
 </html>

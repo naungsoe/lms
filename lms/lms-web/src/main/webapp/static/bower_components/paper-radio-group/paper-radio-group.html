@@ -64,7 +64,6 @@ Custom property | Description | Default
       :host ::content > * {
         padding: var(--paper-radio-group-item-padding, 12px);
       }
-
     </style>
 
     <content id="items" select="*"></content>
@@ -127,7 +126,7 @@ Custom property | Description | Default
     /**
      * Selects the given value.
      */
-     select: function(value) {
+    select: function(value) {
       var newItem = this._valueToItem(value);
       if (newItem && newItem.hasAttribute('disabled')) {
         return;
@@ -139,7 +138,7 @@ Custom property | Description | Default
         if (this.selected == value) {
           // If deselecting is allowed we'll have to apply an empty selection.
           // Otherwise, we should force the selection to stay and make this
-          // actionType a no-op.
+          // action a no-op.
           if (this.allowEmptySelection) {
             value = '';
           } else {
@@ -183,5 +182,4 @@ Custom property | Description | Default
       this._activateFocusedItem();
     }
   });
-
 </script>

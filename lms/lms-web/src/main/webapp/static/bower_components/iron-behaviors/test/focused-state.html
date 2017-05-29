@@ -19,28 +19,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="TrivialFocusedState">
-  <template>
-    <test-control tabindex="-1"></test-control>
-  </template>
-</test-fixture>
+  <test-fixture id="TrivialFocusedState">
+    <template>
+      <test-control tabindex="-1"></test-control>
+    </template>
+  </test-fixture>
 
-<test-fixture id="NestedFocusedState">
-  <template>
-    <nested-focusable></nested-focusable>
-  </template>
-</test-fixture>
-
-<test-fixture id="LightDOM">
-  <template>
-    <test-light-dom>
-      <input id="input">
+  <test-fixture id="NestedFocusedState">
+    <template>
       <nested-focusable></nested-focusable>
-    </test-light-dom>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
-<script>
+  <test-fixture id="LightDOM">
+    <template>
+      <test-light-dom>
+        <input id="input">
+        <nested-focusable></nested-focusable>
+      </test-light-dom>
+    </template>
+  </test-fixture>
+
+  <script>
     suite('focused-state', function() {
       var focusTarget;
 
@@ -155,8 +155,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

@@ -130,13 +130,12 @@ Displays a page on different device layouts.
 
       }
 
-
     </style>
 
     <div class="canvas" device$="{{device}}">
 
       <iron-selector id="views" selected="{{device}}" attr-for-selected="device"
-                     selected-item="{{selectedView}}" device$="{{device}}" activate-event="">
+          selected-item="{{selectedView}}" device$="{{device}}" activate-event="">
 
         <device-view device="laptop" src="{{src}}"></device-view>
         <device-view device="tablet" src="{{src}}" landscape></device-view>
@@ -191,7 +190,6 @@ Displays a page on different device layouts.
       }
 
     });
-
 
   </script>
 

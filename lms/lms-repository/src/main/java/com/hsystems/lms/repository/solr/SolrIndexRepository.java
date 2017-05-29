@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
@@ -33,7 +34,7 @@ public class SolrIndexRepository implements IndexRepository {
     query.addCriterion(Criterion.createEqual("id", id));
     QueryResult<T> queryResult = client.query(query, type);
 
-    if (queryResult.getItems().isEmpty()) {
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return Optional.empty();
     }
 
@@ -49,14 +50,14 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T extends Entity> void save(T entity)
+  public <T extends Entity> void save(List<T> entities)
       throws IOException {
 
-    client.index(entity);
+    client.index(entities);
   }
 
   @Override
-  public <T extends Entity> void save(List<T> entity)
+  public <T extends Entity> void save(T entity)
       throws IOException {
 
     client.index(entity);

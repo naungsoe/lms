@@ -7,6 +7,7 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.entity.Subject;
@@ -52,7 +53,7 @@ public class SubjectService extends BaseService {
     QueryResult<Subject> queryResult
         = indexRepository.findAllBy(query, Subject.class);
 
-    if (queryResult.getItems().isEmpty()) {
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return Collections.emptyList();
     }
 

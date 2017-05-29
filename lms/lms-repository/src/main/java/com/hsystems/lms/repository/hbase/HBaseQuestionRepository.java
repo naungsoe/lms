@@ -3,6 +3,7 @@ package com.hsystems.lms.repository.hbase;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.MutationRepository;
@@ -11,16 +12,17 @@ import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -64,13 +66,19 @@ public class HBaseQuestionRepository
     }
 
     Mutation mutation = mutationOptional.get();
+    return findBy(id, mutation.getTimestamp());
+  }
+
+  private Optional<Question> findBy(String id, long timestamp)
+      throws IOException {
+
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setTimeStamp(timestamp);
 
     List<Result> results = client.scan(scan, Question.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
@@ -86,15 +94,16 @@ public class HBaseQuestionRepository
     List<Mutation> mutations = mutationRepository.findAllBy(
         schoolId, lastId, limit, EntityType.QUESTION);
 
-    if (mutations.isEmpty()) {
+    if (CollectionUtils.isEmpty(mutations)) {
       return Collections.emptyList();
     }
 
     Mutation startMutation = mutations.get(0);
     Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String startRowKey = startMutation.getId();
     String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
     Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
+    scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 
@@ -108,19 +117,69 @@ public class HBaseQuestionRepository
 
     Optional<Mutation> mutationOptional
         = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
-    ActionType actionType = mutationOptional.isPresent()
-        ? ActionType.MODIFIED : ActionType.CREATED;
+
+    if (mutationOptional.isPresent()) {
+      saveQuestion(entity);
+
+    } else {
+      createQuestion(entity);
+    }
+  }
+
+  private void saveQuestion(Question entity)
+      throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
     List<Put> puts = questionMapper.getPuts(entity, timestamp);
     client.put(puts, Question.class);
 
-    Mutation mutation = getMutation(entity, actionType, timestamp);
+    Mutation modifiedMutation = getMutation(entity,
+        ActionType.MODIFIED, timestamp);
+    mutationRepository.save(modifiedMutation);
+
+    AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
+        ActionType.MODIFIED, timestamp);
+    auditLogRepository.save(auditLog);
+
+    List<String> rowKeys = getPutRowKeys(puts);
+    deleteUnusedRows(entity, rowKeys);
+  }
+
+  private void deleteUnusedRows(Question entity, List<String> rowKeys)
+      throws IOException {
+
+    String startRowKey = entity.getId();
+    Scan scan = getRowKeyOnlyFilterScan(startRowKey);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+
+    List<Result> results = client.scan(scan, Question.class);
+    List<String> origRowKeys = getResultRowKeys(results);
+    List<String> unusedRowKeys = new ArrayList<>();
+    origRowKeys.forEach(origRowKey -> {
+      boolean usedRowKey = rowKeys.stream()
+          .anyMatch(rowKey -> rowKey.equals(origRowKey));
+
+      if (!usedRowKey) {
+        unusedRowKeys.add(origRowKey);
+      }
+    });
+
+    List<Delete> deletes = questionMapper.getDeletes(unusedRowKeys);
+    client.delete(deletes, Question.class);
+  }
+
+  private void createQuestion(Question entity)
+      throws IOException {
+
+    long timestamp = DateTimeUtils.getCurrentMilliseconds();
+    List<Put> puts = questionMapper.getPuts(entity, timestamp);
+    client.put(puts, Question.class);
+
+    Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
     mutationRepository.save(mutation);
 
-    User user = actionType.equals(ActionType.CREATED)
-        ? entity.getModifiedBy() : entity.getCreatedBy();
-    AuditLog auditLog = getAuditLog(entity, user, actionType, timestamp);
+    AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
+        ActionType.CREATED, timestamp);
     auditLogRepository.save(auditLog);
   }
 

@@ -147,54 +147,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<app-box
-    effects="parallax-background"
-    effects-config='{"parallax-background": {"scalar": -0.5}}'></app-box>
+  <app-box
+      effects="parallax-background"
+      effects-config='{"parallax-background": {"scalar": -0.5}}'></app-box>
 
-<app-header-layout>
+  <app-header-layout>
 
-  <app-header reveals>
-    <app-toolbar>
-      <paper-icon-button icon="arrow-back"></paper-icon-button>
-      <div main-title></div>
-      <paper-icon-button icon="search"></paper-icon-button>
-    </app-toolbar>
-  </app-header>
+    <app-header reveals>
+      <app-toolbar>
+       <paper-icon-button icon="arrow-back"></paper-icon-button>
+        <div main-title></div>
+        <paper-icon-button icon="search"></paper-icon-button>
+      </app-toolbar>
+    </app-header>
 
-  <div class="content">
+    <div class="content">
 
-    <h2>GIRL</h2>
-    <div class="artist-date">
-      <div class="artist">Pharrell Williams</div>
-      <time>March 3, 2014</time>
-    </div>
-    <summary>
-      Girl is the second studio album by American recording artist and record producer Pharrell Williams. The album was
-      released on March 3, 2014, through Williams' label i Am Other and Columbia Records.
-    </summary>
-
-    <template is="dom-repeat" id="repeater">
-      <div class="song">
-        <div class="no">{{item.no}}</div>
-        <div class="name">{{item.name}}</div>
-        <div class="duration">{{item.duration}}</div>
-        <iron-icon icon="more-vert"></iron-icon>
+      <h2>GIRL</h2>
+      <div class="artist-date">
+        <div class="artist">Pharrell Williams</div><time>March 3, 2014</time>
       </div>
-    </template>
+      <summary>
+        Girl is the second studio album by American recording artist and record producer Pharrell Williams. The album was released on March 3, 2014, through Williams' label i Am Other and Columbia Records.
+      </summary>
 
-  </div>
+      <template is="dom-repeat" id="repeater">
+        <div class="song">
+          <div class="no">{{item.no}}</div>
+          <div class="name">{{item.name}}</div>
+          <div class="duration">{{item.duration}}</div>
+          <iron-icon icon="more-vert"></iron-icon>
+        </div>
+      </template>
 
-  <paper-fab icon="av:play-arrow"></paper-fab>
+    </div>
 
-</app-header-layout>
+    <paper-fab icon="av:play-arrow"></paper-fab>
 
-<script>
+  </app-header-layout>
+
+  <script>
 
     addEventListener('WebComponentsReady', function() {
 
@@ -236,8 +233,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     });
 
-
-</script>
+  </script>
 
 </body>
 </html>

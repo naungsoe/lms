@@ -11,7 +11,7 @@ public abstract class Mapper<T> {
   protected static final String FIELD_NAME = "fieldName";
   protected static final String FIELD_TYPE_NAME = "typeName";
 
-  abstract  <S> T map(S source)
+  abstract <S> T map(S source)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException;
 }

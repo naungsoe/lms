@@ -2,7 +2,7 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.common.util.ListUtils;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
@@ -14,7 +14,7 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(name = "groups")
-public class Group extends Auditable implements Entity, Serializable {
+public class Group extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 2420329732282197342L;
 
@@ -77,13 +77,13 @@ public class Group extends Auditable implements Entity, Serializable {
   }
 
   public List<Permission> getPermissions() {
-    return ListUtils.isEmpty(permissions)
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyList()
         : Collections.unmodifiableList(permissions);
   }
 
   public List<User> getMembers() {
-    return ListUtils.isEmpty(members)
+    return CollectionUtils.isEmpty(members)
         ? Collections.emptyList()
         : Collections.unmodifiableList(members);
   }

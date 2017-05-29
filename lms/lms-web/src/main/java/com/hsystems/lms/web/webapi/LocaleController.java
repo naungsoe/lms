@@ -48,7 +48,7 @@ public class LocaleController {
     String locale = ServletUtils.getCookie(request, "locale");
     locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
     String navigationFilePath = String.format(
-        "locales/navigation/%s.json", locale);
+        "locales/common/%s.json", locale);
     String moduleFilePath = String.format(
         "locales/%s/%s.json", module, locale);
 

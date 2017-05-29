@@ -40,9 +40,9 @@ public class EntityMapper extends Mapper {
           = getField(sourceFields, compositeFieldName);
 
       if (compositeFieldOptional.isPresent()) {
+        Field compositeField = compositeFieldOptional.get();
         ReflectionUtils.setValue(instance, fieldName,
-            getFieldValue(source, compositeFieldOptional.get(),
-                compositeFieldType));
+            getFieldValue(source, compositeField, compositeFieldType));
 
       } else {
         ReflectionUtils.setValue(instance, field.getName(),

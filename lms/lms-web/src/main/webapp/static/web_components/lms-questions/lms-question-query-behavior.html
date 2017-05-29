@@ -14,11 +14,19 @@
         type: String,
         notify: true
       },
-      questionTypes: {
+      selectedLevels: {
         type: Array,
         notify: true
       },
-      ownedByTypes: {
+      selectedSubjects: {
+        type: Array,
+        notify: true
+      },
+      selectedTypes: {
+        type: Array,
+        notify: true
+      },
+      selectedOwners: {
         type: Array,
         notify: true
       }
@@ -26,7 +34,8 @@
 
     observers: [
       '_updateQuery(queryTerm)',
-      '_updateFilters(questionTypes, ownedByTypes)'
+      '_updateFilters(selectedLevels, selectedSubjects, '
+        + 'selectedTypes, selectedOwners)'
     ],
 
     _updateQuery: function(queryTerm) {
@@ -41,20 +50,55 @@
       this.offset = 0;
     },
 
-    _updateFilters: function(questionTypes, ownedByTypes) {
+    _updateFilters: function(
+        selectedLevels, selectedSubjects,
+        selectedTypes, selectedOwners) {
+
       var filters = [];
 
-      if (questionTypes.length > 0) {
-        var typeFilter = questionTypes.join(' OR ');
-        filters.push('type:MUST ' + typeFilter);
+      if (selectedLevels.length > 0) {
+        var levels = selectedLevels.filter(function(level) {
+          return level !== 'ALL';
+        });
+
+        if (levels.length > 0) {
+          var levelFilter = levels.join(' OR ');
+          filters.push('level.id:MUST ' + levelFilter);
+        }
       }
 
-      if (ownedByTypes.length === 1) {
-        ownedByTypes.forEach(function(ownedByType) {
-          if (ownedByType === "OWNED_BY_ME") {
+      if (selectedSubjects.length > 0) {
+        var subjects = selectedSubjects.filter(function(subject) {
+          return subject !== 'ALL';
+        });
+
+        if (subjects.length > 0) {
+          var subjectFilter = subjects.join(' OR ');
+          filters.push('subject.id:MUST ' + subjectFilter);
+        }
+      }
+
+      if (selectedTypes.length > 0) {
+        var types = selectedTypes.filter(function(type) {
+          return type !== 'ALL';
+        });
+
+        if (types.length > 0) {
+          var typeFilter = types.join(' OR ');
+          filters.push('type:MUST ' + typeFilter);
+        }
+      }
+
+      if (selectedOwners.length === 1) {
+        var owners = selectedOwners.filter(function(owner) {
+          return owner !== 'ANYONE';
+        });
+
+        owners.forEach(function(owner) {
+          if (owner === "ME") {
             filters.push('createdBy.id:MUST ' + this.userId);
 
-          } else if (ownedByType === "OWNED_BY_OTHERS") {
+          } else if (owner === "NOT_ME") {
             filters.push('createdBy.id:NOT ' + this.userId);
           }
         }, this);

@@ -54,90 +54,104 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     width: 3000px;
     height: 3000px;
   }
-
 </style>
 
 <body>
 
-<test-fixture id="TrivialDropdown">
-  <template>
-    <iron-dropdown>
-      <div class="dropdown-content"></div>
-    </iron-dropdown>
-  </template>
-</test-fixture>
-
-<test-fixture id="NonLockingDropdown">
-  <template>
-    <iron-dropdown allow-outside-scroll>
-      <div class="dropdown-content">I don't lock scroll!</div>
-    </iron-dropdown>
-  </template>
-</test-fixture>
-
-<test-fixture id="AlignedDropdown">
-  <template>
-    <div class="container">
-      <iron-dropdown horizontal-align="right" vertical-align="top">
-        <div class="dropdown-content big"></div>
-      </iron-dropdown>
-    </div>
-  </template>
-</test-fixture>
-
-<!-- Absolutely position the dropdown so that it has enough space to move around -->
-<test-fixture id="OffsetDropdownTopLeft">
-  <template>
-    <div class="container positioned">
+  <test-fixture id="TrivialDropdown">
+    <template>
       <iron-dropdown>
         <div class="dropdown-content"></div>
       </iron-dropdown>
-    </div>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
-<test-fixture id="OffsetDropdownBottomRight">
-  <template>
-    <div class="container positioned">
-      <iron-dropdown horizontal-align="right" vertical-align="bottom">
-        <div class="dropdown-content"></div>
+  <test-fixture id="NonLockingDropdown">
+    <template>
+      <iron-dropdown allow-outside-scroll>
+        <div class="dropdown-content">I don't lock scroll!</div>
       </iron-dropdown>
-    </div>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
-<test-fixture id="FocusableContentDropdown">
-  <template>
-    <iron-dropdown>
-      <div class="dropdown-content" tabindex="0">
-        <div class="subcontent" tabindex="0"></div>
+  <test-fixture id="AlignedDropdown">
+    <template>
+      <div class="container">
+        <iron-dropdown horizontal-align="right" vertical-align="top">
+          <div class="dropdown-content big"></div>
+        </iron-dropdown>
       </div>
-    </iron-dropdown>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
-<test-fixture id="RTLDropdownLeft">
-  <template>
-    <div dir="rtl" class="container">
+  <!-- Absolutely position the dropdown so that it has enough space to move around -->
+  <test-fixture id="OffsetDropdownTopLeft">
+    <template>
+      <div class="container positioned">
+        <iron-dropdown>
+          <div class="dropdown-content"></div>
+        </iron-dropdown>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="OffsetDropdownBottomRight">
+    <template>
+      <div class="container positioned">
+        <iron-dropdown horizontal-align="right" vertical-align="bottom">
+          <div class="dropdown-content"></div>
+        </iron-dropdown>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="FocusableContentDropdown">
+    <template>
       <iron-dropdown>
-        <div class="dropdown-content"></div>
+        <div class="dropdown-content" tabindex="0">
+          <div class="subcontent" tabindex="0"></div>
+        </div>
       </iron-dropdown>
-    </div>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
-<test-fixture id="RTLDropdownRight">
-  <template>
-    <div dir="rtl" class="container">
-      <iron-dropdown horizontal-align="right">
-        <div class="dropdown-content"></div>
+  <test-fixture id="RTLDropdownLeft">
+    <template>
+      <div dir="rtl" class="container">
+        <iron-dropdown>
+          <div class="dropdown-content"></div>
+        </iron-dropdown>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="RTLDropdownRight">
+    <template>
+      <div dir="rtl" class="container">
+        <iron-dropdown horizontal-align="right">
+          <div class="dropdown-content"></div>
+        </iron-dropdown>
+      </div>
+    </template>
+  </test-fixture>
+
+  <test-fixture id="sizingTarget">
+    <template>
+      <iron-dropdown>
+        <div class="dropdown-content">
+          <div class="subcontent"></div>
+        </div>
       </iron-dropdown>
-    </div>
-  </template>
-</test-fixture>
+    </template>
+  </test-fixture>
 
+  <test-fixture id="EmptyDropdown">
+    <template>
+      <iron-dropdown></iron-dropdown>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
     function elementIsVisible(element) {
       var contentRect = element.getBoundingClientRect();
       var computedStyle = window.getComputedStyle(element);
@@ -225,6 +239,78 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             });
           });
         });
+
+        suite('when dropdown is empty', function() {
+          test('keeps the sizingTarget default value', function() {
+            dropdown = fixture('EmptyDropdown');
+            expect(dropdown.sizingTarget).to.be.equal(dropdown);
+          });
+        });
+
+        suite('correct animationConfig setup', function() {
+          test('as objects', function() {
+            dropdown.openAnimationConfig = {
+              name: 'open-animation'
+            };
+            dropdown.closeAnimationConfig = {
+              name: 'close-animation'
+            };
+
+            dropdown.opened = true;
+
+            assert.deepEqual(dropdown.openAnimationConfig, {
+              name: 'open-animation',
+              node: content
+            }, 'open animation ok');
+
+            assert.deepEqual(dropdown.closeAnimationConfig, {
+              name: 'close-animation',
+              node: content
+            }, 'close animation ok');
+
+            assert.deepEqual(dropdown.animationConfig, {
+              open: dropdown.openAnimationConfig,
+              close: dropdown.closeAnimationConfig
+            }, 'animationConfig ok');
+          });
+
+          test('as arrays', function() {
+            dropdown.openAnimationConfig = [{
+              name: 'open-animation-1'
+            }, {
+              name: 'open-animation-2'
+            }];
+            dropdown.closeAnimationConfig = [{
+              name: 'close-animation-1'
+            }, {
+              name: 'close-animation-2'
+            }];
+
+            dropdown.opened = true;
+
+            assert.deepEqual(dropdown.openAnimationConfig, [{
+              name: 'open-animation-1',
+              node: content
+            }, {
+              name: 'open-animation-2',
+              node: content
+            }], 'open animation ok');
+
+            assert.deepEqual(dropdown.closeAnimationConfig, [{
+              name: 'close-animation-1',
+              node: content
+            }, {
+              name: 'close-animation-2',
+              node: content
+            }], 'close animation ok');
+
+            assert.deepEqual(dropdown.animationConfig, {
+              open: dropdown.openAnimationConfig,
+              close: dropdown.closeAnimationConfig
+            }, 'animationConfig ok');
+          });
+        });
+
       });
 
       suite('locking scroll', function() {
@@ -476,9 +562,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           });
         });
       });
-    });
 
-</script>
+      suite('sizing target', function() {
+        setup(function() {
+          dropdown = fixture('sizingTarget');
+          content = Polymer.dom(dropdown).querySelector('.dropdown-content');
+        });
+
+        test('sizingTarget is the content element by default', function(done) {
+          runAfterOpen(dropdown, function() {
+            expect(dropdown.sizingTarget).to.be.equal(content);
+            expect(content.style.maxHeight).to.be.not.empty;
+            expect(content.style.maxWidth).to.be.not.empty;
+            done();
+          });
+        });
+
+        test('sizingTarget can be set to a child element', function(done) {
+          var subcontent = Polymer.dom(dropdown).querySelector('.subcontent');
+          dropdown.sizingTarget = subcontent;
+
+          runAfterOpen(dropdown, function() {
+            expect(dropdown.sizingTarget).to.be.equal(subcontent);
+            expect(subcontent.style.maxHeight).to.be.not.empty;
+            expect(subcontent.style.maxWidth).to.be.not.empty;
+            done();
+          });
+        });
+      });
+    });
+  </script>
 </body>
 
 </html>

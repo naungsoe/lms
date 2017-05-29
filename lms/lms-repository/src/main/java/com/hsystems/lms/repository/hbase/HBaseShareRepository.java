@@ -2,6 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.ShareRepository;
 import com.hsystems.lms.repository.entity.Share;
 import com.hsystems.lms.repository.hbase.mapper.HBaseShareMapper;
@@ -42,7 +43,7 @@ public class HBaseShareRepository
     scan.setStartRow(Bytes.toBytes(id));
     List<Result> results = client.scan(scan, Share.class);
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 

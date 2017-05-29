@@ -104,7 +104,10 @@ Custom property | Description | Default
         margin-bottom: -10px;
         margin-top: 20px;
       }
-
+      
+      #trigger {
+        cursor: pointer;
+      }
     </style>
 
     <div id="trigger" on-tap="toggle">
@@ -112,21 +115,21 @@ Custom property | Description | Default
     </div>
 
     <iron-dropdown
-        id="dropdown"
-        opened="{{opened}}"
-        horizontal-align="[[horizontalAlign]]"
-        vertical-align="[[verticalAlign]]"
-        dynamic-align="[[dynamicAlign]]"
-        horizontal-offset="[[horizontalOffset]]"
-        vertical-offset="[[verticalOffset]]"
-        no-overlap="[[noOverlap]]"
-        open-animation-config="[[openAnimationConfig]]"
-        close-animation-config="[[closeAnimationConfig]]"
-        no-animations="[[noAnimations]]"
-        focus-target="[[_dropdownContent]]"
-        allow-outside-scroll="[[allowOutsideScroll]]"
-        restore-focus-on-close="[[restoreFocusOnClose]]"
-        on-iron-overlay-canceled="__onIronOverlayCanceled">
+      id="dropdown"
+      opened="{{opened}}"
+      horizontal-align="[[horizontalAlign]]"
+      vertical-align="[[verticalAlign]]"
+      dynamic-align="[[dynamicAlign]]"
+      horizontal-offset="[[horizontalOffset]]"
+      vertical-offset="[[verticalOffset]]"
+      no-overlap="[[noOverlap]]"
+      open-animation-config="[[openAnimationConfig]]"
+      close-animation-config="[[closeAnimationConfig]]"
+      no-animations="[[noAnimations]]"
+      focus-target="[[_dropdownContent]]"
+      allow-outside-scroll="[[allowOutsideScroll]]"
+      restore-focus-on-close="[[restoreFocusOnClose]]"
+      on-iron-overlay-canceled="__onIronOverlayCanceled">
       <div class="dropdown-content">
         <content id="content" select=".dropdown-content"></content>
       </div>
@@ -472,6 +475,5 @@ Custom property | Description | Default
 
       Polymer.PaperMenuButton = PaperMenuButton;
     })();
-
   </script>
 </dom-module>

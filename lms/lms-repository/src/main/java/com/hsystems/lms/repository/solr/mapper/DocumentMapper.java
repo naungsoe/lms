@@ -1,8 +1,8 @@
 package com.hsystems.lms.repository.solr.mapper;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
-import com.hsystems.lms.common.util.ListUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
@@ -81,6 +81,10 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
         List<Enum> enums = (List<Enum>) fieldValue;
         document.addField(fieldName, getEnumsValue(enums));
 
+      } else if (ReflectionUtils.getListType(field) == String.class) {
+        List<String> values = (List<String>) fieldValue;
+        document.addField(fieldName, values);
+
       } else {
         List<SolrInputDocument> childDocuments
             = getChildDocuments(fieldName, (List) fieldValue);
@@ -133,7 +137,7 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
       document.setField(FIELD_PARENT_ID, parentId);
     }
 
-    if (ListUtils.isNotEmpty(document.getChildDocuments())) {
+    if (CollectionUtils.isNotEmpty(document.getChildDocuments())) {
       document.getChildDocuments().forEach(
           childDocument -> updateParentId(childDocument, id));
     }
@@ -150,7 +154,7 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
           FIELD_NAME_FORMAT, parentFieldName, fieldName));
     }
 
-    if (ListUtils.isNotEmpty(document.getChildDocuments())) {
+    if (CollectionUtils.isNotEmpty(document.getChildDocuments())) {
       document.getChildDocuments().forEach(
           childDocument -> updateFieldName(childDocument, fieldName));
     }

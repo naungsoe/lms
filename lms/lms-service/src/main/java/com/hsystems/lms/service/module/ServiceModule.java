@@ -4,8 +4,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.repository.AuditLogRepository;
+import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
+import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
@@ -16,7 +18,9 @@ import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
+import com.hsystems.lms.repository.hbase.HBaseComponentRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
+import com.hsystems.lms.repository.hbase.HBaseLessonRepository;
 import com.hsystems.lms.repository.hbase.HBaseLevelRepository;
 import com.hsystems.lms.repository.hbase.HBaseMutationRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
@@ -64,7 +68,11 @@ public class ServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(UserRepository.class).to(HBaseUserRepository.class)
         .in(Singleton.class);
+    bind(LessonRepository.class).to(HBaseLessonRepository.class)
+        .in(Singleton.class);
     bind(QuizRepository.class).to(HBaseQuizRepository.class)
+        .in(Singleton.class);
+    bind(ComponentRepository.class).to(HBaseComponentRepository.class)
         .in(Singleton.class);
     bind(QuestionRepository.class).to(HBaseQuestionRepository.class)
         .in(Singleton.class);

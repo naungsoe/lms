@@ -3,21 +3,23 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
-import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Lesson;
+import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionComponent;
 import com.hsystems.lms.repository.entity.QuestionOption;
 import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.Section;
 import com.hsystems.lms.repository.entity.ShareEntry;
+import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;
+import org.apache.hadoop.hbase.CellUtil;
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
@@ -43,6 +45,9 @@ public abstract class HBaseMapper<T> {
   public static final String PREFIXED_ID_PATTERN = "%s([A-Za-z0-9]*)$";
 
   public static final String ROW_KEY_FORMAT = "%s%s%s";
+  public static final String CHILD_ID_FORMAT = "%s_%s";
+
+  public static final String VALUE_SEPARATOR = ",";
 
   protected Optional<Mutation> getMutationById(
       List<Mutation> mutations, String id) {
@@ -417,6 +422,18 @@ public abstract class HBaseMapper<T> {
     }
   }
 
+  protected String getParent(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_PARENT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_PARENT);
+      return getString(cells, timestamp);
+    }
+  }
+
   protected boolean getBoolean(
       Result result, byte[] family, byte[] identifier) {
 
@@ -496,7 +513,7 @@ public abstract class HBaseMapper<T> {
       return "";
     }
 
-    byte[] value = cellOptional.get().getValueArray();
+    byte[] value = CellUtil.cloneValue(cellOptional.get());
     return (value == null) ? "" : Bytes.toString(value);
   }
 
@@ -536,12 +553,28 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_MEMBER);
   }
 
-  protected Predicate<Result> isSectionResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SECTION);
+  protected Predicate<Result> isLevelResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_LEVEL);
+  }
+
+  protected Predicate<Result> isSubjectResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_SUBJECT);
   }
 
   protected Predicate<Result> isComponentResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_COMPONENT);
+  }
+
+  protected Predicate<Result> isLessonResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_LESSON);
+  }
+
+  protected Predicate<Result> isQuizResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_QUIZ);
+  }
+
+  protected Predicate<Result> isSectionResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_SECTION);
   }
 
   protected Predicate<Result> isQuestionResult(String prefix) {
@@ -591,10 +624,7 @@ public abstract class HBaseMapper<T> {
     return getUser(result, Constants.SEPARATOR_MODIFIED_BY, timestamp);
   }
 
-  protected List<Permission> getPermissions(
-      Result result, String separator, long timestamp) {
-
-    List<Permission> permissions = new ArrayList<>();
+  protected List<Permission> getPermissions(Result result, long timestamp) {
     String value;
 
     if (timestamp == 0) {
@@ -608,10 +638,11 @@ public abstract class HBaseMapper<T> {
     }
 
     if (StringUtils.isEmpty(value)) {
-      return permissions;
+      return Collections.emptyList();
     }
 
-    String[] items = value.split(separator);
+    List<Permission> permissions = new ArrayList<>();
+    String[] items = value.split(VALUE_SEPARATOR);
     Arrays.asList(items).forEach(item -> {
       Permission permission = Enum.valueOf(Permission.class, item);
       permissions.add(permission);
@@ -636,61 +667,97 @@ public abstract class HBaseMapper<T> {
     return getUser(result, Constants.SEPARATOR_MEMBER, timestamp);
   }
 
-  protected String getSectionId(Result result) {
-    return getId(result, Constants.SEPARATOR_SECTION);
-  }
-
-  protected String getComponentId(Result result) {
-    return getId(result, Constants.SEPARATOR_COMPONENT);
-  }
-
-  protected String getQuestionId(Result result) {
-    return getId(result, Constants.SEPARATOR_QUESTION);
-  }
-
-  protected List<Section> getQuizSections(
+  protected List<Level> getLevels(
       List<Result> results, String prefix, long timestamp) {
 
-    List<Section> sections = new ArrayList<>();
-    results.stream().filter(isSectionResult(prefix))
+    List<Level> levels = new ArrayList<>();
+    results.stream().filter(isLevelResult(prefix))
         .forEach(result -> {
-          String id = getSectionId(result);
-          String instructions = getInstructions(result, timestamp);
-          List<Component> components
-              = getQuizComponents(results, id, timestamp);
-          int order = getOrder(result, timestamp);
+          String id = getId(result, Constants.SEPARATOR_LEVEL);
+          String name = getName(result, timestamp);
 
-          Section section = new Section(
+          Level level = new Level(
               id,
-              order,
-              instructions,
-              components
+              name
           );
-          sections.add(section);
+          levels.add(level);
         });
 
-    return sections;
+    return levels;
   }
 
-  protected List<Component> getQuizComponents(
+  protected List<Subject> getSubjects(
       List<Result> results, String prefix, long timestamp) {
 
-    List<Component> components = new ArrayList<>();
-    results.stream().filter(isComponentResult(prefix))
+    List<Subject> subjects = new ArrayList<>();
+    results.stream().filter(isSubjectResult(prefix))
         .forEach(result -> {
-          String id = getComponentId(result);
-          int order = getOrder(result, timestamp);
-          Question question = getQuestion(results, id, timestamp);
+          String id = getId(result, Constants.SEPARATOR_SUBJECT);
+          String name = getName(result, timestamp);
 
-          Component component = new QuestionComponent(
+          Subject subject = new Subject(
               id,
-              order,
-              question
+              name
           );
-          components.add(component);
+          subjects.add(subject);
         });
 
-    return components;
+    return subjects;
+  }
+
+  protected List<String> getKeywords(Result result, long timestamp) {
+    String value;
+
+    if (timestamp == 0) {
+      value = getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_KEYWORDS);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_KEYWORDS);
+      value = getString(cells, timestamp);
+    }
+
+    if (StringUtils.isEmpty(value)) {
+      return Collections.emptyList();
+    }
+
+    String[] items = value.split(VALUE_SEPARATOR);
+    return Arrays.asList(items);
+  }
+
+  protected Lesson getLesson(
+      List<Result> results, String prefix, long timestamp) {
+
+    Result result = results.stream()
+        .filter(isLessonResult(prefix)).findFirst().get();
+    String id = getId(result, Constants.SEPARATOR_LESSON);
+    String title = getTitle(result, timestamp);
+    String instructions = getInstructions(result, timestamp);
+
+    return new Lesson(
+        id,
+        title,
+        instructions,
+        Collections.emptyList()
+    );
+  }
+
+  protected Quiz getQuiz(
+      List<Result> results, String prefix, long timestamp) {
+
+    Result result = results.stream()
+        .filter(isQuizResult(prefix)).findFirst().get();
+    String id = getId(result, Constants.SEPARATOR_QUIZ);
+    String title = getTitle(result, timestamp);
+    String instructions = getInstructions(result, timestamp);
+
+    return new Quiz(
+        id,
+        title,
+        instructions,
+        Collections.emptyList()
+    );
   }
 
   protected List<Question> getQuestions(
@@ -711,7 +778,7 @@ public abstract class HBaseMapper<T> {
 
     Result result = results.stream()
         .filter(isQuestionResult(prefix)).findFirst().get();
-    String id = getQuestionId(result);
+    String id = getId(result, Constants.SEPARATOR_QUESTION);
     QuestionType type = getType(result, timestamp, QuestionType.class);
     String body = getBody(result, timestamp);
     String hint = getHint(result, timestamp);
@@ -725,7 +792,7 @@ public abstract class HBaseMapper<T> {
       childQuestions = getQuestions(results, id, timestamp);
 
     } else {
-      options = getQuestionOptions(results, id, timestamp);
+      options = getOptions(results, id, timestamp);
       childQuestions = Collections.emptyList();
     }
 
@@ -740,20 +807,20 @@ public abstract class HBaseMapper<T> {
     );
   }
 
-  protected List<QuestionOption> getQuestionOptions(
+  protected List<QuestionOption> getOptions(
       List<Result> results, String prefix, long timestamp) {
 
     List<QuestionOption> options = new ArrayList<>();
     results.stream().filter(isOptionResult(prefix))
         .forEach(result -> {
-          QuestionOption option = getQuestionOption(result, timestamp);
+          QuestionOption option = getOption(result, timestamp);
           options.add(option);
         });
 
     return options;
   }
 
-  protected QuestionOption getQuestionOption(Result result, long timestamp) {
+  protected QuestionOption getOption(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_OPTION);
     String body = getBody(result, timestamp);
     String feedback = getFeedback(result, timestamp);
@@ -858,11 +925,24 @@ public abstract class HBaseMapper<T> {
   }
 
   protected <T extends Enum<T>> void addStatusColumn(Put put, T value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION,
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_STATUS,
         Bytes.toBytes(value.toString()));
   }
 
-  protected Put getQuestionOptionPut(
+  protected Put getQuestionPut(
+      Question question, String prefix, long timestamp) {
+
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
+        Constants.SEPARATOR_OPTION, question.getId());
+    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
+    addTypeColumn(put, question.getType());
+    addBodyColumn(put, question.getBody());
+    addHintColumn(put, question.getHint());
+    addExplanationColumn(put, question.getExplanation());
+    return put;
+  }
+
+  protected Put getOptionPut(
       QuestionOption option, String prefix, long timestamp) {
 
     String rowKey = String.format(ROW_KEY_FORMAT, prefix,
@@ -904,7 +984,7 @@ public abstract class HBaseMapper<T> {
     puts.add(put);
   }
 
-  protected Delete getQuestionOptionDelete(
+  protected Delete getOptionDelete(
       QuestionOption option, String prefix, long timestamp) {
 
     String rowKey = String.format(ROW_KEY_FORMAT, prefix,
@@ -928,6 +1008,15 @@ public abstract class HBaseMapper<T> {
         Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
+  }
+
+  public List<Delete> getDeletes(List<String> rowKeys) {
+    List<Delete> deletes = new ArrayList<>();
+    rowKeys.forEach(rowKey -> {
+      Delete delete = new Delete(Bytes.toBytes(rowKey));
+      deletes.add(delete);
+    });
+    return deletes;
   }
 
   abstract List<T> getEntities(List<Result> results, List<Mutation> mutations);

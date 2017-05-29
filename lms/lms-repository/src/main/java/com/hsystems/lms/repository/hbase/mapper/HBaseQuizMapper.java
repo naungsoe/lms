@@ -1,9 +1,11 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.Section;
+import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -26,7 +28,7 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
   public List<Quiz> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       Collections.emptyList();
     }
 
@@ -50,11 +52,13 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult, timestamp);
     String instructions = getInstructions(mainResult, timestamp);
-    List<Section> sections = getQuizSections(results, id, timestamp);
+    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
+    List<Level> levels = getLevels(results, id, timestamp);
+    List<Subject> subjects = getSubjects(results, id, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -72,8 +76,11 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
         id,
         title,
         instructions,
-        sections,
+        Collections.emptyList(),
         school,
+        levels,
+        subjects,
+        keywords,
         createdBy,
         createdDateTime,
         modifiedBy,

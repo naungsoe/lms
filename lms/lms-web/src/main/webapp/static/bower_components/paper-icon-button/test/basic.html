@@ -23,21 +23,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="TrivialIconButton">
-  <template>
-    <div style="line-height:30px;">
-      <paper-icon-button id="fab1" icon="add"></paper-icon-button>
-    </div>
-  </template>
-</test-fixture>
+  <test-fixture id="TrivialIconButton">
+    <template>
+      <div style="line-height:30px;">
+        <paper-icon-button id="fab1" icon="add"></paper-icon-button>
+      </div>
+    </template>
+  </test-fixture>
 
-<test-fixture id="SrcIconButton">
-  <template>
-    <paper-icon-button src="add.png"></paper-icon-button>
-  </template>
-</test-fixture>
+  <test-fixture id="SrcIconButton">
+    <template>
+      <paper-icon-button src="add.png"></paper-icon-button>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
 
     var b1;
     var b2;
@@ -70,7 +70,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     test('renders correctly independent of line height', function() {
       assert.ok(approxEqual(centerOf(b1.$.icon), centerOf(b1)));
     });
-
-</script>
+  </script>
 </body>
 </html>

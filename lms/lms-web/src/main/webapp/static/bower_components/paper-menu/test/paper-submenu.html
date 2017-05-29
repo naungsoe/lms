@@ -9,64 +9,76 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <html>
-<head>
+  <head>
 
-  <title>paper-submenu tests</title>
+    <title>paper-submenu tests</title>
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1, user-scalable=yes">
 
-  <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
 
-  <script src="../../web-component-tester/browser.js"></script>
-  <script src="../../iron-test-helpers/mock-interactions.js"></script>
+    <script src="../../web-component-tester/browser.js"></script>
+    <script src="../../iron-test-helpers/mock-interactions.js"></script>
 
-  <link rel="import" href="../../paper-item/paper-item.html">
-  <link rel="import" href="../paper-menu.html">
-  <link rel="import" href="../paper-submenu.html">
+    <link rel="import" href="../../paper-item/paper-item.html">
+    <link rel="import" href="../paper-menu.html">
+    <link rel="import" href="../paper-submenu.html">
 
-</head>
-<style>
+  </head>
+  <style>
     paper-item {
       font-weight: normal;
     }
+  </style>
+  <body>
 
-</style>
-<body>
+    <test-fixture id="basic">
+      <template>
+        <paper-menu>
+          <paper-submenu>
+            <paper-item class="menu-trigger">Topic 1</paper-item>
+            <paper-menu class="menu-content">
+              <paper-item>item 1.1</paper-item>
+              <paper-item>item 1.2</paper-item>
+              <paper-item>item 1.3</paper-item>
+            </paper-menu>
+          </paper-submenu>
+          <paper-submenu>
+            <paper-item class="menu-trigger">Topic 2</paper-item>
+            <paper-menu class="menu-content">
+              <paper-item>item 2.1</paper-item>
+              <paper-item>item 2.2</paper-item>
+              <paper-item>item 2.3</paper-item>
+            </paper-menu>
+          </paper-submenu>
+          <paper-submenu disabled>
+            <paper-item class="menu-trigger">Topic 3</paper-item>
+            <paper-menu class="menu-content">
+              <paper-item>item 3.1</paper-item>
+              <paper-item>item 3.2</paper-item>
+              <paper-item>item 3.3</paper-item>
+            </paper-menu>
+          </paper-submenu>
+        </paper-menu>
+      </template>
+    </test-fixture>
 
-<test-fixture id="basic">
-  <template>
-    <paper-menu>
-      <paper-submenu>
-        <paper-item class="menu-trigger">Topic 1</paper-item>
-        <paper-menu class="menu-content">
-          <paper-item>item 1.1</paper-item>
-          <paper-item>item 1.2</paper-item>
-          <paper-item>item 1.3</paper-item>
+    <test-fixture id="opened">
+      <template>
+        <paper-menu>
+          <paper-submenu class="menu-content" opened>
+            <paper-item class="menu-trigger">My submenu is opened to start!</paper-item>
+            <paper-menu class="menu-content">
+              <paper-item>Triggered item</paper-item>
+            </paper-menu>
+          </paper-submenu>
         </paper-menu>
-      </paper-submenu>
-      <paper-submenu>
-        <paper-item class="menu-trigger">Topic 2</paper-item>
-        <paper-menu class="menu-content">
-          <paper-item>item 2.1</paper-item>
-          <paper-item>item 2.2</paper-item>
-          <paper-item>item 2.3</paper-item>
-        </paper-menu>
-      </paper-submenu>
-      <paper-submenu disabled>
-        <paper-item class="menu-trigger">Topic 3</paper-item>
-        <paper-menu class="menu-content">
-          <paper-item>item 3.1</paper-item>
-          <paper-item>item 3.2</paper-item>
-          <paper-item>item 3.3</paper-item>
-        </paper-menu>
-      </paper-submenu>
-    </paper-menu>
-  </template>
-</test-fixture>
+      </template>
+    </test-fixture>
 
-<script>
+    <script>
 
       suite('<paper-submenu>', function() {
         var menu,
@@ -198,8 +210,76 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       });
 
+      suite('<paper-submenu opened>', function() {
+        var opened;
+        var submenu;
+        var collapse;
 
-</script>
+        var fail = function(msg) {
+          return function() {
+            throw new Error(msg);
+          };
+        };
 
-</body>
+        setup(function() {
+          opened = fixture('opened');
+          submenu = opened.querySelector('paper-submenu');
+          collapse = Polymer.dom(submenu.root).querySelector('iron-collapse');
+        });
+
+        test('opened binding + .menu-trigger tap', function() {
+          assert.isTrue(submenu.opened);
+
+          var trigger = submenu.querySelector('.menu-trigger');
+          MockInteractions.tap(trigger);
+          assert.isFalse(submenu.opened);
+
+          MockInteractions.tap(trigger);
+          assert.isTrue(submenu.opened);
+        });
+
+        test('opened binding + open()/close()', function() {
+          assert.isTrue(submenu.opened);
+
+          submenu.close();
+          assert.isFalse(submenu.opened);
+          assert.isFalse(collapse.opened);
+
+          submenu.open();
+          assert.isTrue(submenu.opened);
+          assert.isTrue(collapse.opened);
+        });
+
+        test('opened binding + toggle()', function() {
+          assert.isTrue(submenu.opened);
+
+          submenu.toggle();
+          assert.isFalse(submenu.opened);
+          assert.isFalse(collapse.opened);
+
+          submenu.toggle();
+          assert.isTrue(submenu.opened);
+          assert.isTrue(collapse.opened);
+        });
+
+        test('opened binding + open() x 2', function() {
+          assert.isTrue(submenu.opened);
+
+          opened.addEventListener('paper-submenu-open', fail('duplicate open'));
+
+          submenu.open();  // Opening when already opened should not fire().
+        });
+
+        test('opened binding + close() x 2', function() {
+          submenu.close();
+          assert.isFalse(submenu.opened);
+
+          opened.addEventListener('paper-submenu-close', fail('duplicate close'));
+
+          submenu.close();  // Closing again when !opened should not fire().
+        });
+      });
+    </script>
+
+  </body>
 </html>

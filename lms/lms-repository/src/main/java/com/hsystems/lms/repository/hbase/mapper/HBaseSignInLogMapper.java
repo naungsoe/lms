@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.SignInLog;
 
@@ -22,7 +23,7 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
   public List<SignInLog> getEntities(
       List<Result> results, List<Mutation> list) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

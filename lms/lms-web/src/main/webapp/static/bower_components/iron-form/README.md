@@ -25,12 +25,12 @@ native HTML elements. For more information on which attributes are
 available on the native form element, see [https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/form)
 
 It supports both `get` and `post` methods, and uses an `iron-ajax` element to
-submit the form data to the actionType URL.
+submit the form data to the action URL.
 
   Example:
 
 ```html
-<form is="iron-form" id="form" method="post" actionType="/form/handler">
+<form is="iron-form" id="form" method="post" action="/form/handler">
   <paper-input name="name" label="name"></paper-input>
   <input name="address">
   ...
@@ -70,7 +70,7 @@ form.addEventListener('iron-form-presubmit', function() {
 ```javascript
 form.addEventListener('iron-form-presubmit', function(event) {
   event.preventDefault();
-  var firebase = new Firebase(form.getAttribute('actionType'));
+  var firebase = new Firebase(form.getAttribute('action'));
   firebase.set(form.serialize());
 });
 ```

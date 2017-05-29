@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -26,7 +27,7 @@ public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
   public List<AuditLog> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 

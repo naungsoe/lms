@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 1/11/16.
  */
 @IndexCollection(name = "levels")
-public class Level extends Auditable implements Entity, Serializable {
+public class Level extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 1219434630963071408L;
 
@@ -25,6 +25,14 @@ public class Level extends Auditable implements Entity, Serializable {
 
   Level() {
 
+  }
+
+  public Level(
+      String id,
+      String name) {
+
+    this.id = id;
+    this.name = name;
   }
 
   public Level(

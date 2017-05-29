@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
@@ -25,7 +26,7 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
   public List<School> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
@@ -51,7 +52,7 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
     String locale = getLocale(mainResult, timestamp);
     String dateFormat = getDateFormat(mainResult, timestamp);
     String dateTimeFormat = getDateTimeFormat(mainResult, timestamp);
-    List<Permission> permissions = getPermissions(mainResult, ",", timestamp);
+    List<Permission> permissions = getPermissions(mainResult, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();

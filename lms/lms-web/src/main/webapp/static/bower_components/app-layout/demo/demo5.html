@@ -56,62 +56,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       color: #666;
     }
 
-
   </style>
 
 </head>
 <body unresolved>
 
-<template is="dom-bind">
-  <app-drawer-layout>
+  <template is="dom-bind">
+    <app-drawer-layout>
 
-    <app-drawer swipe-open>
-      <app-header-layout has-scrolling-region>
+      <app-drawer swipe-open>
+        <app-header-layout has-scrolling-region>
 
-        <app-header class="whiteHeader" waterfall fixed>
+          <app-header class="whiteHeader" waterfall fixed>
+            <app-toolbar>
+              <div main-title>Inbox</div>
+            </app-toolbar>
+          </app-header>
+
+          <template is="dom-repeat" id="menu" items="[[items]]">
+            <paper-icon-item class="iconItem">
+              <iron-icon class="grayIcon" icon="[[_randomIcon()]]" item-icon></iron-icon> <span>[[item]]</span>
+            </paper-icon-item>
+          </template>
+
+        </app-header-layout>
+      </app-drawer>
+
+      <app-header-layout>
+
+        <app-header class="blueHeader" condenses reveals effects="waterfall">
           <app-toolbar>
-            <div main-title>Inbox</div>
+            <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
+            <div main-title></div>
+            <paper-icon-button icon="search"></paper-icon-button>
+            <paper-icon-button icon="more-vert"></paper-icon-button>
+          </app-toolbar>
+          <app-toolbar></app-toolbar>
+          <app-toolbar>
+            <div spacer main-title>My Drive</div>
           </app-toolbar>
         </app-header>
 
-        <template is="dom-repeat" id="menu" items="[[items]]">
-          <paper-icon-item class="iconItem">
-            <iron-icon class="grayIcon" icon="[[_randomIcon()]]" item-icon></iron-icon>
-            <span>[[item]]</span>
-          </paper-icon-item>
-        </template>
+        <sample-content size="100"></sample-content>
 
       </app-header-layout>
-    </app-drawer>
 
-    <app-header-layout>
+    </app-drawer-layout>
+  </template>
 
-      <app-header class="blueHeader" condenses reveals effects="waterfall">
-        <app-toolbar>
-          <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
-          <div main-title></div>
-          <paper-icon-button icon="search"></paper-icon-button>
-          <paper-icon-button icon="more-vert"></paper-icon-button>
-        </app-toolbar>
-        <app-toolbar></app-toolbar>
-        <app-toolbar>
-          <div spacer main-title>My Drive</div>
-        </app-toolbar>
-      </app-header>
-
-      <sample-content size="100"></sample-content>
-
-    </app-header-layout>
-
-  </app-drawer-layout>
-</template>
-
-<script>
+  <script>
     (function(scope) {
       var items = [];
       var icons = ['inbox', 'favorite', 'polymer', 'question-answer', 'send', 'archive', 'backup', 'dashboard'];
 
-      while (items.length < 100) {
+      while (items.length < 10) {
         items.push('Option Name');
       }
 
@@ -122,8 +120,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       scope.items = items;
 
     })(document.querySelector('template[is=dom-bind]'));
-
-</script>
+  </script>
 
 </body>
 </html>

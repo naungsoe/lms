@@ -32,19 +32,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         max-height: 250px;
       }
     }
-
   </style>
 
 </head>
 
 <body unresolved class="centered">
-<h3>
-  An element with <code>IronFitBehavior</code> can be centered in
-  <code>fitInto</code> or positioned around a <code>positionTarget</code>
-</h3>
-<demo-snippet>
-  <template>
-    <style>
+  <h3>
+    An element with <code>IronFitBehavior</code> can be centered in
+    <code>fitInto</code> or positioned around a <code>positionTarget</code>
+  </h3>
+  <demo-snippet>
+    <template>
+      <style>
         .target {
           cursor: pointer;
           text-align: center;
@@ -73,30 +72,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         button.selected {
           background-color: #b3e5fc;
         }
-
-    </style>
-    <template is="dom-bind">
-      <template is="dom-repeat" items="[[containers]]">
-        <div class="target" on-tap="updatePositionTarget">Target</div>
-      </template>
-      <simple-fit id="myFit" auto-fit-on-attach>
-        <h2>Align</h2>
-        <p>
-          <button on-tap="updateAlign" vertical-align="top">top</button>
-          <button on-tap="updateAlign" vertical-align="bottom">bottom</button>
-          <button on-tap="updateAlign" vertical-align="auto">auto</button>
-          <button on-tap="updateAlign" vertical-align>null</button>
-        </p>
-        <p>
-          <button on-tap="updateAlign" horizontal-align="left">left</button>
-          <button on-tap="updateAlign" horizontal-align="right">right</button>
-          <button on-tap="updateAlign" horizontal-align="auto">auto</button>
-          <button on-tap="updateAlign" horizontal-align>null</button>
-        </p>
-        <button on-tap="toggleNoOverlap">no overlap</button>
-        <button on-tap="toggleDynamicAlign">dynamic align</button>
-      </simple-fit>
-      <script>
+      </style>
+      <template is="dom-bind">
+        <template is="dom-repeat" items="[[containers]]">
+          <div class="target" on-tap="updatePositionTarget">Target</div>
+        </template>
+        <simple-fit id="myFit" auto-fit-on-attach>
+          <h2>Align</h2>
+          <p>
+            <button on-tap="updateAlign" vertical-align="top">top</button>
+            <button on-tap="updateAlign" vertical-align="bottom">bottom</button>
+            <button on-tap="updateAlign" vertical-align="auto">auto</button>
+            <button on-tap="updateAlign" vertical-align>null</button>
+          </p>
+          <p>
+            <button on-tap="updateAlign" horizontal-align="left">left</button>
+            <button on-tap="updateAlign" horizontal-align="right">right</button>
+            <button on-tap="updateAlign" horizontal-align="auto">auto</button>
+            <button on-tap="updateAlign" horizontal-align>null</button>
+          </p>
+          <button on-tap="toggleNoOverlap">no overlap</button>
+          <button on-tap="toggleDynamicAlign">dynamic align</button>
+        </simple-fit>
+        <script>
           var defaultTarget = Polymer.dom(myFit).parentNode;
           var template = document.querySelector('template[is="dom-bind"]');
 
@@ -158,11 +156,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           function toggleClass(element, cssClass, condition) {
             element.classList[condition ? 'add' : 'remove'](cssClass);
           }
-
-      </script>
+        </script>
+      </template>
     </template>
-  </template>
-</demo-snippet>
+  </demo-snippet>
 
 </body>
 

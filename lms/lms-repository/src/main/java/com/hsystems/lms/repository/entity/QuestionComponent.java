@@ -7,15 +7,15 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class QuestionComponent implements Serializable, Component {
+public class QuestionComponent implements Component, Serializable {
 
   private static final long serialVersionUID = -8886998378935720413L;
 
   @IndexField
-  private String id;
+  protected String id;
 
   @IndexField
-  private int order;
+  protected int order;
 
   @IndexField
   private Question question;
@@ -42,6 +42,11 @@ public class QuestionComponent implements Serializable, Component {
   @Override
   public int getOrder() {
     return order;
+  }
+
+  @Override
+  public ComponentType getType() {
+    return ComponentType.QUESTION;
   }
 
   public Question getQuestion() {

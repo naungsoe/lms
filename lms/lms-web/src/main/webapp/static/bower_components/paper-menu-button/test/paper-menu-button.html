@@ -25,29 +25,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 </head>
 <body>
 
-<test-fixture id="TrivialMenuButton">
-  <template>
-    <paper-menu-button no-animations>
-      <span class="dropdown-trigger">trigger</span>
-      <span class="dropdown-content">content</span>
-    </paper-menu-button>
-  </template>
-</test-fixture>
+  <test-fixture id="TrivialMenuButton">
+    <template>
+      <paper-menu-button no-animations>
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+    </template>
+  </test-fixture>
 
-<test-fixture id="TwoMenuButtons">
-  <template>
-    <paper-menu-button no-animations>
-      <span class="dropdown-trigger">trigger</span>
-      <span class="dropdown-content">content</span>
-    </paper-menu-button>
-    <paper-menu-button no-animations>
-      <span class="dropdown-trigger">trigger</span>
-      <span class="dropdown-content">content</span>
-    </paper-menu-button>
-  </template>
-</test-fixture>
+  <test-fixture id="TwoMenuButtons">
+    <template>
+      <paper-menu-button no-animations>
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+      <paper-menu-button no-animations>
+        <span class="dropdown-trigger">trigger</span>
+        <span class="dropdown-content">content</span>
+      </paper-menu-button>
+    </template>
+  </test-fixture>
 
-<script>
+  <script>
     suite('<paper-menu-button>', function() {
       var menuButton;
       var trigger;
@@ -194,7 +194,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         MockInteractions.tap(trigger);
       });
     });
-
-</script>
+  </script>
 </body>
 </html>

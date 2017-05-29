@@ -50,35 +50,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       overflow-y: auto;
     }
 
-
   </style>
 
 </head>
 <body>
 
-<template is="dom-bind">
+  <template is="dom-bind">
 
-  <app-toolbar>
-    <div main-title></div>
-    <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
-  </app-toolbar>
+    <app-toolbar>
+      <div main-title></div>
+      <paper-icon-button icon="menu" on-tap="toggleDrawer"></paper-icon-button>
+    </app-toolbar>
 
-  <sample-content size="100"></sample-content>
+    <sample-content size="100"></sample-content>
 
-  <app-drawer id="drawer" align="right" swipe-open>
-    <div class="drawer-contents">
-      <template is="dom-repeat" id="menu" items="[[items]]">
-        <paper-icon-item>
-          <iron-icon class="grayIcon" icon="[[item]]" item-icon></iron-icon>
-          <span>[[item]]</span>
-        </paper-icon-item>
-      </template>
-    </div>
-  </app-drawer>
+    <app-drawer id="drawer" align="right" swipe-open>
+      <div class="drawer-contents">
+        <template is="dom-repeat" id="menu" items="[[items]]">
+          <paper-icon-item>
+            <iron-icon class="grayIcon" icon="[[item]]" item-icon></iron-icon>
+            <span>[[item]]</span>
+          </paper-icon-item>
+        </template>
+      </div>
+    </app-drawer>
 
-</template>
+  </template>
 
-<script>
+  <script>
     (function(scope) {
 
       scope.toggleDrawer = function() {
@@ -89,8 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       scope.items = icons.concat(icons).concat(icons);
 
     })(document.querySelector('template[is=dom-bind]'));
-
-</script>
+  </script>
 
 </body>
 </html>

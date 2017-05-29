@@ -37,8 +37,9 @@ public abstract class Mapper {
           .findFirst();
 
       if (sourceFieldOptional.isPresent()) {
+        Field sourceField = sourceFieldOptional.get();
         ReflectionUtils.setValue(instance, fieldName,
-            getFieldValue(source, sourceFieldOptional.get(), fieldType));
+            getFieldValue(source, sourceField, fieldType));
 
       } else {
         ReflectionUtils.setValue(instance, fieldName,
@@ -73,32 +74,35 @@ public abstract class Mapper {
       return getDateTimeValue(fieldValue);
 
     } else if (fieldType == List.class) {
-      return getListValue(fieldValue, type);
+      return getListValue((List) fieldValue, type);
 
     } else {
       return map(fieldValue, type);
     }
   }
 
-  protected <T> List<T> getListValue(Object obj, Class<T> type) {
-    if (obj == null) {
+  protected <T> List<T> getListValue(List list, Class<T> type) {
+    if (list == null) {
       return Collections.emptyList();
     }
 
-    List<T> list = new ArrayList<>();
+    List<T> values = new ArrayList<>();
 
-    for (Object item : (List) obj) {
+    for (Object item : list) {
       if (item.getClass().isEnum()) {
-        list.add(type.equals(String.class)
+        values.add(type.equals(String.class)
             ? type.cast(item.toString()) : (T) item);
+
+      } else if (item.getClass() == String.class) {
+        values.add((T) item);
 
       } else {
         T valueItem = map(item, type);
-        list.add(valueItem);
+        values.add(valueItem);
       }
     }
 
-    return list;
+    return values;
   }
 
   protected Queue<String> getNameTokens(String name) {
@@ -115,8 +119,8 @@ public abstract class Mapper {
 
   protected Optional<Field> getField(List<Field> fields, String fieldName) {
     return fields.stream()
-        .filter(field -> field.getName().equals(
-            StringUtils.uncapitalize(fieldName)))
+        .filter(field -> field.getName()
+            .equals(StringUtils.uncapitalize(fieldName)))
         .findFirst();
   }
 

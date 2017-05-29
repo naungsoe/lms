@@ -1,5 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
@@ -26,7 +27,7 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
   public List<Group> getEntities (
       List<Result> results, List<Mutation> mutations) {
 
-    if (results.isEmpty()) {
+    if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
@@ -49,7 +50,7 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
 
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult, timestamp);
-    List<Permission> permissions = getPermissions(mainResult, ",", timestamp);
+    List<Permission> permissions = getPermissions(mainResult, timestamp);
 
     List<User> members = new ArrayList<>();
     results.stream().filter(isMemberResult(id))

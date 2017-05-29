@@ -23,7 +23,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <link rel="import" href="../../paper-styles/color.html">
   <link rel="import" href="../../paper-styles/demo-pages.html">
   <link rel="import" href="../../paper-styles/typography.html">
-
+  
   <style is="custom-style">
 
     .vertical-section {
@@ -46,36 +46,33 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       padding: 0.2em;
     }
 
-
   </style>
 </head>
 <body>
 
-<div class="vertical-section vertical-section-container centered">
-  <template is="dom-bind">
-    <p>
-      <input is="iron-input" bind-value="{{bindValue}}" value="{{value::input}}">
-      <br>
-      bind to <code>bind-value</code>: <b>[[bindValue]]</b>
-      <br>
-      bind to <code>value::input</code>: <b>{{value}}</b>
-    </p>
+  <div class="vertical-section vertical-section-container centered">
+    <template is="dom-bind">
+      <p>
+        <input is="iron-input" bind-value="{{bindValue}}" value="{{value::input}}">
+        <br>
+        bind to <code>bind-value</code>: <b>[[bindValue]]</b>
+        <br>
+        bind to <code>value::input</code>: <b>{{value}}</b>
+      </p>
 
-    <p on-click="setValue">
-      set bind-value to: <input>
-      <button is="paper-button" value="bindValue">set</button>
-      <br>
-      set value to: <input>
-      <button value="value">set</button>
-    </p>
-  </template>
-  <p>only allows these characters:
+      <p on-click="setValue">
+        set bind-value to: <input> <button is="paper-button" value="bindValue">set</button>
+        <br>
+        set value to: <input> <button value="value">set</button>
+      </p>
+    </template>
+    <p>only allows these characters:
     <code>!@#0123456789</code></p>
-  <input is="iron-input" allowed-pattern="[!@#0-9]" prevent-invalid-input>
+    <input is="iron-input" allowed-pattern="[!@#0-9]" prevent-invalid-input>
 
-</div>
+  </div>
 
-<script>
+  <script>
     var scope = document.querySelector('template[is=dom-bind]');
 
     scope.setValue = function(event) {
@@ -84,8 +81,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
       document.querySelector('input[is=iron-input]')[event.target.value] = event.target.previousElementSibling.value;
     }
-
-</script>
+  </script>
 
 </body>
 </html>
