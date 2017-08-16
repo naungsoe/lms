@@ -9,7 +9,7 @@ public class SignInModel implements Serializable {
 
   private static final long serialVersionUID = 3067612161107841603L;
 
-  private String id;
+  private String account;
 
   private String password;
 
@@ -24,25 +24,25 @@ public class SignInModel implements Serializable {
   }
 
   public SignInModel(
-      String id,
+      String account,
       String password,
       String captcha,
       String sessionId,
       String ipAddress) {
 
-    this.id = id;
+    this.account = account;
     this.password = password;
     this.captcha = captcha;
     this.sessionId = sessionId;
     this.ipAddress = ipAddress;
   }
 
-  public String getId() {
-    return id;
+  public String getAccount() {
+    return account;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setAccount(String account) {
+    this.account = account;
   }
 
   public String getPassword() {

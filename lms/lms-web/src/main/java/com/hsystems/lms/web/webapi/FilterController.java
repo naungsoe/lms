@@ -8,17 +8,22 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.common.util.JsonUtils;
+import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.SubjectService;
 import com.hsystems.lms.service.model.LevelModel;
 import com.hsystems.lms.service.model.SubjectModel;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -31,7 +36,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("filters")
+@Path("/filters")
 public class FilterController {
 
   private final Provider<Principal> principalProvider;
@@ -63,11 +68,12 @@ public class FilterController {
       @Context HttpServletRequest request)
       throws IOException {
 
+    JsonNode localeNode = findLocaleNode(request);
     JsonNode moduleNode;
 
     switch (module) {
       case "questions":
-        moduleNode = findQuestionFilters();
+        moduleNode = findQuestionFilters(localeNode);
         break;
       default:
         ObjectMapper mapper = new ObjectMapper();
@@ -79,7 +85,22 @@ public class FilterController {
     return Response.ok(json).build();
   }
 
-  private JsonNode findQuestionFilters()
+  private JsonNode findLocaleNode(HttpServletRequest request)
+      throws IOException {
+
+    ServletContext context = request.getServletContext();
+    String defaultLocale = "en_US";
+    String locale = ServletUtils.getCookie(request, "locale");
+    locale = StringUtils.isEmpty(locale) ? defaultLocale : locale;
+    String commonFilePath = String.format(
+        "locales/common/%s.json", locale);
+    InputStream commonInputStream = getClass().getClassLoader()
+        .getResourceAsStream(commonFilePath);
+    JsonNode commonNode = JsonUtils.parseJson(commonInputStream);
+    return commonNode.get(locale);
+  }
+
+  private JsonNode findQuestionFilters(JsonNode localeNode)
       throws IOException {
 
     ObjectMapper mapper = new ObjectMapper();
@@ -92,7 +113,7 @@ public class FilterController {
     populateSubjects(subjectsNode);
 
     ArrayNode typesNode = moduleNode.putArray("types");
-    populateQuestionTypes(typesNode);
+    populateQuestionTypes(typesNode, localeNode);
 
     return moduleNode;
   }
@@ -100,9 +121,9 @@ public class FilterController {
   private void populateLevels(ArrayNode levelsNode)
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
-    String schoolId = userModel.getSchool().getId();
-    List<LevelModel> levelModels = levelService.findAllBy(schoolId, userModel);
+    Principal principal = principalProvider.get();
+    String schoolId = ((UserModel) principal).getSchool().getId();
+    List<LevelModel> levelModels = levelService.findAllBy(schoolId, principal);
 
     ObjectMapper mapper = new ObjectMapper();
     levelModels.forEach(levelModel -> {
@@ -116,10 +137,10 @@ public class FilterController {
   private void populateSubjects(ArrayNode subjectsNode)
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
-    String schoolId = userModel.getSchool().getId();
+    Principal principal = principalProvider.get();
+    String schoolId = ((UserModel) principal).getSchool().getId();
     List<SubjectModel> subjectModels
-        = subjectService.findAllBy(schoolId, userModel);
+        = subjectService.findAllBy(schoolId, principal);
 
     ObjectMapper mapper = new ObjectMapper();
     subjectModels.forEach(subjectModel -> {
@@ -130,12 +151,37 @@ public class FilterController {
     });
   }
 
-  private void populateQuestionTypes(ArrayNode typesNode) {
+  private void populateQuestionTypes(
+      ArrayNode typesNode, JsonNode localeNode) {
+
     ObjectMapper mapper = new ObjectMapper();
     List<QuestionType> questionTypes = questionService.findAllTypes();
     questionTypes.forEach(questionType -> {
       ObjectNode typeNode = mapper.createObjectNode();
-      typeNode.put("name", questionType.toString());
+      JsonNode fieldNode;
+
+      switch (questionType) {
+        case MULTIPLE_CHOICE:
+          fieldNode = localeNode.get("labelMultipleChoice");
+          break;
+        case MULTIPLE_RESPONSE:
+          fieldNode = localeNode.get("labelMultipleResponse");
+          break;
+        case SHORT_ANSWER:
+          fieldNode = localeNode.get("labelShortAnswer");
+          break;
+        case ESSAY:
+          fieldNode = localeNode.get("labelEssay");
+          break;
+        case COMPOSITE:
+          fieldNode = localeNode.get("labelComposite");
+          break;
+        default:
+          fieldNode = localeNode.get("labelUnknown");
+          break;
+      }
+
+      typeNode.put("name", fieldNode.textValue());
       typeNode.put("value", questionType.toString());
       typesNode.add(typeNode);
     });

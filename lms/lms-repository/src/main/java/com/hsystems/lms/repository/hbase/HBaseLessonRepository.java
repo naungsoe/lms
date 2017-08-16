@@ -12,7 +12,7 @@ import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Lesson;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLessonMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 

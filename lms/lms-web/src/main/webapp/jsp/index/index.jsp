@@ -6,82 +6,101 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
   <script src="<c:url value="/static/bower_components/webcomponentsjs/webcomponents-lite.js"/>"></script>
-  <link rel="import" href="<c:url value="/static/web_components/lms-default.html"/>">
-  <link rel="import" href="<c:url value="/static/web_components/lms-style.html"/>">
-  <link rel="import" href="<c:url value="/static/bower_components/paper-spinner/paper-spinner.html"/>">
+  <link rel="stylesheet" href="<c:url value="/static/web_components/normalize.css"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/polymer/polymer.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/iron-ajax/iron-ajax.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-button/paper-button.html"/>">
 </head>
 <body>
-  <dom-module id="lms-indexer">
+  <dom-module id="main-element">
+    <template>
+      <iron-ajax
+          method="POST"
+          content-type="application/json"
+          loading="{{loading}}">
+      </iron-ajax>
 
-    <template strip-whitespace>
-      <style include="lms-style">
-        :host {
-          @apply(--layout-vertical);
-          @apply(--layout-center);
-          @apply(--layout-center-justified);
-          width: 100vw;
-        }
+      <h1>Indexing entities</h1>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleLevelsTap">
+        Index Levels
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleSubjectsTap">
+        Index Subjects
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleUsersTap">
+        Index Users
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleQuestionTap">
+        Index Questions
+      </paper-button>
 
-        .main-content {
-          max-width: 800px;
-          width: 100%;
-          margin: 0 auto;
-        }
-      </style>
-
-      <iron-ajax method="POST" content-type="application/json" loading="{{loading}}"></iron-ajax>
-
-      <div class="main-content">
-        <h1>Indexing entities</h1>
-        <paper-button on-tap="_onIndexLevelsTap" raised disabled$="[[loading]]">Index Levels</paper-button>
-        <paper-button on-tap="_onIndexSubjectsTap" raised disabled$="[[loading]]">Index Subjects</paper-button>
-        <paper-button on-tap="_onIndexUsersTap" raised disabled$="[[loading]]">Index Users</paper-button>
-        <paper-button on-tap="_onIndexQuestionTap" raised disabled$="[[loading]]">Index Questions</paper-button>
-
-        <div class="loading-status" hidden$="[[!loading]]">
-          <paper-spinner active$="[[loading]]"></paper-spinner> Indexing...
+      <template
+          is="dom-if"
+          if="[[loading]]">
+        <div class="loading-status">
+          Indexing...
         </div>
-      </div>
+      </template>
     </template>
 
     <script>
-      HTMLImports.whenReady(function () {
-        Polymer({
-          is: 'lms-indexer',
-
-          properties: {
-            loading: {
-              type: Boolean,
-              value: false,
-              notify: true
-            }
-          },
-
-          _onIndexLevelsTap: function(event) {
-            this.$$('iron-ajax').url = '/webapi/index/levels';
-            this.$$('iron-ajax').generateRequest();
-          },
-
-          _onIndexSubjectsTap: function(event) {
-            this.$$('iron-ajax').url = '/webapi/index/subjects';
-            this.$$('iron-ajax').generateRequest();
-          },
-
-          _onIndexUsersTap: function(event) {
-            this.$$('iron-ajax').url = '/webapi/index/users';
-            this.$$('iron-ajax').generateRequest();
-          },
-
-          _onIndexQuestionTap: function(event) {
-            this.$$('iron-ajax').url = '/webapi/index/questions';
-            this.$$('iron-ajax').generateRequest();
+      HTMLImports.whenReady(function() {
+        class MainElement extends Polymer.Element {
+          static get is() {
+            return 'main-element';
           }
-        });
+
+          static get properties() {
+            return {
+              loading: {
+                type: Boolean,
+                value: false,
+                notify: true
+              }
+            };
+          }
+
+          _handleLevelsTap(event) {
+            let root = this.shadowRoot;
+            let request = root.querySelector('iron-ajax');
+            request.url = '/webapi/index/levels';
+            request.generateRequest();
+          }
+
+          _handleSubjectsTap(event) {
+            let root = this.shadowRoot;
+            let request = root.querySelector('iron-ajax');
+            request.url = '/webapi/index/subjects';
+            request.generateRequest();
+          }
+
+          _handleUsersTap(event) {
+            let root = this.shadowRoot;
+            let request = root.querySelector('iron-ajax');
+            request.url = '/webapi/index/users';
+            request.generateRequest();
+          }
+
+          _handleQuestionTap(event) {
+            let root = this.shadowRoot;
+            let request = root.querySelector('iron-ajax');
+            request.url = '/webapi/index/questions';
+            request.generateRequest();
+          }
+        }
+        customElements.define(MainElement.is, MainElement);
       });
     </script>
-
   </dom-module>
-  <lms-indexer></lms-indexer>
+
+  <main-element></main-element>
 </body>
 </html>

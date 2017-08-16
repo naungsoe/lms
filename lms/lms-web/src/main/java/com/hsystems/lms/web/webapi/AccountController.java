@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response.Status;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("account")
+@Path("/account")
 public class AccountController {
 
   private static final String APPLICATION_PNG = "image/png";
@@ -39,12 +39,6 @@ public class AccountController {
   AccountController(Properties properties, UserService userService) {
     this.properties = properties;
     this.userService = userService;
-  }
-
-  @GET
-  @Produces(MediaType.APPLICATION_JSON)
-  public String findBy(String id) {
-    return "Get request";
   }
 
   @POST

@@ -1,0 +1,147 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../web_components/page-header-panel.html">
+<link rel="import" href="../../web_components/module-questions/page-question-edit-toolbar.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-attributes.html">
+
+<dom-module id="page-question-edit">
+  <template>
+    <style>
+      .question {
+        border: 1px solid var(--border-color);
+        margin: 16px 0;
+        padding: 16px;
+      }
+
+      .question .question-attributes {
+        margin-top: 32px;
+      }
+
+      .question .question-content .title,
+      .question .question-attributes .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+      }
+    </style>
+
+    <iron-ajax
+        name="ajax"
+        url="[[restUrl]]/[[questionId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{question}}">
+    </iron-ajax>
+
+    <page-header-panel>
+      <div slot="page-header">
+        <page-question-edit-toolbar
+            user="[[user]]"
+            question="[[question]]">
+        </page-question-edit-toolbar>
+      </div>
+
+      <div class="question">
+        <section class="question-content">
+          <template
+              is="dom-if"
+              if="[[_isMultipleChoice(question)]]">
+            <div class="title">
+              Multiple Choice
+            </div>
+
+            <question-edit-multiple-choice
+                question="[[question]]"
+                language="[[language]]"
+                resources="[[resources]]">
+            </question-edit-multiple-choice>
+          </template>
+        </section>
+
+        <section class="question-attributes">
+          <div class="title">
+            Attributes
+          </div>
+
+          <question-edit-attributes
+              filter-options="[[filterOptions]]"
+              question="[[question]]"
+              language="[[language]]"
+              resources="[[resources]]">
+          </question-edit-attributes>
+        </section>
+      </div>
+    </page-header-panel>
+  </template>
+
+  <script>
+    const PageQuestionEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageQuestionEdit extends PageQuestionEditBase {
+      static get is() {
+        return 'page-question-edit';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          questionId: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, questionId)'
+        ];
+      }
+
+      _isMultipleChoice(question) {
+        return question.type === 'MULTIPLE_CHOICE';
+      }
+
+      _generateRequest(restUrl, questionId) {
+        if ((restUrl === undefined)
+            || (questionId === undefined)) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax');
+        request.generateRequest();
+      }
+    }
+    customElements.define(PageQuestionEdit.is, PageQuestionEdit);
+  </script>
+</dom-module>

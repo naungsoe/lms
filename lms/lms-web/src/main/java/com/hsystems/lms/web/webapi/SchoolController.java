@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 15/10/16.
  */
-@Path("schools")
+@Path("/schools")
 public class SchoolController {
 
   private final Provider<Principal> principalProvider;

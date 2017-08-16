@@ -81,8 +81,11 @@ public class HBaseClient {
 
   private <T> TableName getTableName(Class<T> type) {
     IndexCollection annotation = type.getAnnotation(IndexCollection.class);
-    String tableName = StringUtils.isEmpty(annotation.name())
+    String namespace = annotation.namespace();
+    String collection = StringUtils.isEmpty(annotation.name())
         ? type.getSimpleName() : annotation.name();
+    String tableName = StringUtils.isEmpty(namespace)
+        ? collection : String.format("%s:%s", namespace, collection);
     return TableName.valueOf(tableName);
   }
 

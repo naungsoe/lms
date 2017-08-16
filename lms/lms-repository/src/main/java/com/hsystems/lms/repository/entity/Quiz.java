@@ -3,6 +3,7 @@ package com.hsystems.lms.repository.entity;
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
@@ -10,12 +11,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
  * Created by naungsoe on 19/12/16.
  */
-@IndexCollection(name = "quizzes")
+@IndexCollection(namespace = "lms", name = "quizzes")
 public class Quiz extends Resource implements Serializable {
 
   private static final long serialVersionUID = 645532833693995164L;
@@ -57,6 +59,7 @@ public class Quiz extends Resource implements Serializable {
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
+      List<AccessControl> accessControls,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -70,6 +73,7 @@ public class Quiz extends Resource implements Serializable {
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
+    this.accessControls = accessControls;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -89,18 +93,32 @@ public class Quiz extends Resource implements Serializable {
     return instructions;
   }
 
-  public List<Component> getComponents() {
+  public Enumeration<Component> getComponents() {
     return CollectionUtils.isEmpty(components)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(components);
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(components);
   }
 
-  public void addComponent(Component... component) {
-    if (CollectionUtils.isEmpty(components)) {
-      components = new ArrayList<>();
+  public void addComponent(Component... components) {
+    if (CollectionUtils.isEmpty(this.components)) {
+      this.components = new ArrayList<>();
     }
 
-    components.addAll(Arrays.asList(component));
+    Arrays.stream(components).forEach(component -> {
+      checkQuizSectionComponent(component);
+      this.components.add(component);
+    });
+  }
+
+  private void checkQuizSectionComponent(Component component) {
+    boolean isQuizSectionComponent = component instanceof QuizSectionComponent;
+    CommonUtils.checkArgument(isQuizSectionComponent,
+        "component is not quiz section");
+  }
+
+  public void removeComponent(Component component) {
+    checkQuizSectionComponent(component);
+    this.components.remove(component);
   }
 
   @Override
@@ -121,12 +139,13 @@ public class Quiz extends Resource implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, components=%s, school=%s, "
-            + "levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
-            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
-        id, title, instructions, StringUtils.join(components, ","), school,
-        StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
-        StringUtils.join(keywords, ","), createdBy, createdDateTime,
-        modifiedBy, modifiedDateTime);
+        "Quiz{id=%s, title=%s, instructions=%s, components=%s, "
+            + "school=%s, levels=%s, subjects=%s, keywords=%s, "
+            + "accessControls=%s, createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
+        id, title, instructions, StringUtils.join(components, ","),
+        school, StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
+        StringUtils.join(keywords, ","), StringUtils.join(accessControls, ","),
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

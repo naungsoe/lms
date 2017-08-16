@@ -1,0 +1,192 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+
+<dom-module id="question-list">
+  <template>
+    <style>
+      .question {
+        @apply --layout-vertical;
+        background-color: var(--primary-background-color);
+        border: 1px solid var(--border-color);
+        padding: 16px;
+        margin: 8px 0;
+      }
+
+      .question .question-type {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+      }
+    </style>
+
+    <iron-ajax
+        url="[[restUrl]]"
+        params="[[restParams]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        on-response="_handleAjaxResponse">
+    </iron-ajax>
+
+    <iron-list
+        items="[[questions]]"
+        as="question"
+        scroll-target="document"
+        selected-item="{{selectedQuestion}}"
+        selection-enabled>
+      <template>
+        <div class="list-item">
+          <div class="question">
+            <div class="question-type">
+              [[question.type]]
+            </div>
+
+            <div class="question-body">
+              [[question.body]]
+            </div>
+
+            <template
+                is="dom-if"
+                if="[[question.questions]]">
+              <template
+                  is="dom-repeat"
+                  items="[[question.questions]]"
+                  as="question">
+                <div class="question">
+                  <div class="question-body">
+                    [[question.body]]
+                  </div>
+                </div>
+              </template>
+            </template>
+          </div>
+        </div>
+      </template>
+    </iron-list>
+
+    <template
+        is="dom-if"
+        if="[[loading]]">
+      <div class="loading-status">
+        [[localize('labelFetchingQuestions')]]
+      </div>
+    </template>
+
+    <iron-scroll-threshold
+        scroll-target="document"
+        lower-threshold="100"
+        on-lower-threshold="_handleLowerThreshold">
+    </iron-scroll-threshold>
+  </template>
+
+  <script>
+    const QuestionListBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionList extends QuestionListBase {
+      static get is() {
+        return 'question-list';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          restParams: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          types: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          numFound: {
+            type: Number,
+            readOnly: false,
+            notify: true
+          },
+          selectedQuestion: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          loading: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, restParams)',
+          '_notifySelection(selectedQuestion)'
+        ];
+      }
+
+      _generateRequest(restUrl, restParams) {
+        if ((restUrl === undefined)
+            || (restParams === undefined)) {
+          return;
+        }
+
+        this.set('questions', []);
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax');
+        request.generateRequest();
+      }
+
+      _handleAjaxResponse(event) {
+        let root = this.shadowRoot;
+        let response = event.detail.response;
+        response.items.forEach(function(item) {
+          this.types.forEach(function(type) {
+            if (item.type === type.value) {
+              item.type = type.name;
+            }
+          }, this);
+
+          this.push('questions', item);
+        }, this);
+
+        this.numFound = response.numFound;
+        root.querySelector('iron-scroll-threshold').clearTriggers();
+      }
+
+      _handleLowerThreshold(event) {
+        let count = (this.offset + 1) * this.limit;
+
+        if ((this.numFound > 0) && (count < 1000)) {
+          this.offset = this.offset + 1;
+
+        } else {
+          let root = this.shadowRoot;
+          root.querySelector('iron-scroll-threshold').clearTriggers();
+        }
+      }
+
+      _notifySelection(selectedQuestion) {
+        if (selectedQuestion === null) {
+          return;
+        }
+
+        let data = {bubbles: true, composed: true,
+          detail: {question: selectedQuestion}
+        };
+        let event = new CustomEvent('question-selected', data);
+        this.dispatchEvent(event);
+      }
+    }
+    customElements.define(QuestionList.is, QuestionList);
+  </script>
+</dom-module>

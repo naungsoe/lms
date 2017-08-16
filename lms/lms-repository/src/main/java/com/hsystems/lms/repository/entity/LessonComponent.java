@@ -12,10 +12,10 @@ public class LessonComponent implements Component, Serializable {
   private static final long serialVersionUID = 1349480384363058632L;
 
   @IndexField
-  protected String id;
+  private String id;
 
   @IndexField
-  protected int order;
+  private int order;
 
   @IndexField
   private Lesson lesson;

@@ -28,7 +28,7 @@ public class QuestionModel extends ResourceModel implements Serializable {
 
   private List<QuestionOptionModel> options;
 
-  private List<QuestionModel> questions;
+  private List<QuestionComponentModel> components;
 
   public QuestionModel() {
 
@@ -85,14 +85,14 @@ public class QuestionModel extends ResourceModel implements Serializable {
     this.options.addAll(options);
   }
 
-  public List<QuestionModel> getQuestions() {
-    return CollectionUtils.isEmpty(questions)
+  public List<QuestionComponentModel> getComponents() {
+    return CollectionUtils.isEmpty(components)
         ? Collections.emptyList()
-        : Collections.unmodifiableList(questions);
+        : Collections.unmodifiableList(components);
   }
 
-  public void setQuestions(List<QuestionModel> questions) {
-    this.questions = new ArrayList<>();
-    this.questions.addAll(questions);
+  public void setComponents(List<QuestionComponentModel> components) {
+    this.components = new ArrayList<>();
+    this.components.addAll(components);
   }
 }

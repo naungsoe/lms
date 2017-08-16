@@ -1,0 +1,119 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-chip/paper-chip.html">
+<link rel="import" href="../paper-input/paper-input.html">
+<link rel="import" href="../paper-icon-button/paper-icon-button.html">
+
+<dom-module id="paper-chips-input">
+  <template>
+    <style>
+      :host {
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
+      }
+
+      paper-chip {
+        @apply --layout-horizontal;
+        @apply --layout-self-start;
+        background-color: var(--secondary-background-color);
+        margin: 0 4px 4px 0;
+      }
+
+      paper-chip label {
+        padding: 6px 8px 6px 12px;
+      }
+
+      paper-chip paper-icon-button {
+        color: var(--secondary-text-color);
+        height: 32px;
+        padding: 6px;
+        width: 32px;
+      }
+
+      paper-chip[existing] {
+        background-color: var(--divider-color);
+      }
+
+      paper-input {
+        @apply --layout-flex;
+        min-width: 240px
+      }
+    </style>
+
+    <template
+        is="dom-repeat"
+        items="[[values]]"
+        as="value">
+      <paper-chip>
+        <label>[[value]]</label>
+        <paper-icon-button
+            icon="cancel"
+            on-tap="_handleRemoveTap">
+        </paper-icon-button>
+      </paper-chip>
+    </template>
+
+    <paper-input no-label-float
+        value="{{value}}"
+        on-keydown="_handleKeydown">
+    </paper-input>
+  </template>
+
+  <script>
+    class PaperChipsInput extends Polymer.Element {
+      static get is() {
+        return 'paper-chips-input';
+      }
+
+      static get properties() {
+        return {
+          values: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          value: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _handleRemoveTap(event) {
+        let root = this.shadowRoot;
+        let index = event.model.index + 1;
+        let selector = 'paper-chip:nth-of-type(' + index + ')';
+        let chip = root.querySelector(selector);
+        root.removeChild(chip);
+      }
+
+      _handleKeydown(event) {
+        if (event.keyCode === 13) {
+          if (this.value.trim() === '') {
+            return;
+          }
+
+          let root = this.shadowRoot;
+          let value = this.value.trim();
+
+          if (this.values.indexOf(value) === -1) {
+            this.push('values', value);
+
+          } else {
+            let index = this.values.indexOf(value) + 1;
+            let selector = 'paper-chip:nth-of-type(' + index + ')';
+            let chip = root.querySelector(selector);
+            chip.setAttribute('existing', '');
+
+            setTimeout(function() {
+              chip.removeAttribute('existing');
+            }, 600);
+          }
+
+          this.value = '';
+        }
+      }
+    }
+    customElements.define(PaperChipsInput.is, PaperChipsInput);
+  </script>
+</dom-module>

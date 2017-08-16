@@ -18,6 +18,22 @@
       <url-pattern>/webapi/*</url-pattern>
   </servlet-mapping>
   -->
+  <context-param>
+    <param-name>signInUrl</param-name>
+    <param-value>/web/signin</param-value>
+  </context-param>
+  <context-param>
+    <param-name>homeUrl</param-name>
+    <param-value>/web/home</param-value>
+  </context-param>
+  <context-param>
+    <param-name>publicUrls</param-name>
+    <param-value>
+      /web/error,/web/signup,/web/signin,/web/signout,/web/account,
+      /webapi/locales/error,/webapi/locales/signup,/webapi/locales/signin,
+      /webapi/locales/signout,/webapi/locales/account
+    </param-value>
+  </context-param>
   <listener>
     <listener-class>com.hsystems.lms.web.AppContextListener</listener-class>
   </listener>

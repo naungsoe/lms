@@ -2,18 +2,21 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.AccessControl;
+import com.hsystems.lms.repository.entity.AccessType;
 import com.hsystems.lms.repository.entity.Auditable;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Lesson;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionOption;
-import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
@@ -225,6 +228,20 @@ public abstract class HBaseMapper<T> {
   }
 
   protected <T extends Enum<T>> T getType(
+      Result result, long timestamp, Class<T> type) {
+
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TYPE, type);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE);
+      return getEnum(cells, timestamp, type);
+    }
+  }
+
+  protected <T extends Enum<T>> T getSectionType(
       Result result, long timestamp, Class<T> type) {
 
     if (timestamp == 0) {
@@ -561,10 +578,6 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_SUBJECT);
   }
 
-  protected Predicate<Result> isComponentResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_COMPONENT);
-  }
-
   protected Predicate<Result> isLessonResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_LESSON);
   }
@@ -577,6 +590,10 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_SECTION);
   }
 
+  protected Predicate<Result> isComponentResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_COMPONENT);
+  }
+
   protected Predicate<Result> isQuestionResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_QUESTION);
   }
@@ -585,8 +602,8 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_OPTION);
   }
 
-  protected Predicate<Result> isShareResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SHARE);
+  protected Predicate<Result> isAccessControlResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_ACCESS);
   }
 
   protected String getId(Result result, String separator) {
@@ -651,16 +668,33 @@ public abstract class HBaseMapper<T> {
     return permissions;
   }
 
-  protected Permission getPermission(Result result, long timestamp) {
+  protected List<AccessType> getAccessTypes(
+      Result result, long timestamp) {
+
+    String value;
+
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.IDENTIFIER_PERMISSION, Permission.class);
+      value = getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ACCESSES);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.IDENTIFIER_PERMISSION);
-      return getEnum(cells, timestamp, Permission.class);
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACCESSES);
+      value = getString(cells, timestamp);
     }
+
+    if (StringUtils.isEmpty(value)) {
+      return Collections.emptyList();
+    }
+
+    List<AccessType> accessTypes = new ArrayList<>();
+    String[] items = value.split(VALUE_SEPARATOR);
+    Arrays.asList(items).forEach(item -> {
+      AccessType accessType = Enum.valueOf(AccessType.class, item);
+      accessTypes.add(accessType);
+    });
+
+    return accessTypes;
   }
 
   protected User getMember(Result result, long timestamp) {
@@ -760,19 +794,6 @@ public abstract class HBaseMapper<T> {
     );
   }
 
-  protected List<Question> getQuestions(
-      List<Result> results, String prefix, long timestamp) {
-
-    List<Question> questions = new ArrayList<>();
-    results.stream().filter(isQuestionResult(prefix))
-        .forEach(result -> {
-          Question question = getQuestion(results, prefix, timestamp);
-          questions.add(question);
-        });
-
-    return questions;
-  }
-
   protected Question getQuestion(
       List<Result> results, String prefix, long timestamp) {
 
@@ -785,15 +806,15 @@ public abstract class HBaseMapper<T> {
     String explanation = getExplanation(result, timestamp);
 
     List<QuestionOption> options;
-    List<Question> childQuestions;
+    List<Component> components;
 
     if (type == QuestionType.COMPOSITE) {
       options = Collections.emptyList();
-      childQuestions = getQuestions(results, id, timestamp);
+      components = getQuestionComponents(results, id, timestamp);
 
     } else {
-      options = getOptions(results, id, timestamp);
-      childQuestions = Collections.emptyList();
+      options = getQuestionOptions(results, id, timestamp);
+      components = Collections.emptyList();
     }
 
     return new Question(
@@ -803,24 +824,44 @@ public abstract class HBaseMapper<T> {
         hint,
         explanation,
         options,
-        childQuestions
+        components
     );
   }
 
-  protected List<QuestionOption> getOptions(
+  protected List<Component> getQuestionComponents(
+      List<Result> results, String prefix, long timestamp) {
+
+    List<Component> components = new ArrayList<>();
+    results.stream().filter(isComponentResult(prefix))
+        .forEach(result -> {
+          String id = getId(result, Constants.SEPARATOR_COMPONENT);
+          int order = getOrder(result, timestamp);
+          Question question = getQuestion(results, id, timestamp);
+          QuestionComponent component = new QuestionComponent(
+              id,
+              order,
+              question
+          );
+          components.add(component);
+        });
+
+    return components;
+  }
+
+  protected List<QuestionOption> getQuestionOptions(
       List<Result> results, String prefix, long timestamp) {
 
     List<QuestionOption> options = new ArrayList<>();
     results.stream().filter(isOptionResult(prefix))
         .forEach(result -> {
-          QuestionOption option = getOption(result, timestamp);
+          QuestionOption option = getQuestionOption(result, timestamp);
           options.add(option);
         });
 
     return options;
   }
 
-  protected QuestionOption getOption(Result result, long timestamp) {
+  protected QuestionOption getQuestionOption(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_OPTION);
     String body = getBody(result, timestamp);
     String feedback = getFeedback(result, timestamp);
@@ -829,17 +870,17 @@ public abstract class HBaseMapper<T> {
     return new QuestionOption(id, body, feedback, correct, order);
   }
 
-  protected ShareEntry getShareEntry(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_SHARE);
+  protected AccessControl getAccessControl(Result result, long timestamp) {
+    String id = getId(result, Constants.SEPARATOR_ACCESS);
     String firstName = getFirstName(result, timestamp);
     String lastName = getLastName(result, timestamp);
 
     User user = new User(id, firstName, lastName);
-    Permission permission = getPermission(result, timestamp);
+    List<AccessType> accessTypes = getAccessTypes(result, timestamp);
 
-    return new ShareEntry(
+    return new AccessControl(
         user,
-        permission
+        accessTypes
     );
   }
 
@@ -929,19 +970,6 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value.toString()));
   }
 
-  protected Put getQuestionPut(
-      Question question, String prefix, long timestamp) {
-
-    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
-        Constants.SEPARATOR_OPTION, question.getId());
-    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
-    addTypeColumn(put, question.getType());
-    addBodyColumn(put, question.getBody());
-    addHintColumn(put, question.getHint());
-    addExplanationColumn(put, question.getExplanation());
-    return put;
-  }
-
   protected Put getOptionPut(
       QuestionOption option, String prefix, long timestamp) {
 
@@ -952,6 +980,21 @@ public abstract class HBaseMapper<T> {
     addFeedbackColumn(put, option.getFeedback());
     addCorrectColumn(put, option.isCorrect());
     addOrderColumn(put, option.getOrder());
+    return put;
+  }
+
+  protected Put getQuestionComponentPut(
+      QuestionComponent component, String prefix, long timestamp) {
+
+    Question question =  component.getQuestion();
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
+        Constants.SEPARATOR_OPTION, question.getId());
+    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
+    addTypeColumn(put, question.getType());
+    addBodyColumn(put, question.getBody());
+    addHintColumn(put, question.getHint());
+    addExplanationColumn(put, question.getExplanation());
+    addOrderColumn(put, component.getOrder());
     return put;
   }
 

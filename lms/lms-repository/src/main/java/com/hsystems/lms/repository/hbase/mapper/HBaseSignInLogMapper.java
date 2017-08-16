@@ -37,11 +37,19 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
   private SignInLog getEntity(Result result) {
     String id = Bytes.toString(result.getRow());
+    String account = getAccount(result, 0);
     String sessionId = getSessionId(result, 0);
     String ipAddress = getIpAddress(result, 0);
     LocalDateTime dateTime = getDateTime(result, 0);
     int fails = getFails(result, 0);
-    return new SignInLog(id, sessionId, ipAddress, dateTime, fails);
+    return new SignInLog(
+        id,
+        account,
+        sessionId,
+        ipAddress,
+        dateTime,
+        fails
+    );
   }
 
   @Override

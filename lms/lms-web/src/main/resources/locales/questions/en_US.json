@@ -1,22 +1,22 @@
 {
   "en_US": {
     "titlePage": "Questions",
+    "titleQuestion": "Question",
+    "titleDetails": "Details",
     "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
     "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
     "labelOwnedByAnyone": "Owned by anyone",
     "labelOwnedByMe": "Owned by me",
     "labelNotOwnerByMe": "Owned by others",
     "labelAllQuestionTypes": "All question types",
-    "labelMultipleChoice": "Multiple choice",
-    "labelMultipleResponse": "Multiple response",
-    "labelShortAnswer": "Short answer",
-    "labelEssay": "Essay",
-    "labelComposite": "Composite",
     "labelFetchingQuestion": "Fetching question",
     "labelFetchingQuestions": "Fetching questions",
     "labelQuestion": "question",
     "labelQuestions": "questions",
     "buttonResetFilter": "Reset",
-    "buttonApplyFilter": "Apply"
+    "buttonApplyFilter": "Apply",
+    "buttonAddOption": "Add option"
   }
 }

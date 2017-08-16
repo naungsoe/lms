@@ -21,7 +21,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("users")
+@Path("/users")
 public class UserController {
 
   private final Provider<Principal> principalProvider;
@@ -44,8 +44,9 @@ public class UserController {
       @PathParam("id") String id)
       throws IOException {
 
+    Principal principal = principalProvider.get();
     Optional<UserModel> userModelOptional
-        = userService.findBy(id, principalProvider.get());
+        = userService.findBy(id, principal);
 
     if (!userModelOptional.isPresent()) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);

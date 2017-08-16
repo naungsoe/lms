@@ -5,10 +5,10 @@ package com.hsystems.lms.repository.entity;
  */
 public enum ComponentType {
 
-  UNKNOWN,
-  FILE,
-  QUESTION,
-  SECTION,
+  LESSON,
   QUIZ,
-  LESSON
+  SECTION,
+  QUESTION,
+  FILE,
+  UNKNOWN
 }

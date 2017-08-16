@@ -7,13 +7,17 @@ import java.lang.reflect.Field;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 /**
  * Created by naungsoe on 13/8/16.
  */
 public final class ServletUtils {
 
-  private static final String HEADER_XFORWARDEDFOR = "X-FORWARDED-FOR";
+  private static final String ACCESS_TOKEN_HEADER = "X-ACCESS-TOKEN";
+  private static final String SESSION_TOKEN_HEADER = "X-SESSION-TOKEN";
+  private static final String CSRF_TOKEN_HEADER = "X-CSRF-TOKEN";
+  private static final String FORWARDED_HEADER = "X-FORWARDED-FOR";
 
   public static String getCookie(
       HttpServletRequest request, String name) {
@@ -50,8 +54,16 @@ public final class ServletUtils {
     return instance;
   }
 
+  public static String getAccessToken(HttpServletRequest request) {
+    return request.getHeader(ACCESS_TOKEN_HEADER);
+  }
+
+  public static String getSessionToken(HttpServletRequest request) {
+    return request.getHeader(SESSION_TOKEN_HEADER);
+  }
+
   public static String getRemoteAddress(HttpServletRequest request) {
-    String address = request.getHeader(HEADER_XFORWARDEDFOR);
+    String address = request.getHeader(FORWARDED_HEADER);
     return StringUtils.isEmpty(address) ? request.getRemoteAddr() : address;
   }
 }

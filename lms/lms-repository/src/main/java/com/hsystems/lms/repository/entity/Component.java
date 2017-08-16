@@ -5,7 +5,7 @@ import com.hsystems.lms.common.annotation.IndexCollection;
 /**
  * Created by naungsoe on 6/1/17.
  */
-@IndexCollection(name = "components")
+@IndexCollection(namespace = "lms", name = "components")
 public interface Component extends Entity {
 
   int getOrder();

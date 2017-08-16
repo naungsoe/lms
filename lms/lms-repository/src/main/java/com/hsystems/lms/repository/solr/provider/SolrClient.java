@@ -30,6 +30,11 @@ import java.util.Properties;
  */
 public class SolrClient {
 
+  private static final String FIELD_ID = "id";
+
+  private static final String ROUTE_FORMAT = "%s!";
+  private static final String COMPOSITE_ID_FORMAT = "%s!%s";
+
   private Properties properties;
 
   private volatile CloudSolrClient cloudClient;
@@ -50,12 +55,33 @@ public class SolrClient {
       CloudSolrClient client = getCloudClient();
       client.setDefaultCollection(collection);
 
+      String namespace = getNamespace(type);
+      String route = String.format(ROUTE_FORMAT, namespace);
+      query.getCriteria().forEach(criterion -> {
+            if (FIELD_ID.equals(criterion.getField())) {
+              List<Object> compositeIds = new ArrayList<>();
+              criterion.getValues().forEach(value -> {
+                String compositeId = String.format(
+                    COMPOSITE_ID_FORMAT, namespace, value);
+                compositeIds.add(compositeId);
+              });
+              criterion.setValues(compositeIds);
+            }
+          });
+
       QueryMapper mapper = new QueryMapper(type);
       SolrQuery solrQuery = mapper.map(query);
+      solrQuery.set("_route_", route);
+
       QueryResponse response = client.query(solrQuery);
       SolrDocumentList results = response.getResults();
-      List<T> entities = getEntities(results, type);
+      results.forEach(result -> {
+        String compositeId = (String) result.getFieldValue(FIELD_ID);
+        String id = compositeId.substring(route.length());
+        result.setField(FIELD_ID, id);
+      });
 
+      List<T> entities = getEntities(results, type);
       return new QueryResult<>(
           response.getElapsedTime(),
           results.getStart(),
@@ -91,10 +117,17 @@ public class SolrClient {
     return instance;
   }
 
+  private <T extends Entity> String getNamespace(Class<T> type) {
+    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+    String namespace = annotation.namespace();
+    return StringUtils.isEmpty(namespace) ? "default" : namespace;
+  }
+
   private <T extends Entity> String getCollection(Class<T> type) {
     IndexCollection annotation = type.getAnnotation(IndexCollection.class);
-    return StringUtils.isEmpty(annotation.name())
-        ? type.getSimpleName() : annotation.name();
+    String collection = annotation.name();
+    return StringUtils.isEmpty(collection)
+        ? type.getSimpleName() : collection;
   }
 
   protected <T extends Entity> List<T> getEntities(
@@ -128,6 +161,7 @@ public class SolrClient {
 
       for (Entity entity : entities) {
         SolrInputDocument document = mapper.map(entity);
+        updateDocumentId(document, entity);
         client.add(document);
       }
 
@@ -142,6 +176,15 @@ public class SolrClient {
     }
   }
 
+  public <T extends Entity> void updateDocumentId(
+      SolrInputDocument document, T entity) {
+
+    String namespace = getNamespace(entity.getClass());
+    String compositeId = String.format(
+        COMPOSITE_ID_FORMAT, namespace, entity.getId());
+    document.setField(FIELD_ID, compositeId);
+  }
+
   public <T extends Entity> void index(T entity)
       throws IOException {
 
@@ -152,6 +195,7 @@ public class SolrClient {
 
       DocumentMapper mapper = new DocumentMapper();
       SolrInputDocument document = mapper.map(entity);
+      updateDocumentId(document, entity);
       client.add(document);
       client.commit();
 

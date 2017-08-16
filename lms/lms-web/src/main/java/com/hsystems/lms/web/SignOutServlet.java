@@ -3,11 +3,12 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.model.SignInModel;
+import com.hsystems.lms.service.model.SignOutModel;
 import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,13 +22,11 @@ public class SignOutServlet extends BaseServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
 
-  private static final String SIGNIN_PATH = "/web/signin";
-
-  private final AuthenticationService authenticationService;
+  private final AuthenticationService authService;
 
   @Inject
-  SignOutServlet(AuthenticationService authenticationService) {
-    this.authenticationService = authenticationService;
+  SignOutServlet(AuthenticationService authService) {
+    this.authService = authService;
   }
 
   @Override
@@ -50,11 +49,14 @@ public class SignOutServlet extends BaseServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignInModel signInModel = ServletUtils.getModel(request, SignInModel.class);
-    authenticationService.signOut(signInModel);
+    SignOutModel signOutModel = ServletUtils.getModel(
+        request, SignOutModel.class);
+    authService.signOut(signOutModel);
 
+    ServletContext servletContext = request.getServletContext();
+    String signInUrl = servletContext.getInitParameter("signInUrl");
     clearUserSession(request, response);
-    redirectRequest(response, SIGNIN_PATH);
+    redirectRequest(response, signInUrl);
   }
 
   private void clearUserSession(

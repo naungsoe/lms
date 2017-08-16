@@ -7,11 +7,13 @@ import com.hsystems.lms.repository.entity.ComponentType;
 import com.hsystems.lms.repository.entity.FileComponent;
 import com.hsystems.lms.repository.entity.Lesson;
 import com.hsystems.lms.repository.entity.LessonComponent;
+import com.hsystems.lms.repository.entity.LessonSectionComponent;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionComponent;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.QuizComponent;
+import com.hsystems.lms.repository.entity.QuizSectionComponent;
 import com.hsystems.lms.repository.entity.SectionComponent;
 import com.hsystems.lms.repository.entity.special.UnknownComponent;
 
@@ -97,13 +99,32 @@ public class HBaseComponentMapper extends HBaseMapper<Component> {
       case SECTION:
         String title = getTitle(mainResult, timestamp);
         String instructions = getInstructions(mainResult, timestamp);
-        component = new SectionComponent(
-            id,
-            title,
-            instructions,
-            order,
-            Collections.emptyList()
-        );
+        ComponentType sectionType = getSectionType(
+            mainResult, timestamp, ComponentType.class);
+
+        switch (sectionType) {
+          case LESSON:
+            component = new LessonSectionComponent(
+                id,
+                title,
+                instructions,
+                order,
+                Collections.emptyList()
+            );
+            break;
+          case QUIZ:
+            component = new QuizSectionComponent(
+                id,
+                title,
+                instructions,
+                order,
+                Collections.emptyList()
+            );
+            break;
+          default:
+            component = new UnknownComponent();
+            break;
+        }
         break;
       case QUESTION:
         Question question = getQuestion(results, id, timestamp);

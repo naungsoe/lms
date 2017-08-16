@@ -11,8 +11,9 @@ public enum EntityType {
   SUBJECT,
   GROUP,
   USER,
-  QUESTION,
-  COMPONENT,
+  LESSON,
   QUIZ,
-  LESSON
+  COMPONENT,
+  QUESTION,
+  FILE
 }

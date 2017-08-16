@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(name = "mutations")
+@IndexCollection(namespace = "lms", name = "mutations")
 public class Mutation implements Entity, Serializable {
 
   private static final long serialVersionUID = 6681526004482435421L;

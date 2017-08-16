@@ -1,9 +1,20 @@
 {
   "en_US": {
     "menuHome": "Home",
+    "menuAssignments": "Assignments",
+    "menuLessons": "Lessons",
     "menuQuizzes": "Quizzes",
     "menuQuestions": "Questions",
     "menuStorage": "Storage",
-    "menuSignOut": "Sign out"
+    "menuSignOut": "Sign out",
+    "labelMultipleChoice": "Multiple choice",
+    "labelMultipleResponse": "Multiple response",
+    "labelShortAnswer": "Short answer",
+    "labelEssay": "Essay",
+    "labelComposite": "Composite",
+    "labelUnknown": "Unknown",
+    "labelKeywords": "Keywords",
+    "labelCreatedDate": "Created",
+    "labelModifiedDate": "Modified"
   }
 }

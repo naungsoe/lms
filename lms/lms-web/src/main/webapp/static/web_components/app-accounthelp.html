@@ -1,0 +1,120 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/paper-radio-group/paper-radio-group.html">
+<link rel="import" href="../bower_components/paper-radio-button/paper-radio-button.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="app-accounthelp">
+  <template>
+    <style>
+      .form-content section {
+        padding: 0 16px;
+      }
+
+      .form-content section [title] {
+        @apply --paper-font-subhead;
+        margin: 16px 0 4px 0;
+      }
+
+      .form-content section .section-content {
+        @apply --layout-vertical;
+      }
+
+      .form-content section .section-actions {
+        padding: 12px 0;
+      }
+
+      paper-radio-group {
+        @apply --layout-vertical;
+      }
+
+      paper-radio-group paper-radio-button {
+        padding: 12px 0;
+      }
+    </style>
+
+    <form
+        method="post"
+        action="[[actionUrl]]"
+        content-type="application/json">
+      <div class="form-content">
+        <section>
+          <h4 title>
+            [[localize('labelIssues')]]
+          </h4>
+
+          <div class="section-content">
+            <paper-radio-group>
+              <paper-radio-button name="id">
+                Forgot my id
+              </paper-radio-button>
+
+              <paper-radio-button name="password">
+                Forgot my password
+              </paper-radio-button>
+            </paper-radio-group>
+          </div>
+
+          <div class="section-actions">
+            <paper-button raised
+                on-tap="_handleContinueTap">
+              [[localize('buttonRecoverAccount')]]
+            </paper-button>
+          </div>
+        </section>
+      </div>
+    </form>
+  </template>
+
+  <script>
+    const AppAccountHelpBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class AppAccountHelp extends AppAccountHelpBase {
+      static get is() {
+        return 'app-accounthelp';
+      }
+
+      static get properties() {
+        return {
+          captchaUrl: {
+            type: String,
+            readOnly: true,
+            notify: true
+          },
+          accountHelpUrl: {
+            type: String,
+            readOnly: true,
+            notify: true
+          },
+          actionUrl: {
+            type: String,
+            readOnly: true,
+            notify: true
+          },
+          captchaRequired: {
+            type: String,
+            readOnly: true,
+            notify: true
+          },
+          account: {
+            type: String,
+            readOnly: true,
+            notify: true
+          },
+          error: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _handleContinueTap(event) {
+
+      }
+    }
+    customElements.define(AppAccountHelp.is, AppAccountHelp);
+  </script>
+</dom-module>

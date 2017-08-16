@@ -2,17 +2,19 @@ package com.hsystems.lms.repository.entity;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(name = "schools")
+@IndexCollection(namespace = "lms", name = "schools")
 public class School extends Auditable implements Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;
@@ -92,8 +94,10 @@ public class School extends Auditable implements Serializable {
     return dateTimeFormat;
   }
 
-  public List<Permission> getPermissions() {
-    return Collections.unmodifiableList(permissions);
+  public Enumeration<Permission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(permissions);
   }
 
   @Override

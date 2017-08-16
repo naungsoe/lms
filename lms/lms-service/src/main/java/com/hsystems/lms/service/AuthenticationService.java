@@ -15,6 +15,7 @@ import com.hsystems.lms.repository.entity.SignInLog;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignInModel;
+import com.hsystems.lms.service.model.SignOutModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -48,7 +49,7 @@ public class AuthenticationService extends BaseService {
   public Optional<UserModel> signIn(SignInModel signInModel)
       throws IOException {
 
-    Optional<User> userOptional = findUserBy(signInModel.getId());
+    Optional<User> userOptional = findUserBy(signInModel.getAccount());
 
     if (!userOptional.isPresent()) {
       return Optional.empty();
@@ -87,7 +88,7 @@ public class AuthenticationService extends BaseService {
 
     String hashedPassword = SecurityUtils.getPassword(
         signInModel.getPassword(), user.getSalt());
-    return user.getAccount().equals(signInModel.getId())
+    return user.getAccount().equals(signInModel.getAccount())
         && user.getPassword().equals(hashedPassword);
   }
 
@@ -96,6 +97,7 @@ public class AuthenticationService extends BaseService {
 
     SignInLog signInLog = new SignInLog(
         user.getId(),
+        signInModel.getAccount(),
         signInModel.getSessionId(),
         signInModel.getIpAddress(),
         LocalDateTime.now(),
@@ -119,6 +121,7 @@ public class AuthenticationService extends BaseService {
     if (signInLogOptional.isPresent()) {
       signInLog = new SignInLog(
           user.getId(),
+          signInModel.getAccount(),
           signInModel.getSessionId(),
           signInModel.getIpAddress(),
           LocalDateTime.now(),
@@ -127,6 +130,7 @@ public class AuthenticationService extends BaseService {
     } else {
       signInLog = new SignInLog(
           user.getId(),
+          signInModel.getAccount(),
           signInModel.getSessionId(),
           signInModel.getIpAddress(),
           LocalDateTime.now(),
@@ -138,10 +142,10 @@ public class AuthenticationService extends BaseService {
   }
 
   @Log(LoggerType.SIGNIN)
-  public boolean isCaptchaRquired(SignInModel signInModel)
+  public boolean isCaptchaRequired(SignInModel signInModel)
       throws IOException {
 
-    Optional<User> userOptional = findUserBy(signInModel.getId());
+    Optional<User> userOptional = findUserBy(signInModel.getAccount());
 
     if (!userOptional.isPresent()) {
       return false;
@@ -162,7 +166,7 @@ public class AuthenticationService extends BaseService {
   }
 
   @Log(LoggerType.SIGNIN)
-  public void signOut(SignInModel signInModel) {
+  public void signOut(SignOutModel signOutModel) {
     // clear sign in
   }
 
@@ -170,12 +174,24 @@ public class AuthenticationService extends BaseService {
   public Optional<UserModel> findSignedInUserBy(SignInModel signInModel)
       throws IOException {
 
-    Optional<User> userOptional = findUserBy(signInModel.getId());
+    String account = signInModel.getAccount();
+    Optional<SignInLog> signInLogOptional = findSignInLogBy(account);
 
-    if (!userOptional.isPresent()) {
+    if (!signInLogOptional.isPresent()) {
       return Optional.empty();
     }
 
+    SignInLog signInLog = signInLogOptional.get();
+    String sessionId = signInLog.getSessionId();
+    String ipAddress = signInLog.getIpAddress();
+
+    if (!sessionId.equals(signInModel.getSessionId())
+        || !ipAddress.equals(signInModel.getIpAddress())) {
+
+      return Optional.empty();
+    }
+
+    Optional<User> userOptional = findUserBy(account);
     User user = userOptional.get();
     return Optional.of(getUserModel(user));
     /*User user = userOptional.get();
@@ -193,17 +209,35 @@ public class AuthenticationService extends BaseService {
     return Optional.empty();*/
   }
 
+  private Optional<SignInLog> findSignInLogBy(String account)
+      throws IOException {
+
+    Query query = Query.create();
+    query.addCriterion(Criterion.createEqual("account", account));
+    QueryResult<SignInLog> queryResult
+        = indexRepository.findAllBy(query, SignInLog.class);
+
+    if (CollectionUtils.isEmpty(queryResult.getItems())) {
+      return Optional.empty();
+    }
+
+    SignInLog signInLog = queryResult.getItems().get(0);
+    return Optional.of(signInLog);
+  }
+
   @Log(LoggerType.SIGNIN)
   public void saveSignIn(SignInModel signInModel, UserModel userModel)
       throws IOException {
 
     SignInLog signInLog = new SignInLog(
         userModel.getId(),
+        signInModel.getAccount(),
         signInModel.getSessionId(),
         signInModel.getIpAddress(),
         LocalDateTime.now(),
         0
     );
     signInLogRepository.save(signInLog);
+    indexRepository.save(signInLog);
   }
 }

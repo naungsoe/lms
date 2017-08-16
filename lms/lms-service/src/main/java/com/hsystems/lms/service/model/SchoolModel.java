@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SchoolModel implements Serializable {
 
   private static final long serialVersionUID = -8371629223750518583L;

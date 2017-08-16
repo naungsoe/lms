@@ -1,0 +1,183 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/iron-form/iron-form.html">
+<link rel="import" href="../bower_components/paper-card/paper-card.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="app-signin">
+  <template>
+    <style>
+      paper-card {
+        --paper-card-header-text: {
+          background-color: var(--primary-color);
+          color: white;
+        };
+        width: 320px;
+      }
+
+      paper-card .card-content .error-credential {
+        color: var(--error-color);
+      }
+
+      paper-card .card-actions {
+        border-top: 0;
+        padding-bottom: 16px;
+      }
+
+      paper-card .card-actions paper-button[primary] {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      paper-input:not(:first-child) {
+        margin-top: 8px
+      }
+    </style>
+
+    <iron-form allow-redirect>
+      <form
+          method="post"
+          action="[[actionUrl]]">
+        <paper-card
+            heading="[[localize('titleCard')]]"
+            alt="[[localize('titleCard')]]">
+          <div class="card-content">
+            <paper-input required autofocus no-label-float
+                name="account"
+                label="[[localize('inputLabelId')]]"
+                value="{{account}}"
+                type="text"
+                autocomplete="off"
+                error-message="[[localize('errorIdRequired')]]"
+                on-keydown="_handleInputKeydown">
+            </paper-input>
+
+            <paper-input required no-label-float
+                name="password"
+                label="[[localize('inputLabelPassword')]]"
+                value="{{password}}"
+                type="password"
+                autocomplete="new-password"
+                error-message="[[localize('errorPasswordRequired')]]"
+                on-keydown="_handleInputKeydown">
+            </paper-input>
+
+            <template is="dom-if" if="[[captchaRequired]]">
+              <br/>
+              <img src="[[restRoot]]/account/captcha"
+                  alt="[[localize('labelAltCaptcha')]]"/>
+
+              <paper-input required no-label-float
+                  name="captcha"
+                  label="[[localize('inputLabelCaptcha')]]"
+                  value="{{captcha}}"
+                  type="text"
+                  autocomplete="off"
+                  error-message="[[localize('errorCaptchaRequired')]]"
+                  on-keydown="_handleInputKeydown">
+              </paper-input>
+            </template>
+
+            <template is="dom-if" if="[[error]]">
+              <div class="error-credential">
+                [[localize('errorCredential')]]
+              </div>
+            </template>
+          </div>
+
+          <div class="card-actions">
+            <paper-button primary
+                on-tap="_handleSignInTap">
+              [[localize('buttonSignIn')]]
+            </paper-button>
+
+            <paper-button on-tap="_handleAccountHelpTap">
+              [[localize('buttonAccountHelp')]]
+            </paper-button>
+          </div>
+        </paper-card>
+      </form>
+    </iron-form>
+  </template>
+
+  <script>
+    const AppSignInBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class AppSignIn extends AppSignInBase {
+      static get is() {
+        return 'app-signin';
+      }
+
+      static get properties() {
+        return {
+          captchaUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          captchaRequired: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          },
+          accountHelpUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          actionUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          account: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          error: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _handleInputKeydown(event) {
+        if (event.keyCode === 13) {
+          this._handleSignInTap(event);
+        }
+      }
+
+      _handleSignInTap(event) {
+        let root = this.shadowRoot;
+        let account = root.querySelector('[name=account]');
+        let valid = account.validate();
+
+        let password = root.querySelector('[name=password]');
+        valid = password.validate() && valid;
+
+        let captcha = root.querySelector('[name=captcha]');
+
+        if ((captcha !== null) && captcha.validate) {
+          valid = captcha.validate() && valid;
+        }
+
+        if (valid) {
+          let form = root.querySelector('iron-form');
+          form.submit();
+
+        } else {
+          this.error = '';
+        }
+      }
+
+      _handleAccountHelpTap(event) {
+        window.location = this.accountHelpUrl;
+      }
+    }
+    customElements.define(AppSignIn.is, AppSignIn);
+  </script>
+</dom-module>

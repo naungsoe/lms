@@ -6,6 +6,7 @@ import com.google.inject.Singleton;
 import com.hsystems.lms.web.webapi.AccountController;
 import com.hsystems.lms.web.webapi.FilterController;
 import com.hsystems.lms.web.webapi.IndexController;
+import com.hsystems.lms.web.webapi.LessonController;
 import com.hsystems.lms.web.webapi.LocaleController;
 import com.hsystems.lms.web.webapi.QuestionController;
 import com.hsystems.lms.web.webapi.QuizController;
@@ -24,6 +25,7 @@ public class WebAPIModule extends AbstractModule {
     bind(AccountController.class).in(Singleton.class);
     bind(SchoolController.class).in(Singleton.class);
     bind(UserController.class).in(Singleton.class);
+    bind(LessonController.class).in(Singleton.class);
     bind(QuizController.class).in(Singleton.class);
     bind(QuestionController.class).in(Singleton.class);
     bind(IndexController.class).in(Singleton.class);

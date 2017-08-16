@@ -5,6 +5,7 @@ import com.google.inject.Singleton;
 
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.ComponentRepository;
+import com.hsystems.lms.repository.FileRepository;
 import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
@@ -13,12 +14,13 @@ import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SchoolRepository;
-import com.hsystems.lms.repository.ShareRepository;
+import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseComponentRepository;
+import com.hsystems.lms.repository.hbase.HBaseFileRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
 import com.hsystems.lms.repository.hbase.HBaseLessonRepository;
 import com.hsystems.lms.repository.hbase.HBaseLevelRepository;
@@ -26,7 +28,7 @@ import com.hsystems.lms.repository.hbase.HBaseMutationRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuizRepository;
 import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
-import com.hsystems.lms.repository.hbase.HBaseShareRepository;
+import com.hsystems.lms.repository.hbase.HBaseShareLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSignInLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSubjectRepository;
 import com.hsystems.lms.repository.hbase.HBaseUserRepository;
@@ -36,6 +38,8 @@ import com.hsystems.lms.repository.solr.SolrIndexRepository;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
 import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.service.ComponentService;
+import com.hsystems.lms.service.LessonService;
 import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.QuizService;
@@ -56,7 +60,7 @@ public class ServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)
         .in(Singleton.class);
-    bind(ShareRepository.class).to(HBaseShareRepository.class)
+    bind(ShareLogRepository.class).to(HBaseShareLogRepository.class)
         .in(Singleton.class);
     bind(SchoolRepository.class).to(HBaseSchoolRepository.class)
         .in(Singleton.class);
@@ -76,6 +80,8 @@ public class ServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(QuestionRepository.class).to(HBaseQuestionRepository.class)
         .in(Singleton.class);
+    bind(FileRepository.class).to(HBaseFileRepository.class)
+        .in(Singleton.class);
     bind(SignInLogRepository.class).to(HBaseSignInLogRepository.class)
         .in(Singleton.class);
     bind(SolrClient.class).toProvider(SolrClientProvider.class)
@@ -88,7 +94,9 @@ public class ServiceModule extends AbstractModule {
     bind(LevelService.class).in(Singleton.class);
     bind(SubjectService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);
+    bind(LessonService.class).in(Singleton.class);
     bind(QuizService.class).in(Singleton.class);
+    bind(ComponentService.class).in(Singleton.class);
     bind(QuestionService.class).in(Singleton.class);
   }
 }

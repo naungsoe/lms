@@ -14,12 +14,12 @@ import java.util.Arrays;
  */
 public class LogInterceptor implements MethodInterceptor {
 
+  private final static String MESSAGE_FORMAT
+      = "Invocation of %s.%s with parameters %s";
+
   private final static Logger rootLogger = LogManager.getRootLogger();
 
   private final static Logger signInLogger = LogManager.getLogger("SignInLog");
-
-  private final static String messageFormat
-      = "Invocation of %s.%s with parameters %s";
 
   public Object invoke(MethodInvocation invocation)
       throws Throwable {
@@ -35,28 +35,6 @@ public class LogInterceptor implements MethodInterceptor {
     }
   }
 
-  private void logError(MethodInvocation invocation, Exception e) {
-    Log annotation = invocation.getMethod()
-        .getDeclaredAnnotation(Log.class);
-    String message = getMessage(invocation);
-
-    switch (annotation.value()) {
-      case SIGNIN:
-        signInLogger.error(message, e);
-        break;
-      default:
-        rootLogger.error(message, e);
-        break;
-    }
-  }
-
-  private String getMessage(MethodInvocation invocation) {
-    String type = invocation.getThis().getClass().getName();
-    String method = invocation.getMethod().getName();
-    String arguments = Arrays.toString(invocation.getArguments());
-    return String.format(messageFormat, type, method, arguments);
-  }
-
   private void logInfo(MethodInvocation invocation) {
     Log annotation = invocation.getMethod()
         .getDeclaredAnnotation(Log.class);
@@ -68,6 +46,28 @@ public class LogInterceptor implements MethodInterceptor {
         break;
       default:
         rootLogger.info(message);
+        break;
+    }
+  }
+
+  private String getMessage(MethodInvocation invocation) {
+    String type = invocation.getThis().getClass().getName();
+    String method = invocation.getMethod().getName();
+    String arguments = Arrays.toString(invocation.getArguments());
+    return String.format(MESSAGE_FORMAT, type, method, arguments);
+  }
+
+  private void logError(MethodInvocation invocation, Exception e) {
+    Log annotation = invocation.getMethod()
+        .getDeclaredAnnotation(Log.class);
+    String message = getMessage(invocation);
+
+    switch (annotation.value()) {
+      case SIGNIN:
+        signInLogger.error(message, e);
+        break;
+      default:
+        rootLogger.error(message, e);
         break;
     }
   }

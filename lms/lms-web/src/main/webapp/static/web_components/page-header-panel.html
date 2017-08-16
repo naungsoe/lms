@@ -1,0 +1,78 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="page-header-panel">
+  <template>
+    <style>
+      .page-header {
+        background-color: white;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 64px;
+        z-index: 2;
+        width: 100%;
+      }
+
+      .page-header::before {
+        bottom: -5px;
+        box-shadow: inset 0 5px 6px -3px rgba(0, 0, 0, 0.4);
+        content: "";
+        height: 5px;
+        left: 0;
+        opacity: 0;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        transition: opacity 0.4s;
+      }
+
+      .page-header[shadow]::before {
+        opacity: 1;
+      }
+
+      .page-content {
+        margin: 0 auto;
+        max-width: 800px;
+        padding-top: 64px;
+        width: 100%;
+      }
+    </style>
+
+    <div class="page-content">
+      <slot></slot>
+    </div>
+
+    <div class="page-header">
+      <slot name="page-header"></slot>
+    </div>
+  </template>
+
+  <script>
+    class PageHeaderPanel extends Polymer.Element {
+      static get is() {
+        return 'page-header-panel';
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        let boundHandleScroll = this._handleScroll.bind(this);
+        document.addEventListener('scroll', boundHandleScroll);
+      }
+
+      _handleScroll(event) {
+        let root = this.shadowRoot;
+        let header = root.querySelector('.page-header');
+
+        if (window.pageYOffset > 0) {
+          if (!header.hasAttribute('shadow')) {
+            header.setAttribute('shadow', '');
+          }
+        } else if (header.hasAttribute('shadow')) {
+          header.removeAttribute('shadow');
+        }
+      }
+    }
+    customElements.define(PageHeaderPanel.is, PageHeaderPanel);
+  </script>
+</dom-module>

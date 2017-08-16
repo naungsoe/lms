@@ -13,7 +13,7 @@ import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;

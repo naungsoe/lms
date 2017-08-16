@@ -8,12 +8,13 @@ import com.hsystems.lms.common.util.StringUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(name = "groups")
+@IndexCollection(namespace = "lms", name = "groups")
 public class Group extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 2420329732282197342L;
@@ -76,16 +77,16 @@ public class Group extends Auditable implements Serializable {
     return name;
   }
 
-  public List<Permission> getPermissions() {
+  public Enumeration<Permission> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(permissions);
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(permissions);
   }
 
-  public List<User> getMembers() {
+  public Enumeration<User> getMembers() {
     return CollectionUtils.isEmpty(members)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(members);
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(members);
   }
 
   public School getSchool() {

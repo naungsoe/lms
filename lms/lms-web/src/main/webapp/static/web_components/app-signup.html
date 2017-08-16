@@ -1,0 +1,188 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="app-signup">
+  <template>
+    <style>
+      .form-content {
+        @apply --layout-horizontal;
+      }
+
+      .form-content section {
+        min-width: 280px;
+        padding: 0 16px;
+      }
+
+      .form-content section [title] {
+        @apply --paper-font-subhead;
+        margin: 16px 0 0 0;
+      }
+
+      .form-content section .section-content {
+        @apply --layout-vertical;
+      }
+
+      .form-actions {
+        padding: 16px;
+      }
+
+      paper-dropdown-menu {
+        --paper-input-container: {
+          padding: 4px 0 8px 0;
+        };
+      }
+
+      @media (max-width: 624px) {
+        .form-content {
+          @apply --layout-vertical;
+        }
+
+        .form-content section:not(:first-child) {
+          margin-left: 0;
+          padding-top: 16px;
+        }
+      }
+    </style>
+
+    <form
+        method="post"
+        action="[[actionUrl]]"
+        content-type="application/json">
+      <div class="form-content">
+        <section>
+          <h4 title>
+            [[localize('titleAccountDetails')]]
+          </h4>
+
+          <div class="section-content">
+            <paper-input required autofocus
+                name="id"
+                label="[[localize('inputLabelId')]]"
+                value="{{id}}"
+                error-message="[[localize('errorIdRequired')]]">
+            </paper-input>
+
+            <paper-input required
+                name="password"
+                label="[[localize('inputLabelPassword')]]"
+                type="password"
+                value="{{password}}"
+                error-message="[[localize('errorPasswordRequired')]]">
+            </paper-input>
+
+            <paper-input required
+                name="confirmPassword"
+                label="[[localize('inputLabelConfirmPassword')]]"
+                type="password"
+                value="{{confirmPassword}}"
+                error-message="[[localize('errorConfirmPasswordRequired')]]">
+            </paper-input>
+
+            <paper-input required
+                name="email"
+                label="[[localize('inputLabelEmail')]]"
+                value="{{email}}"
+                error-message="[[localize('errorEmailFormat')]]">
+            </paper-input>
+
+            <paper-input required
+                name="mobile"
+                label="[[localize('inputLabelMobile')]]"
+                value="{{mobile}}"
+                error-message="[[localize('errorMobileFormat')]]">
+            </paper-input>
+          </div>
+        </section>
+
+        <section>
+          <h4 title>
+            [[localize('titleParticulars')]]
+          </h4>
+
+          <div class="section-content">
+            <paper-input required
+                name="firstName"
+                label="[[localize('inputLabelFirstName')]]"
+                value="{{firstName}}"
+                error-message="[[localize('errorFirstNameRequired')]]">
+            </paper-input>
+
+            <paper-input required
+                name="lastName"
+                label="[[localize('inputLabelLastName')]]"
+                value="{{lastName}}"
+                error-message="[[localize('errorLastNameRequired')]]">
+            </paper-input>
+
+            <paper-input
+                name="birthday"
+                label="[[localize('inputLabelBirthday')]]"
+                value="{{birthday}}"
+                pattern="[[datePattern]]"
+                error-message="[[localize('errorBirthdayRequired')]]">
+            </paper-input>
+
+            <paper-dropdown-menu
+                label="[[localize('dropdownLabelGender')]]">
+              <paper-listbox slot="dropdown-content">
+                <paper-item>
+                  [[localize('labelGenderFemale')]]
+                </paper-item>
+
+                <paper-item>
+                  [[localize('labelGenderMale')]]
+                </paper-item>
+
+                <paper-item>
+                  [[localize('labelGenderOther')]]
+                </paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+        </section>
+      </div>
+
+      <div class="form-actions">
+        <paper-button raised>
+          [[localize('buttonSignUp')]]
+        </paper-button>
+      </div>
+    </form>
+  </template>
+
+  <script>
+    const AppSignUpBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class AppSignUp extends AppSignUpBase {
+      static get is() {
+        return 'app-signup';
+      }
+
+      static get properties() {
+        return {
+          actionUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          datePattern: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          error: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(AppSignUp.is, AppSignUp);
+  </script>
+</dom-module>

@@ -81,6 +81,7 @@ public class HBaseLessonMapper extends HBaseMapper<Lesson> {
         levels,
         subjects,
         keywords,
+        Collections.emptyList(),
         createdBy,
         createdDateTime,
         modifiedBy,

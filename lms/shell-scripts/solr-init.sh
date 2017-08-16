@@ -9,9 +9,10 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/schools/schema
 
 
@@ -23,9 +24,10 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/levels/schema
 
 
@@ -37,9 +39,10 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/subjects/schema
 
 
@@ -62,10 +65,29 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/users/schema
+
+
+solr-6.2.1/bin/solr delete -c quizzes
+solr-6.2.1/bin/solr create -c quizzes
+curl -X POST -H 'Content-type:application/json' --data-binary '{
+  "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"keywords","type":"strings","indexed":false,"stored":true},
+  "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
+}' http://localhost:8983/solr/quizzes/schema
 
 
 solr-6.2.1/bin/solr delete -c questions
@@ -84,32 +106,17 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/questions/schema
-
-
-solr-6.2.1/bin/solr delete -c quizzes
-solr-6.2.1/bin/solr create -c quizzes
-curl -X POST -H 'Content-type:application/json' --data-binary '{
-  "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"keywords","type":"strings","indexed":false,"stored":true},
-  "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
-  "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
-  "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/quizzes/schema
 
 
 solr-6.2.1/bin/solr delete -c components
 solr-6.2.1/bin/solr create -c components
 curl -X POST -H 'Content-type:application/json' --data-binary '{
+  "add-field":{"name":"containerId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"type","type":"string","indexed":true,"stored":true},
@@ -119,7 +126,20 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"feedback","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"correct","type":"boolean","indexed":false,"stored":true},
   "add-field":{"name":"order","type":"int","indexed":false,"stored":true},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/components/schema
+
+
+solr-6.2.1/bin/solr delete -c signinlogs
+solr-6.2.1/bin/solr create -c signinlogs
+curl -X POST -H 'Content-type:application/json' --data-binary '{
+  "add-field":{"name":"account","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"sessionId","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"ipAddress","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"dateTime","type":"date","indexed":false,"stored":true},
+  "add-field":{"name":"fails","type":"int","indexed":false,"stored":true},
+  "add-field":{"name":"typeName","type":"string","indexed":false,"stored":true}
+}' http://localhost:8983/solr/signinlogs/schema

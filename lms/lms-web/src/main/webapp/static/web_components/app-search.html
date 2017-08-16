@@ -1,0 +1,129 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../bower_components/paper-button/paper-button.html">
+
+<dom-module id="app-search">
+  <template>
+    <style>
+      :host {
+        @apply --layout-horizontal;
+      }
+
+      :host([active]) iron-input {
+        -webkit-transition: width 200ms;
+        transition: width 200ms;
+        width: 160px;
+      }
+
+      :host([active]) paper-icon-button {
+        background-color: white;
+        color: var(--paper-grey-700);
+      }
+
+      iron-input {
+        overflow: hidden;
+        width: 0;
+      }
+
+      iron-input input {
+        @apply --paper-font-subhead;
+        border: 0;
+        outline: none;
+        padding: 8px 0 8px 8px;
+        max-width: 152px;
+      }
+
+      paper-icon-button {
+        color: white;
+      }
+    </style>
+
+    <iron-input on-keydown="_handleInputKeydown">
+      <input/>
+    </iron-input>
+
+    <paper-icon-button
+        icon="search"
+        on-tap="_handleSearchTap">
+    </paper-icon-button>
+  </template>
+
+  <script>
+    const AppSearchBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class AppSearch extends AppSearchBase {
+      static get is() {
+        return 'app-search';
+      }
+
+      static get properties() {
+        return {
+          queryFields: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          query: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          showing: {
+            type: Boolean,
+            readOnly: false,
+            value: false
+          }
+        };
+      }
+
+      connectedCallback() {
+        super.connectedCallback();
+
+        let boundHandleComponentTap = this._handleComponentTap.bind(this);
+        this.addEventListener('tap', boundHandleComponentTap);
+        document.addEventListener('tap', boundHandleComponentTap);
+      }
+
+      _handleInputKeydown(event) {
+        if (event.keyCode === 13) {
+          this._handleSearchTap(event);
+        }
+      }
+
+      _handleComponentTap(event) {
+        if (event.target === this) {
+          event.stopPropagation();
+
+        } else if (this.showing) {
+          this.removeAttribute('active');
+          this.showing = false;
+        }
+      }
+
+      _handleSearchTap(event) {
+        let root = this.shadowRoot;
+        let input = root.querySelector('iron-input');
+
+        if (this.showing) {
+          let query = input.value;
+
+          if (query.trim() === '') {
+            input.querySelector('input').focus();
+
+          } else {
+            this.removeAttribute('active');
+            this.showing = false;
+            this.query = this.queryFields + ':LIKE ' + query;
+          }
+        } else {
+          input.querySelector('input').focus();
+          this.setAttribute('active', '');
+          this.showing = true;
+        }
+      }
+    }
+    customElements.define(AppSearch.is, AppSearch);
+  </script>
+</dom-module>

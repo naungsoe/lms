@@ -41,12 +41,18 @@ public class ModelMapper extends Mapper {
       fieldOptional = getField(sourceFields, fieldNameToken);
     }
 
+    if (!fieldOptional.isPresent()) {
+      return null;
+    }
+
+    Field field = fieldOptional.get();
+
     if (CollectionUtils.isEmpty(fieldNameTokens)) {
-      return (S) getFieldValue(source, fieldOptional.get(), type);
+      return (S) getFieldValue(source, field, type);
     }
 
     Object compositeInstance = ReflectionUtils.getValue(
-        source, fieldOptional.get(), Object.class);
+        source, field, Object.class);
 
     if (compositeInstance == null) {
       return null;

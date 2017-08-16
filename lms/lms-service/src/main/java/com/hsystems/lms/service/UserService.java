@@ -19,6 +19,7 @@ import com.hsystems.lms.service.model.UserModel;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -62,12 +63,12 @@ public class UserService extends BaseService {
 
     checkSignUpPreconditions(signUpModel);
 
-    User user = getUser(signUpModel);
+    User user = createUser(signUpModel);
   }
 
   private void checkSignUpPreconditions(SignUpModel signUpModel) {
     CommonUtils.checkArgument(
-        StringUtils.isNotEmpty(signUpModel.getId()),
+        StringUtils.isNotEmpty(signUpModel.getAccount()),
         "id cannot be empty");
     CommonUtils.checkArgument(
         StringUtils.isNotEmpty(signUpModel.getPassword()),
@@ -83,7 +84,7 @@ public class UserService extends BaseService {
         "last name cannot be empty");
   }
 
-  private User getUser(SignUpModel signUpModel) throws IOException {
+  private User createUser(SignUpModel signUpModel) throws IOException {
     String schoolId = properties.getProperty("app.default.school.id");
     String groupId = properties.getProperty("app.default.group.id");
     Optional<School> schoolOptional
@@ -113,7 +114,7 @@ public class UserService extends BaseService {
 
     return new User(
         CommonUtils.genUniqueKey(),
-        signUpModel.getId(),
+        signUpModel.getAccount(),
         hashedPassword,
         randomSalt,
         signUpModel.getFirstName(),
@@ -125,7 +126,7 @@ public class UserService extends BaseService {
         school.getLocale(),
         school.getDateFormat(),
         school.getDateTimeFormat(),
-        group.getPermissions(),
+        Collections.list(group.getPermissions()),
         school,
         Arrays.asList(group),
         createdBy,

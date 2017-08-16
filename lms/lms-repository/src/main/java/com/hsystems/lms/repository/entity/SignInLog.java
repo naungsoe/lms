@@ -8,12 +8,14 @@ import java.time.LocalDateTime;
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(name = "signinlogs")
+@IndexCollection(namespace = "lms", name = "signinlogs")
 public class SignInLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 6681526004482435421L;
 
   private String id;
+
+  private String account;
 
   private String sessionId;
 
@@ -29,12 +31,14 @@ public class SignInLog implements Entity, Serializable {
 
   public SignInLog(
       String id,
+      String account,
       String sessionId,
       String ipAddress,
       LocalDateTime dateTime,
       int fails) {
 
     this.id = id;
+    this.account = account;
     this.sessionId = sessionId;
     this.ipAddress = ipAddress;
     this.dateTime = dateTime;
@@ -44,6 +48,10 @@ public class SignInLog implements Entity, Serializable {
   @Override
   public String getId() {
     return id;
+  }
+
+  public String getAccount() {
+    return account;
   }
 
   public String getSessionId() {
@@ -66,6 +74,7 @@ public class SignInLog implements Entity, Serializable {
   public int hashCode() {
     int prime = 31;
     int result = id.hashCode();
+    result = result * prime + account.hashCode();
     result = result * prime + sessionId.hashCode();
     result = result * prime + ipAddress.hashCode();
     result = result * prime + dateTime.hashCode();
@@ -81,16 +90,15 @@ public class SignInLog implements Entity, Serializable {
     SignInLog signInLog = (SignInLog) obj;
 
     return id.equals(signInLog.getId())
-        && sessionId.equals(signInLog.getSessionId())
-        && ipAddress.equals(signInLog.getIpAddress())
-        && (fails == signInLog.getFails())
-        && dateTime.equals(signInLog.getDateTime());
+        && account.equals(signInLog.getSessionId())
+        && sessionId.equals(signInLog.getSessionId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "SignInLog{id=%s, sessionId=%s, ipAddress=%s, fails=%s, dateTime=%s}",
-        id, sessionId, ipAddress, fails, dateTime);
+        "SignInLog{id=%s, account=%s, sessionId=%s, "
+            + "ipAddress=%s, fails=%s, dateTime=%s}",
+        id, account, sessionId, ipAddress, fails, dateTime);
   }
 }

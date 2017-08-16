@@ -1,611 +1,646 @@
-disable 'permissions'
-drop 'permissions'
-create 'permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'permissions', 'VIEW_HOME', 'd:name', 'View Home', 1480299712295
-put 'permissions', 'VIEW_ASSIGNMENTS', 'd:name', 'View Assignments', 1480299712295
-put 'permissions', 'VIEW_QUESTIONS', 'd:name', 'View Questions', 1480299712295
-put 'permissions', 'EDIT_QUESTION', 'd:name', 'Create Question', 1480299712295
-put 'permissions', 'VIEW_USERS', 'd:name', 'View Users', 1480299712295
-put 'permissions', 'EDIT_USER', 'd:name', 'Create School', 1480299712295
-put 'permissions', 'VIEW_GROUPS', 'd:name', 'View Groups', 1480299712295
-put 'permissions', 'EDIT_GROUP', 'd:name', 'Create Group', 1480299712295
-put 'permissions', 'VIEW_SCHOOLS', 'd:name', 'View Schools', 1480299712295
-put 'permissions', 'EDIT_SCHOOL', 'd:name', 'Create School', 1480299712295
-
-
-disable 'schools'
-drop 'schools'
-create 'schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'schools', 'c784ae9', 'd:name', 'Open School', 1480299712295
-put 'schools', 'c784ae9', 'd:locale', 'en_US', 1480299712295
-put 'schools', 'c784ae9', 'd:permissions', 'VIEW_HOME|VIEW_ASSIGNMENTS|VIEW_QUESTIONS|EDIT_QUESTION|VIEW_USERS|EDIT_USER|VIEW_GROUPS|EDIT_GROUP', 1480299712295
-put 'schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'levels'
-drop 'levels'
-create 'levels', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'levels', 'c784ae9', 'd:name', 'Open School Levels', 1480299712295
-
-put 'levels', 'c784ae9001', 'd:name', 'Grade 1', 1480299712295
-put 'levels', 'c784ae9001_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9002', 'd:name', 'Grade 2', 1480299712295
-put 'levels', 'c784ae9002_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9003', 'd:name', 'Grade 3', 1480299712295
-put 'levels', 'c784ae9003_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9004', 'd:name', 'Grade 4', 1480299712295
-put 'levels', 'c784ae9004_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9005', 'd:name', 'Grade 5', 1480299712295
-put 'levels', 'c784ae9005_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9006', 'd:name', 'Grade 6', 1480299712295
-put 'levels', 'c784ae9006_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9007', 'd:name', 'Grade 7', 1480299712295
-put 'levels', 'c784ae9007_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9008', 'd:name', 'Grade 8', 1480299712295
-put 'levels', 'c784ae9008_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9009', 'd:name', 'Grade 9', 1480299712295
-put 'levels', 'c784ae9009_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9010', 'd:name', 'Grade 10', 1480299712295
-put 'levels', 'c784ae9010_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'levels', 'c784ae9011', 'd:name', 'Grade 11', 1480299712295
-put 'levels', 'c784ae9011_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'subjects'
-drop 'subjects'
-create 'subjects', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'subjects', 'c784ae9', 'd:name', 'Open School Subjects', 1480299712295
-
-put 'subjects', 'c784ae9001', 'd:name', 'Myanmar', 1480299712295
-put 'subjects', 'c784ae9001_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9002', 'd:name', 'English', 1480299712295
-put 'subjects', 'c784ae9002_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'subjects', 'c784ae9003_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9004', 'd:name', 'Physics', 1480299712295
-put 'subjects', 'c784ae9004_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9005', 'd:name', 'Chemistry', 1480299712295
-put 'subjects', 'c784ae9005_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9006', 'd:name', 'Biology', 1480299712295
-put 'subjects', 'c784ae9006_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9007', 'd:name', 'History', 1480299712295
-put 'subjects', 'c784ae9007_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9008', 'd:name', 'Geology', 1480299712295
-put 'subjects', 'c784ae9008_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'subjects', 'c784ae9009', 'd:name', 'Economics', 1480299712295
-put 'subjects', 'c784ae9009_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'groups'
-drop 'groups'
-create 'groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'groups', 'c784ae9', 'd:name', 'Open School Groups', 1480299712295
-
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION', 1480299712295
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Students', 1480299712295
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS', 1480299712295
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'users'
-drop 'users'
-create 'users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'users', 'c784ae9', 'd:name', 'Open School Users', 1480299712295
-
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:account', 'admin', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af078e8da57b4fe16bbf189', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:salt', 'c3c704f0a67f469086e8ff50a056b3d5', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dob', '1990-11-28T05:16:31.893', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:gender', 'Male', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:mobile', '987654321', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:email', 'admin@google.com', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:locale', 'en_US', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dateFormat', 'yyyy-MM-dd', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9001', 'd:name', 'Myanmar', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9002', 'd:name', 'English', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
-put 'users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'questions'
-drop 'questions'
-create 'questions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'questions', 'c784ae9', 'd:name', 'Open School Questions', 1480299712295
-
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:keywords', 'addition,10', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:body', '1', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:order', '1', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:body', '2', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:order', '2', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:body', '3', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:feedback', 'Correct.', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:correct', 'true', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:order', '3', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:body', '4', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:order', '4', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:type', 'COMPOSITE', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:body', 'Addition within 10.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:hint', '', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:explanation', '', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:keywords', 'addition,10', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291', 'd:body', '4 + 5 = ?', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291', 'd:hint', 'Addition within 10.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712291', 'd:body', '6', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712291', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712291', 'd:order', '1', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712292', 'd:body', '7', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712292', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712292', 'd:order', '2', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712293', 'd:body', '8', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712293', 'd:feedback', 'Incorrect.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712293', 'd:correct', 'false', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712293', 'd:order', '3', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712294', 'd:body', '9', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712294', 'd:feedback', 'Correct.', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712294', 'd:correct', 'true', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_que_1480299712291_opt_1480299712294', 'd:order', '4', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'quizzes'
-drop 'quizzes'
-create 'quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'quizzes', 'c784ae9', 'd:name', 'Open School Questions', 1480299712295
-
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions 1', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:keywords', 'additions', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'components'
-drop 'components'
-create 'components', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'components', 'c784ae9', 'd:name', 'Open School Components', 1480299712295
-
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:type', 'SECTION', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:title', 'Section A', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:instructions', 'Answer all questions.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:order', '1', 1480299712295
-
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:type', 'QUESTION', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:parent', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
-
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:type', 'SECTION', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:title', 'Section A', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:instructions', 'Answer all questions.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:order', '1', 1480299712295
-
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:type', 'QUESTION', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
-
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:type', 'QUIZ', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:order', '2', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410_quz_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions 1', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410_quz_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
-
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:type', 'SECTION', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:title', 'Section A', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:instructions', 'Answer all questions.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 1480299712295
-
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:type', 'QUESTION', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
-put 'components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
-
-
-disable 'lessons'
-drop 'lessons'
-create 'lessons', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'lessons', 'c784ae9', 'd:name', 'Open School Lessons', 1480299712295
-
-put 'lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:title', 'Additions 1', 1480299712295
-put 'lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:instructions', 'Section A: Answer all questions.', 1480299712295
-put 'lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:keywords', 'additions', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_sch_c784ae9', 'd:name', 'Open School', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-
-
-disable 'mutations'
-drop 'mutations'
-create 'mutations', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'mutations', 'LEVEL_c784ae9', 'd:name', 'Open School Subjects'
-
-put 'mutations', 'LEVEL_c784ae9001', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9001', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9002', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9002', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9003', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9003', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9004', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9004', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9005', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9005', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9006', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9006', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9007', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9007', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9008', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9008', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9009', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9009', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9010', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9010', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'LEVEL_c784ae9011', 'd:actionType', 'CREATED'
-put 'mutations', 'LEVEL_c784ae9011', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9', 'd:name', 'Open School Subjects'
-
-put 'mutations', 'SUBJECT_c784ae9001', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9001', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9002', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9002', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9003', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9003', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9004', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9004', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9005', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9005', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9006', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9006', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9007', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9007', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9008', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9008', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'SUBJECT_c784ae9009', 'd:actionType', 'CREATED'
-put 'mutations', 'SUBJECT_c784ae9009', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'USER_c784ae9', 'd:name', 'Open School Users'
-
-put 'mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:actionType', 'CREATED'
-put 'mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'QUESTION_c784ae9', 'd:name', 'Open School Questions'
-
-put 'mutations', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:actionType', 'MODIFIED'
-put 'mutations', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:actionType', 'MODIFIED'
-put 'mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:actionType', 'MODIFIED'
-put 'mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'QUIZ_c784ae9', 'd:name', 'Open School Quizzes'
-
-put 'mutations', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:actionType', 'MODIFIED'
-put 'mutations', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'COMPONENT_c784ae9', 'd:name', 'Open School Components'
-
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:name', 'Resource Components'
-
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:actionType', 'MODIFIED'
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:actionType', 'MODIFIED'
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Resource Components'
-
-put 'mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:actionType', 'MODIFIED'
-put 'mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:timestamp', '1480299712295'
-
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:actionType', 'MODIFIED'
-put 'mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:timestamp', '1480299712295'
-
-
-disable 'shares'
-drop 'shares'
-create 'shares', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'shares', 'QUIZ_c784ae9', 'd:name', 'Open School Quizzes'
-
-put 'shares', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
-put 'shares', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_sha_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
-put 'shares', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_sha_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
-put 'shares', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_sha_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permission', 'EDIT_RESOURCE', 1480299712295
-
-
-disable 'signinlogs'
-drop 'signinlogs'
-create 'signinlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'signinlogs', 'c784ae9', 'd:name', 'Open School Users'
-
-put 'signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:session', 'c1bf10cdc70ed3529f8'
-put 'signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:ip', '127.0.0.1'
-put 'signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893'
-put 'signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fails', '3'
-
-
-disable 'auditlogs'
-drop 'auditlogs'
-create 'auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'auditlogs', 'SCHOOL_c784ae9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'SCHOOL_c784ae9', 'd:fname', 'Admin'
-put 'auditlogs', 'SCHOOL_c784ae9', 'd:lname', 'User'
-put 'auditlogs', 'SCHOOL_c784ae9', 'd:actionType', 'CREATED'
-put 'auditlogs', 'SCHOOL_c784ae9', 'd:timestamp', '1480299712295'
-
-put 'auditlogs', 'GROUP_c784ae9', 'd:name', 'Open School Groups'
-
-put 'auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:fname', 'Admin'
-put 'auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:lname', 'User'
-put 'auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:actionType', 'CREATED'
-put 'auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:timestamp', '1480299712295'
-put 'auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:fname', 'Admin'
-put 'auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:lname', 'User'
-put 'auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:actionType', 'CREATED'
-put 'auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:timestamp', '1480299712295'
-put 'auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
-put 'auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
-put 'auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:actionType', 'CREATED'
-put 'auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
-
-put 'auditlogs', 'QUESTION_c784ae9', 'd:name', 'Open School Questions'
-
-put 'auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
-put 'auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
-put 'auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:actionType', 'CREATED'
-put 'auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
-
-put 'auditlogs', 'QUIZ_c784ae9', 'd:name', 'Open School Quizzes'
-
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:fname', 'Admin'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:lname', 'User'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:actionType', 'CREATED'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:timestamp', '1480299712295'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:fname', 'Admin'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:lname', 'User'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:actionType', 'SHARED'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:fname', 'Admin'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:lname', 'User'
-put 'auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:actionType', 'MODIFIED'
-
-disable 'references'
-drop 'references'
+disable 'lms:permissions'
+drop 'lms:permissions'
+
+disable 'lms:schools'
+drop 'lms:schools'
+
+disable 'lms:levels'
+drop 'lms:levels'
+
+disable 'lms:subjects'
+drop 'lms:subjects'
+
+disable 'lms:groups'
+drop 'lms:groups'
+
+disable 'lms:users'
+drop 'lms:users'
+
+disable 'lms:questions'
+drop 'lms:questions'
+
+disable 'lms:quizzes'
+drop 'lms:quizzes'
+
+disable 'lms:components'
+drop 'lms:components'
+
+disable 'lms:lessons'
+drop 'lms:lessons'
+
+disable 'lms:shareLogs'
+drop 'lms:shareLogs'
+
+disable 'lms:mutations'
+drop 'lms:mutations'
+
+disable 'lms:signinlogs'
+drop 'lms:signinlogs'
+
+disable 'lms:auditlogs'
+drop 'lms:auditlogs'
+
+drop_namespace 'lms'
+create_namespace 'lms'
+
+
+
+create 'lms:permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:permissions', 'VIEW_HOME', 'd:name', 'View Home', 1480299712295
+put 'lms:permissions', 'VIEW_ASSIGNMENTS', 'd:name', 'View Assignments', 1480299712295
+put 'lms:permissions', 'VIEW_QUESTIONS', 'd:name', 'View Questions', 1480299712295
+put 'lms:permissions', 'EDIT_QUESTION', 'd:name', 'Create Question', 1480299712295
+put 'lms:permissions', 'VIEW_USERS', 'd:name', 'View Users', 1480299712295
+put 'lms:permissions', 'EDIT_USER', 'd:name', 'Create School', 1480299712295
+put 'lms:permissions', 'VIEW_GROUPS', 'd:name', 'View Groups', 1480299712295
+put 'lms:permissions', 'EDIT_GROUP', 'd:name', 'Create Group', 1480299712295
+put 'lms:permissions', 'VIEW_SCHOOLS', 'd:name', 'View Schools', 1480299712295
+put 'lms:permissions', 'EDIT_SCHOOL', 'd:name', 'Create School', 1480299712295
+
+
+
+create 'lms:schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:schools', 'c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:schools', 'c784ae9', 'd:locale', 'en_US', 1480299712295
+put 'lms:schools', 'c784ae9', 'd:permissions', 'VIEW_HOME|VIEW_ASSIGNMENTS|VIEW_QUESTIONS|EDIT_QUESTION|VIEW_USERS|EDIT_USER|VIEW_GROUPS|EDIT_GROUP', 1480299712295
+put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:levels', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:levels', 'c784ae9', 'd:name', 'Open School Levels', 1480299712295
+
+put 'lms:levels', 'c784ae9001', 'd:name', 'Grade 1', 1480299712295
+put 'lms:levels', 'c784ae9001_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9002', 'd:name', 'Grade 2', 1480299712295
+put 'lms:levels', 'c784ae9002_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9003', 'd:name', 'Grade 3', 1480299712295
+put 'lms:levels', 'c784ae9003_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9004', 'd:name', 'Grade 4', 1480299712295
+put 'lms:levels', 'c784ae9004_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9005', 'd:name', 'Grade 5', 1480299712295
+put 'lms:levels', 'c784ae9005_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9006', 'd:name', 'Grade 6', 1480299712295
+put 'lms:levels', 'c784ae9006_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9007', 'd:name', 'Grade 7', 1480299712295
+put 'lms:levels', 'c784ae9007_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9008', 'd:name', 'Grade 8', 1480299712295
+put 'lms:levels', 'c784ae9008_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9009', 'd:name', 'Grade 9', 1480299712295
+put 'lms:levels', 'c784ae9009_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9010', 'd:name', 'Grade 10', 1480299712295
+put 'lms:levels', 'c784ae9010_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9010_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:levels', 'c784ae9011', 'd:name', 'Grade 11', 1480299712295
+put 'lms:levels', 'c784ae9011_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:levels', 'c784ae9011_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:subjects', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:subjects', 'c784ae9', 'd:name', 'Open School Subjects', 1480299712295
+
+put 'lms:subjects', 'c784ae9001', 'd:name', 'Myanmar', 1480299712295
+put 'lms:subjects', 'c784ae9001_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9001_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9002', 'd:name', 'English', 1480299712295
+put 'lms:subjects', 'c784ae9002_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9002_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:subjects', 'c784ae9003_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9003_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9004', 'd:name', 'Physics', 1480299712295
+put 'lms:subjects', 'c784ae9004_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9004_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9005', 'd:name', 'Chemistry', 1480299712295
+put 'lms:subjects', 'c784ae9005_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9005_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9006', 'd:name', 'Biology', 1480299712295
+put 'lms:subjects', 'c784ae9006_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9006_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9007', 'd:name', 'History', 1480299712295
+put 'lms:subjects', 'c784ae9007_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9007_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9008', 'd:name', 'Geography', 1480299712295
+put 'lms:subjects', 'c784ae9008_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9008_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:subjects', 'c784ae9009', 'd:name', 'Economics', 1480299712295
+put 'lms:subjects', 'c784ae9009_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:subjects', 'c784ae9009_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:groups', 'c784ae9', 'd:name', 'Open School Groups', 1480299712295
+
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Students', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:users', 'c784ae9', 'd:name', 'Open School Users', 1480299712295
+
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:account', 'admin', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:password', '1427e78af4b62d997210e72f3b90ff3fee383d5f0af078e8da57b4fe16bbf189', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:salt', 'c3c704f0a67f469086e8ff50a056b3d5', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dob', '1990-11-28T05:16:31.893', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:gender', 'Male', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:mobile', '987654321', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:email', 'admin@google.com', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:locale', 'en_US', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dateFormat', 'yyyy-MM-dd', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dateTimeFormat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_ASSIGNMENTS,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9001', 'd:name', 'Myanmar', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9002', 'd:name', 'English', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:questions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:questions', 'c784ae9', 'd:name', 'Open School Questions', 1480299712295
+
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:keywords', 'addition,10', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:body', '1', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712291', 'd:order', '1', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:body', '2', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712292', 'd:order', '2', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:body', '3', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:correct', 'true', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712293', 'd:order', '3', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:body', '4', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712294', 'd:order', '4', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:type', 'COMPOSITE', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:body', 'Addition within 10.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:hint', '', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:explanation', '', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:keywords', 'addition,10', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:type', 'QUESTION', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:order', '1', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291', 'd:body', '4 + 5 = ?', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291', 'd:hint', 'Addition within 10.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291', 'd:explanation', '1 + 2 = 3', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291', 'd:order', '1', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712291', 'd:body', '6', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712291', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712291', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712291', 'd:order', '1', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712292', 'd:body', '7', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712292', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712292', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712292', 'd:order', '2', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712293', 'd:body', '8', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712293', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712293', 'd:correct', 'false', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712293', 'd:order', '3', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712294', 'd:body', '9', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712294', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712294', 'd:correct', 'true', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290_que_1480299712291_opt_1480299712294', 'd:order', '4', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:quizzes', 'c784ae9', 'd:name', 'Open School Questions', 1480299712295
+
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions 1', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:keywords', 'additions', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:components', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:components', 'c784ae9', 'd:name', 'Open School Components', 1480299712295
+
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:type', 'SECTION', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:title', 'Section A', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:section', 'QUIZ', 1480299712295
+
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:type', 'QUESTION', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:parent', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
+
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:type', 'SECTION', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:title', 'Section A', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:section', 'LESSON', 1480299712295
+
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:type', 'QUESTION', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
+
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:type', 'QUIZ', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410_quz_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions 1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410_quz_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
+
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:type', 'SECTION', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:title', 'Section A', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:section', 'QUIZ', 1480299712295
+
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:type', 'QUESTION', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MULTIPLE_CHOICE', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:body', '1 + 2 = ?', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:hint', 'Addition within 10.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:explanation', '1 + 2 = 3', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:body', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712391', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:body', '2', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712392', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:body', '3', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:correct', 'true', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712393', 'd:order', '3', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:body', '4', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610_que_c784ae91efe773c7c5f41de68effd1ce03e6d7e_opt_1480299712394', 'd:order', '4', 1480299712295
+
+
+
+create 'lms:lessons', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:lessons', 'c784ae9', 'd:name', 'Open School Lessons', 1480299712295
+
+put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:title', 'Additions 1', 1480299712295
+put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:instructions', 'Section A: Answer all questions.', 1480299712295
+put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:keywords', 'additions', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_sch_c784ae9', 'd:name', 'Open School', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_lvl_c784ae9001', 'd:name', 'Grade 1', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_lvl_c784ae9002', 'd:name', 'Grade 2', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_sub_c784ae9003', 'd:name', 'Mathematics', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:lessons', 'c784ae9ecfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:shareLogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:shareLogs', 'c784ae9', 'd:name', 'Open School Shares'
+
+put 'lms:shareLogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+put 'lms:shareLogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_acc_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:shareLogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_acc_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:shareLogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_acc_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:access', 'VIEW,EDIT', 1480299712295
+
+
+
+create 'lms:mutations', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:mutations', 'LEVEL_c784ae9', 'd:name', 'Open School Subjects'
+
+put 'lms:mutations', 'LEVEL_c784ae9001', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9001', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9002', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9002', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9003', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9003', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9004', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9004', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9005', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9005', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9006', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9006', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9007', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9007', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9008', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9008', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9009', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9009', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9010', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9010', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'LEVEL_c784ae9011', 'd:action', 'CREATED'
+put 'lms:mutations', 'LEVEL_c784ae9011', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9', 'd:name', 'Open School Subjects'
+
+put 'lms:mutations', 'SUBJECT_c784ae9001', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9001', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9002', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9002', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9003', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9003', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9004', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9004', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9005', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9005', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9006', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9006', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9007', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9007', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9008', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9008', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBJECT_c784ae9009', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBJECT_c784ae9009', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'USER_c784ae9', 'd:name', 'Open School Users'
+
+put 'lms:mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:action', 'CREATED'
+put 'lms:mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'QUESTION_c784ae9', 'd:name', 'Open School Questions'
+
+put 'lms:mutations', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'QUESTION_c784ae9603233f623f202ee3a136ee2478ed46a', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'QUIZ_c784ae9', 'd:name', 'Open School Quizzes'
+
+put 'lms:mutations', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'COMPONENT_c784ae9', 'd:name', 'Open School Components'
+
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:name', 'Resource Components'
+
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Resource Components'
+
+put 'lms:mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae181480299712350', 'd:timestamp', '1480299712295'
+
+
+
+create 'lms:signinlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:signinlogs', 'c784ae9', 'd:name', 'Open School Users'
+
+put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:session', 'c1bf10cdc70ed3529f8'
+put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:ip', '127.0.0.1'
+put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893'
+put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fails', '3'
+
+
+
+create 'lms:auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:lname', 'User'
+put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:timestamp', '1480299712295'
+
+put 'lms:auditlogs', 'GROUP_c784ae9', 'd:name', 'Open School Groups'
+
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
+
+put 'lms:auditlogs', 'QUESTION_c784ae9', 'd:name', 'Open School Questions'
+
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
+
+put 'lms:auditlogs', 'QUIZ_c784ae9', 'd:name', 'Open School Quizzes'
+
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:action', 'CREATED'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:action', 'SHARED'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:action', 'MODIFIED'

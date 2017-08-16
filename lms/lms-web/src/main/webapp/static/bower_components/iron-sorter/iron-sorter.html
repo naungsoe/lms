@@ -1,0 +1,36 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="sortable.html">
+
+<script>
+  class IronSorter extends Polymer.Element {
+    static get is() {
+      return 'iron-sorter';
+    }
+
+    connectedCallback() {
+      super.connectedCallback();
+
+      this._boundUpdate = function (event) {
+        let data = {bubbles: true, composed: true};
+        var event = new CustomEvent('order-changed', data);
+        this.dispatchEvent(event);
+      }.bind(this);
+
+      this._sortable = new Sortable(this, {
+        handle: '.drag-handle',
+        ghostClass: 'drop-placeholder',
+        chosenClass: 'drag-item',
+        dragClass: 'drag-item',
+        scroll: true,
+        onUpdate: this._boundUpdate
+      });
+    }
+
+    disconnectedCallback() {
+      super.disconnectedCallback();
+
+      this._sortable.destroy();
+    }
+  }
+  customElements.define(IronSorter.is, IronSorter);
+</script>

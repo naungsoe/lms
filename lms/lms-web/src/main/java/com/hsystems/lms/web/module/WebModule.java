@@ -11,7 +11,7 @@ import com.hsystems.lms.common.interceptor.LogInterceptor;
 import com.hsystems.lms.common.provider.PropertiesProvider;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.security.RequiresInterceptor;
-import com.hsystems.lms.web.AuthenticationFilter;
+import com.hsystems.lms.web.AccountServlet;
 import com.hsystems.lms.web.ErrorServlet;
 import com.hsystems.lms.web.HomeServlet;
 import com.hsystems.lms.web.IndexServlet;
@@ -22,6 +22,8 @@ import com.hsystems.lms.web.SignUpServlet;
 import com.hsystems.lms.web.StorageServlet;
 import com.hsystems.lms.web.UserServlet;
 import com.hsystems.lms.web.UtilServlet;
+import com.hsystems.lms.web.filter.AuthenticationFilter;
+import com.hsystems.lms.web.filter.CsrfValidationFilter;
 import com.hsystems.lms.web.provider.PrincipalProvider;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -44,29 +46,33 @@ public class WebModule extends ServletModule {
     bind(Principal.class).toProvider(PrincipalProvider.class)
         .in(RequestScoped.class);
 
+    bind(AuthenticationFilter.class).in(Singleton.class);
+    bind(CsrfValidationFilter.class).in(Singleton.class);
     bind(UtilServlet.class).in(Singleton.class);
     bind(ErrorServlet.class).in(Singleton.class);
     bind(SignUpServlet.class).in(Singleton.class);
     bind(SignInServlet.class).in(Singleton.class);
     bind(SignOutServlet.class).in(Singleton.class);
-    bind(IndexServlet.class).in(Singleton.class);
-    bind(UserServlet.class).in(Singleton.class);
+    bind(AccountServlet.class).in(Singleton.class);
     bind(HomeServlet.class).in(Singleton.class);
-    bind(StorageServlet.class).in(Singleton.class);
+    bind(UserServlet.class).in(Singleton.class);
     bind(QuestionServlet.class).in(Singleton.class);
-    bind(AuthenticationFilter.class).in(Singleton.class);
+    bind(StorageServlet.class).in(Singleton.class);
+    bind(IndexServlet.class).in(Singleton.class);
 
-    filter("/web/*").through(AuthenticationFilter.class);
-    serve("/webapi/*").with(GuiceContainer.class);
-    serve("/web/util").with(UtilServlet.class);
-    serve("/web/error").with(ErrorServlet.class);
-    serve("/web/signup").with(SignUpServlet.class);
-    serve("/web/signin").with(SignInServlet.class);
-    serve("/web/signout").with(SignOutServlet.class);
-    serve("/web/index").with(IndexServlet.class);
-    serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
+    filterRegex("/(web|webapi2)(\\/\\w+)*").through(AuthenticationFilter.class);
+    filterRegex("/(web|webapi2)(\\/\\w+)*").through(CsrfValidationFilter.class);
+    serveRegex("/web/util(\\/\\w+)*").with(UtilServlet.class);
+    serveRegex("/web/error(\\/\\w+)*").with(ErrorServlet.class);
+    serveRegex("/web/signup(\\/\\w+)*").with(SignUpServlet.class);
+    serveRegex("/web/signin(\\/\\w+)*").with(SignInServlet.class);
+    serveRegex("/web/signout(\\/\\w+)*").with(SignOutServlet.class);
+    serveRegex("/web/account(\\/\\w+)*").with(AccountServlet.class);
     serveRegex("/web/home(\\/\\w+)*").with(HomeServlet.class);
-    serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);
+    serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
     serveRegex("/web/questions(\\/\\w+)*").with(QuestionServlet.class);
+    serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);
+    serveRegex("/web/index(\\/\\w+)*").with(IndexServlet.class);
+    serve("/webapi/*").with(GuiceContainer.class);
   }
 }

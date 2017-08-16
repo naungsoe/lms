@@ -1,0 +1,39 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="page-toolbar">
+  <template>
+    <style>
+      :host {
+        @apply --layout-horizontal;
+        @apply --layout-center;
+        @apply --paper-font-subhead;
+        height: 64px;
+        margin: 0 auto;
+        max-width: 800px;
+        pointer-events: none;
+        width: 100%;
+      }
+
+      :host ::slotted(*) {
+        pointer-events: auto;
+      }
+
+      :host ::slotted(.title) {
+        @apply --layout-flex;
+        margin: 0 12px;
+        pointer-events: none;
+      }
+    </style>
+
+    <slot></slot>
+  </template>
+
+  <script>
+    class PageToolbar extends Polymer.Element {
+      static get is() {
+        return 'page-toolbar';
+      }
+    }
+    customElements.define(PageToolbar.is, PageToolbar);
+  </script>
+</dom-module>

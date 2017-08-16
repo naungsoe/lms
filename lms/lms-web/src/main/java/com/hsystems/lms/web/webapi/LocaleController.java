@@ -26,7 +26,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 15/10/16.
  */
-@Path("locales")
+@Path("/locales")
 public class LocaleController {
 
   private final Provider<Principal> principalProvider;

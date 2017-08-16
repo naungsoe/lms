@@ -29,10 +29,10 @@ public class Constants {
       = Bytes.toBytes("dateFormat");
   public static final byte[] IDENTIFIER_DATE_TIME_FORMAT
       = Bytes.toBytes("dateTimeFormat");
-  public static final byte[] IDENTIFIER_PERMISSION
-      = Bytes.toBytes("permission");
   public static final byte[] IDENTIFIER_PERMISSIONS
       = Bytes.toBytes("permissions");
+  public static final byte[] IDENTIFIER_ACCESSES
+      = Bytes.toBytes("accesses");
   public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes("type");
   public static final byte[] IDENTIFIER_SESSION_ID = Bytes.toBytes("session");
   public static final byte[] IDENTIFIER_IP_ADDRESS = Bytes.toBytes("ip");
@@ -61,11 +61,11 @@ public class Constants {
   public static final String SEPARATOR_MEMBER = "_mem_";
   public static final String SEPARATOR_LEVEL = "_lvl_";
   public static final String SEPARATOR_SUBJECT = "_sub_";
-  public static final String SEPARATOR_COMPONENT = "_com_";
   public static final String SEPARATOR_LESSON = "_lsn_";
   public static final String SEPARATOR_QUIZ = "_quz_";
   public static final String SEPARATOR_SECTION = "_sec_";
+  public static final String SEPARATOR_COMPONENT = "_com_";
   public static final String SEPARATOR_QUESTION = "_que_";
   public static final String SEPARATOR_OPTION = "_opt_";
-  public static final String SEPARATOR_SHARE = "_sha_";
+  public static final String SEPARATOR_ACCESS = "_acc_";
 }

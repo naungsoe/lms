@@ -138,7 +138,7 @@ public class EntityMapper extends Mapper<Entity> {
   protected boolean isChildDocument(
       SolrDocument document, String parentId, String fieldName) {
 
-    Object fullFieldName = document.getFieldValue(FIELD_NAME);
+    Object fullFieldName = document.getFieldValue(MEMBER_FIELD_NAME);
     return document.getFieldValue("parentId").equals(parentId)
         && fullFieldName.toString().endsWith(fieldName)
         && !"true".equals(document.getFieldValue("processed"));
@@ -150,44 +150,46 @@ public class EntityMapper extends Mapper<Entity> {
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    T entity = (T) ReflectionUtils.getInstance(type);
-    List<Field> fields = ReflectionUtils.getFields(entity.getClass());
-
     Optional<SolrDocument> documentOptional = documents.stream()
         .filter(document -> isChildDocument(document, parentId, fieldName))
         .findFirst();
 
     if (!documentOptional.isPresent()) {
-      return entity;
+      return null;
     }
 
     SolrDocument document = documentOptional.get();
     String id = document.getFieldValue(FIELD_ID).toString();
+    String packageName = type.getPackage().getName();
+    String typeName = String.format("%s.%s", packageName,
+        document.getFieldValue(MEMBER_FIELD_TYPE_NAME).toString());
+    T entity = (T) ReflectionUtils.getInstance(typeName);
+    List<Field> fields = ReflectionUtils.getFields(entity.getClass());
 
     for (Field field : fields) {
       if (!field.isAnnotationPresent(IndexField.class)) {
         continue;
       }
 
-      String childFieldName = getFieldName(field);
-      Class<?> childFieldType = field.getType();
+      String memberFieldName = getFieldName(field);
+      Class<?> memberFieldType = field.getType();
 
-      if (childFieldType.isPrimitive() || childFieldType.isEnum()
-          || (childFieldType == LocalDateTime.class)
-          || (childFieldType == String.class)) {
+      if (memberFieldType.isPrimitive() || memberFieldType.isEnum()
+          || (memberFieldType == LocalDateTime.class)
+          || (memberFieldType == String.class)) {
 
         populateProperty(entity, document, field);
 
-      } else if (childFieldType == List.class) {
+      } else if (memberFieldType == List.class) {
         Class<?> listType = ReflectionUtils.getListType(field);
         Object fieldValue;
 
         if (listType.isEnum()) {
-          fieldValue = document.getFieldValue(childFieldName);
+          fieldValue = document.getFieldValue(memberFieldName);
 
           if (fieldValue == null) {
             ReflectionUtils.setValue(entity,
-                childFieldName, Collections.emptyList());
+                memberFieldName, Collections.emptyList());
 
           } else {
             List<String> enumValues = (List<String>) fieldValue;
@@ -197,28 +199,28 @@ public class EntityMapper extends Mapper<Entity> {
             List<Enum> enums = new ArrayList<>();
             enumValues.forEach(enumValue -> enums.add(
                 Enum.valueOf(enumType, enumValue)));
-            ReflectionUtils.setValue(entity, childFieldName, enums);
+            ReflectionUtils.setValue(entity, memberFieldName, enums);
           }
         } else if (listType == String.class) {
-          fieldValue = document.getFieldValue(childFieldName);
+          fieldValue = document.getFieldValue(memberFieldName);
 
           if (fieldValue == null) {
             ReflectionUtils.setValue(entity,
-                childFieldName, Collections.emptyList());
+                memberFieldName, Collections.emptyList());
 
           } else {
             List<String> values = (List<String>) fieldValue;
-            ReflectionUtils.setValue(entity, childFieldName, values);
+            ReflectionUtils.setValue(entity, memberFieldName, values);
           }
         } else {
           List<?> childEntities = getChildEntities(
-              documents, listType, id, childFieldName);
-          ReflectionUtils.setValue(entity, childFieldName, childEntities);
+              documents, listType, id, memberFieldName);
+          ReflectionUtils.setValue(entity, memberFieldName, childEntities);
         }
       } else {
         Object childEntity = getChildEntity(
-            documents, field.getType(), id, childFieldName);
-        ReflectionUtils.setValue(entity, childFieldName, childEntity);
+            documents, field.getType(), id, memberFieldName);
+        ReflectionUtils.setValue(entity, memberFieldName, childEntity);
       }
     }
 

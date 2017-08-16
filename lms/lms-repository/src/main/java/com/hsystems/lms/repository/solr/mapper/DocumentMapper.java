@@ -126,7 +126,9 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
       throws IllegalAccessException, NoSuchFieldException {
 
     SolrInputDocument childDocument = getDocument(entity);
-    childDocument.setField(FIELD_NAME, fieldName);
+    childDocument.setField(MEMBER_FIELD_NAME, fieldName);
+    childDocument.setField(MEMBER_FIELD_TYPE_NAME,
+        entity.getClass().getSimpleName());
     return childDocument;
   }
 
@@ -146,17 +148,19 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
   protected void updateFieldName(
       SolrInputDocument document, String parentFieldName) {
 
-    String fieldName = (document.getFieldValue(FIELD_NAME) == null)
-        ? "" : document.getFieldValue(FIELD_NAME).toString();
+    String fieldName = (document.getFieldValue(MEMBER_FIELD_NAME) == null)
+        ? "" : document.getFieldValue(MEMBER_FIELD_NAME).toString();
 
     if (StringUtils.isNotEmpty(parentFieldName)) {
-      document.setField(FIELD_NAME, String.format(
+      document.setField(MEMBER_FIELD_NAME, String.format(
           FIELD_NAME_FORMAT, parentFieldName, fieldName));
     }
 
-    if (CollectionUtils.isNotEmpty(document.getChildDocuments())) {
-      document.getChildDocuments().forEach(
-          childDocument -> updateFieldName(childDocument, fieldName));
+    List<SolrInputDocument> childDocuments = document.getChildDocuments();
+
+    if (CollectionUtils.isNotEmpty(childDocuments)) {
+      childDocuments.forEach(childDocument -> updateFieldName(
+          childDocument, fieldName));
     }
   }
 }

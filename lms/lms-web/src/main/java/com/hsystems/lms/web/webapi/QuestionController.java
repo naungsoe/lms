@@ -29,7 +29,7 @@ import javax.ws.rs.core.UriInfo;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("questions")
+@Path("/questions")
 public class QuestionController {
 
   private final Provider<Principal> principalProvider;
@@ -52,9 +52,10 @@ public class QuestionController {
       @Context UriInfo uriInfo)
       throws IOException {
 
+    Principal principal = principalProvider.get();
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
     QueryResult<QuestionModel> queryResult
-        = questionService.findAllBy(query, principalProvider.get());
+        = questionService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
   }
 
@@ -66,8 +67,9 @@ public class QuestionController {
       @PathParam("id") String id)
       throws IOException {
 
+    Principal principal = principalProvider.get();
     Optional<QuestionModel> questionModelOptional
-        = questionService.findBy(id, principalProvider.get());
+        = questionService.findBy(id, principal);
 
     if (!questionModelOptional.isPresent()) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
@@ -83,7 +85,8 @@ public class QuestionController {
   public Response save(QuestionModel questionModel)
       throws IOException {
 
-    questionService.save(questionModel, principalProvider.get());
+    Principal principal = principalProvider.get();
+    questionService.save(questionModel, principal);
     return Response.ok(questionModel).build();
   }
 }

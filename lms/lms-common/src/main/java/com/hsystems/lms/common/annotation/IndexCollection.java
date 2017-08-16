@@ -12,5 +12,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 public @interface IndexCollection {
 
+  String namespace() default "";
+
   String name() default "";
 }

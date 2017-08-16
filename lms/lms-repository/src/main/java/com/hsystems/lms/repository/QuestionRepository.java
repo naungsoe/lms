@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository;
 
-import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.question.Question;
 
 import java.io.IOException;
 import java.util.List;

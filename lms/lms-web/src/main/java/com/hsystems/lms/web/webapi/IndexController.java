@@ -19,7 +19,7 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("index")
+@Path("/index")
 public class IndexController {
 
   private final Provider<Principal> principalProvider;

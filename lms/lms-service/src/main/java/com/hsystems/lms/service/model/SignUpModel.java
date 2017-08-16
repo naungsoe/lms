@@ -9,7 +9,7 @@ public class SignUpModel implements Serializable {
 
   private static final long serialVersionUID = -6318683344722781066L;
 
-  private String id;
+  private String account;
 
   private String password;
 
@@ -32,7 +32,7 @@ public class SignUpModel implements Serializable {
   }
 
   public SignUpModel(
-      String id,
+      String account,
       String password,
       String confirmPassword,
       String firstName,
@@ -42,7 +42,7 @@ public class SignUpModel implements Serializable {
       String mobile,
       String email) {
 
-    this.id = id;
+    this.account = account;
     this.password = password;
     this.confirmPassword = confirmPassword;
     this.firstName = firstName;
@@ -53,12 +53,12 @@ public class SignUpModel implements Serializable {
     this.email = email;
   }
 
-  public String getId() {
-    return id;
+  public String getAccount() {
+    return account;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setAccount(String account) {
+    this.account = account;
   }
 
   public String getPassword() {

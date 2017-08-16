@@ -81,6 +81,7 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
         levels,
         subjects,
         keywords,
+        Collections.emptyList(),
         createdBy,
         createdDateTime,
         modifiedBy,

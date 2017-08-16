@@ -12,9 +12,17 @@ public abstract class AuditableModel implements Serializable {
 
   private UserModel createdBy;
 
+  private String createdDate;
+
+  private String createdTime;
+
   private String createdDateTime;
 
   private UserModel modifiedBy;
+
+  private String modifiedDate;
+
+  private String modifiedTime;
 
   private String modifiedDateTime;
 
@@ -24,6 +32,22 @@ public abstract class AuditableModel implements Serializable {
 
   public void setCreatedBy(UserModel createdBy) {
     this.createdBy = createdBy;
+  }
+
+  public String getCreatedDate() {
+    return createdDate;
+  }
+
+  public void setCreatedDate(String createdDate) {
+    this.createdDate = createdDate;
+  }
+
+  public String getCreatedTime() {
+    return createdTime;
+  }
+
+  public void setCreatedTime(String createdTime) {
+    this.createdTime = createdTime;
   }
 
   public String getCreatedDateTime() {
@@ -40,6 +64,22 @@ public abstract class AuditableModel implements Serializable {
 
   public void setModifiedBy(UserModel modifiedBy) {
     this.modifiedBy = modifiedBy;
+  }
+
+  public String getModifiedDate() {
+    return modifiedDate;
+  }
+
+  public void setModifiedDate(String modifiedDate) {
+    this.modifiedDate = modifiedDate;
+  }
+
+  public String getModifiedTime() {
+    return modifiedTime;
+  }
+
+  public void setModifiedTime(String modifiedTime) {
+    this.modifiedTime = modifiedTime;
   }
 
   public String getModifiedDateTime() {

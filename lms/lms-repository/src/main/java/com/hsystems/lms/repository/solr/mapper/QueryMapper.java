@@ -198,27 +198,22 @@ public class QueryMapper extends Mapper<SolrQuery> {
     queryCriteria.forEach(criterion -> {
       int lastIndex = criterion.getField().indexOf('.');
       String fieldName = criterion.getField().substring(lastIndex + 1);
-      String propertyFieldName = criterion.getField().substring(0, lastIndex);
-      String propertyFieldFilter = String.format(
-          FILTER_FORMAT, FIELD_NAME, propertyFieldName);
-
-      if (FIELD_ID.equals(fieldName)) {
-        String id = (String) criterion.getValues().get(0);
-        criterion.setValues(Arrays.asList("*" + id));
-      }
+      String memberFieldName = criterion.getField().substring(0, lastIndex);
+      String memberFieldFilter = String.format(
+          FILTER_FORMAT, MEMBER_FIELD_NAME, memberFieldName);
 
       switch (criterion.getOperator()) {
         case EQUAL:
           String equalFilter = String.format(FILTER_FORMAT, fieldName,
               StringUtils.join(criterion.getValues(), OR_SEPARATOR));
           solrQuery.addFilterQuery(String.format("%s(%s AND %s)",
-              typeNameFilter, propertyFieldFilter, equalFilter));
+              typeNameFilter, memberFieldFilter, equalFilter));
           break;
         case NOT_EQUAL:
           String notEqualFilter = String.format(FILTER_FORMAT, fieldName,
               StringUtils.prepend(criterion.getValues(), NOT_SEPARATOR));
           solrQuery.addFilterQuery(String.format("%s(%s AND %s)",
-              typeNameFilter, propertyFieldFilter, notEqualFilter));
+              typeNameFilter, memberFieldFilter, notEqualFilter));
           break;
         default:
           break;
@@ -257,7 +252,7 @@ public class QueryMapper extends Mapper<SolrQuery> {
     }
 
     String childFieldFilter = CollectionUtils.isEmpty(childFieldNames)
-        ? "" : String.format(FILTER_FORMAT, FIELD_NAME,
+        ? "" : String.format(FILTER_FORMAT, MEMBER_FIELD_NAME,
         StringUtils.join(childFieldNames, OR_SEPARATOR));
     String typeNameField = String.format(TRANSFORM_FORMAT,
         FIELD_TYPE_NAME, type.getSimpleName(), childFieldFilter);

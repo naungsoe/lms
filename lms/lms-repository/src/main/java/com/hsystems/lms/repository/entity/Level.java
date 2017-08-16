@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * Created by naungsoe on 1/11/16.
  */
-@IndexCollection(name = "levels")
+@IndexCollection(namespace = "lms", name = "levels")
 public class Level extends Auditable implements Serializable {
 
   private static final long serialVersionUID = 1219434630963071408L;

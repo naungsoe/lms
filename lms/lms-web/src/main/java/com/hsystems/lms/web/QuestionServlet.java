@@ -1,6 +1,12 @@
 package com.hsystems.lms.web;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -17,11 +23,21 @@ public class QuestionServlet extends BaseServlet {
 
   private static final String JSP_PATH = "/jsp/questions/index.jsp";
 
+  private final Provider<Principal> principalProvider;
+
+  @Inject
+  QuestionServlet(Provider<Principal> principalProvider) {
+    this.principalProvider = principalProvider;
+  }
+
   @Override
   @Requires(Permission.VIEW_QUESTIONS)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
+    UserModel userModel = (UserModel) principalProvider.get();
+    request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "questions");
     forwardRequest(request, response, JSP_PATH);

@@ -1,0 +1,159 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+<link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../bower_components/app-route/app-route.html">
+<link rel="import" href="../bower_components/app-route/app-location.html">
+<link rel="import" href="../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../bower_components/iron-icons/device-icons.html">
+<link rel="import" href="../bower_components/iron-icons/communication-icons.html">
+<link rel="import" href="../bower_components/iron-icon/iron-icon.html">
+<link rel="import" href="../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../bower_components/paper-item/paper-icon-item.html">
+
+<dom-module id="app-navigation">
+  <template>
+    <style>
+      paper-icon-item {
+        --paper-item-icon-width: 40px;
+      }
+    </style>
+
+    <app-location route="{{route}}">
+    </app-location>
+
+    <app-route
+        route="{{route}}"
+        pattern="[[contextRoot]]/:module"
+        data="{{routeData}}">
+    </app-route>
+
+    <paper-listbox
+        selected="{{module}}"
+        attr-for-selected="name">
+      <paper-icon-item name="home">
+        <iron-icon
+            icon="home"
+            slot="item-icon">
+        </iron-icon>
+        [[localize('menuHome')]]
+      </paper-icon-item>
+
+      <paper-icon-item name="assignments">
+        <iron-icon
+            icon="assignment"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuAssignments')]]
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-icon-item name="lessons">
+        <iron-icon
+            icon="communication:import-contacts"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuLessons')]]
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-icon-item name="quizzes">
+        <iron-icon
+            icon="social:poll"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuQuizzes')]]
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-icon-item name="questions">
+        <iron-icon
+            icon="extension"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuQuestions')]]
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-icon-item name="storage">
+        <iron-icon
+            icon="device:storage"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuStorage')]]
+        </paper-item-body>
+      </paper-icon-item>
+
+      <paper-icon-item name="signout">
+        <iron-icon
+            icon="exit-to-app"
+            slot="item-icon">
+        </iron-icon>
+        <paper-item-body>
+          [[localize('menuSignOut')]]
+        </paper-item-body>
+      </paper-icon-item>
+    </paper-listbox>
+  </template>
+
+  <script>
+    const AppNavigationBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class AppNavigation extends AppNavigationBase {
+      static get is() {
+        return 'app-navigation';
+      }
+
+      static get properties() {
+        return {
+          contextRoot: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          route: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          routeData: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          module: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateModule(routeData)',
+          '_updateLocation(module)'
+        ];
+      }
+
+      _updateModule(routeData) {
+        let root = this.shadowRoot;
+        let module = this.routeData.module;
+        root.querySelector('paper-listbox').selected = module;
+      }
+
+      _updateLocation(module) {
+        if (this.routeData.module !== module) {
+          var moduleUrl = this.contextRoot + '/' + module;
+          window.location = moduleUrl;
+        }
+      }
+    }
+    customElements.define(AppNavigation.is, AppNavigation);
+  </script>
+</dom-module>

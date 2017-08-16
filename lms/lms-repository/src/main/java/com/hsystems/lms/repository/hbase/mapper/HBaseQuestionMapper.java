@@ -1,11 +1,13 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionOption;
-import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
@@ -18,6 +20,7 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
@@ -77,15 +80,15 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
     List<QuestionOption> options;
-    List<Question> questions;
+    List<Component> components;
 
     if (type == QuestionType.COMPOSITE) {
       options = Collections.emptyList();
-      questions = getQuestions(results, id, timestamp);
+      components = getQuestionComponents(results, id, timestamp);
 
     } else {
-      options = getOptions(results, id, timestamp);
-      questions = Collections.emptyList();
+      options = getQuestionOptions(results, id, timestamp);
+      components = Collections.emptyList();
     }
 
     return new Question(
@@ -95,11 +98,12 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         hint,
         explanation,
         options,
-        questions,
+        components,
         school,
         levels,
         subjects,
         keywords,
+        Collections.emptyList(),
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -120,7 +124,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     addQuestionPut(puts, entity, timestamp);
     addOptionsPut(puts, entity, timestamp);
 
-    if (CollectionUtils.isNotEmpty(entity.getQuestions())) {
+    if (CollectionUtils.isNotEmpty(entity.getComponents())) {
       addQuestionsPut(puts, entity, timestamp);
     }
 
@@ -144,21 +148,27 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   private void addOptionsPut(
       List<Put> puts, Question entity, long timestamp) {
 
-    entity.getOptions().forEach(option -> {
+    Enumeration<QuestionOption> enumeration = entity.getOptions();
+
+    while (enumeration.hasMoreElements()) {
+      QuestionOption option = enumeration.nextElement();
       String prefix = entity.getId();
       Put put = getOptionPut(option, prefix, timestamp);
       puts.add(put);
-    });
+    }
   }
 
   private void addQuestionsPut(
       List<Put> puts, Question entity, long timestamp) {
 
-    entity.getQuestions().forEach(question -> {
+    Enumeration<Component> enumeration = entity.getComponents();
+
+    while (enumeration.hasMoreElements()) {
+      QuestionComponent component = (QuestionComponent) enumeration.nextElement();
       String prefix = entity.getId();
-      Put put = getQuestionPut(question, prefix, timestamp);
+      Put put = getQuestionComponentPut(component, prefix, timestamp);
       puts.add(put);
-    });
+    }
   }
 
   @Override
@@ -182,10 +192,12 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   private void addOptionsDelete(
       List<Delete> deletes, Question entity, long timestamp) {
 
-    entity.getOptions().forEach(option -> {
-      Delete delete = getOptionDelete(
-          option, entity.getId(), timestamp);
+    Enumeration<QuestionOption> enumeration = entity.getOptions();
+
+    while (enumeration.hasMoreElements()) {
+      QuestionOption option = enumeration.nextElement();
+      Delete delete = getOptionDelete(option, entity.getId(), timestamp);
       deletes.add(delete);
-    });
+    }
   }
 }

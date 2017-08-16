@@ -1,13 +1,16 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 4/11/16.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class QuestionOptionModel implements Serializable {
 
-  private static final long serialVersionUID = -1625929256059640222L;
+  private static final long serialVersionUID = 2175757096624150046L;
 
   private String id;
 

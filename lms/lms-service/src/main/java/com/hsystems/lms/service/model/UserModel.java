@@ -82,6 +82,7 @@ public class UserModel
     this.groups = groups;
   }
 
+  @Override
   public String getId() {
     return id;
   }

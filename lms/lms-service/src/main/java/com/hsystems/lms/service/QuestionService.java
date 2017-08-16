@@ -3,7 +3,6 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
@@ -13,8 +12,8 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.Question;
-import com.hsystems.lms.repository.entity.QuestionType;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuestionModel;
 import com.hsystems.lms.service.model.UserModel;
@@ -46,30 +45,10 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public Optional<QuestionModel> findBy(String id, Principal principal)
-      throws IOException {
-
-    Optional<Question> questionOptional
-        = indexRepository.findBy(id, Question.class);
-
-    if (questionOptional.isPresent()) {
-      Question question = questionOptional.get();
-      Configuration configuration = Configuration.create();
-      QuestionModel questionModel = getModel(question,
-          QuestionModel.class, configuration);
-      return Optional.of(questionModel);
-    }
-
-    return Optional.empty();
-  }
-
-  @Log
   public QueryResult<QuestionModel> findAllBy(Query query, Principal principal)
       throws IOException {
 
-    UserModel userModel = (UserModel) principal;
-    String schoolId = userModel.getSchool().getId();
-    query.addCriterion(Criterion.createEqual("school.id", schoolId));
+    addSchoolFilter(query, principal);
 
     QueryResult<Question> queryResult
         = indexRepository.findAllBy(query, Question.class);
@@ -99,26 +78,77 @@ public class QuestionService extends BaseService {
     List<QuestionModel> questionModels = new ArrayList<>();
 
     for (Question question : questions) {
-      QuestionModel questionModel = getModel(question,
-          QuestionModel.class, configuration);
+      QuestionModel questionModel = getQuestionModel(question, configuration);
+      LocalDateTime createdDateTime = question.getCreatedDateTime();
+      LocalDateTime modifiedDateTime = question.getModifiedDateTime();
+
+      if (DateTimeUtils.isToday(createdDateTime)) {
+        questionModel.setCreatedTime(
+            DateTimeUtils.toPrettyTime(createdDateTime));
+      }
+
+      if (DateTimeUtils.isNotEmpty(modifiedDateTime)
+          && DateTimeUtils.isToday(modifiedDateTime)) {
+
+        questionModel.setModifiedTime(
+            DateTimeUtils.toPrettyTime(modifiedDateTime));
+      }
+
       questionModels.add(questionModel);
     }
 
     return questionModels;
   }
 
+  private QuestionModel getQuestionModel(
+      Question question, Configuration configuration) {
+
+    QuestionModel questionModel = getModel(question,
+        QuestionModel.class, configuration);
+    String dateFormat = configuration.getDateFormat();
+    LocalDateTime createdDateTime = question.getCreatedDateTime();
+    LocalDateTime modifiedDateTime = question.getModifiedDateTime();
+
+    questionModel.setCreatedDate(
+        DateTimeUtils.toString(createdDateTime, dateFormat));
+
+    if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
+      questionModel.setModifiedDate(DateTimeUtils.toString(
+          question.getModifiedDateTime(), dateFormat));
+    }
+
+    return questionModel;
+  }
+
+  @Log
+  public Optional<QuestionModel> findBy(String id, Principal principal)
+      throws IOException {
+
+    Optional<Question> questionOptional
+        = indexRepository.findBy(id, Question.class);
+
+    if (questionOptional.isPresent()) {
+      Question question = questionOptional.get();
+      Configuration configuration = Configuration.create(principal);
+      QuestionModel questionModel = getQuestionModel(question, configuration);
+      return Optional.of(questionModel);
+    }
+
+    return Optional.empty();
+  }
+
   @Log
   public void create(QuestionModel questionModel, Principal principal)
       throws IOException {
 
-    checkSavePreconditions(questionModel);
+    checkQuestionModel(questionModel);
     questionModel.setCreatedBy((UserModel) principal);
     questionModel.setCreatedDateTime(DateTimeUtils.toString(
         LocalDateTime.now(), principal.getDateTimeFormat()));
     saveQuestion(questionModel, principal);
   }
 
-  private void checkSavePreconditions(QuestionModel questionModel) {
+  private void checkQuestionModel(QuestionModel questionModel) {
     CommonUtils.checkNotNull(questionModel.getBody(),
         "question body cannot be null");
     CommonUtils.checkArgument(StringUtils.isNotEmpty(questionModel.getBody()),
@@ -143,7 +173,7 @@ public class QuestionService extends BaseService {
   public void save(QuestionModel questionModel, Principal principal)
       throws IOException {
 
-    checkSavePreconditions(questionModel);
+    checkQuestionModel(questionModel);
 
     Optional<Question> questionOptional = indexRepository.findBy(
         questionModel.getId(), Question.class);
@@ -167,7 +197,7 @@ public class QuestionService extends BaseService {
     destModel.setHint(sourceModel.getHint());
     destModel.setExplanation(sourceModel.getExplanation());
     destModel.setOptions(sourceModel.getOptions());
-    destModel.setQuestions(sourceModel.getQuestions());
+    destModel.setComponents(sourceModel.getComponents());
     destModel.setSchool(sourceModel.getSchool());
     destModel.setLevels(sourceModel.getLevels());
     destModel.setSubjects(sourceModel.getSubjects());

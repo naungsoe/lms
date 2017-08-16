@@ -15,8 +15,8 @@ public class Permission {
   public static final String EDIT_QUESTION = "EDIT_QUESTION";
   public static final String VIEW_QUIZZES = "VIEW_QUIZZES";
   public static final String EDIT_QUIZ = "EDIT_QUIZ";
-  public static final String VIEW_LESSON_PACKAGES = "VIEW_LESSON_PACKAGES";
-  public static final String EDIT_LESSON_PACKAGE = "EDIT_LESSON_PACKAGE";
+  public static final String VIEW_LESSONS = "VIEW_LESSONS";
+  public static final String EDIT_LESSON = "EDIT_LESSON";
   public static final String VIEW_STORAGE = "VIEW_STORAGE";
   public static final String EDIT_FILE = "EDIT_FILE";
   public static final String VIEW_USERS = "VIEW_USERS";

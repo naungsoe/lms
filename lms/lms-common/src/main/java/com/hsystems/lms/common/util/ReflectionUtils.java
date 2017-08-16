@@ -16,6 +16,17 @@ import java.util.function.Predicate;
  */
 public final class ReflectionUtils {
 
+  public static Object getInstance(String typeName, Object... initargs) {
+    try {
+      Class<?> type = Class.forName(typeName);
+      return getInstance(type, initargs);
+
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException(
+          "error creating instance", e);
+    }
+  }
+
   public static Object getInstance(Class type, Object... initargs) {
     Optional<Constructor> constructor = getParamLessConstructor(type);
 

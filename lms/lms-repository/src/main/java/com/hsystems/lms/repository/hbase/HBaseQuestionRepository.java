@@ -11,7 +11,7 @@ import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Question;
+import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuestionMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -133,13 +133,13 @@ public class HBaseQuestionRepository
     List<Put> puts = questionMapper.getPuts(entity, timestamp);
     client.put(puts, Question.class);
 
-    Mutation modifiedMutation = getMutation(entity,
-        ActionType.MODIFIED, timestamp);
-    mutationRepository.save(modifiedMutation);
-
     AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
         ActionType.MODIFIED, timestamp);
     auditLogRepository.save(auditLog);
+
+    Mutation modifiedMutation = getMutation(entity,
+        ActionType.MODIFIED, timestamp);
+    mutationRepository.save(modifiedMutation);
 
     List<String> rowKeys = getPutRowKeys(puts);
     deleteUnusedRows(entity, rowKeys);
@@ -175,12 +175,12 @@ public class HBaseQuestionRepository
     List<Put> puts = questionMapper.getPuts(entity, timestamp);
     client.put(puts, Question.class);
 
-    Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
-    mutationRepository.save(mutation);
-
     AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
         ActionType.CREATED, timestamp);
     auditLogRepository.save(auditLog);
+
+    Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
+    mutationRepository.save(mutation);
   }
 
   @Override

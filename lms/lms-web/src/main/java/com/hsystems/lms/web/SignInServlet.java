@@ -12,6 +12,7 @@ import com.hsystems.lms.web.util.ServletUtils;
 import java.io.IOException;
 import java.util.Optional;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -27,15 +28,11 @@ public class SignInServlet extends BaseServlet {
 
   private static final String JSP_PATH = "/jsp/signin/index.jsp";
 
-  private static final String SIGNIN_PATH = "/web/signin";
-
-  private static final String HOME_PATH = "/web/home";
-
-  private final AuthenticationService authenticationService;
+  private final AuthenticationService authService;
 
   @Inject
-  SignInServlet(AuthenticationService authenticationService) {
-    this.authenticationService = authenticationService;
+  SignInServlet(AuthenticationService authService) {
+    this.authService = authService;
   }
 
   @Override
@@ -51,7 +48,7 @@ public class SignInServlet extends BaseServlet {
       SignInModel signInModel = new SignInModel(
           id, "", "", sessionId, ipAddress);
 
-      if (authenticationService.isCaptchaRquired(signInModel)) {
+      if (authService.isCaptchaRequired(signInModel)) {
         loadCaptchaAttributes(request);
         request.setAttribute("error", "errorCredential");
       }
@@ -75,42 +72,50 @@ public class SignInServlet extends BaseServlet {
       throws ServletException, IOException {
 
     SignInModel signInModel = ServletUtils.getModel(request, SignInModel.class);
+    HttpSession session = request.getSession(false);
 
     if (!areCredentialsValid(request, signInModel)) {
-      HttpSession session = request.getSession(true);
       String captcha = (String) session.getAttribute("captcha");
 
       if (StringUtils.isNotEmpty(captcha)) {
         loadCaptchaAttributes(request);
       }
 
-      request.setAttribute("id", signInModel.getId());
+      request.setAttribute("account", signInModel.getAccount());
       request.setAttribute("error", "errorCredential");
       loadSignIn(request, response);
       return;
     }
 
-    signInModel.setSessionId(request.getRequestedSessionId());
+    session.invalidate();
+    session = request.getSession(true);
+
+    signInModel.setSessionId(session.getId());
     signInModel.setIpAddress(ServletUtils.getRemoteAddress(request));
 
-    Optional<UserModel> userModelOptional
-        = authenticationService.signIn(signInModel);
+    Optional<UserModel> userModelOptional = authService.signIn(signInModel);
 
     if (userModelOptional.isPresent()) {
       String refererPath = getRefererPath(request);
-      createUserSession(request, response, userModelOptional.get());
+      UserModel userModel = userModelOptional.get();
+      updateUserSession(request, response, userModel);
 
-      if (SIGNIN_PATH.equals(refererPath)) {
-        redirectRequest(response, HOME_PATH);
+      ServletContext servletContext = request.getServletContext();
+      String signInUrl = servletContext.getInitParameter("signInUrl");
+
+      if (signInUrl.equalsIgnoreCase(refererPath)) {
+        String homeUrl = servletContext.getInitParameter("homeUrl");
+        redirectRequest(response, homeUrl);
+
       } else {
         redirectRequest(response, refererPath);
       }
     } else {
-      if (authenticationService.isCaptchaRquired(signInModel)) {
+      if (authService.isCaptchaRequired(signInModel)) {
         loadCaptchaAttributes(request);
       }
 
-      request.setAttribute("id", signInModel.getId());
+      request.setAttribute("account", signInModel.getAccount());
       request.setAttribute("error", "errorCredential");
       loadSignIn(request, response);
     }
@@ -119,7 +124,7 @@ public class SignInServlet extends BaseServlet {
   private boolean areCredentialsValid(
       HttpServletRequest request, SignInModel signInModel) {
 
-    boolean valid = StringUtils.isNotEmpty(signInModel.getId());
+    boolean valid = StringUtils.isNotEmpty(signInModel.getAccount());
     valid = StringUtils.isNotEmpty(signInModel.getPassword()) && valid;
 
     HttpSession session = request.getSession();
@@ -132,16 +137,14 @@ public class SignInServlet extends BaseServlet {
     return valid;
   }
 
-  private void createUserSession(
+  private void updateUserSession(
       HttpServletRequest request, HttpServletResponse response,
       UserModel userModel) {
 
-    request.getSession().invalidate();
+    HttpSession session = request.getSession(false);
+    session.setAttribute("principal", userModel);
 
-    HttpSession session = request.getSession(true);
-    session.setAttribute("userModel", userModel);
-
-    Cookie cookie = new Cookie("id", userModel.getAccount());
+    Cookie cookie = new Cookie("account", userModel.getAccount());
     cookie.setMaxAge(30 * 60);
     response.addCookie(cookie);
   }

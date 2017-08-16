@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 
 /**
@@ -40,11 +41,47 @@ public final class DateTimeUtils {
     return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
   }
 
+  public static String toPrettyTime(LocalDateTime dateTime) {
+    LocalDateTime now = LocalDateTime.now();
+    long seconds = ChronoUnit.SECONDS.between(dateTime, now);
+    long minutes = ChronoUnit.MINUTES.between(dateTime, now);
+    long hours = ChronoUnit.HOURS.between(dateTime, now);
+
+    if (hours > 0) {
+      String suffix = (hours == 1)
+          ? " hour ago" : " hours ago";
+      return hours + suffix;
+
+    } else if (minutes > 0) {
+      String suffix = (minutes == 1)
+          ? " minutes ago" : " minutes ago";
+      return minutes + suffix;
+
+    } else {
+      String suffix = (seconds == 1)
+          ? " seconds ago" : " seconds ago";
+      return seconds + suffix;
+    }
+  }
+
   public static long getCurrentMilliseconds() {
     return getMilliseconds(LocalDateTime.now());
   }
 
   public static long getMilliseconds(LocalDateTime dateTime) {
     return dateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+  }
+
+  public static boolean isEmpty(LocalDateTime dateTime) {
+    return dateTime == null;
+  }
+
+  public static boolean isNotEmpty(LocalDateTime dateTime) {
+    return !isEmpty(dateTime);
+  }
+
+  public static boolean isToday(LocalDateTime dateTime) {
+    LocalDateTime now = LocalDateTime.now();
+    return ChronoUnit.HOURS.between(dateTime, now) > 24;
   }
 }

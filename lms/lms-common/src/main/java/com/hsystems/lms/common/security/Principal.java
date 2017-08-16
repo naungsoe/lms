@@ -5,6 +5,8 @@ package com.hsystems.lms.common.security;
  */
 public interface Principal {
 
+  String getId();
+
   String getName();
 
   String getLocale();
