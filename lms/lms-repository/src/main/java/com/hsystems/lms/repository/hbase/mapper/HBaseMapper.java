@@ -1,24 +1,30 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
-import com.hsystems.lms.repository.entity.AccessControl;
-import com.hsystems.lms.repository.entity.AccessType;
 import com.hsystems.lms.repository.entity.Auditable;
-import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.Entity;
+import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.repository.entity.Lesson;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
-import com.hsystems.lms.repository.entity.question.QuestionOption;
-import com.hsystems.lms.repository.entity.question.QuestionType;
-import com.hsystems.lms.repository.entity.Quiz;
+import com.hsystems.lms.repository.entity.ResourceAccess;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
+import com.hsystems.lms.repository.entity.question.CompositeQuestion;
+import com.hsystems.lms.repository.entity.question.CompositeQuestionComponent;
+import com.hsystems.lms.repository.entity.question.MultipleChoice;
+import com.hsystems.lms.repository.entity.question.MultipleChoiceComponent;
+import com.hsystems.lms.repository.entity.question.MultipleResponse;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.hbase.Cell;
@@ -32,6 +38,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -227,17 +234,16 @@ public abstract class HBaseMapper<T> {
     }
   }
 
-  protected <T extends Enum<T>> T getType(
-      Result result, long timestamp, Class<T> type) {
+  protected String getType(Result result, long timestamp) {
 
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.IDENTIFIER_TYPE, type);
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TYPE);
 
     } else {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE);
-      return getEnum(cells, timestamp, type);
+      return getString(cells, timestamp);
     }
   }
 
@@ -387,20 +393,6 @@ public abstract class HBaseMapper<T> {
     }
   }
 
-  protected <T extends Enum<T>> T getAction(
-      Result result, long timestamp, Class<T> type) {
-
-    if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.IDENTIFIER_ACTION, type);
-
-    } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION);
-      return getEnum(cells, timestamp, type);
-    }
-  }
-
   protected boolean getCorrect(Result result, long timestamp) {
     if (timestamp == 0) {
       return getBoolean(result, Constants.FAMILY_DATA,
@@ -422,6 +414,42 @@ public abstract class HBaseMapper<T> {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.IDENTIFIER_ORDER);
       return getInteger(cells, timestamp);
+    }
+  }
+
+  protected long getScore(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getLong(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_SCORE);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_SCORE);
+      return getLong(cells, timestamp);
+    }
+  }
+
+  protected EntityType getEntityType(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_TYPE, EntityType.class);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE);
+      return getEnum(cells, timestamp, EntityType.class);
+    }
+  }
+
+  protected ActionType getActionType(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getEnum(result, Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_ACTION, ActionType.class);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION);
+      return getEnum(cells, timestamp, ActionType.class);
     }
   }
 
@@ -562,6 +590,10 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_MODIFIED_BY);
   }
 
+  protected Predicate<Result> isSharedByResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_SHARED_BY);
+  }
+
   protected Predicate<Result> isGroupResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_GROUP);
   }
@@ -602,8 +634,8 @@ public abstract class HBaseMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_OPTION);
   }
 
-  protected Predicate<Result> isAccessControlResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_ACCESS);
+  protected Predicate<Result> isPermissionResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_PERMISSION);
   }
 
   protected String getId(Result result, String separator) {
@@ -668,18 +700,18 @@ public abstract class HBaseMapper<T> {
     return permissions;
   }
 
-  protected List<AccessType> getAccessTypes(
+  protected List<ResourceAccess> getResourceAccesss(
       Result result, long timestamp) {
 
     String value;
 
     if (timestamp == 0) {
       value = getString(result, Constants.FAMILY_DATA,
-          Constants.IDENTIFIER_ACCESSES);
+          Constants.IDENTIFIER_PERMISSIONS);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.IDENTIFIER_ACCESSES);
+      List<Cell> cells = result.getColumnCells(Constants.FAMILY_DATA,
+          Constants.IDENTIFIER_PERMISSIONS);
       value = getString(cells, timestamp);
     }
 
@@ -687,14 +719,15 @@ public abstract class HBaseMapper<T> {
       return Collections.emptyList();
     }
 
-    List<AccessType> accessTypes = new ArrayList<>();
+    List<ResourceAccess> permissions = new ArrayList<>();
     String[] items = value.split(VALUE_SEPARATOR);
     Arrays.asList(items).forEach(item -> {
-      AccessType accessType = Enum.valueOf(AccessType.class, item);
-      accessTypes.add(accessType);
+      ResourceAccess permission
+          = Enum.valueOf(ResourceAccess.class, item);
+      permissions.add(permission);
     });
 
-    return accessTypes;
+    return permissions;
   }
 
   protected User getMember(Result result, long timestamp) {
@@ -794,58 +827,97 @@ public abstract class HBaseMapper<T> {
     );
   }
 
-  protected Question getQuestion(
+  protected CompositeQuestionComponent getCompositeQuestionComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    CompositeQuestion question = getCompositeQuestion(results, id, timestamp);
+    int order = getOrder(mainResult, timestamp);
+    long score = getScore(mainResult, timestamp);
+
+    return new CompositeQuestionComponent(
+        id,
+        question,
+        order,
+        score
+    );
+  }
+
+  protected CompositeQuestion getCompositeQuestion(
       List<Result> results, String prefix, long timestamp) {
 
     Result result = results.stream()
         .filter(isQuestionResult(prefix)).findFirst().get();
     String id = getId(result, Constants.SEPARATOR_QUESTION);
-    QuestionType type = getType(result, timestamp, QuestionType.class);
     String body = getBody(result, timestamp);
     String hint = getHint(result, timestamp);
     String explanation = getExplanation(result, timestamp);
+    List<QuestionComponent> components
+        = getQuestionComponents(results, id, timestamp);
 
-    List<QuestionOption> options;
-    List<Component> components;
-
-    if (type == QuestionType.COMPOSITE) {
-      options = Collections.emptyList();
-      components = getQuestionComponents(results, id, timestamp);
-
-    } else {
-      options = getQuestionOptions(results, id, timestamp);
-      components = Collections.emptyList();
-    }
-
-    return new Question(
+    return new CompositeQuestion(
         id,
-        type,
         body,
         hint,
         explanation,
-        options,
         components
     );
   }
 
-  protected List<Component> getQuestionComponents(
+  protected List<QuestionComponent> getQuestionComponents(
       List<Result> results, String prefix, long timestamp) {
 
-    List<Component> components = new ArrayList<>();
+    List<QuestionComponent> components = new ArrayList<>();
     results.stream().filter(isComponentResult(prefix))
         .forEach(result -> {
-          String id = getId(result, Constants.SEPARATOR_COMPONENT);
-          int order = getOrder(result, timestamp);
-          Question question = getQuestion(results, id, timestamp);
-          QuestionComponent component = new QuestionComponent(
-              id,
-              order,
-              question
-          );
-          components.add(component);
+          String componentType = getType(result, timestamp);
+
+          switch (componentType) {
+            case "MultipleChoiceComponent":
+              QuestionComponent component
+                  = getMultipleChoiceComponent(result, results, timestamp);
+              components.add(component);
+              break;
+          }
         });
 
     return components;
+  }
+
+  protected MultipleChoiceComponent getMultipleChoiceComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    MultipleChoice question = getMultipleChoice(results, id, timestamp);
+    int order = getOrder(mainResult, timestamp);
+    long score = getScore(mainResult, timestamp);
+
+    return new MultipleChoiceComponent(
+        id,
+        question,
+        order,
+        score
+    );
+  }
+
+  protected MultipleChoice getMultipleChoice(
+      List<Result> results, String prefix, long timestamp) {
+
+    Result result = results.stream()
+        .filter(isQuestionResult(prefix)).findFirst().get();
+    String id = getId(result, Constants.SEPARATOR_QUESTION);
+    String body = getBody(result, timestamp);
+    String hint = getHint(result, timestamp);
+    String explanation = getExplanation(result, timestamp);
+    List<QuestionOption> options = getQuestionOptions(results, id, timestamp);
+
+    return new MultipleChoice(
+        id,
+        body,
+        hint,
+        explanation,
+        options
+    );
   }
 
   protected List<QuestionOption> getQuestionOptions(
@@ -870,23 +942,19 @@ public abstract class HBaseMapper<T> {
     return new QuestionOption(id, body, feedback, correct, order);
   }
 
-  protected AccessControl getAccessControl(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_ACCESS);
+  protected ResourcePermission getResourcePermission(
+      Result result, long timestamp) {
+
+    String id = getId(result, Constants.SEPARATOR_PERMISSION);
     String firstName = getFirstName(result, timestamp);
     String lastName = getLastName(result, timestamp);
 
     User user = new User(id, firstName, lastName);
-    List<AccessType> accessTypes = getAccessTypes(result, timestamp);
-
-    return new AccessControl(
+    List<ResourceAccess> accesses = getResourceAccesss(result, timestamp);
+    return new ResourcePermission(
         user,
-        accessTypes
+        accesses
     );
-  }
-
-  protected void addIdColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_ID,
-        Bytes.toBytes(value));
   }
 
   protected void addFirstNameColumn(Put put, String value) {
@@ -905,7 +973,7 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(datetime));
   }
 
-  protected <T extends Enum<T>> void addTypeColumn(Put put, T value) {
+  protected void addEntityTypeColumn(Put put, EntityType value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_TYPE,
         Bytes.toBytes(value.toString()));
   }
@@ -923,6 +991,11 @@ public abstract class HBaseMapper<T> {
   protected void addFailsColumn(Put put, int value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_FAILS,
         Bytes.toBytes(Integer.toString(value)));
+  }
+
+  protected void addTypeColumn(Put put, String value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_BODY,
+        Bytes.toBytes(value));
   }
 
   protected void addBodyColumn(Put put, String value) {
@@ -955,12 +1028,17 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value));
   }
 
+  protected void addScoreColumn(Put put, long value) {
+    put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_SCORE,
+        Bytes.toBytes(value));
+  }
+
   protected void addTimestampColumn(Put put, long value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_TIMESTAMP,
         Bytes.toBytes(value));
   }
 
-  protected <T extends Enum<T>> void addActionColumn(Put put, T value) {
+  protected void addActionTypeColumn(Put put, ActionType value) {
     put.addColumn(Constants.FAMILY_DATA, Constants.IDENTIFIER_ACTION,
         Bytes.toBytes(value.toString()));
   }
@@ -970,8 +1048,72 @@ public abstract class HBaseMapper<T> {
         Bytes.toBytes(value.toString()));
   }
 
-  protected Put getOptionPut(
-      QuestionOption option, String prefix, long timestamp) {
+  protected void getQuestionComponentPut(
+      List<Put> puts, QuestionComponent component,
+      String prefix, long timestamp) {
+
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
+        Constants.SEPARATOR_COMPONENT, component.getId());
+    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
+    addTypeColumn(put, component.getClass().getSimpleName());
+    addOrderColumn(put, component.getOrder());
+    addScoreColumn(put, component.getScore());
+    puts.add(put);
+
+    Question question = component.getQuestion();
+
+    if (question instanceof CompositeQuestion) {
+      addQuestionPut(puts, question, rowKey, timestamp);
+
+    } else if (question instanceof MultipleChoice) {
+      addQuestionPut(puts, question, rowKey, timestamp);
+      addQuestionOptionsPut(puts, question, rowKey, timestamp);
+    }
+  }
+
+  protected void addQuestionPut(
+      List<Put> puts, Question question,
+      String prefix, long timestamp) {
+
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
+        Constants.SEPARATOR_OPTION, question.getId());
+    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
+    addTypeColumn(put, question.getClass().getSimpleName());
+    addBodyColumn(put, question.getBody());
+    addHintColumn(put, question.getHint());
+    addExplanationColumn(put, question.getExplanation());
+    puts.add(put);
+  }
+
+  private void addQuestionOptionsPut(
+      List<Put> puts, Question question,
+      String prefix, long timestamp) {
+
+    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
+        Constants.SEPARATOR_OPTION, question.getId());
+    Enumeration<QuestionOption> enumeration;
+
+    if (question instanceof MultipleChoice) {
+      MultipleChoice multipleChoice = (MultipleChoice) question;
+      enumeration = multipleChoice.getOptions();
+
+    } else if (question instanceof MultipleResponse) {
+      MultipleResponse multipleResponse = (MultipleResponse) question;
+      enumeration = multipleResponse.getOptions();
+
+    } else {
+      enumeration = Collections.emptyEnumeration();
+    }
+
+    while (enumeration.hasMoreElements()) {
+      QuestionOption option = enumeration.nextElement();
+      addQuestionOptionPut(puts, option, rowKey, timestamp);
+    }
+  }
+
+  protected void addQuestionOptionPut(
+      List<Put> puts, QuestionOption option,
+      String prefix, long timestamp) {
 
     String rowKey = String.format(ROW_KEY_FORMAT, prefix,
         Constants.SEPARATOR_OPTION, option.getId());
@@ -980,28 +1122,14 @@ public abstract class HBaseMapper<T> {
     addFeedbackColumn(put, option.getFeedback());
     addCorrectColumn(put, option.isCorrect());
     addOrderColumn(put, option.getOrder());
-    return put;
-  }
-
-  protected Put getQuestionComponentPut(
-      QuestionComponent component, String prefix, long timestamp) {
-
-    Question question =  component.getQuestion();
-    String rowKey = String.format(ROW_KEY_FORMAT, prefix,
-        Constants.SEPARATOR_OPTION, question.getId());
-    Put put = new Put(Bytes.toBytes(rowKey), timestamp);
-    addTypeColumn(put, question.getType());
-    addBodyColumn(put, question.getBody());
-    addHintColumn(put, question.getHint());
-    addExplanationColumn(put, question.getExplanation());
-    addOrderColumn(put, component.getOrder());
-    return put;
+    puts.add(put);
   }
 
   protected void addCreatedByPut(
-      List<Put> puts, Auditable auditable, long timestamp) {
+      List<Put> puts, Entity entity, long timestamp) {
 
-    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
+    Auditable auditable = (Auditable) entity;
+    String rowKey = String.format(ROW_KEY_FORMAT, entity.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Put put = getUserPut(auditable.getCreatedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getCreatedDateTime());
@@ -1018,16 +1146,17 @@ public abstract class HBaseMapper<T> {
   }
 
   protected void addModifiedByPut(
-      List<Put> puts, Auditable auditable, long timestamp) {
+      List<Put> puts, Entity entity, long timestamp) {
 
-    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
+    Auditable auditable = (Auditable) entity;
+    String rowKey = String.format(ROW_KEY_FORMAT, entity.getId(),
         Constants.SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
     Put put = getUserPut(auditable.getModifiedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getModifiedDateTime());
     puts.add(put);
   }
 
-  protected Delete getOptionDelete(
+  protected Delete getQuestionOptionDelete(
       QuestionOption option, String prefix, long timestamp) {
 
     String rowKey = String.format(ROW_KEY_FORMAT, prefix,
@@ -1036,18 +1165,20 @@ public abstract class HBaseMapper<T> {
   }
 
   protected void addCreatedByDelete(
-      List<Delete> deletes, Auditable auditable, long timestamp) {
+      List<Delete> deletes, Entity entity, long timestamp) {
 
-    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
+    Auditable auditable = (Auditable) entity;
+    String rowKey = String.format(ROW_KEY_FORMAT, entity.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }
 
   protected void addModifiedByDelete(
-      List<Delete> deletes, Auditable auditable, long timestamp) {
+      List<Delete> deletes, Entity entity, long timestamp) {
 
-    String rowKey = String.format(ROW_KEY_FORMAT, auditable.getId(),
+    Auditable auditable = (Auditable) entity;
+    String rowKey = String.format(ROW_KEY_FORMAT, entity.getId(),
         Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);

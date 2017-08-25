@@ -3,10 +3,10 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Quiz;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
@@ -81,7 +81,6 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
         levels,
         subjects,
         keywords,
-        Collections.emptyList(),
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -98,11 +97,11 @@ public class HBaseQuizMapper extends HBaseMapper<Quiz> {
 
   @Override
   public List<Put> getPuts(Quiz entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Quiz entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

@@ -1,38 +1,23 @@
 package com.hsystems.lms.service.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * Created by naungsoe on 3/11/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QuestionModel extends ResourceModel implements Serializable {
+public abstract class QuestionModel
+    extends ResourceModel implements Serializable {
 
-  private static final long serialVersionUID = 553257369714695546L;
+  protected String id;
 
-  private String id;
+  protected String body;
 
-  private String type;
+  protected String hint;
 
-  private String body;
-
-  private String hint;
-
-  private String explanation;
-
-  private List<QuestionOptionModel> options;
-
-  private List<QuestionComponentModel> components;
-
-  public QuestionModel() {
-
-  }
+  protected String explanation;
 
   public String getId() {
     return id;
@@ -40,14 +25,6 @@ public class QuestionModel extends ResourceModel implements Serializable {
 
   public void setId(String id) {
     this.id = id;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public void setType(String type) {
-    this.type = type;
   }
 
   public String getBody() {
@@ -72,27 +49,5 @@ public class QuestionModel extends ResourceModel implements Serializable {
 
   public void setExplanation(String explanation) {
     this.explanation = explanation;
-  }
-
-  public List<QuestionOptionModel> getOptions() {
-    return CollectionUtils.isEmpty(options)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(options);
-  }
-
-  public void setOptions(List<QuestionOptionModel> options) {
-    this.options = new ArrayList<>();
-    this.options.addAll(options);
-  }
-
-  public List<QuestionComponentModel> getComponents() {
-    return CollectionUtils.isEmpty(components)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(components);
-  }
-
-  public void setComponents(List<QuestionComponentModel> components) {
-    this.components = new ArrayList<>();
-    this.components.addAll(components);
   }
 }

@@ -2,12 +2,13 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.ShareLogRepository;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
@@ -30,8 +31,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseQuestionRepository
-    extends HBaseRepository implements QuestionRepository {
+public class HBaseQuestionRepository extends HBaseResourceRepository
+    implements QuestionRepository {
 
   private final HBaseClient client;
 
@@ -46,12 +47,14 @@ public class HBaseQuestionRepository
       HBaseClient client,
       HBaseQuestionMapper questionMapper,
       MutationRepository mutationRepository,
-      AuditLogRepository auditLogRepository) {
+      AuditLogRepository auditLogRepository,
+      ShareLogRepository shareLogRepository) {
 
     this.client = client;
     this.questionMapper = questionMapper;
     this.mutationRepository = mutationRepository;
     this.auditLogRepository = auditLogRepository;
+    this.shareLogRepository = shareLogRepository;
   }
 
   @Override
@@ -83,6 +86,7 @@ public class HBaseQuestionRepository
     }
 
     Question question = questionMapper.getEntity(results);
+    populatePermissions(question);
     return Optional.of(question);
   }
 
@@ -108,7 +112,9 @@ public class HBaseQuestionRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, Question.class);
-    return questionMapper.getEntities(results, mutations);
+    List<Question> questions = questionMapper.getEntities(results, mutations);
+    populatePermissions(questions);
+    return questions;
   }
 
   @Override

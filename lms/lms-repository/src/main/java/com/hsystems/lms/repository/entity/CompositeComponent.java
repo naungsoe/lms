@@ -9,5 +9,7 @@ public interface CompositeComponent extends Component {
 
   Enumeration<Component> getComponents();
 
-  void addComponent(Component... component);
+  void addComponent(Component... components);
+
+  void removeComponent(Component component);
 }

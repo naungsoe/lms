@@ -1,10 +1,20 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.lesson;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.repository.entity.Resource;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Subject;
+import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.file.FileComponent;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.quiz.QuizComponent;
+import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,12 +28,10 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(namespace = "lms", name = "lessons")
-public class Lesson extends Resource implements Serializable {
+public class Lesson extends Resource
+    implements Serializable {
 
-  private static final long serialVersionUID = 885954460906982717L;
-
-  @IndexField
-  private String id;
+  private static final long serialVersionUID = 5774253712067824162L;
 
   @IndexField
   private String title;
@@ -59,7 +67,6 @@ public class Lesson extends Resource implements Serializable {
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<AccessControl> accessControls,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -73,16 +80,10 @@ public class Lesson extends Resource implements Serializable {
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.accessControls = accessControls;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
-  }
-
-  @Override
-  public String getId() {
-    return id;
   }
 
   public String getTitle() {
@@ -105,16 +106,46 @@ public class Lesson extends Resource implements Serializable {
     }
 
     Arrays.stream(components).forEach(component -> {
-      checkLessonSectionComponent(component);
+      checkSectionComponent(component);
       this.components.add(component);
     });
   }
 
-  private void checkLessonSectionComponent(Component component) {
-    boolean isLessonSectionComponent
-        = component instanceof LessonSectionComponent;
-    CommonUtils.checkArgument(isLessonSectionComponent,
-        "component is not section");
+  private void checkSectionComponent(Component component) {
+    boolean isSectionComponent = component instanceof SectionComponent;
+    boolean isQuizComponent = component instanceof QuizComponent;
+    CommonUtils.checkArgument(isSectionComponent || isQuizComponent,
+        "component is not section or quiz");
+
+    if (isSectionComponent) {
+      SectionComponent sectionComponent = (SectionComponent) component;
+      Enumeration<Component> enumeration = sectionComponent.getComponents();
+
+      while (enumeration.hasMoreElements()) {
+        Component element = enumeration.nextElement();
+        checkAllowedComponent(element);
+      }
+    } else if (isQuizComponent) {
+      SectionComponent sectionComponent = (SectionComponent) component;
+      Enumeration<Component> enumeration = sectionComponent.getComponents();
+
+      while (enumeration.hasMoreElements()) {
+        Component element = enumeration.nextElement();
+        checkQuestionComponent(element);
+      }
+    }
+  }
+
+  private void checkAllowedComponent(Component component) {
+    boolean isQuestionComponent = component instanceof QuestionComponent;
+    boolean isFileComponent = component instanceof FileComponent;
+    CommonUtils.checkArgument(isQuestionComponent || isFileComponent,
+        "component is not question or file");
+  }
+
+  private void checkQuestionComponent(Component component) {
+    boolean isQuestionComponent = component instanceof QuestionComponent;
+    CommonUtils.checkArgument(isQuestionComponent, "component is not question");
   }
 
   @Override
@@ -136,12 +167,11 @@ public class Lesson extends Resource implements Serializable {
   public String toString() {
     return String.format(
         "Lesson{id=%s, title=%s, instructions=%s, components=%s, "
-            + "school=%s, levels=%s, subjects=%s, keywords=%s, "
-            + "accessControls=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
+            + "school=%s, levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
         id, title, instructions, StringUtils.join(components, ","),
         school, StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
-        StringUtils.join(keywords, ","), StringUtils.join(accessControls, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

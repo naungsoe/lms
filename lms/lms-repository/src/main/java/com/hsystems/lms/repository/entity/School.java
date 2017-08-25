@@ -15,9 +15,9 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(namespace = "lms", name = "schools")
-public class School extends Auditable implements Serializable {
+public class School implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = -8371629223750518583L;
+  private static final long serialVersionUID = -2792764271066500681L;
 
   @IndexField
   private String id;
@@ -36,6 +36,18 @@ public class School extends Auditable implements Serializable {
 
   @IndexField
   private List<Permission> permissions;
+
+  @IndexField
+  private User createdBy;
+
+  @IndexField
+  private LocalDateTime createdDateTime;
+
+  @IndexField
+  private User modifiedBy;
+
+  @IndexField
+  private LocalDateTime modifiedDateTime;
 
   School() {
 
@@ -101,6 +113,26 @@ public class School extends Auditable implements Serializable {
   }
 
   @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
+  }
+
+  @Override
   public int hashCode() {
     return id.hashCode();
   }
@@ -118,9 +150,9 @@ public class School extends Auditable implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "School{id=%s, name=%s, locale=%s, dateFormat=%s, dateTimeFormat=%s, "
-            + "permissions=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
+        "School{id=%s, name=%s, locale=%s, dateFormat=%s, "
+            + "dateTimeFormat=%s, permissions=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
         id, name, locale, dateFormat, dateTimeFormat,
         StringUtils.join(permissions, ","), createdBy, createdDateTime,
         modifiedBy, modifiedDateTime);

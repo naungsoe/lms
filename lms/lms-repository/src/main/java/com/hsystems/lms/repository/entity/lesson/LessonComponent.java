@@ -1,37 +1,38 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.lesson;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.entity.Component;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class QuizComponent implements Component, Serializable {
+public class LessonComponent implements Component, Serializable {
 
-  private static final long serialVersionUID = 863456205775216283L;
-
-  @IndexField
-  protected String id;
+  private static final long serialVersionUID = 5504807075977704731L;
 
   @IndexField
-  protected int order;
+  private String id;
 
   @IndexField
-  private Quiz quiz;
+  private Lesson lesson;
 
-  QuizComponent() {
+  @IndexField
+  private int order;
+
+  LessonComponent() {
 
   }
 
-  public QuizComponent(
+  public LessonComponent(
       String id,
-      int order,
-      Quiz quiz) {
+      Lesson lesson,
+      int order) {
 
     this.id = id;
+    this.lesson = lesson;
     this.order = order;
-    this.quiz = quiz;
   }
 
   @Override
@@ -39,18 +40,13 @@ public class QuizComponent implements Component, Serializable {
     return id;
   }
 
+  public Lesson getLesson() {
+    return lesson;
+  }
+
   @Override
   public int getOrder() {
     return order;
-  }
-
-  @Override
-  public ComponentType getType() {
-    return ComponentType.QUIZ;
-  }
-
-  public Quiz getQuiz() {
-    return quiz;
   }
 
   @Override
@@ -64,14 +60,14 @@ public class QuizComponent implements Component, Serializable {
       return false;
     }
 
-    QuizComponent component = (QuizComponent) obj;
+    LessonComponent component = (LessonComponent) obj;
     return id.equals(component.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "QuizComponent{id=%s, order=%s, quiz=%s}",
-        id, order, quiz);
+        "LessonComponent{id=%s, lesson=%s, order=%s}",
+        id, lesson, order);
   }
 }

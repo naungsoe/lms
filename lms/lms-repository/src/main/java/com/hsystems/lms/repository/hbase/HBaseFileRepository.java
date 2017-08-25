@@ -6,9 +6,9 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.FileRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.FileResource;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.file.FileResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseFileMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 

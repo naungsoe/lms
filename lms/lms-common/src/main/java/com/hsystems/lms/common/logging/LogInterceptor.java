@@ -1,4 +1,4 @@
-package com.hsystems.lms.common.interceptor;
+package com.hsystems.lms.common.logging;
 
 import com.hsystems.lms.common.annotation.Log;
 

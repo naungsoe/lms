@@ -8,7 +8,8 @@ import java.io.Serializable;
  * Created by naungsoe on 7/10/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class FileResourceModel extends AuditableModel implements Serializable {
+public class FileResourceModel extends AuditableModel
+    implements Serializable {
 
   private static final long serialVersionUID = -4535401603567169953L;
 

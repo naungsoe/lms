@@ -15,9 +15,9 @@ import java.util.List;
  * Created by naungsoe on 8/8/16.
  */
 @IndexCollection(namespace = "lms", name = "users")
-public class User extends Auditable implements Serializable {
+public class User implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = -3039577050861410422L;
+  private static final long serialVersionUID = -2968973442931380433L;
 
   @IndexField
   private String id;
@@ -66,6 +66,18 @@ public class User extends Auditable implements Serializable {
 
   @IndexField
   private List<Group> groups;
+
+  @IndexField
+  private User createdBy;
+
+  @IndexField
+  private LocalDateTime createdDateTime;
+
+  @IndexField
+  private User modifiedBy;
+
+  @IndexField
+  private LocalDateTime modifiedDateTime;
 
   User() {
 
@@ -192,6 +204,26 @@ public class User extends Auditable implements Serializable {
     return CollectionUtils.isEmpty(groups)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(groups);
+  }
+
+  @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
   }
 
   @Override

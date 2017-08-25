@@ -27,8 +27,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class AuthenticationFilter
-    extends BaseFilter implements Filter {
+public class AuthenticationFilter extends ServletFilter
+    implements Filter {
 
   private final Injector injector;
 

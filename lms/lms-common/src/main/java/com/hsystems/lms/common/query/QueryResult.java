@@ -17,6 +17,10 @@ public class QueryResult<T> {
 
   private List<T> items;
 
+  QueryResult() {
+
+  }
+
   public QueryResult(
       long elapsedTime, long start, long numFound, List<T> items) {
 

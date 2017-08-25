@@ -1,24 +1,31 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 2/11/16.
  */
+@IndexCollection(namespace = "lms", name = "groups")
 public class AuditLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = -3408481188461757227L;
+  private static final long serialVersionUID = 3331117617965491553L;
 
+  @IndexField
   private String id;
 
-  private EntityType type;
+  @IndexField
+  private EntityType entityType;
 
-  private User user;
+  @IndexField
+  private User actionBy;
 
+  @IndexField
   private ActionType actionType;
 
+  @IndexField
   private long timestamp;
 
   AuditLog() {
@@ -27,14 +34,14 @@ public class AuditLog implements Entity, Serializable {
 
   public AuditLog(
       String id,
-      EntityType type,
-      User user,
+      EntityType entityType,
+      User actionBy,
       ActionType actionType,
       long timestamp) {
 
     this.id = id;
-    this.type = type;
-    this.user = user;
+    this.entityType = entityType;
+    this.actionBy = actionBy;
     this.actionType = actionType;
     this.timestamp = timestamp;
   }
@@ -44,12 +51,12 @@ public class AuditLog implements Entity, Serializable {
     return id;
   }
 
-  public EntityType getType() {
-    return type;
+  public EntityType getEntityType() {
+    return entityType;
   }
 
-  public User getUser() {
-    return user;
+  public User getActionBy() {
+    return actionBy;
   }
 
   public ActionType getActionType() {
@@ -64,7 +71,7 @@ public class AuditLog implements Entity, Serializable {
   public int hashCode() {
     int prime = 31;
     int result = id.hashCode();
-    result = result * prime + user.hashCode();
+    result = result * prime + actionBy.hashCode();
     return result * prime + Long.hashCode(timestamp);
   }
 
@@ -81,7 +88,8 @@ public class AuditLog implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, type=%s, user=%s, timestamp=%s, actionType=%s}",
-        id, type, user, timestamp, actionType);
+        "AuditLog{id=%s, entityType=%s, "
+            + "actionBy=%s, timestamp=%s, actionType=%s}",
+        id, entityType, actionBy, timestamp, actionType);
   }
 }

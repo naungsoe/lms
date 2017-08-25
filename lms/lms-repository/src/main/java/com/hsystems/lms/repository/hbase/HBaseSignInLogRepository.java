@@ -21,8 +21,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseSignInLogRepository
-    extends HBaseRepository implements SignInLogRepository {
+public class HBaseSignInLogRepository extends HBaseRepository
+    implements SignInLogRepository {
 
   private final HBaseClient client;
 

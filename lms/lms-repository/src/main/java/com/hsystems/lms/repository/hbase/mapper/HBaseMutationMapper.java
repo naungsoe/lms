@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
@@ -49,17 +49,16 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
     String row = Bytes.toString(result.getRow());
     Pattern pattern = Pattern.compile(KEY_PATTERN);
     Matcher matcher = pattern.matcher(row);
-    String id = "";
-    EntityType type = EntityType.UNKNOWN;
 
-    if (matcher.matches()) {
-      id = matcher.group(2);
-      type = EntityType.valueOf(matcher.group(1));
+    if (!matcher.matches()) {
+      return null;
     }
 
-    ActionType actionType = getAction(result, 0, ActionType.class);
+    String id = matcher.group(2);
+    EntityType entityType = EntityType.valueOf(matcher.group(1));
+    ActionType actionType = getActionType(result, 0);
     long timestamp = getTimestamp(result, 0);
-    return new Mutation(id, type, actionType, timestamp);
+    return new Mutation(id, entityType, actionType, timestamp);
   }
 
   @Override
@@ -71,11 +70,12 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   @Override
   public List<Put> getPuts(Mutation entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
-    String id = String.format(KEY_FORMAT, entity.getType(), entity.getId());
+    String id = String.format(KEY_FORMAT,
+        entity.getEntityType(), entity.getId());
     byte[] row = Bytes.toBytes(id);
     Put logPut = new Put(row, timestamp);
-    addTypeColumn(logPut, entity.getType());
-    addActionColumn(logPut, entity.getActionType());
+    addEntityTypeColumn(logPut, entity.getEntityType());
+    addActionTypeColumn(logPut, entity.getActionType());
     addTimestampColumn(logPut, timestamp);
     puts.add(logPut);
     return puts;
@@ -84,7 +84,8 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   @Override
   public List<Delete> getDeletes(Mutation entity, long timestamp) {
     List<Delete> deletes = new ArrayList<>();
-    String id = String.format(KEY_FORMAT, entity.getType(), entity.getId());
+    String id = String.format(KEY_FORMAT,
+        entity.getEntityType(), entity.getId());
     byte[] row = Bytes.toBytes(id);
     Delete delete = new Delete(row, timestamp);
     deletes.add(delete);

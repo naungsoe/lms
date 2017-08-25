@@ -4,6 +4,7 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,7 +14,10 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-public abstract class Resource extends Auditable implements Serializable {
+public abstract class Resource implements Entity, Auditable, Serializable {
+
+  @IndexField
+  protected String id;
 
   @IndexField
   protected School school;
@@ -28,7 +32,24 @@ public abstract class Resource extends Auditable implements Serializable {
   protected List<String> keywords;
 
   @IndexField
-  protected List<AccessControl> accessControls;
+  protected List<ResourcePermission> permissions;
+
+  @IndexField
+  protected User createdBy;
+
+  @IndexField
+  protected LocalDateTime createdDateTime;
+
+  @IndexField
+  protected User modifiedBy;
+
+  @IndexField
+  protected LocalDateTime modifiedDateTime;
+
+  @Override
+  public String getId() {
+    return id;
+  }
 
   public School getSchool() {
     return school;
@@ -52,17 +73,37 @@ public abstract class Resource extends Auditable implements Serializable {
         : Collections.enumeration(keywords);
   }
 
-  public Enumeration<AccessControl> getAccessControls() {
-    return CollectionUtils.isEmpty(accessControls)
+  public Enumeration<ResourcePermission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(accessControls);
+        : Collections.enumeration(permissions);
   }
 
-  public void addAccessControl(AccessControl... accessControls) {
-    if (CollectionUtils.isEmpty(this.accessControls)) {
-      this.accessControls = new ArrayList<>();
+  public void addPermission(ResourcePermission... permissions) {
+    if (CollectionUtils.isEmpty(this.permissions)) {
+      this.permissions = new ArrayList<>();
     }
 
-    this.accessControls.addAll(Arrays.asList(accessControls));
+    Arrays.stream(permissions).forEach(this.permissions::add);
+  }
+
+  @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
   }
 }

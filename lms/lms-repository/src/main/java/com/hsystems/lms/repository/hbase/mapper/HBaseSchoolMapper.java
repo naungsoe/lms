@@ -89,11 +89,11 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
 
   @Override
   public List<Put> getPuts(School entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(School entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

@@ -15,9 +15,9 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(namespace = "lms", name = "groups")
-public class Group extends Auditable implements Serializable {
+public class Group implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = 2420329732282197342L;
+  private static final long serialVersionUID = 8449941063254753142L;
 
   @IndexField
   private String id;
@@ -33,6 +33,18 @@ public class Group extends Auditable implements Serializable {
 
   @IndexField
   private School school;
+
+  @IndexField
+  private User createdBy;
+
+  @IndexField
+  private LocalDateTime createdDateTime;
+
+  @IndexField
+  private User modifiedBy;
+
+  @IndexField
+  private LocalDateTime modifiedDateTime;
 
   Group() {
 
@@ -94,6 +106,26 @@ public class Group extends Auditable implements Serializable {
   }
 
   @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
+  }
+
+  @Override
   public int hashCode() {
     return id.hashCode();
   }
@@ -115,7 +147,7 @@ public class Group extends Auditable implements Serializable {
             + "school=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, StringUtils.join(permissions, ","),
-        StringUtils.join(members, ","), school,
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(members, ","), school, createdBy,
+        createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

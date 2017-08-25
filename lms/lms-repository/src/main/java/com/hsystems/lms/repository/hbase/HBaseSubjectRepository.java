@@ -24,8 +24,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseSubjectRepository
-    extends HBaseRepository implements SubjectRepository {
+public class HBaseSubjectRepository extends HBaseRepository
+    implements SubjectRepository {
 
   private final HBaseClient client;
 

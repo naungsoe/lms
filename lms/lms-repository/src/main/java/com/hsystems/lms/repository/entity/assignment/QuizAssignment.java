@@ -1,8 +1,10 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.assignment;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,11 +13,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "assignments")
-public class QuizAssignment
-    extends ResourceAssignment implements Serializable {
+public class QuizAssignment extends Assignment implements Serializable {
 
-  private static final long serialVersionUID = -7085261253973175352L;
+  private static final long serialVersionUID = 847987010896164170L;
 
   @IndexField
   private String id;
@@ -98,8 +98,8 @@ public class QuizAssignment
       return false;
     }
 
-    QuizAssignment quizAssignment = (QuizAssignment) obj;
-    return id.equals(quizAssignment.getId());
+    QuizAssignment assignment = (QuizAssignment) obj;
+    return id.equals(assignment.getId());
   }
 
   @Override

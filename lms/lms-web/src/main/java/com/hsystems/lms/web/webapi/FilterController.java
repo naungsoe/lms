@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.JsonUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.SubjectService;
@@ -155,34 +154,12 @@ public class FilterController {
       ArrayNode typesNode, JsonNode localeNode) {
 
     ObjectMapper mapper = new ObjectMapper();
-    List<QuestionType> questionTypes = questionService.findAllTypes();
+    List<String> questionTypes = questionService.findAllTypes();
     questionTypes.forEach(questionType -> {
+      JsonNode fieldNode = localeNode.get("label" + questionType);
       ObjectNode typeNode = mapper.createObjectNode();
-      JsonNode fieldNode;
-
-      switch (questionType) {
-        case MULTIPLE_CHOICE:
-          fieldNode = localeNode.get("labelMultipleChoice");
-          break;
-        case MULTIPLE_RESPONSE:
-          fieldNode = localeNode.get("labelMultipleResponse");
-          break;
-        case SHORT_ANSWER:
-          fieldNode = localeNode.get("labelShortAnswer");
-          break;
-        case ESSAY:
-          fieldNode = localeNode.get("labelEssay");
-          break;
-        case COMPOSITE:
-          fieldNode = localeNode.get("labelComposite");
-          break;
-        default:
-          fieldNode = localeNode.get("labelUnknown");
-          break;
-      }
-
       typeNode.put("name", fieldNode.textValue());
-      typeNode.put("value", questionType.toString());
+      typeNode.put("value", questionType);
       typesNode.add(typeNode);
     });
   }

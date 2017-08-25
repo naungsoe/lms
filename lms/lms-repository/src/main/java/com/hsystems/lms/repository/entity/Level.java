@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 1/11/16.
  */
 @IndexCollection(namespace = "lms", name = "levels")
-public class Level extends Auditable implements Serializable {
+public class Level implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = 1219434630963071408L;
+  private static final long serialVersionUID = -2000226388145752537L;
 
   @IndexField
   private String id;
@@ -22,6 +22,18 @@ public class Level extends Auditable implements Serializable {
 
   @IndexField
   private School school;
+
+  @IndexField
+  private User createdBy;
+
+  @IndexField
+  private LocalDateTime createdDateTime;
+
+  @IndexField
+  private User modifiedBy;
+
+  @IndexField
+  private LocalDateTime modifiedDateTime;
 
   Level() {
 
@@ -66,6 +78,26 @@ public class Level extends Auditable implements Serializable {
   }
 
   @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
+  }
+
+  @Override
   public int hashCode() {
     return id.hashCode();
   }
@@ -83,8 +115,7 @@ public class Level extends Auditable implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Level{id=%s, name=%s, school=%s, "
-            + "createdBy=%s, createdDateTime=%s, "
+        "Level{id=%s, name=%s, school=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, school, createdBy, createdDateTime,
         modifiedBy, modifiedDateTime);

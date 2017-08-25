@@ -1,6 +1,7 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.file;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.entity.Component;
 
 import java.io.Serializable;
 
@@ -9,16 +10,16 @@ import java.io.Serializable;
  */
 public class FileComponent implements Component, Serializable {
 
-  private static final long serialVersionUID = -6449371376495474202L;
+  private static final long serialVersionUID = 5996223382448951189L;
 
   @IndexField
   protected String id;
 
   @IndexField
-  protected int order;
+  private FileResource file;
 
   @IndexField
-  private FileResource file;
+  protected int order;
 
   FileComponent() {
 
@@ -26,12 +27,12 @@ public class FileComponent implements Component, Serializable {
 
   public FileComponent(
       String id,
-      int order,
-      FileResource file) {
+      FileResource file,
+      int order) {
 
     this.id = id;
-    this.order = order;
     this.file = file;
+    this.order = order;
   }
 
   @Override
@@ -39,18 +40,13 @@ public class FileComponent implements Component, Serializable {
     return id;
   }
 
+  public FileResource getFile() {
+    return file;
+  }
+
   @Override
   public int getOrder() {
     return order;
-  }
-
-  @Override
-  public ComponentType getType() {
-    return ComponentType.FILE;
-  }
-
-  public FileResource getFile() {
-    return file;
   }
 
   @Override
@@ -71,7 +67,7 @@ public class FileComponent implements Component, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "FileComponent{id=%s, order=%s, file=%s}",
-        id, order, file);
+        "FileComponent{id=%s, file=%s, order=%s}",
+        id, file, order);
   }
 }

@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository;
 
-import com.hsystems.lms.repository.entity.FileResource;
+import com.hsystems.lms.repository.entity.file.FileResource;
 
 import java.io.IOException;
 import java.util.List;

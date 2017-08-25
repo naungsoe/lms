@@ -97,12 +97,11 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
 
   @Override
   public List<Put> getPuts(Group entity, long timestamp) {
-    List<Put> puts = new ArrayList<>();
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Group entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

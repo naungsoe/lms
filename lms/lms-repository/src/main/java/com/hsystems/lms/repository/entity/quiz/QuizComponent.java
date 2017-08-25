@@ -1,42 +1,47 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.quiz;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.entity.GradableComponent;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class LessonComponent implements Component, Serializable {
+public class QuizComponent implements GradableComponent, Serializable {
 
-  private static final long serialVersionUID = 1349480384363058632L;
+  private static final long serialVersionUID = -5123843132884732942L;
 
   @IndexField
   private String id;
 
   @IndexField
-  private int order;
+  private Quiz quiz;
 
   @IndexField
-  private Lesson lesson;
+  private int order;
 
-  LessonComponent() {
+  QuizComponent() {
 
   }
 
-  public LessonComponent(
+  public QuizComponent(
       String id,
-      int order,
-      Lesson lesson) {
+      Quiz quiz,
+      int order) {
 
     this.id = id;
+    this.quiz = quiz;
     this.order = order;
-    this.lesson = lesson;
   }
 
   @Override
   public String getId() {
     return id;
+  }
+
+  public Quiz getQuiz() {
+    return quiz;
   }
 
   @Override
@@ -45,12 +50,8 @@ public class LessonComponent implements Component, Serializable {
   }
 
   @Override
-  public ComponentType getType() {
-    return ComponentType.SECTION;
-  }
-
-  public Lesson getLesson() {
-    return lesson;
+  public long getScore() {
+    return quiz.getScore();
   }
 
   @Override
@@ -64,14 +65,14 @@ public class LessonComponent implements Component, Serializable {
       return false;
     }
 
-    LessonComponent section = (LessonComponent) obj;
-    return id.equals(section.getId());
+    QuizComponent component = (QuizComponent) obj;
+    return id.equals(component.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "LessonComponent{id=%s, order=%s, lesson=%s}",
-        id, order, lesson);
+        "QuizComponent{id=%s, quiz=%s, order=%s}",
+        id, quiz, order);
   }
 }

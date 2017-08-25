@@ -9,6 +9,10 @@ public class SortKey {
 
   private SortOrder order;
 
+  SortKey() {
+
+  }
+
   public SortKey(String field, SortOrder order) {
     this.field = field;
     this.order = order;

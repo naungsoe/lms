@@ -1,9 +1,12 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.file;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Subject;
+import com.hsystems.lms.repository.entity.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -14,61 +17,41 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "files")
-public class FileResource extends Resource implements Serializable {
+public class DirectoryResource extends FileResource implements Serializable {
 
-  private static final long serialVersionUID = -4200928490264612997L;
-
-  @IndexField
-  private String id;
-
-  @IndexField
-  private String name;
-
-  @IndexField
-  private String type;
-
-  @IndexField
-  private long size;
-
-  @IndexField
-  private boolean directory;
+  private static final long serialVersionUID = -5311103954407482435L;
 
   @IndexField
   private List<FileResource> files;
 
-  FileResource() {
+  DirectoryResource() {
 
   }
 
-  public FileResource(
+  public DirectoryResource(
       String id,
       String name,
       String type,
       long size,
-      boolean directory,
       List<FileResource> files) {
 
     this.id = id;
     this.name = name;
     this.type = type;
     this.size = size;
-    this.directory = directory;
     this.files = files;
   }
 
-  public FileResource(
+  public DirectoryResource(
       String id,
       String name,
       String type,
       long size,
-      boolean directory,
       List<FileResource> files,
       School school,
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<AccessControl> accessControls,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -78,38 +61,15 @@ public class FileResource extends Resource implements Serializable {
     this.name = name;
     this.type = type;
     this.size = size;
-    this.directory = directory;
     this.files = files;
     this.school = school;
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.accessControls = accessControls;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public long getSize() {
-    return size;
-  }
-
-  public boolean isDirectory() {
-    return directory;
   }
 
   public Enumeration<FileResource> getFiles() {
@@ -129,17 +89,17 @@ public class FileResource extends Resource implements Serializable {
       return false;
     }
 
-    FileResource file = (FileResource) obj;
+    DirectoryResource file = (DirectoryResource) obj;
     return id.equals(file.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "FileResource{id=%s, name=%s, type=s%, size=%s, directory=%s, "
+        "DirectoryResource{id=%s, name=%s, type=s%, size=%s, "
             + "files=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, name, type, size, directory, StringUtils.join(files, ","),
+        id, name, type, size, StringUtils.join(files, ","),
         createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

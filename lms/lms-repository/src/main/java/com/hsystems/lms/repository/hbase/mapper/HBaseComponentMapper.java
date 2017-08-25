@@ -3,18 +3,13 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Component;
-import com.hsystems.lms.repository.entity.ComponentType;
-import com.hsystems.lms.repository.entity.FileComponent;
-import com.hsystems.lms.repository.entity.Lesson;
-import com.hsystems.lms.repository.entity.LessonComponent;
-import com.hsystems.lms.repository.entity.LessonSectionComponent;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
-import com.hsystems.lms.repository.entity.Quiz;
-import com.hsystems.lms.repository.entity.QuizComponent;
-import com.hsystems.lms.repository.entity.QuizSectionComponent;
-import com.hsystems.lms.repository.entity.SectionComponent;
+import com.hsystems.lms.repository.entity.file.FileComponent;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
+import com.hsystems.lms.repository.entity.lesson.LessonComponent;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
+import com.hsystems.lms.repository.entity.quiz.QuizComponent;
+import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.repository.entity.special.UnknownComponent;
 
 import org.apache.hadoop.hbase.client.Delete;
@@ -43,153 +38,153 @@ public class HBaseComponentMapper extends HBaseMapper<Component> {
       return Collections.emptyList();
     }
 
-    List<Component> parentComponents = new ArrayList<>();
+    List<Component> rootComponents = new ArrayList<>();
     Map<String, List<Component>> childComponents = new HashMap<>();
     results.stream().filter(isMainResult()).forEach(result -> {
       String id = Bytes.toString(result.getRow());
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        String parentId = getParent(result, timestamp);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
         Component component = getEntity(result, results, timestamp);
+        String parentId = getParent(result, timestamp);
 
         if (StringUtils.isNotEmpty(parentId)) {
           if (childComponents.containsKey(parentId)) {
             childComponents.get(parentId).add(component);
 
           } else {
-            childComponents.put(parentId, Arrays.asList(component));
+            List<Component> components = Arrays.asList(component);
+            childComponents.put(parentId, components);
           }
         } else {
-          parentComponents.add(component);
+          rootComponents.add(component);
         }
       }
     });
 
-    addChildToParent(parentComponents, childComponents);
-    return parentComponents;
+    addChildToParent(rootComponents, childComponents);
+    return rootComponents;
   }
 
   private Component getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
+    String componentType = getType(mainResult, timestamp);
+
+    switch (componentType) {
+      case "LessonComponent":
+        return getLessonComponent(mainResult, results, timestamp);
+      case "QuizComponent":
+        return getQuizComponent(mainResult, results, timestamp);
+      case "SectionComponent":
+        return getSectionComponent(mainResult, timestamp);
+      case "CompositeQuestionComponent":
+        return getCompositeQuestionComponent(mainResult, results, timestamp);
+      case "MultipleChoiceComponent":
+        return getMultipleChoiceComponent(mainResult, results, timestamp);
+      case "FileComponent":
+        return getFileComponent(mainResult, results, timestamp);
+      default:
+        return new UnknownComponent();
+    }
+  }
+
+  private LessonComponent getLessonComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    Lesson lesson = getLesson(results, id, timestamp);
+    int order = getOrder(mainResult, timestamp);
+
+    return new LessonComponent(
+        id,
+        lesson,
+        order
+    );
+  }
+
+  private QuizComponent getQuizComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    Quiz quiz = getQuiz(results, id, timestamp);
+    int order = getOrder(mainResult, timestamp);
+
+    return new QuizComponent(
+        id,
+        quiz,
+        order
+    );
+  }
+
+  private SectionComponent getSectionComponent(
+      Result mainResult, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    String title = getTitle(mainResult, timestamp);
+    String instructions = getInstructions(mainResult, timestamp);
+    int order = getOrder(mainResult, timestamp);
+
+    return new SectionComponent(
+        id,
+        title,
+        instructions,
+        Collections.emptyList(),
+        order
+    );
+  }
+
+  private FileComponent getFileComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
     String id = Bytes.toString(mainResult.getRow());
     int order = getOrder(mainResult, timestamp);
-    ComponentType type = getType(mainResult, timestamp, ComponentType.class);
-    Component component;
 
-    switch (type) {
-      case LESSON:
-        Lesson lesson = getLesson(results, id, timestamp);
-        component = new LessonComponent(
-            id,
-            order,
-            lesson
-        );
-        break;
-      case QUIZ:
-        Quiz quiz = getQuiz(results, id, timestamp);
-        component = new QuizComponent(
-            id,
-            order,
-            quiz
-        );
-        break;
-      case SECTION:
-        String title = getTitle(mainResult, timestamp);
-        String instructions = getInstructions(mainResult, timestamp);
-        ComponentType sectionType = getSectionType(
-            mainResult, timestamp, ComponentType.class);
-
-        switch (sectionType) {
-          case LESSON:
-            component = new LessonSectionComponent(
-                id,
-                title,
-                instructions,
-                order,
-                Collections.emptyList()
-            );
-            break;
-          case QUIZ:
-            component = new QuizSectionComponent(
-                id,
-                title,
-                instructions,
-                order,
-                Collections.emptyList()
-            );
-            break;
-          default:
-            component = new UnknownComponent();
-            break;
-        }
-        break;
-      case QUESTION:
-        Question question = getQuestion(results, id, timestamp);
-        component = new QuestionComponent(
-            id,
-            order,
-            question
-        );
-        break;
-      case FILE:
-        component = new FileComponent(
-            id,
-            order,
-            null
-        );
-        break;
-      default:
-        component = new UnknownComponent();
-        break;
-    }
-
-    return component;
+    return new FileComponent(
+        id,
+        null,
+        order
+    );
   }
 
   private void addChildToParent(
-      List<Component> parentComponents,
+      List<Component> rootComponents,
       Map<String, List<Component>> childComponents) {
 
-    if (CollectionUtils.isEmpty(parentComponents)) {
+    if (CollectionUtils.isEmpty(rootComponents)) {
       return;
     }
 
-    parentComponents.forEach(parentComponent -> {
-      childComponents.keySet().forEach(parentId -> {
-        if (parentId.equals(parentComponent.getId())) {
-          List<Component> components = childComponents.get(parentId);
+    rootComponents.forEach(rootComponent ->
+        childComponents.keySet().forEach(parentId -> {
+          if (parentId.equals(rootComponent.getId())) {
+            List<Component> components = childComponents.get(parentId);
 
-          switch (parentComponent.getType()) {
-            case LESSON:
+            if (rootComponent instanceof LessonComponent) {
               LessonComponent lessonComponent
-                  = (LessonComponent) parentComponent;
+                  = (LessonComponent) rootComponent;
               lessonComponent.getLesson().addComponent(
                   components.toArray(new Component[0]));
               addChildToParent(components, childComponents);
-              break;
-            case QUIZ:
+
+            } else if (rootComponent instanceof QuizComponent) {
               QuizComponent quizComponent
-                  = (QuizComponent) parentComponent;
+                  = (QuizComponent) rootComponent;
               quizComponent.getQuiz().addComponent(
                   components.toArray(new Component[0]));
               addChildToParent(components, childComponents);
-              break;
-            case SECTION:
+
+            } else if (rootComponent instanceof SectionComponent) {
               SectionComponent sectionComponent
-                  = (SectionComponent) parentComponent;
+                  = (SectionComponent) rootComponent;
               sectionComponent.addComponent(
                   components.toArray(new Component[0]));
               addChildToParent(components, childComponents);
-              break;
-            default:
-              break;
+            }
           }
-        }
-      });
-    });
+        }));
   }
 
   @Override
@@ -201,11 +196,11 @@ public class HBaseComponentMapper extends HBaseMapper<Component> {
 
   @Override
   public List<Put> getPuts(Component entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Component entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

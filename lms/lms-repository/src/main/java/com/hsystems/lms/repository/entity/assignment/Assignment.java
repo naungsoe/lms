@@ -1,9 +1,13 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.assignment;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.repository.entity.Auditable;
+import com.hsystems.lms.repository.entity.Entity;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.User;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -17,8 +21,10 @@ import java.util.List;
  * Created by naungsoe on 5/11/16.
  */
 @IndexCollection(namespace = "lms", name = "assignments")
-public abstract class ResourceAssignment 
-		extends Auditable implements Serializable {
+public abstract class Assignment implements Entity, Auditable, Serializable {
+
+  @IndexField
+  protected String id;
 
   @IndexField
   protected List<Group> groups;
@@ -31,6 +37,23 @@ public abstract class ResourceAssignment
 
   @IndexField
   protected LocalDateTime releaseDateTime;
+
+  @IndexField
+  protected User createdBy;
+
+  @IndexField
+  protected LocalDateTime createdDateTime;
+
+  @IndexField
+  protected User modifiedBy;
+
+  @IndexField
+  protected LocalDateTime modifiedDateTime;
+
+  @Override
+  public String getId() {
+    return id;
+  }
 
   public Enumeration<Group> getGroups() {
     return CollectionUtils.isEmpty(groups)
@@ -69,5 +92,25 @@ public abstract class ResourceAssignment
 
   public LocalDateTime getReleaseDateTime() {
     return releaseDateTime;
+  }
+
+  @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
   }
 }

@@ -23,8 +23,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class HBaseUserRepository
-    extends HBaseRepository implements UserRepository {
+public class HBaseUserRepository extends HBaseRepository
+    implements UserRepository {
 
   private final HBaseClient client;
 

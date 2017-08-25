@@ -2,7 +2,7 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
@@ -10,7 +10,7 @@ import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.Lesson;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLessonMapper;

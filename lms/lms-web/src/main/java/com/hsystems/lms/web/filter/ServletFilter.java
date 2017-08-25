@@ -7,12 +7,11 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * Created by naungsoe on 11/8/16.
  */
-public abstract class BaseFilter implements Filter {
+public abstract class ServletFilter implements Filter {
 
   protected static final String ACCESS_TOKEN_HEADER = "X-ACCESS-TOKEN";
   protected static final String CSRF_TOKEN_HEADER = "X-CSRF-TOKEN";

@@ -123,4 +123,9 @@ public final class ReflectionUtils {
     ParameterizedType paramType = (ParameterizedType) field.getGenericType();
     return (Class<?>) paramType.getActualTypeArguments()[0];
   }
+
+  public static <T> Class<?> getEnumerationType(Field field) {
+    ParameterizedType paramType = (ParameterizedType) field.getGenericType();
+    return (Class<?>) paramType.getActualTypeArguments()[0];
+  }
 }

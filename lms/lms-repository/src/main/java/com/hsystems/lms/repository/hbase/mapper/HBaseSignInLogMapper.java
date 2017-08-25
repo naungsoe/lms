@@ -42,6 +42,7 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
     String ipAddress = getIpAddress(result, 0);
     LocalDateTime dateTime = getDateTime(result, 0);
     int fails = getFails(result, 0);
+
     return new SignInLog(
         id,
         account,

@@ -1,19 +1,59 @@
 package com.hsystems.lms.repository.entity.question;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.repository.entity.ResourceAttempt;
-import com.hsystems.lms.repository.entity.User;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "attempts")
-public abstract class MultipleChoiceAttempt
-    extends ResourceAttempt implements Serializable {
+public class MultipleChoiceAttempt extends QuestionComponentAttempt
+    implements Serializable {
+
+  private static final long serialVersionUID = -2226333026142212633L;
 
   @IndexField
-  protected long score;
+  private String optionId;
+
+  MultipleChoiceAttempt() {
+
+  }
+
+  public MultipleChoiceAttempt(
+      String id,
+      QuestionComponent component,
+      String optionId,
+      long score) {
+
+    this.id = id;
+    this.component = component;
+    this.optionId = optionId;
+    this.score = score;
+  }
+
+  public String getOptionId() {
+    return optionId;
+  }
+
+  @Override
+  public int hashCode() {
+    return id.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if ((obj == null) || (getClass() != obj.getClass())) {
+      return false;
+    }
+
+    MultipleChoiceAttempt attempt = (MultipleChoiceAttempt) obj;
+    return id.equals(attempt.getId());
+  }
+
+  @Override
+  public String toString() {
+    return String.format(
+        "MultipleResponseAttempt{id=%s, component=%s, optionId=%s, score=%s}",
+        id, component,optionId, score);
+  }
 }

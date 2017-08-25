@@ -1,10 +1,8 @@
 package com.hsystems.lms.repository.entity.question;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.AccessControl;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
@@ -21,28 +19,13 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(namespace = "lms", name = "questions")
-public class MultipleChoice extends Question implements Serializable {
+public final class MultipleChoice extends Question
+    implements Serializable {
 
-  private static final long serialVersionUID = 6004706395678775298L;
-
-  @IndexField
-  private String id;
+  private static final long serialVersionUID = 9041109973626247394L;
 
   @IndexField
-  private QuestionType type;
-
-  @IndexField
-  private String body;
-
-  @IndexField
-  private String hint;
-
-  @IndexField
-  private String explanation;
-
-  @IndexField
-  private List<QuestionOption> options;
+  protected List<QuestionOption> options;
 
   MultipleChoice() {
 
@@ -50,14 +33,12 @@ public class MultipleChoice extends Question implements Serializable {
 
   public MultipleChoice(
       String id,
-      QuestionType type,
       String body,
       String hint,
       String explanation,
       List<QuestionOption> options) {
 
     this.id = id;
-    this.type = type;
     this.body = body;
     this.hint = hint;
     this.explanation = explanation;
@@ -66,7 +47,6 @@ public class MultipleChoice extends Question implements Serializable {
 
   public MultipleChoice(
       String id,
-      QuestionType type,
       String body,
       String hint,
       String explanation,
@@ -75,14 +55,12 @@ public class MultipleChoice extends Question implements Serializable {
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<AccessControl> accessControls,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
       LocalDateTime modifiedDateTime) {
 
     this.id = id;
-    this.type = type;
     this.body = body;
     this.hint = hint;
     this.explanation = explanation;
@@ -91,32 +69,10 @@ public class MultipleChoice extends Question implements Serializable {
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.accessControls = accessControls;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
-  }
-
-  @Override
-  public String getId() {
-    return id;
-  }
-
-  public QuestionType getType() {
-    return type;
-  }
-
-  public String getBody() {
-    return body;
-  }
-
-  public String getHint() {
-    return hint;
-  }
-
-  public String getExplanation() {
-    return explanation;
   }
 
   public Enumeration<QuestionOption> getOptions() {
@@ -137,10 +93,6 @@ public class MultipleChoice extends Question implements Serializable {
     this.options.remove(option);
   }
 
-  public void gradeAttempt(MultipleChoiceAttempt attempt) {
-
-  }
-
   @Override
   public int hashCode() {
     return id.hashCode();
@@ -159,13 +111,12 @@ public class MultipleChoice extends Question implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Question{id=%s, type=%s, body=%s, hint=%s, explanation=%s, "
-            + "options=%s, school=%s, levels=%s, subjects=%s, keywords=%s, "
-            + "accessControls=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, type, body, hint, explanation, StringUtils.join(options, ","),
-        school, StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
-        StringUtils.join(keywords, ","), StringUtils.join(accessControls, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        "MultipleChoice{id=%s, body=%s, hint=%s, explanation=%s, options=%s, "
+            + "school=%s, levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        id, body, hint, explanation, StringUtils.join(options, ","), school,
+        StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

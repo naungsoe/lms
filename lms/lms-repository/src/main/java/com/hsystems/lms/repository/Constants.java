@@ -31,8 +31,6 @@ public class Constants {
       = Bytes.toBytes("dateTimeFormat");
   public static final byte[] IDENTIFIER_PERMISSIONS
       = Bytes.toBytes("permissions");
-  public static final byte[] IDENTIFIER_ACCESSES
-      = Bytes.toBytes("accesses");
   public static final byte[] IDENTIFIER_TYPE = Bytes.toBytes("type");
   public static final byte[] IDENTIFIER_SESSION_ID = Bytes.toBytes("session");
   public static final byte[] IDENTIFIER_IP_ADDRESS = Bytes.toBytes("ip");
@@ -48,6 +46,7 @@ public class Constants {
   public static final byte[] IDENTIFIER_FEEDBACK = Bytes.toBytes("feedback");
   public static final byte[] IDENTIFIER_CORRECT = Bytes.toBytes("correct");
   public static final byte[] IDENTIFIER_ORDER = Bytes.toBytes("order");
+  public static final byte[] IDENTIFIER_SCORE = Bytes.toBytes("score");
   public static final byte[] IDENTIFIER_STATUS = Bytes.toBytes("status");
   public static final byte[] IDENTIFIER_TIMESTAMP = Bytes.toBytes("timestamp");
   public static final byte[] IDENTIFIER_ACTION = Bytes.toBytes("action");
@@ -58,6 +57,7 @@ public class Constants {
   public static final String SEPARATOR_GROUP = "_grp_";
   public static final String SEPARATOR_CREATED_BY = "_cre_";
   public static final String SEPARATOR_MODIFIED_BY = "_mod_";
+  public static final String SEPARATOR_SHARED_BY = "_sha_";
   public static final String SEPARATOR_MEMBER = "_mem_";
   public static final String SEPARATOR_LEVEL = "_lvl_";
   public static final String SEPARATOR_SUBJECT = "_sub_";
@@ -67,5 +67,5 @@ public class Constants {
   public static final String SEPARATOR_COMPONENT = "_com_";
   public static final String SEPARATOR_QUESTION = "_que_";
   public static final String SEPARATOR_OPTION = "_opt_";
-  public static final String SEPARATOR_ACCESS = "_acc_";
+  public static final String SEPARATOR_PERMISSION = "_per_";
 }

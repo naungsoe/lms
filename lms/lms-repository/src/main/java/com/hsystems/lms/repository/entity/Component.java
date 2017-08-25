@@ -9,6 +9,4 @@ import com.hsystems.lms.common.annotation.IndexCollection;
 public interface Component extends Entity {
 
   int getOrder();
-
-  ComponentType getType();
 }

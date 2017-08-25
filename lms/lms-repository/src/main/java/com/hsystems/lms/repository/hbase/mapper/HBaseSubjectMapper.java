@@ -85,11 +85,11 @@ public class HBaseSubjectMapper extends HBaseMapper<Subject> {
 
   @Override
   public List<Put> getPuts(Subject entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Subject entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

@@ -1,40 +1,21 @@
 package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.repository.entity.Component;
-import com.hsystems.lms.repository.entity.ComponentType;
-
-import java.io.Serializable;
+import com.hsystems.lms.repository.entity.GradableComponent;
 
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class QuestionComponent implements Component, Serializable {
-
-  private static final long serialVersionUID = -8886998378935720413L;
+public abstract class QuestionComponent implements GradableComponent {
 
   @IndexField
-  private String id;
+  protected String id;
 
   @IndexField
-  private int order;
+  protected int order;
 
   @IndexField
-  private Question question;
-
-  QuestionComponent() {
-
-  }
-
-  public QuestionComponent(
-      String id,
-      int order,
-      Question question) {
-
-    this.id = id;
-    this.order = order;
-    this.question = question;
-  }
+  protected long score;
 
   @Override
   public String getId() {
@@ -47,33 +28,11 @@ public class QuestionComponent implements Component, Serializable {
   }
 
   @Override
-  public ComponentType getType() {
-    return ComponentType.QUESTION;
+  public long getScore() {
+    return score;
   }
 
-  public Question getQuestion() {
-    return question;
-  }
+  public abstract Question getQuestion();
 
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    QuestionComponent component = (QuestionComponent) obj;
-    return id.equals(component.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "QuestionComponent{id=%s, order=%s, question=%s}",
-        id, order, question);
-  }
+  public abstract GradingStrategy getGradingStrategy();
 }

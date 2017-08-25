@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -123,12 +123,12 @@ public abstract class HBaseRepository {
   }
 
   protected <T extends Entity> AuditLog getAuditLog(
-      T entity, User user, ActionType actionType, long timestamp) {
+      T entity, User actionBy, ActionType actionType, long timestamp) {
 
     return new AuditLog(
         entity.getId(),
         getEntityType(entity),
-        user,
+        actionBy,
         actionType,
         timestamp
     );

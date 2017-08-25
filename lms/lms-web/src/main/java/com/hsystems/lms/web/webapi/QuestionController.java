@@ -8,6 +8,7 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuestionService;
+import com.hsystems.lms.service.model.CompositeQuestionModel;
 import com.hsystems.lms.service.model.QuestionModel;
 import com.hsystems.lms.web.Permission;
 
@@ -80,9 +81,22 @@ public class QuestionController {
   }
 
   @POST
+  @Path("/composite")
   @Consumes(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_QUESTIONS)
-  public Response save(QuestionModel questionModel)
+  public Response create(CompositeQuestionModel questionModel)
+      throws IOException {
+
+    Principal principal = principalProvider.get();
+    questionService.create(questionModel, principal);
+    return Response.ok(questionModel).build();
+  }
+
+  @POST
+  @Path("/composite/{id}")
+  @Consumes(MediaType.APPLICATION_JSON)
+  @Requires(Permission.VIEW_QUESTIONS)
+  public Response save(CompositeQuestionModel questionModel)
       throws IOException {
 
     Principal principal = principalProvider.get();

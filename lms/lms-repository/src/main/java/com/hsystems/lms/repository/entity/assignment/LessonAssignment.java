@@ -1,8 +1,10 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.assignment;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -11,11 +13,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "assignments")
-public class LessonAssignment
-    extends ResourceAssignment implements Serializable {
+public class LessonAssignment extends Assignment implements Serializable {
 
-  private static final long serialVersionUID = 7882721274226435888L;
+  private static final long serialVersionUID = -3160966083481582393L;
 
   @IndexField
   private String id;

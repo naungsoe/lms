@@ -1,16 +1,18 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
-import com.hsystems.lms.repository.entity.question.QuestionOption;
-import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.question.CompositeQuestion;
+import com.hsystems.lms.repository.entity.question.MultipleChoice;
+import com.hsystems.lms.repository.entity.question.MultipleResponse;
+import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.question.QuestionOption;
+import com.hsystems.lms.repository.entity.special.UnknownQuestion;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
@@ -48,6 +50,7 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
         questions.add(question);
       }
     });
+
     return questions;
   }
 
@@ -55,17 +58,17 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
-    QuestionType type = getType(mainResult, timestamp, QuestionType.class);
+    String type = getType(mainResult, timestamp);
     String body = getBody(mainResult, timestamp);
     String hint = getHint(mainResult, timestamp);
     String explanation = getExplanation(mainResult, timestamp);
-    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
     List<Level> levels = getLevels(results, id, timestamp);
     List<Subject> subjects = getSubjects(results, id, timestamp);
+    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -79,36 +82,64 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
+    List<QuestionComponent> components;
     List<QuestionOption> options;
-    List<Component> components;
 
-    if (type == QuestionType.COMPOSITE) {
-      options = Collections.emptyList();
-      components = getQuestionComponents(results, id, timestamp);
-
-    } else {
-      options = getQuestionOptions(results, id, timestamp);
-      components = Collections.emptyList();
+    switch (type) {
+      case "CompositeQuestion":
+        components = getQuestionComponents(results, id, timestamp);
+        return new CompositeQuestion(
+            id,
+            body,
+            hint,
+            explanation,
+            components,
+            school,
+            levels,
+            subjects,
+            keywords,
+            createdBy,
+            createdDateTime,
+            modifiedBy,
+            modifiedDateTime
+        );
+      case "MultipleChoice":
+        options = getQuestionOptions(results, id, timestamp);
+        return new MultipleChoice(
+            id,
+            body,
+            hint,
+            explanation,
+            options,
+            school,
+            levels,
+            subjects,
+            keywords,
+            createdBy,
+            createdDateTime,
+            modifiedBy,
+            modifiedDateTime
+        );
+      case "MultipleResponse":
+        options = getQuestionOptions(results, id, timestamp);
+        return new MultipleResponse(
+            id,
+            body,
+            hint,
+            explanation,
+            options,
+            school,
+            levels,
+            subjects,
+            keywords,
+            createdBy,
+            createdDateTime,
+            modifiedBy,
+            modifiedDateTime
+        );
+      default:
+        return new UnknownQuestion();
     }
-
-    return new Question(
-        id,
-        type,
-        body,
-        hint,
-        explanation,
-        options,
-        components,
-        school,
-        levels,
-        subjects,
-        keywords,
-        Collections.emptyList(),
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
   }
 
   @Override
@@ -121,83 +152,79 @@ public class HBaseQuestionMapper extends HBaseMapper<Question> {
   @Override
   public List<Put> getPuts(Question entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
-    addQuestionPut(puts, entity, timestamp);
-    addOptionsPut(puts, entity, timestamp);
 
-    if (CollectionUtils.isNotEmpty(entity.getComponents())) {
-      addQuestionsPut(puts, entity, timestamp);
+    if (entity instanceof CompositeQuestion) {
+      addCompositeQuestionPut(puts, entity, timestamp);
+
+    } if (entity instanceof MultipleChoice) {
+      addQuestionPut(puts, entity, timestamp);
+      addOptionsPut(puts, entity, timestamp);
+
+    } else if (entity instanceof MultipleResponse) {
+      addOptionsPut(puts, entity, timestamp);
+      addOptionsPut(puts, entity, timestamp);
     }
 
     addCreatedByPut(puts, entity, timestamp);
-    addModifiedByPut(puts, entity, timestamp);
+
+    if (entity.getModifiedBy() != null) {
+      addModifiedByPut(puts, entity, timestamp);
+    }
+
     return puts;
   }
 
-  private void addQuestionPut(
-      List<Put> puts, Question entity, long timestamp) {
+  private void addCompositeQuestionPut(
+      List<Put> puts, Question question, long timestamp) {
 
-    byte[] row = Bytes.toBytes(entity.getId());
+    CompositeQuestion composite = (CompositeQuestion) question;
+    Enumeration<QuestionComponent> enumeration = composite.getComponents();
+
+    while (enumeration.hasMoreElements()) {
+      String prefix = question.getId();
+      QuestionComponent component = enumeration.nextElement();
+      getQuestionComponentPut(puts, component, prefix, timestamp);
+    }
+  }
+
+  private void addQuestionPut(
+      List<Put> puts, Question question, long timestamp) {
+
+    byte[] row = Bytes.toBytes(question.getId());
     Put put = new Put(row, timestamp);
-    addTypeColumn(put, entity.getType());
-    addBodyColumn(put, entity.getBody());
-    addHintColumn(put, entity.getHint());
-    addExplanationColumn(put, entity.getExplanation());
+    addTypeColumn(put, question.getClass().getSimpleName());
+    addBodyColumn(put, question.getBody());
+    addHintColumn(put, question.getHint());
+    addExplanationColumn(put, question.getExplanation());
     puts.add(put);
   }
 
   private void addOptionsPut(
       List<Put> puts, Question entity, long timestamp) {
 
-    Enumeration<QuestionOption> enumeration = entity.getOptions();
+    Enumeration<QuestionOption> enumeration;
 
-    while (enumeration.hasMoreElements()) {
-      QuestionOption option = enumeration.nextElement();
-      String prefix = entity.getId();
-      Put put = getOptionPut(option, prefix, timestamp);
-      puts.add(put);
+    if (entity instanceof MultipleChoice) {
+      MultipleChoice question = (MultipleChoice) entity;
+      enumeration = question.getOptions();
+
+    } else if (entity instanceof MultipleResponse) {
+      MultipleResponse question = (MultipleResponse) entity;
+      enumeration = question.getOptions();
+
+    } else {
+      enumeration = Collections.emptyEnumeration();
     }
-  }
-
-  private void addQuestionsPut(
-      List<Put> puts, Question entity, long timestamp) {
-
-    Enumeration<Component> enumeration = entity.getComponents();
 
     while (enumeration.hasMoreElements()) {
-      QuestionComponent component = (QuestionComponent) enumeration.nextElement();
       String prefix = entity.getId();
-      Put put = getQuestionComponentPut(component, prefix, timestamp);
-      puts.add(put);
+      QuestionOption option = enumeration.nextElement();
+      addQuestionOptionPut(puts, option, prefix, timestamp);
     }
   }
 
   @Override
   public List<Delete> getDeletes(Question entity, long timestamp) {
-    List<Delete> deletes = new ArrayList<>();
-
-    byte[] row = Bytes.toBytes(entity.getId());
-    Delete delete = new Delete(row, timestamp);
-    deletes.add(delete);
-
-    addOptionsDelete(deletes, entity, timestamp);
-    addCreatedByDelete(deletes, entity, timestamp);
-
-    if (entity.getModifiedBy() != null) {
-      addModifiedByDelete(deletes, entity, timestamp);
-    }
-
-    return deletes;
-  }
-
-  private void addOptionsDelete(
-      List<Delete> deletes, Question entity, long timestamp) {
-
-    Enumeration<QuestionOption> enumeration = entity.getOptions();
-
-    while (enumeration.hasMoreElements()) {
-      QuestionOption option = enumeration.nextElement();
-      Delete delete = getOptionDelete(option, entity.getId(), timestamp);
-      deletes.add(delete);
-    }
+    return Collections.emptyList();
   }
 }

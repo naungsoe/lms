@@ -119,11 +119,11 @@ public class HBaseUserMapper extends HBaseMapper<User> {
 
   @Override
   public List<Put> getPuts(User entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(User entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

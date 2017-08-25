@@ -13,8 +13,8 @@ import java.util.List;
  * Created by naungsoe on 8/8/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserModel
-    extends AuditableModel implements Principal, Serializable {
+public class UserModel extends AuditableModel
+    implements Principal, Serializable {
 
   private static final long serialVersionUID = -8222871542135593721L;
 

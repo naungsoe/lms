@@ -1,9 +1,8 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.AccessControl;
-import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.User;
 
@@ -49,7 +48,6 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
-    EntityType type = getType(mainResult, timestamp, EntityType.class);
     User sharedBy = new User(
         getId(mainResult, timestamp),
         getFirstName(mainResult, timestamp),
@@ -57,20 +55,19 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
     );
     LocalDateTime sharedDateTime = getDateTime(mainResult, timestamp);
 
-    List<AccessControl> accessControls = new ArrayList<>();
-    results.stream().filter(isAccessControlResult(id))
-        .forEach(shareResult -> {
-          AccessControl accessControl
-              = getAccessControl(shareResult, timestamp);
-          accessControls.add(accessControl);
+    List<ResourcePermission> permissions = new ArrayList<>();
+    results.stream().filter(isPermissionResult(id))
+        .forEach(permissionResult -> {
+          ResourcePermission permission
+              = getResourcePermission(permissionResult, timestamp);
+          permissions.add(permission);
         });
 
     return new ShareLog(
         id,
-        type,
         sharedBy,
         sharedDateTime,
-        accessControls
+        permissions
     );
   }
 
@@ -83,11 +80,11 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
 
   @Override
   public List<Put> getPuts(ShareLog entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(ShareLog entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

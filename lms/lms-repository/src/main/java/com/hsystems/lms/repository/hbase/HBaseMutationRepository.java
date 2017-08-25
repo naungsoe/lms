@@ -23,8 +23,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseMutationRepository
-    extends HBaseRepository implements MutationRepository {
+public class HBaseMutationRepository extends HBaseRepository
+    implements MutationRepository {
 
   private final HBaseClient client;
 

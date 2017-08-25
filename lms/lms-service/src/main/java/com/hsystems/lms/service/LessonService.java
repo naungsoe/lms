@@ -11,7 +11,7 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
-import com.hsystems.lms.repository.entity.Lesson;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.LessonModel;
 

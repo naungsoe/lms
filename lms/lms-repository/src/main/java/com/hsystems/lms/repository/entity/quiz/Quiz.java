@@ -1,10 +1,18 @@
-package com.hsystems.lms.repository.entity;
+package com.hsystems.lms.repository.entity.quiz;
 
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.Entity;
+import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.repository.entity.Resource;
+import com.hsystems.lms.repository.entity.School;
+import com.hsystems.lms.repository.entity.Subject;
+import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -18,12 +26,10 @@ import java.util.List;
  * Created by naungsoe on 19/12/16.
  */
 @IndexCollection(namespace = "lms", name = "quizzes")
-public class Quiz extends Resource implements Serializable {
+public class Quiz extends Resource
+    implements Serializable {
 
-  private static final long serialVersionUID = 645532833693995164L;
-
-  @IndexField
-  private String id;
+  private static final long serialVersionUID = 140365368286164278L;
 
   @IndexField
   private String title;
@@ -59,7 +65,6 @@ public class Quiz extends Resource implements Serializable {
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<AccessControl> accessControls,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -73,16 +78,10 @@ public class Quiz extends Resource implements Serializable {
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.accessControls = accessControls;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
-  }
-
-  @Override
-  public String getId() {
-    return id;
   }
 
   public String getTitle() {
@@ -105,20 +104,49 @@ public class Quiz extends Resource implements Serializable {
     }
 
     Arrays.stream(components).forEach(component -> {
-      checkQuizSectionComponent(component);
+      checkSectionComponent(component);
       this.components.add(component);
     });
   }
 
-  private void checkQuizSectionComponent(Component component) {
-    boolean isQuizSectionComponent = component instanceof QuizSectionComponent;
-    CommonUtils.checkArgument(isQuizSectionComponent,
-        "component is not quiz section");
+  private void checkSectionComponent(Component component) {
+    boolean isSectionComponent = component instanceof SectionComponent;
+    CommonUtils.checkArgument(isSectionComponent, "component is not section");
+
+    SectionComponent sectionComponent = (SectionComponent) component;
+    Enumeration<Component> enumeration = sectionComponent.getComponents();
+
+    while (enumeration.hasMoreElements()) {
+      Component element = enumeration.nextElement();
+      checkQuestionComponent(element);
+    }
+  }
+
+  private void checkQuestionComponent(Component component) {
+    boolean isQuestionComponent = component instanceof QuestionComponent;
+    CommonUtils.checkArgument(isQuestionComponent, "component is not question");
   }
 
   public void removeComponent(Component component) {
-    checkQuizSectionComponent(component);
+    checkSectionComponent(component);
     this.components.remove(component);
+  }
+
+  public long getScore() {
+    long score = 0;
+
+    for (Component component : components) {
+      SectionComponent sectionComponent = (SectionComponent) component;
+      Enumeration<Component> enumeration = sectionComponent.getComponents();
+
+      while (enumeration.hasMoreElements()) {
+        Component element = enumeration.nextElement();
+        QuestionComponent questionComponent = (QuestionComponent) element;
+        score += questionComponent.getScore();
+      }
+    }
+
+    return score;
   }
 
   @Override
@@ -139,13 +167,12 @@ public class Quiz extends Resource implements Serializable {
   @Override
   public String toString() {
     return String.format(
-        "Quiz{id=%s, title=%s, instructions=%s, components=%s, "
-            + "school=%s, levels=%s, subjects=%s, keywords=%s, "
-            + "accessControls=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
+        "Quiz{id=%s, title=%s, instructions=%s, components=%s, school=%s, "
+            + "levels=%s, subjects=%s, keywords=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
         id, title, instructions, StringUtils.join(components, ","),
         school, StringUtils.join(levels, ","), StringUtils.join(subjects, ","),
-        StringUtils.join(keywords, ","), StringUtils.join(accessControls, ","),
-        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(keywords, ","), createdBy, createdDateTime,
+        modifiedBy, modifiedDateTime);
   }
 }

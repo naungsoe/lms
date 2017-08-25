@@ -24,8 +24,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseLevelRepository
-    extends HBaseRepository implements LevelRepository {
+public class HBaseLevelRepository extends HBaseRepository
+    implements LevelRepository {
 
   private final HBaseClient client;
 

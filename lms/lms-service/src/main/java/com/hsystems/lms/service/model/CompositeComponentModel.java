@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public abstract class CompositeComponentModel
-    extends ComponentModel implements Serializable {
+public abstract class CompositeComponentModel extends ComponentModel
+    implements Serializable {
 
   private List<ComponentModel> components;
 

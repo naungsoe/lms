@@ -85,11 +85,11 @@ public class HBaseLevelMapper extends HBaseMapper<Level> {
 
   @Override
   public List<Put> getPuts(Level entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Level entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

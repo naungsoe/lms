@@ -7,25 +7,24 @@ import com.hsystems.lms.common.util.StringUtils;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(namespace = "lms", name = "shares")
+@IndexCollection(namespace = "lms", name = "sharelogs")
 public class ShareLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = 6359949551941210092L;
+  private static final long serialVersionUID = -1443558206059695568L;
 
   private String id;
-
-  private EntityType type;
 
   private User sharedBy;
 
   private LocalDateTime sharedDateTime;
 
-  private List<AccessControl> accessControls;
+  private List<ResourcePermission> permissions;
 
   ShareLog() {
 
@@ -33,25 +32,19 @@ public class ShareLog implements Entity, Serializable {
 
   public ShareLog(
       String id,
-      EntityType type,
       User sharedBy,
       LocalDateTime sharedDateTime,
-      List<AccessControl> accessControls) {
+      List<ResourcePermission> permissions) {
 
     this.id = id;
-    this.type = type;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
-    this.accessControls = accessControls;
+    this.permissions = permissions;
   }
 
   @Override
   public String getId() {
     return id;
-  }
-
-  public EntityType getType() {
-    return type;
   }
 
   public User getSharedBy() {
@@ -62,10 +55,10 @@ public class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public List<AccessControl> getAccessControls() {
-    return CollectionUtils.isEmpty(accessControls)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(accessControls);
+  public Enumeration<ResourcePermission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(permissions);
   }
 
   @Override
@@ -82,16 +75,14 @@ public class ShareLog implements Entity, Serializable {
       return false;
     }
 
-    ShareLog shareLog = (ShareLog) obj;
-    return id.equals(shareLog.getId());
+    ShareLog log = (ShareLog) obj;
+    return id.equals(log.getId());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ShareLog{id=%s, type=%s, sharedBy=%s, "
-            + "sharedDateTime=%s, accessControls=%s}",
-        id, type, sharedBy, sharedDateTime,
-        StringUtils.join(accessControls, ","));
+        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, permissions=%s}",
+        id, sharedBy, sharedDateTime, StringUtils.join(permissions, ","));
   }
 }

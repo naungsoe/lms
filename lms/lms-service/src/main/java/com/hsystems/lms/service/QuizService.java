@@ -10,7 +10,7 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
-import com.hsystems.lms.repository.entity.Quiz;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.QuizModel;
 

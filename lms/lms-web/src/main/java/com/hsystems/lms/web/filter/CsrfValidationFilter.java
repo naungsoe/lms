@@ -13,8 +13,8 @@ import javax.servlet.ServletResponse;
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class CsrfValidationFilter
-    extends BaseFilter implements Filter {
+public class CsrfValidationFilter extends ServletFilter
+    implements Filter {
 
   @Override
   public void init(FilterConfig filterConfig)

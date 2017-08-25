@@ -1,12 +1,12 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Lesson;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
@@ -81,7 +81,6 @@ public class HBaseLessonMapper extends HBaseMapper<Lesson> {
         levels,
         subjects,
         keywords,
-        Collections.emptyList(),
         createdBy,
         createdDateTime,
         modifiedBy,
@@ -98,11 +97,11 @@ public class HBaseLessonMapper extends HBaseMapper<Lesson> {
 
   @Override
   public List<Put> getPuts(Lesson entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(Lesson entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

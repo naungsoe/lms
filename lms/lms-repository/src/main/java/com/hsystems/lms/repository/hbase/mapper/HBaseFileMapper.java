@@ -1,14 +1,12 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.FileResource;
-import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.file.FileResource;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -23,7 +21,7 @@ public class HBaseFileMapper extends HBaseMapper<FileResource> {
     return Collections.emptyList();
   }
 
-  private Level getEntity(
+  private FileResource getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     return null;
@@ -36,11 +34,11 @@ public class HBaseFileMapper extends HBaseMapper<FileResource> {
 
   @Override
   public List<Put> getPuts(FileResource entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 
   @Override
   public List<Delete> getDeletes(FileResource entity, long timestamp) {
-    return new ArrayList<>();
+    return Collections.emptyList();
   }
 }

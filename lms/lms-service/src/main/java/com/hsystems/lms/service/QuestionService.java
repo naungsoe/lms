@@ -12,10 +12,15 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.entity.question.CompositeQuestion;
+import com.hsystems.lms.repository.entity.question.MultipleChoice;
 import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionType;
 import com.hsystems.lms.service.mapper.Configuration;
+import com.hsystems.lms.service.model.CompositeQuestionModel;
+import com.hsystems.lms.service.model.MultipleChoiceModel;
+import com.hsystems.lms.service.model.QuestionComponentModel;
 import com.hsystems.lms.service.model.QuestionModel;
+import com.hsystems.lms.service.model.QuestionOptionModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -25,11 +30,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public class QuestionService extends BaseService {
+
+  private final Properties properties;
 
   private final QuestionRepository questionRepository;
 
@@ -37,9 +45,11 @@ public class QuestionService extends BaseService {
 
   @Inject
   QuestionService(
+      Properties properties,
       QuestionRepository questionRepository,
       IndexRepository indexRepository) {
 
+    this.properties = properties;
     this.questionRepository = questionRepository;
     this.indexRepository = indexRepository;
   }
@@ -138,70 +148,129 @@ public class QuestionService extends BaseService {
   }
 
   @Log
-  public void create(QuestionModel questionModel, Principal principal)
+  public void create(
+      CompositeQuestionModel questionModel, Principal principal)
       throws IOException {
 
     checkQuestionModel(questionModel);
-    questionModel.setCreatedBy((UserModel) principal);
-    questionModel.setCreatedDateTime(DateTimeUtils.toString(
-        LocalDateTime.now(), principal.getDateTimeFormat()));
-    saveQuestion(questionModel, principal);
+    checkCompositeQuestionModel(questionModel);
+    populateCreatedByAndDate(questionModel, principal);
+    saveQuestion(questionModel, principal, CompositeQuestion.class);
   }
 
   private void checkQuestionModel(QuestionModel questionModel) {
-    CommonUtils.checkNotNull(questionModel.getBody(),
-        "question body cannot be null");
-    CommonUtils.checkArgument(StringUtils.isNotEmpty(questionModel.getBody()),
+    String questionBody = questionModel.getBody();
+    CommonUtils.checkNotNull(questionBody, "question body cannot be null");
+    CommonUtils.checkArgument(StringUtils.isNotEmpty(questionBody),
         "question body cannot be empty");
-    CommonUtils.checkNotNull(questionModel.getOptions(),
-        "question options cannot be null");
-    CommonUtils.checkArgument(
-        CollectionUtils.isNotEmpty(questionModel.getOptions()),
-        "question options cannot be empty");
   }
 
-  private void saveQuestion(QuestionModel questionModel, Principal principal)
+  private void checkCompositeQuestionModel(
+      CompositeQuestionModel questionModel) {
+
+    List<QuestionComponentModel> models = questionModel.getComponents();
+    CommonUtils.checkNotNull(models, "question components cannot be null");
+    CommonUtils.checkArgument(CollectionUtils.isNotEmpty(models),
+        "question components cannot be empty");
+  }
+
+  private void populateCreatedByAndDate(
+      QuestionModel questionModel, Principal principal) {
+
+    String dateTime = DateTimeUtils.toString(LocalDateTime.now(),
+        principal.getDateTimeFormat());
+    questionModel.setCreatedBy((UserModel) principal);
+    questionModel.setCreatedDateTime(dateTime);
+  }
+
+  private <T extends Question> void saveQuestion(
+      QuestionModel questionModel, Principal principal, Class<T> type)
       throws IOException {
 
     Configuration configuration = Configuration.create(principal);
-    Question question = getEntity(questionModel, Question.class, configuration);
+    T question = getEntity(questionModel, type, configuration);
     questionRepository.save(question);
     indexRepository.save(question);
   }
 
   @Log
-  public void save(QuestionModel questionModel, Principal principal)
+  public void create(
+      MultipleChoiceModel questionModel, Principal principal)
       throws IOException {
 
     checkQuestionModel(questionModel);
+    checkMultipleChoiceModel(questionModel);
+    populateCreatedByAndDate(questionModel, principal);
+    saveQuestion(questionModel, principal, MultipleChoice.class);
+  }
 
-    Optional<Question> questionOptional = indexRepository.findBy(
-        questionModel.getId(), Question.class);
+  private void checkMultipleChoiceModel(MultipleChoiceModel questionModel) {
+    List<QuestionOptionModel> models = questionModel.getOptions();
+    CommonUtils.checkNotNull(models, "question options cannot be null");
+    CommonUtils.checkArgument(CollectionUtils.isNotEmpty(models),
+        "question options cannot be empty");
+  }
+
+  @Log
+  public void save(
+      CompositeQuestionModel questionModel, Principal principal)
+      throws IOException {
+
+    checkQuestionModel(questionModel);
+    checkCompositeQuestionModel(questionModel);
+
+    Optional<CompositeQuestion> questionOptional = indexRepository.findBy(
+        questionModel.getId(), CompositeQuestion.class);
 
     if (questionOptional.isPresent()) {
-      Question question = questionOptional.get();
-      QuestionModel origQuestionModel = getModel(question, QuestionModel.class);
-      origQuestionModel.setModifiedBy((UserModel) principal);
-      origQuestionModel.setModifiedDateTime(DateTimeUtils.toString(
-          LocalDateTime.now(), principal.getDateTimeFormat()));
-      copyProperties(origQuestionModel, questionModel);
-      saveQuestion(questionModel, principal);
+      CompositeQuestion question = questionOptional.get();
+      CompositeQuestionModel exModel
+          = getModel(question, CompositeQuestionModel.class);
+      copyQuestionProperties(exModel, questionModel);
+      populateModifiedByAndDate(exModel, principal);
+      saveQuestion(exModel, principal, CompositeQuestion.class);
     }
   }
 
-  private void copyProperties(
+  private void copyQuestionProperties(
       QuestionModel destModel, QuestionModel sourceModel) {
 
-    destModel.setType(sourceModel.getType());
     destModel.setBody(sourceModel.getBody());
     destModel.setHint(sourceModel.getHint());
     destModel.setExplanation(sourceModel.getExplanation());
-    destModel.setOptions(sourceModel.getOptions());
-    destModel.setComponents(sourceModel.getComponents());
     destModel.setSchool(sourceModel.getSchool());
     destModel.setLevels(sourceModel.getLevels());
     destModel.setSubjects(sourceModel.getSubjects());
     destModel.setKeywords(sourceModel.getKeywords());
+  }
+
+  private void populateModifiedByAndDate(
+      QuestionModel questionModel, Principal principal) {
+
+    questionModel.setModifiedBy((UserModel) principal);
+    questionModel.setModifiedDateTime(DateTimeUtils.toString(
+        LocalDateTime.now(), principal.getDateTimeFormat()));
+  }
+
+  @Log
+  public void save(
+      MultipleChoiceModel questionModel, Principal principal)
+      throws IOException {
+
+    checkQuestionModel(questionModel);
+    checkMultipleChoiceModel(questionModel);
+
+    Optional<MultipleChoice> questionOptional = indexRepository.findBy(
+        questionModel.getId(), MultipleChoice.class);
+
+    if (questionOptional.isPresent()) {
+      MultipleChoice question = questionOptional.get();
+      MultipleChoiceModel exModel
+          = getModel(question, MultipleChoiceModel.class);
+      copyQuestionProperties(exModel, questionModel);
+      populateModifiedByAndDate(exModel, principal);
+      saveQuestion(exModel, principal, MultipleChoice.class);
+    }
   }
 
   @Log
@@ -224,13 +293,15 @@ public class QuestionService extends BaseService {
       Question question, Principal principal) {
 
     UserModel userModel = (UserModel) principal;
-    CommonUtils.checkArgument(question.getCreatedBy()
-            .getId().equals(userModel.getId()),
+    boolean createdByUser = question.getCreatedBy()
+        .getId().equals(userModel.getId());
+    CommonUtils.checkArgument(createdByUser,
         "current user should be question created user");
   }
 
   @Log
-  public List<QuestionType> findAllTypes() {
-    return Arrays.asList(QuestionType.values());
+  public List<String> findAllTypes() {
+    String questionTypes = properties.getProperty("question.types");
+    return Arrays.asList(questionTypes.split(","));
   }
 }

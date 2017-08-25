@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.common.ActionType;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.AuditLog;
@@ -50,23 +50,22 @@ public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
     int endIndex = row.indexOf(Constants.SEPARATOR);
 
     String id = (endIndex == -1) ? row : row.substring(0, endIndex);
-    EntityType type = getType(result, timestamp, EntityType.class);
-
-    User user = new User(
+    EntityType entityType = getEntityType(result, timestamp);
+    User actionBy = new User(
         getId(result, timestamp),
         getFirstName(result, timestamp),
         getLastName(result, timestamp)
     );
 
-    ActionType actionType = getAction(result, timestamp, ActionType.class);
+    ActionType actionType = getActionType(result, timestamp);
     long actionTimestamp = (endIndex == -1)
         ? getTimestamp(result, timestamp)
         : Long.parseLong(row.substring(endIndex));
 
     return new AuditLog(
         id,
-        type,
-        user,
+        entityType,
+        actionBy,
         actionType,
         actionTimestamp
     );

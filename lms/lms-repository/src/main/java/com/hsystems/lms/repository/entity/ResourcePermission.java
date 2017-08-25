@@ -11,34 +11,34 @@ import java.util.List;
 /**
  * Created by naungsoe on 2/11/16.
  */
-public class AccessControl implements Serializable {
+public class ResourcePermission implements Serializable {
 
-  private static final long serialVersionUID = -7423200059728553865L;
+  private static final long serialVersionUID = 4077280546498645770L;
 
   private User user;
 
-  private List<AccessType> accessTypes;
+  private List<ResourceAccess> accesses;
 
-  AccessControl() {
+  ResourcePermission() {
 
   }
 
-  public AccessControl(
+  public ResourcePermission(
       User user,
-      List<AccessType> accessTypes) {
+      List<ResourceAccess> accesses) {
 
     this.user = user;
-    this.accessTypes = accessTypes;
+    this.accesses = accesses;
   }
 
   public User getUser() {
     return user;
   }
 
-  public Enumeration<AccessType> getAccessTypes() {
-    return CollectionUtils.isEmpty(accessTypes)
+  public Enumeration<ResourceAccess> getAccesses() {
+    return CollectionUtils.isEmpty(accesses)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(accessTypes);
+        : Collections.enumeration(accesses);
   }
 
   @Override
@@ -54,14 +54,14 @@ public class AccessControl implements Serializable {
       return false;
     }
 
-    AccessControl entry = (AccessControl) obj;
-    return user.equals(entry.getUser());
+    ResourcePermission access = (ResourcePermission) obj;
+    return user.equals(access.getUser());
   }
 
   @Override
   public String toString() {
     return String.format(
-        "AccessControl{user=%s, accessTypes=%s}",
-        user, StringUtils.join(accessTypes, ","));
+        "ResourcePermission{user=%s, accesses=%s}",
+        user, StringUtils.join(accesses, ","));
   }
 }

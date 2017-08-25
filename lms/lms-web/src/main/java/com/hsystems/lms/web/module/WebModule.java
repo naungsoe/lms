@@ -7,7 +7,7 @@ import com.google.inject.servlet.ServletModule;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.common.interceptor.LogInterceptor;
+import com.hsystems.lms.common.logging.LogInterceptor;
 import com.hsystems.lms.common.provider.PropertiesProvider;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.security.RequiresInterceptor;

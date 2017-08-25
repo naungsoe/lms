@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.common.annotation.IndexCollection;
 
 import java.io.Serializable;
@@ -11,11 +10,11 @@ import java.io.Serializable;
 @IndexCollection(namespace = "lms", name = "mutations")
 public class Mutation implements Entity, Serializable {
 
-  private static final long serialVersionUID = 6681526004482435421L;
+  private static final long serialVersionUID = 1810669316250096511L;
 
   private String id;
 
-  private EntityType type;
+  private EntityType entityType;
 
   private ActionType actionType;
 
@@ -27,12 +26,12 @@ public class Mutation implements Entity, Serializable {
 
   public Mutation(
       String id,
-      EntityType type,
+      EntityType entityType,
       ActionType actionType,
       long timestamp) {
 
     this.id = id;
-    this.type = type;
+    this.entityType = entityType;
     this.actionType = actionType;
     this.timestamp = timestamp;
   }
@@ -42,8 +41,8 @@ public class Mutation implements Entity, Serializable {
     return id;
   }
 
-  public EntityType getType() {
-    return type;
+  public EntityType getEntityType() {
+    return entityType;
   }
 
   public ActionType getActionType() {
@@ -74,7 +73,7 @@ public class Mutation implements Entity, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, type=%s, timestamp=%s, actionType=%s}",
-        id, type, timestamp, actionType);
+        "AuditLog{id=%s, entityType=%s, timestamp=%s, actionType=%s}",
+        id, entityType, timestamp, actionType);
   }
 }

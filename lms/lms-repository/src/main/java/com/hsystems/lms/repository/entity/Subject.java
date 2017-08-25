@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 1/11/16.
  */
 @IndexCollection(namespace = "lms", name = "subjects")
-public class Subject extends Auditable implements Serializable {
+public class Subject implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = 297170263440474153L;
+  private static final long serialVersionUID = -5947698238952730689L;
 
   @IndexField
   private String id;
@@ -22,6 +22,18 @@ public class Subject extends Auditable implements Serializable {
 
   @IndexField
   private School school;
+
+  @IndexField
+  private User createdBy;
+
+  @IndexField
+  private LocalDateTime createdDateTime;
+
+  @IndexField
+  private User modifiedBy;
+
+  @IndexField
+  private LocalDateTime modifiedDateTime;
 
   Subject() {
 
@@ -53,6 +65,7 @@ public class Subject extends Auditable implements Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  @Override
   public String getId() {
     return id;
   }
@@ -63,6 +76,26 @@ public class Subject extends Auditable implements Serializable {
 
   public School getSchool() {
     return school;
+  }
+
+  @Override
+  public User getCreatedBy() {
+    return createdBy;
+  }
+
+  @Override
+  public LocalDateTime getCreatedDateTime() {
+    return createdDateTime;
+  }
+
+  @Override
+  public User getModifiedBy() {
+    return modifiedBy;
+  }
+
+  @Override
+  public LocalDateTime getModifiedDateTime() {
+    return modifiedDateTime;
   }
 
   @Override

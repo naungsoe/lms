@@ -2,19 +2,17 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
-import com.hsystems.lms.repository.entity.AccessControl;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Quiz;
-import com.hsystems.lms.repository.entity.ShareLog;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuizMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -32,16 +30,14 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseQuizRepository
-    extends HBaseRepository implements QuizRepository {
+public class HBaseQuizRepository extends HBaseResourceRepository
+    implements QuizRepository {
 
   private final HBaseClient client;
 
   private final HBaseQuizMapper quizMapper;
 
   private final MutationRepository mutationRepository;
-
-  private final ShareLogRepository shareLogRepository;
 
   private final AuditLogRepository auditLogRepository;
 
@@ -50,14 +46,14 @@ public class HBaseQuizRepository
       HBaseClient client,
       HBaseQuizMapper quizMapper,
       MutationRepository mutationRepository,
-      ShareLogRepository shareLogRepository,
-      AuditLogRepository auditLogRepository) {
+      AuditLogRepository auditLogRepository,
+      ShareLogRepository shareLogRepository) {
 
     this.client = client;
     this.quizMapper = quizMapper;
     this.mutationRepository = mutationRepository;
-    this.shareLogRepository =  shareLogRepository;
     this.auditLogRepository = auditLogRepository;
+    this.shareLogRepository = shareLogRepository;
   }
 
   @Override
@@ -89,15 +85,7 @@ public class HBaseQuizRepository
     }
 
     Quiz quiz = quizMapper.getEntity(results);
-    Optional<ShareLog> shareLogOptional
-        = shareLogRepository.findBy(quiz.getId());
-
-    if (shareLogOptional.isPresent()) {
-      ShareLog shareLog = shareLogOptional.get();
-      List<AccessControl> accessControls = shareLog.getAccessControls();
-      quiz.addAccessControl(accessControls.toArray(new AccessControl[0]));
-    }
-
+    populatePermissions(quiz);
     return Optional.of(quiz);
   }
 

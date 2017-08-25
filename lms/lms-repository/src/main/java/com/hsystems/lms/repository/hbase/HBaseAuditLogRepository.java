@@ -22,8 +22,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseAuditLogRepository
-    extends HBaseRepository implements AuditLogRepository {
+public class HBaseAuditLogRepository extends HBaseRepository
+    implements AuditLogRepository {
 
   private final HBaseClient client;
 

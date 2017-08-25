@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Created by naungsoe on 7/10/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class QuestionComponentModel
-    extends ComponentModel implements Serializable {
+public class QuestionComponentModel extends ComponentModel
+    implements Serializable {
 
   private static final long serialVersionUID = -6712660360345177011L;
 

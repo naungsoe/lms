@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @IndexCollection(namespace = "lms", name = "signinlogs")
 public class SignInLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = 6681526004482435421L;
+  private static final long serialVersionUID = 3323322144069322930L;
 
   private String id;
 

@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public class QuestionOption implements Serializable {
 
-  private static final long serialVersionUID = -4444753561145528740L;
+  private static final long serialVersionUID = -1648329280336973343L;
 
   @IndexField
   private String id;
