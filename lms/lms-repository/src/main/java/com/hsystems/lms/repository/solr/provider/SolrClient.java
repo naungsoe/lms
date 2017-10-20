@@ -1,10 +1,14 @@
 package com.hsystems.lms.repository.solr.provider;
 
+import com.google.inject.Provider;
+
 import com.hsystems.lms.common.annotation.IndexCollection;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.solr.mapper.DocumentMapper;
 import com.hsystems.lms.repository.solr.mapper.EntityMapper;
@@ -23,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -32,10 +37,12 @@ public class SolrClient {
 
   private static final String FIELD_ID = "id";
 
-  private static final String ROUTE_FORMAT = "%s!";
-  private static final String COMPOSITE_ID_FORMAT = "%s!%s";
+  private static final String FORMAT_ROUTE = "%s!";
+  private static final String FORMAT_COMPOSITE_ID = "%s!%s";
 
-  private Properties properties;
+  private Provider<Properties> propertiesProvider;
+
+  private volatile EntityMapper entityMapper;
 
   private volatile CloudSolrClient cloudClient;
 
@@ -43,8 +50,8 @@ public class SolrClient {
 
   }
 
-  SolrClient(Properties properties) {
-    this.properties = properties;
+  SolrClient(Provider<Properties> propertiesProvider) {
+    this.propertiesProvider = propertiesProvider;
   }
 
   public <T extends Entity> QueryResult<T> query(Query query, Class<T> type)
@@ -56,21 +63,21 @@ public class SolrClient {
       client.setDefaultCollection(collection);
 
       String namespace = getNamespace(type);
-      String route = String.format(ROUTE_FORMAT, namespace);
+      String route = String.format(FORMAT_ROUTE, namespace);
       query.getCriteria().forEach(criterion -> {
             if (FIELD_ID.equals(criterion.getField())) {
               List<Object> compositeIds = new ArrayList<>();
               criterion.getValues().forEach(value -> {
                 String compositeId = String.format(
-                    COMPOSITE_ID_FORMAT, namespace, value);
+                    FORMAT_COMPOSITE_ID, namespace, value);
                 compositeIds.add(compositeId);
               });
               criterion.setValues(compositeIds);
             }
           });
 
-      QueryMapper mapper = new QueryMapper(type);
-      SolrQuery solrQuery = mapper.map(query);
+      QueryMapper mapper = new QueryMapper();
+      SolrQuery solrQuery = mapper.map(query, type);
       solrQuery.set("_route_", route);
 
       QueryResponse response = client.query(solrQuery);
@@ -105,11 +112,39 @@ public class SolrClient {
         instance = cloudClient;
 
         if (instance == null) {
+          Properties properties = propertiesProvider.get();
           String zkHost = properties.getProperty("app.zookeeper.quorum")
               + ':' + properties.getProperty("app.zookeeper.client.port");
           cloudClient = new CloudSolrClient.Builder()
               .withZkHost(zkHost).build();
           instance = cloudClient;
+        }
+      }
+    }
+
+    return instance;
+  }
+
+  protected synchronized EntityMapper getMapper() {
+    EntityMapper instance = entityMapper;
+
+    if (instance == null) {
+      synchronized (this) {
+        instance = entityMapper;
+
+        if (instance == null) {
+          String packageName = Entity.class.getPackage().getName();
+
+          try {
+            Map<String, Class> typeMap
+                = ReflectionUtils.getClasses(packageName);
+            entityMapper = new EntityMapper(typeMap);
+            instance = entityMapper;
+
+          } catch (ClassNotFoundException | IOException e) {
+            throw new IllegalArgumentException(
+                "error retrieving classes", e);
+          }
         }
       }
     }
@@ -139,11 +174,12 @@ public class SolrClient {
       Collections.emptyList();
     }
 
+    EntityMapper mapper = getMapper();
     List<T> entities = new ArrayList<>();
 
     for (SolrDocument document : documents) {
-      EntityMapper mapper = new EntityMapper(type);
-      entities.add((T) mapper.map(document));
+      T entity = mapper.map(document, type);
+      entities.add(entity);
     }
 
     return entities;
@@ -181,7 +217,7 @@ public class SolrClient {
 
     String namespace = getNamespace(entity.getClass());
     String compositeId = String.format(
-        COMPOSITE_ID_FORMAT, namespace, entity.getId());
+        FORMAT_COMPOSITE_ID, namespace, entity.getId());
     document.setField(FIELD_ID, compositeId);
   }
 
@@ -234,7 +270,8 @@ public class SolrClient {
       String collection = getCollection(entity.getClass());
       CloudSolrClient client = getCloudClient();
       client.setDefaultCollection(collection);
-      client.deleteById(entity.getId());
+      client.deleteByQuery(String.format("%s:%s*",
+          Constants.FIELD_ID, entity.getId()));
       client.commit();
 
     } catch (SolrServerException e) {

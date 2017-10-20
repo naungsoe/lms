@@ -14,17 +14,17 @@ import java.util.List;
  * Created by naungsoe on 2/11/16.
  */
 @IndexCollection(namespace = "lms", name = "sharelogs")
-public class ShareLog implements Entity, Serializable {
+public final class ShareLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = -1443558206059695568L;
+  private static final long serialVersionUID = -8655950641727343796L;
 
   private String id;
+
+  private List<ShareEntry> shareEntries;
 
   private User sharedBy;
 
   private LocalDateTime sharedDateTime;
-
-  private List<ResourcePermission> permissions;
 
   ShareLog() {
 
@@ -32,14 +32,14 @@ public class ShareLog implements Entity, Serializable {
 
   public ShareLog(
       String id,
+      List<ShareEntry> shareEntries,
       User sharedBy,
-      LocalDateTime sharedDateTime,
-      List<ResourcePermission> permissions) {
+      LocalDateTime sharedDateTime) {
 
     this.id = id;
+    this.shareEntries = shareEntries;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
-    this.permissions = permissions;
   }
 
   @Override
@@ -55,34 +55,16 @@ public class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public Enumeration<ResourcePermission> getPermissions() {
-    return CollectionUtils.isEmpty(permissions)
+  public Enumeration<ShareEntry> getShareEntries() {
+    return CollectionUtils.isEmpty(shareEntries)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(permissions);
-  }
-
-  @Override
-  public int hashCode() {
-    int prime = 31;
-    int result = id.hashCode();
-    result = result * prime + sharedBy.hashCode();
-    return result * prime + sharedDateTime.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    ShareLog log = (ShareLog) obj;
-    return id.equals(log.getId());
+        : Collections.enumeration(shareEntries);
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, permissions=%s}",
-        id, sharedBy, sharedDateTime, StringUtils.join(permissions, ","));
+        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, shareEntries=%s}",
+        id, sharedBy, sharedDateTime, StringUtils.join(shareEntries, ","));
   }
 }

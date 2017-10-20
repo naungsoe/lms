@@ -1,13 +1,18 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 10/9/16.
  */
-public class SignUpModel implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class SignUpModel implements Serializable {
 
-  private static final long serialVersionUID = -6318683344722781066L;
+  private static final long serialVersionUID = -8787138589517013459L;
 
   private String account;
 
@@ -27,30 +32,8 @@ public class SignUpModel implements Serializable {
 
   private String email;
 
-  SignUpModel() {
+  public SignUpModel() {
 
-  }
-
-  public SignUpModel(
-      String account,
-      String password,
-      String confirmPassword,
-      String firstName,
-      String lastName,
-      String dateOfBirth,
-      String gender,
-      String mobile,
-      String email) {
-
-    this.account = account;
-    this.password = password;
-    this.confirmPassword = confirmPassword;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.dateOfBirth = dateOfBirth;
-    this.gender = gender;
-    this.mobile = mobile;
-    this.email = email;
   }
 
   public String getAccount() {

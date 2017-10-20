@@ -8,9 +8,10 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class QuizComponent implements GradableComponent, Serializable {
+public final class QuizComponent
+    implements GradableComponent<QuizComponentAttempt>, Serializable {
 
-  private static final long serialVersionUID = -5123843132884732942L;
+  private static final long serialVersionUID = 1129182302928930252L;
 
   @IndexField
   private String id;
@@ -50,29 +51,7 @@ public class QuizComponent implements GradableComponent, Serializable {
   }
 
   @Override
-  public long getScore() {
-    return quiz.getScore();
-  }
+  public void gradeAttempt(QuizComponentAttempt attempt) {
 
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    QuizComponent component = (QuizComponent) obj;
-    return id.equals(component.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "QuizComponent{id=%s, quiz=%s, order=%s}",
-        id, quiz, order);
   }
 }

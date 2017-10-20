@@ -18,12 +18,33 @@ public class PropertiesProvider implements Provider<Properties> {
 
   private static final String FILE_NAME = "application.properties";
 
-  private final Properties properties;
+  private volatile Properties properties;
 
   PropertiesProvider() {
+
+  }
+
+  public Properties get() {
+    Properties instance = properties;
+
+    if (instance == null) {
+      synchronized (this) {
+        instance = properties;
+
+        if (instance == null) {
+          properties = getProperties();
+          instance = properties;
+        }
+      }
+    }
+
+    return instance;
+  }
+
+  private Properties getProperties() {
     InputStream inputStream = getClass().getClassLoader()
         .getResourceAsStream(FILE_NAME);
-    properties = new Properties();
+    Properties properties = new Properties();
 
     try {
       properties.load(inputStream);
@@ -41,9 +62,7 @@ public class PropertiesProvider implements Provider<Properties> {
         }
       }
     }
-  }
 
-  public Properties get() {
     return properties;
   }
 }

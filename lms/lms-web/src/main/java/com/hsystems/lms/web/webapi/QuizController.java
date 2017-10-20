@@ -11,10 +11,11 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.model.ComponentModel;
-import com.hsystems.lms.service.model.QuizModel;
+import com.hsystems.lms.service.model.quiz.QuizResourceModel;
 import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ import javax.ws.rs.core.UriInfo;
  * Created by naungsoe on 10/9/16.
  */
 @Path("/quizzes")
-public class QuizController {
+public class QuizController extends AbstractController {
 
   private final Provider<Principal> principalProvider;
 
@@ -59,8 +60,9 @@ public class QuizController {
       throws IOException {
 
     Principal principal = principalProvider.get();
-    Query query = Query.create(uriInfo.getRequestUri().getQuery());
-    QueryResult<QuizModel> queryResult
+    URI requestUri = uriInfo.getRequestUri();
+    Query query = Query.create(requestUri.getQuery());
+    QueryResult<QuizResourceModel> queryResult
         = quizService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
   }
@@ -73,24 +75,24 @@ public class QuizController {
       throws IOException {
 
     Principal principal = principalProvider.get();
-    Optional<QuizModel> quizModelOptional
+    Optional<QuizResourceModel> resourceModelOptional
         = quizService.findBy(id, principal);
 
-    if (!quizModelOptional.isPresent()) {
+    if (!resourceModelOptional.isPresent()) {
       throw new WebApplicationException(
           Response.Status.NOT_FOUND);
     }
 
-    QuizModel quizModel = quizModelOptional.get();
+    QuizResourceModel resourceModel = resourceModelOptional.get();
     Query query = Query.create();
     QueryResult<ComponentModel> queryResult
         = componentService.findAllBy(query, principal);
     List<ComponentModel> componentModels = queryResult.getItems();
 
     if (CollectionUtils.isNotEmpty(componentModels)) {
-      quizModel.setComponents(componentModels);
+      resourceModel.getQuiz().setComponents(componentModels);
     }
 
-    return Response.ok(quizModel).build();
+    return Response.ok(resourceModel).build();
   }
 }

@@ -5,7 +5,4 @@ package com.hsystems.lms.repository.entity;
  */
 public interface GradableComponentAttempt extends ComponentAttempt {
 
-  void gradeAttempt();
-
-  long getScore();
 }

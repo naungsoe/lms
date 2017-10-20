@@ -23,8 +23,8 @@ public class Configuration {
 
   public static Configuration create() {
     return new Configuration(
-        Constants.DATE_FORMAT,
-        Constants.DATE_TIME_FORMAT
+        Constants.FORMAT_DATE,
+        Constants.FORMAT_DATE_TIME
     );
   }
 

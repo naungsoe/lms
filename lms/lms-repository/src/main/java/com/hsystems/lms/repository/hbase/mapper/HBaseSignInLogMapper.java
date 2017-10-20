@@ -13,11 +13,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
+public class HBaseSignInLogMapper extends HBaseAbstractMapper<SignInLog> {
 
   @Override
   public List<SignInLog> getEntities(
@@ -29,13 +30,16 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
 
     List<SignInLog> signInLogs = new ArrayList<>();
     results.forEach(result -> {
-      SignInLog signInLog = getEntity(result);
-      signInLogs.add(signInLog);
+      Optional<SignInLog> signInLogOptional = getEntity(result);
+
+      if (signInLogOptional.isPresent()) {
+        signInLogs.add(signInLogOptional.get());
+      }
     });
     return signInLogs;
   }
 
-  private SignInLog getEntity(Result result) {
+  private Optional<SignInLog> getEntity(Result result) {
     String id = Bytes.toString(result.getRow());
     String account = getAccount(result, 0);
     String sessionId = getSessionId(result, 0);
@@ -43,7 +47,7 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
     LocalDateTime dateTime = getDateTime(result, 0);
     int fails = getFails(result, 0);
 
-    return new SignInLog(
+    SignInLog signInLog = new SignInLog(
         id,
         account,
         sessionId,
@@ -51,10 +55,11 @@ public class HBaseSignInLogMapper extends HBaseMapper<SignInLog> {
         dateTime,
         fails
     );
+    return Optional.of(signInLog);
   }
 
   @Override
-  public SignInLog getEntity(List<Result> results) {
+  public Optional<SignInLog> getEntity(List<Result> results) {
     Result mainResult = results.get(0);
     return getEntity(mainResult);
   }

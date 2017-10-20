@@ -8,7 +8,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.repository.FileRepository;
 import com.hsystems.lms.repository.IndexRepository;
-import com.hsystems.lms.service.model.FileResourceModel;
+import com.hsystems.lms.service.model.file.FileResourceModel;
 import com.hsystems.lms.service.model.LevelModel;
 
 import java.io.IOException;
@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class FileService extends BaseService {
+public class FileService extends AbstractService {
 
   private final FileRepository fileRepository;
 

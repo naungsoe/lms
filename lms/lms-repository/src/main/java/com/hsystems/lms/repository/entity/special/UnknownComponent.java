@@ -5,7 +5,7 @@ import com.hsystems.lms.repository.entity.Component;
 /**
  * Created by administrator on 24/5/17.
  */
-public class UnknownComponent implements Component {
+public final class UnknownComponent implements Component {
 
   public UnknownComponent() {
 

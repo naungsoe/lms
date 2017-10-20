@@ -8,15 +8,15 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class FileComponent implements Component, Serializable {
+public final class FileComponent implements Component, Serializable {
 
-  private static final long serialVersionUID = 5996223382448951189L;
+  private static final long serialVersionUID = 4275646003289568699L;
 
   @IndexField
   protected String id;
 
   @IndexField
-  private FileResource file;
+  private FileObject fileObject;
 
   @IndexField
   protected int order;
@@ -27,11 +27,11 @@ public class FileComponent implements Component, Serializable {
 
   public FileComponent(
       String id,
-      FileResource file,
+      FileObject fileObject,
       int order) {
 
     this.id = id;
-    this.file = file;
+    this.fileObject = fileObject;
     this.order = order;
   }
 
@@ -40,8 +40,8 @@ public class FileComponent implements Component, Serializable {
     return id;
   }
 
-  public FileResource getFile() {
-    return file;
+  public FileObject getFileObject() {
+    return fileObject;
   }
 
   @Override
@@ -67,7 +67,7 @@ public class FileComponent implements Component, Serializable {
   @Override
   public String toString() {
     return String.format(
-        "FileComponent{id=%s, file=%s, order=%s}",
-        id, file, order);
+        "FileComponent{id=%s, fileObject=%s, order=%s}",
+        id, fileObject, order);
   }
 }

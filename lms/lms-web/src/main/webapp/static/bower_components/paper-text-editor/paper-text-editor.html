@@ -85,12 +85,14 @@
               <option value="monospace">Monospace</option>
               <option value="tahoma">Tahoma</option>
             </select>
+            <!--
             <select class="ql-size">
               <option value="10px">Small</option>
               <option selected>Normal</option>
               <option value="18px">Large</option>
               <option value="32px">Huge</option>
             </select>
+            -->
           </span>
           <span class="ql-formats">
             <button class="ql-bold" title="Bold"></button>
@@ -155,13 +157,18 @@
         };
       }
 
+      static get observers() {
+        return [
+          '_updateContent(content)'
+        ];
+      }
+
       connectedCallback() {
         super.connectedCallback();
 
         let root = this.shadowRoot;
         let editor = root.querySelector('.editor-content');
         let toolbar = root.querySelector('.editor-toolbar');
-        let delta = Quill.import('delta');
         let font = Quill.import('formats/font');
         font.whitelist = [
           'sans-serif',
@@ -172,8 +179,8 @@
         ];
         Quill.register(font, true);
 
-        let sizeStyle = Quill.import('attributors/style/size');
-        Quill.register(sizeStyle, true);
+        //let sizeStyle = Quill.import('attributors/style/size');
+        //Quill.register(sizeStyle, true);
 
         let bindings = {
           tab: {
@@ -205,12 +212,31 @@
         document.addEventListener('tap', this._boundDocumentTap);
       }
 
+      disconnectedCallback() {
+        this.removeEventListener('tap', this._boundEditorTap);
+        document.removeEventListener('tap', this._boundDocumentTap);
+      }
+
+      focus() {
+        this._handleEditorTap();
+      }
+
+      _updateContent(content) {
+        if (this._quill && this._quill.root) {
+          this._quill.root.innerHTML = this.content;
+        }
+      }
+
       _handleEditorTap(event) {
         let root = this.shadowRoot;
         let container = root.querySelector('.editor-container');
 
         if (!container.hasAttribute('active')) {
           container.setAttribute('active', '');
+
+          if (!this._quill.hasFocus()) {
+            this._quill.focus();
+          }
         }
       }
 

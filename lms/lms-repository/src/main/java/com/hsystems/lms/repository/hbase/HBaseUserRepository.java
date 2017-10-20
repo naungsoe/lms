@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class HBaseUserRepository extends HBaseRepository
+public class HBaseUserRepository extends HBaseAbstractRepository
     implements UserRepository {
 
   private final HBaseClient client;
@@ -71,8 +71,7 @@ public class HBaseUserRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    User user = userMapper.getEntity(results);
-    return Optional.of(user);
+    return userMapper.getEntity(results);
   }
 
   @Override

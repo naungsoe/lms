@@ -24,8 +24,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseFileRepository
-    extends HBaseRepository implements FileRepository {
+public class HBaseFileRepository extends HBaseAbstractRepository
+    implements FileRepository {
 
   private final HBaseClient client;
 
@@ -66,8 +66,7 @@ public class HBaseFileRepository
       return Optional.empty();
     }
 
-    FileResource fileResource = fileMapper.getEntity(results);
-    return Optional.of(fileResource);
+    return fileMapper.getEntity(results);
   }
 
   @Override

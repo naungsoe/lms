@@ -7,7 +7,7 @@ import java.util.Queue;
 /**
  * Created by naungsoe on 12/9/16.
  */
-public class CollectionUtils {
+public final class CollectionUtils {
 
   public static <T> boolean isEmpty(Enumeration<T> enumeration) {
     return (enumeration == null) || !enumeration.hasMoreElements();

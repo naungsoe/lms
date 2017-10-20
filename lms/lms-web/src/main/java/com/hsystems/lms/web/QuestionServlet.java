@@ -6,7 +6,6 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 
@@ -17,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by naungsoe on 31/10/16.
  */
-public class QuestionServlet extends BaseServlet {
+public class QuestionServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 4601083196372398436L;
 

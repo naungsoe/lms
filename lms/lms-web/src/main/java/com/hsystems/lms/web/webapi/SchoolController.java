@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
  * Created by naungsoe on 15/10/16.
  */
 @Path("/schools")
-public class SchoolController {
+public class SchoolController extends AbstractController {
 
   private final Provider<Principal> principalProvider;
 

@@ -1,4 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
@@ -229,7 +230,7 @@
         }
 
         if (this.selectedType !== 'ALL') {
-          filters.push('type:MUST ' + this.selectedType);
+          filters.push('question.fieldTypeName:MUST ' + this.selectedType);
         }
 
         if (this.selectedOwner === "ME") {

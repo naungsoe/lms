@@ -3,38 +3,64 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.GradableComponentAttempt;
 
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
 /**
  * Created by naungsoe on 6/1/17.
  */
-public abstract class QuestionComponentAttempt
-    implements GradableComponentAttempt {
+public class QuestionComponentAttempt<T extends QuestionAttempt>
+		implements GradableComponentAttempt, Serializable {
 
-  @IndexField
-  protected String id;
+  private static final long serialVersionUID = 5517618524514244154L;
 
-  @IndexField
-  protected QuestionComponent component;
+	@IndexField
+	private String id;
 
-  @IndexField
-  protected long score;
+	@IndexField
+	private T attempt;
 
-  @Override
-  public String getId() {
-    return id;
-  }
+	@IndexField
+	private long score;
 
-  public QuestionComponent getComponent() {
-    return component;
-  }
+	@IndexField
+	private LocalDateTime attemptedDateTime;
 
-  @Override
-  public void gradeAttempt() {
-    GradingStrategy strategy = component.getGradingStrategy();
-    score = strategy.gradeAttempt(this);
-  }
+	QuestionComponentAttempt() {
 
-  @Override
-  public long getScore() {
-    return score;
-  }
+	}
+
+	public QuestionComponentAttempt(
+			String id,
+			T attempt,
+			long score,
+			LocalDateTime attemptedDateTime) {
+
+		this.id = id;
+		this.attempt = attempt;
+		this.score = score;
+		this.attemptedDateTime = attemptedDateTime;
+	}
+
+	@Override
+	public String getId() {
+		return id;
+	}
+
+	public T getAttempt() {
+		return attempt;
+	}
+
+	public long getScore() {
+		return score;
+	}
+
+	public void setScore(long score) {
+		this.score = score;
+	}
+
+	@Override
+	public LocalDateTime getAttemptedDateTime() {
+		return attemptedDateTime;
+	}
 }

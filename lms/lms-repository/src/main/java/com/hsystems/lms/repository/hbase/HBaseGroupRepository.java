@@ -8,7 +8,7 @@ import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseGroupMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -23,8 +23,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseGroupRepository
-    extends HBaseRepository implements GroupRepository {
+public class HBaseGroupRepository extends HBaseAbstractRepository
+    implements GroupRepository {
 
   private final HBaseClient client;
 
@@ -65,14 +65,13 @@ public class HBaseGroupRepository
     scan.setStartRow(Bytes.toBytes(id));
     scan.setTimeStamp(timestamp);
 
-    List<Result> results = client.scan(scan, Question.class);
+    List<Result> results = client.scan(scan, QuestionResource.class);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
-    Group group = groupMapper.getEntity(results);
-    return Optional.of(group);
+    return groupMapper.getEntity(results);
   }
 
   @Override

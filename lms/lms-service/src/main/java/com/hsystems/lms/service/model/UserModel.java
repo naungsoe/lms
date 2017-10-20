@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.CollectionUtils;
@@ -13,10 +14,11 @@ import java.util.List;
  * Created by naungsoe on 8/8/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class UserModel extends AuditableModel
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class UserModel extends AuditableModel
     implements Principal, Serializable {
 
-  private static final long serialVersionUID = -8222871542135593721L;
+  private static final long serialVersionUID = -2456428527121361705L;
 
   private String id;
 
@@ -46,40 +48,8 @@ public class UserModel extends AuditableModel
 
   private List<GroupModel> groups;
 
-  UserModel() {
+  public UserModel() {
 
-  }
-
-  public UserModel(
-      String id,
-      String account,
-      String firstName,
-      String lastName,
-      String dateOfBirth,
-      String gender,
-      String mobile,
-      String email,
-      String locale,
-      String dateFormat,
-      String dateTimeFormat,
-      List<String> permissions,
-      SchoolModel school,
-      List<GroupModel> groups) {
-
-    this.id = id;
-    this.account = account;
-    this.firstName = firstName;
-    this.lastName = lastName;
-    this.dateOfBirth = dateOfBirth;
-    this.gender = gender;
-    this.mobile = mobile;
-    this.email = email;
-    this.locale = locale;
-    this.dateFormat = dateFormat;
-    this.dateTimeFormat = dateTimeFormat;
-    this.permissions = permissions;
-    this.school = school;
-    this.groups = groups;
   }
 
   @Override
@@ -176,8 +146,7 @@ public class UserModel extends AuditableModel
 
   public List<String> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(permissions);
+        ? Collections.emptyList() : permissions;
   }
 
   public void setPermissions(List<String> permissions) {
@@ -195,8 +164,7 @@ public class UserModel extends AuditableModel
 
   public List<GroupModel> getGroups() {
     return CollectionUtils.isEmpty(groups)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(groups);
+        ? Collections.emptyList() : groups;
   }
 
   public void setGroups(List<GroupModel> groups) {

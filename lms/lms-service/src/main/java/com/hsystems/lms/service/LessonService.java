@@ -11,9 +11,9 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
-import com.hsystems.lms.repository.entity.lesson.Lesson;
+import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.service.mapper.Configuration;
-import com.hsystems.lms.service.model.LessonModel;
+import com.hsystems.lms.service.model.lesson.LessonResourceModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -25,9 +25,9 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class LessonService extends BaseService {
+public class LessonService extends AbstractService {
 
-  private final LessonRepository lessonRepository;
+  private final LessonRepository resourceRepository;
 
   private final ComponentRepository componentRepository;
 
@@ -35,25 +35,27 @@ public class LessonService extends BaseService {
 
   @Inject
   LessonService(
-      LessonRepository lessonRepository,
+      LessonRepository resourceRepository,
       ComponentRepository componentRepository,
       IndexRepository indexRepository) {
 
-    this.lessonRepository = lessonRepository;
+    this.resourceRepository = resourceRepository;
     this.componentRepository = componentRepository;
     this.indexRepository = indexRepository;
   }
 
   @Log
-  public QueryResult<LessonModel> findAllBy(Query query, Principal principal)
+  public QueryResult<LessonResourceModel> findAllBy(
+      Query query, Principal principal)
       throws IOException {
 
     addSchoolFilter(query, principal);
 
-    QueryResult<Lesson> queryResult
-        = indexRepository.findAllBy(query, Lesson.class);
+    QueryResult<LessonResource> queryResult
+        = indexRepository.findAllBy(query, LessonResource.class);
+    List<LessonResource> lessonResources = queryResult.getItems();
 
-    if (CollectionUtils.isEmpty(queryResult.getItems())) {
+    if (CollectionUtils.isEmpty(lessonResources)) {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
@@ -63,75 +65,79 @@ public class LessonService extends BaseService {
     }
 
     Configuration configuration = Configuration.create(principal);
-    List<Lesson> lessons = queryResult.getItems();
+    List<LessonResourceModel> resourceModels
+        = getLessonResourceModels(lessonResources, configuration);
     return new QueryResult<>(
         queryResult.getElapsedTime(),
         queryResult.getStart(),
         queryResult.getNumFound(),
-        getLessonModels(lessons, configuration)
+        resourceModels
     );
   }
 
-  private List<LessonModel> getLessonModels(
-      List<Lesson> lessons, Configuration configuration) {
+  private List<LessonResourceModel> getLessonResourceModels(
+      List<LessonResource> lessonResources, Configuration configuration) {
 
-    List<LessonModel> lessonModels = new ArrayList<>();
+    List<LessonResourceModel> resourceModels = new ArrayList<>();
 
-    for (Lesson lesson : lessons) {
-      LessonModel lessonModel = getLessonModel(lesson, configuration);
-      LocalDateTime createdDateTime = lesson.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = lesson.getModifiedDateTime();
+    for (LessonResource lessonResource : lessonResources) {
+      LessonResourceModel resourceModel
+          = getLessonResourceModel(lessonResource, configuration);
+      LocalDateTime createdDateTime = lessonResource.getCreatedDateTime();
+      LocalDateTime modifiedDateTime = lessonResource.getModifiedDateTime();
+      String dateFormat = configuration.getDateFormat();
 
       if (DateTimeUtils.isToday(createdDateTime)) {
-        lessonModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime));
+        resourceModel.setCreatedTime(
+            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
       }
 
       if (DateTimeUtils.isNotEmpty(modifiedDateTime)
           && DateTimeUtils.isToday(modifiedDateTime)) {
 
-        lessonModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime));
+        resourceModel.setModifiedTime(
+            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
       }
 
-      lessonModels.add(lessonModel);
+      resourceModels.add(resourceModel);
     }
 
-    return lessonModels;
+    return resourceModels;
   }
 
-  private LessonModel getLessonModel(
-      Lesson lesson, Configuration configuration) {
+  private LessonResourceModel getLessonResourceModel(
+      LessonResource lessonResource, Configuration configuration) {
 
-    LessonModel lessonModel
-        = getModel(lesson, LessonModel.class, configuration);
+    LessonResourceModel resourceModel = getModel(lessonResource,
+        LessonResourceModel.class, configuration);
     String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = lesson.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = lesson.getModifiedDateTime();
+    LocalDateTime createdDateTime = lessonResource.getCreatedDateTime();
+    LocalDateTime modifiedDateTime = lessonResource.getModifiedDateTime();
 
-    lessonModel.setCreatedDate(
+    resourceModel.setCreatedDate(
         DateTimeUtils.toString(createdDateTime, dateFormat));
 
     if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      lessonModel.setModifiedDate(DateTimeUtils.toString(
-          lesson.getModifiedDateTime(), dateFormat));
+      resourceModel.setModifiedDate(DateTimeUtils.toString(
+          lessonResource.getModifiedDateTime(), dateFormat));
     }
 
-    return lessonModel;
+    return resourceModel;
   }
 
   @Log
-  public Optional<LessonModel> findBy(String id, Principal principal)
+  public Optional<LessonResourceModel> findBy(String id, Principal principal)
       throws IOException {
 
-    Optional<Lesson> lessonOptional
-        = indexRepository.findBy(id, Lesson.class);
+    Optional<LessonResource> resourceOptional
+        = indexRepository.findBy(id, LessonResource.class);
 
-    if (lessonOptional.isPresent()) {
-      Lesson lesson = lessonOptional.get();
+    if (resourceOptional.isPresent()) {
+      LessonResource lessonResource = resourceOptional.get();
       Configuration configuration = Configuration.create(principal);
-      LessonModel lessonModel = getLessonModel(lesson, configuration);
-      return Optional.of(lessonModel);
+      LessonResourceModel resourceModel
+          = getLessonResourceModel(lessonResource, configuration);
+      return Optional.of(resourceModel);
     }
 
     return Optional.empty();

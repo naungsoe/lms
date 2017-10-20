@@ -1,13 +1,18 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 10/9/16.
  */
-public class SignOutModel implements Serializable {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class SignOutModel implements Serializable {
 
-  private static final long serialVersionUID = 1077844931304588567L;
+  private static final long serialVersionUID = -8859655739954390376L;
 
   private String account;
 
@@ -15,18 +20,8 @@ public class SignOutModel implements Serializable {
 
   private String ipAddress;
 
-  SignOutModel() {
+  public SignOutModel() {
 
-  }
-
-  public SignOutModel(
-      String account,
-      String sessionId,
-      String ipAddress) {
-
-    this.account = account;
-    this.sessionId = sessionId;
-    this.ipAddress = ipAddress;
   }
 
   public String getAccount() {

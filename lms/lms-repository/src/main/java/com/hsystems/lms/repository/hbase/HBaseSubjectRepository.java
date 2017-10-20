@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseSubjectRepository extends HBaseRepository
+public class HBaseSubjectRepository extends HBaseAbstractRepository
     implements SubjectRepository {
 
   private final HBaseClient client;
@@ -72,8 +72,7 @@ public class HBaseSubjectRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    Subject subject = subjectMapper.getEntity(results);
-    return Optional.of(subject);
+    return subjectMapper.getEntity(results);
   }
 
   @Override

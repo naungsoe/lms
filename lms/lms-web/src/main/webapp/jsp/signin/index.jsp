@@ -67,6 +67,7 @@
       HTMLImports.whenReady(function() {
         const localesUrl = '<c:out value="/webapi/locales/signin"/>';
         const captchaUrl = '<c:out value="/webapi/account/captcha"/>';
+        const captchaRequired = ('<c:out value="${captchaRequired}"/>' === 'true');
         const accountHelpUrl = '<c:out value="/web/account"/>';
         const signUpUrl = '<c:out value="/web/signup"/>';
         const actionUrl = '<c:out value="/web/signin"/>';
@@ -94,6 +95,12 @@
                 readOnly: true,
                 notify: true,
                 value: captchaUrl
+              },
+              captchaRequired: {
+                type: Boolean,
+                readOnly: false,
+                notify: true,
+                value: captchaRequired
               },
               accountHelpUrl: {
                 type: String,

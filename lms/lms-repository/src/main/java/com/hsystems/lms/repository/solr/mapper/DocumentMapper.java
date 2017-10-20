@@ -2,9 +2,12 @@ package com.hsystems.lms.repository.solr.mapper;
 
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.SchoolScoped;
 
 import org.apache.solr.common.SolrInputDocument;
 
@@ -17,22 +20,23 @@ import java.util.List;
 /**
  * Created by naungsoe on 4/11/16.
  */
-public class DocumentMapper extends Mapper<SolrInputDocument> {
+public class DocumentMapper {
 
-  protected static final String FIELD_PARENT_ID = "parentId";
+  public DocumentMapper() {
 
-  protected static final String FIELD_NAME_FORMAT = "%s.%s";
+  }
 
-  @Override
   public <T> SolrInputDocument map(T entity)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     SolrInputDocument document = getDocument(entity);
-    updateParentId(document, "");
+    updateTypeName(document, entity);
+    updateSchoolId(document, entity);
     updateFieldName(document, "");
-    document.addField(FIELD_TYPE_NAME,
-        entity.getClass().getSimpleName());
+    updateValueTypeId(document, "");
+    updateParentId(document, "");
+    updateChildrenId(document, "");
     return document;
   }
 
@@ -126,41 +130,101 @@ public class DocumentMapper extends Mapper<SolrInputDocument> {
       throws IllegalAccessException, NoSuchFieldException {
 
     SolrInputDocument childDocument = getDocument(entity);
-    childDocument.setField(MEMBER_FIELD_NAME, fieldName);
-    childDocument.setField(MEMBER_FIELD_TYPE_NAME,
+    childDocument.setField(Constants.MEMBER_FIELD_NAME, fieldName);
+    childDocument.setField(Constants.MEMBER_FIELD_TYPE_NAME,
         entity.getClass().getSimpleName());
     return childDocument;
   }
 
-  protected void updateParentId(SolrInputDocument document, String parentId) {
-    String id = document.getFieldValue(FIELD_ID).toString();
+  protected <T> void updateTypeName(SolrInputDocument document, T entity) {
+    document.addField(Constants.FIELD_TYPE_NAME,
+        entity.getClass().getSimpleName());
+  }
 
-    if (StringUtils.isNotEmpty(parentId)) {
-      document.setField(FIELD_PARENT_ID, parentId);
-    }
-
-    if (CollectionUtils.isNotEmpty(document.getChildDocuments())) {
-      document.getChildDocuments().forEach(
-          childDocument -> updateParentId(childDocument, id));
+  protected <T> void updateSchoolId(SolrInputDocument document, T entity) {
+    if (entity instanceof SchoolScoped) {
+      SchoolScoped schoolScoped = (SchoolScoped) entity;
+      document.addField(Constants.FIELD_SCHOOL_ID,
+          schoolScoped.getSchool().getId());
     }
   }
 
   protected void updateFieldName(
       SolrInputDocument document, String parentFieldName) {
 
-    String fieldName = (document.getFieldValue(MEMBER_FIELD_NAME) == null)
-        ? "" : document.getFieldValue(MEMBER_FIELD_NAME).toString();
+    Object fieldValue = document.getFieldValue(Constants.MEMBER_FIELD_NAME);
+    String fieldName = (fieldValue == null) ? "" : fieldValue.toString();
 
     if (StringUtils.isNotEmpty(parentFieldName)) {
-      document.setField(MEMBER_FIELD_NAME, String.format(
-          FIELD_NAME_FORMAT, parentFieldName, fieldName));
+      fieldName = String.format(Constants.FORMAT_FIELD_NAME,
+          parentFieldName, fieldName);
+      document.setField(Constants.MEMBER_FIELD_NAME, fieldName);
     }
 
     List<SolrInputDocument> childDocuments = document.getChildDocuments();
 
     if (CollectionUtils.isNotEmpty(childDocuments)) {
-      childDocuments.forEach(childDocument -> updateFieldName(
-          childDocument, fieldName));
+      for (SolrInputDocument childDocument : childDocuments) {
+        updateFieldName(childDocument, fieldName);
+      }
+    }
+  }
+
+  protected void updateValueTypeId(
+      SolrInputDocument document, String parentId) {
+
+    if (StringUtils.isNotEmpty(parentId)) {
+      Object fieldValue = document.getFieldValue(Constants.FIELD_ID);
+
+      if (fieldValue == null) {
+        String id = CommonUtils.genUniqueKey();
+        document.setField(Constants.FIELD_ID, id);
+      }
+    }
+
+    List<SolrInputDocument> childDocuments = document.getChildDocuments();
+
+    if (CollectionUtils.isNotEmpty(childDocuments)) {
+      String id = StringUtils.isNotEmpty(parentId)
+          ? parentId : document.getFieldValue(Constants.FIELD_ID).toString();
+
+      for (SolrInputDocument childDocument : childDocuments) {
+        updateValueTypeId(childDocument, id);
+      }
+    }
+  }
+
+  protected void updateParentId(SolrInputDocument document, String parentId) {
+    if (StringUtils.isNotEmpty(parentId)) {
+      document.setField(Constants.FIELD_PARENT_ID, parentId);
+    }
+
+    List<SolrInputDocument> childDocuments = document.getChildDocuments();
+
+    if (CollectionUtils.isNotEmpty(childDocuments)) {
+      String id = document.getFieldValue(Constants.FIELD_ID).toString();
+
+      for (SolrInputDocument childDocument : childDocuments) {
+        updateParentId(childDocument, id);
+      }
+    }
+  }
+
+  protected void updateChildrenId(SolrInputDocument document, String parentId) {
+    if (StringUtils.isNotEmpty(parentId)) {
+      String id = document.getFieldValue(Constants.FIELD_ID).toString();
+      document.setField(Constants.FIELD_ID,
+          String.format(Constants.FORMAT_FIELD_ID, parentId, id));
+    }
+
+    List<SolrInputDocument> childDocuments = document.getChildDocuments();
+    String rootId = StringUtils.isNotEmpty(parentId)
+        ? parentId : document.getFieldValue(Constants.FIELD_ID).toString();
+
+    if (CollectionUtils.isNotEmpty(childDocuments)) {
+      for (SolrInputDocument childDocument : childDocuments) {
+        updateChildrenId(childDocument, rootId);
+      }
     }
   }
 }

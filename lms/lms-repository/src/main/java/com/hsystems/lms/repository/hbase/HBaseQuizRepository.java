@@ -12,7 +12,9 @@ import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
+import com.hsystems.lms.repository.entity.quiz.QuizResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseQuizMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -24,13 +26,14 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseQuizRepository extends HBaseResourceRepository
+public class HBaseQuizRepository extends HBaseAbstractRepository
     implements QuizRepository {
 
   private final HBaseClient client;
@@ -39,6 +42,8 @@ public class HBaseQuizRepository extends HBaseResourceRepository
 
   private final MutationRepository mutationRepository;
 
+  private final ShareLogRepository shareLogRepository;
+
   private final AuditLogRepository auditLogRepository;
 
   @Inject
@@ -46,18 +51,18 @@ public class HBaseQuizRepository extends HBaseResourceRepository
       HBaseClient client,
       HBaseQuizMapper quizMapper,
       MutationRepository mutationRepository,
-      AuditLogRepository auditLogRepository,
-      ShareLogRepository shareLogRepository) {
+      ShareLogRepository shareLogRepository,
+      AuditLogRepository auditLogRepository) {
 
     this.client = client;
     this.quizMapper = quizMapper;
     this.mutationRepository = mutationRepository;
-    this.auditLogRepository = auditLogRepository;
     this.shareLogRepository = shareLogRepository;
+    this.auditLogRepository = auditLogRepository;
   }
 
   @Override
-  public Optional<Quiz> findBy(String id)
+  public Optional<QuizResource> findBy(String id)
       throws IOException {
 
     Optional<Mutation> mutationOptional
@@ -71,7 +76,7 @@ public class HBaseQuizRepository extends HBaseResourceRepository
     return findBy(id, mutation.getTimestamp());
   }
 
-  private Optional<Quiz> findBy(String id, long timestamp)
+  private Optional<QuizResource> findBy(String id, long timestamp)
       throws IOException {
 
     Scan scan = getRowKeyFilterScan(id);
@@ -84,46 +89,85 @@ public class HBaseQuizRepository extends HBaseResourceRepository
       return Optional.empty();
     }
 
-    Quiz quiz = quizMapper.getEntity(results);
-    populatePermissions(quiz);
-    return Optional.of(quiz);
+    Optional<QuizResource> resourceOptional
+        = quizMapper.getEntity(results);
+
+    if (resourceOptional.isPresent()) {
+      QuizResource quizResource = resourceOptional.get();
+      Optional<ShareLog> logOptional = shareLogRepository.findBy(id);
+
+      if (logOptional.isPresent()) {
+        ShareLog shareLog = logOptional.get();
+        populateShareEntries(quizResource, shareLog);
+      }
+    }
+
+    return resourceOptional;
   }
 
   @Override
-  public void save(Quiz entity)
+  public List<QuizResource> findAllBy(
+      String schoolId, String lastId, int limit)
       throws IOException {
 
-    Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
+    List<Mutation> mutations = mutationRepository.findAllBy(
+        schoolId, lastId, limit, EntityType.QUIZ);
 
-    if (mutationOptional.isPresent()) {
-      saveQuiz(entity);
-
-    } else {
-      createQuiz(entity);
+    if (CollectionUtils.isEmpty(mutations)) {
+      return Collections.emptyList();
     }
+
+    Mutation startMutation = mutations.get(0);
+    Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String startRowKey = startMutation.getId();
+    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setStopRow(Bytes.toBytes(stopRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    List<Result> results = client.scan(scan, QuizResource.class);
+    List<QuizResource> quizResources
+        = quizMapper.getEntities(results, mutations);
+
+    return quizResources;
   }
 
-  private void saveQuiz(Quiz entity)
+  @Override
+  public void save(QuizResource entity)
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
     List<Put> puts = quizMapper.getPuts(entity, timestamp);
     client.put(puts, Quiz.class);
 
-    AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
-        ActionType.MODIFIED, timestamp);
-    auditLogRepository.save(auditLog);
+    Optional<Mutation> mutationOptional
+        = mutationRepository.findBy(entity.getId(), EntityType.QUIZ);
 
-    Mutation modifiedMutation = getMutation(entity,
-        ActionType.MODIFIED, timestamp);
-    mutationRepository.save(modifiedMutation);
+    if (mutationOptional.isPresent()) {
+      AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
+          ActionType.MODIFIED, timestamp);
+      auditLogRepository.save(auditLog);
 
-    List<String> rowKeys = getPutRowKeys(puts);
-    deleteUnusedRows(entity, rowKeys);
+      Mutation modifiedMutation = getMutation(entity,
+          ActionType.MODIFIED, timestamp);
+      mutationRepository.save(modifiedMutation);
+
+      List<String> rowKeys = getPutRowKeys(puts);
+      deleteUnusedRows(entity, rowKeys);
+
+    } else {
+      AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
+          ActionType.CREATED, timestamp);
+      auditLogRepository.save(auditLog);
+
+      Mutation mutation = getMutation(entity,
+          ActionType.CREATED, timestamp);
+      mutationRepository.save(mutation);
+    }
   }
 
-  private void deleteUnusedRows(Quiz entity, List<String> rowKeys)
+  private void deleteUnusedRows(QuizResource entity, List<String> rowKeys)
       throws IOException {
 
     String startRowKey = entity.getId();
@@ -146,23 +190,8 @@ public class HBaseQuizRepository extends HBaseResourceRepository
     client.delete(deletes, Quiz.class);
   }
 
-  private void createQuiz(Quiz entity)
-      throws IOException {
-
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    List<Put> puts = quizMapper.getPuts(entity, timestamp);
-    client.put(puts, Quiz.class);
-
-    AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
-        ActionType.CREATED, timestamp);
-    auditLogRepository.save(auditLog);
-
-    Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
-    mutationRepository.save(mutation);
-  }
-
   @Override
-  public void delete(Quiz entity)
+  public void delete(QuizResource entity)
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();

@@ -16,6 +16,7 @@ import com.hsystems.lms.web.ErrorServlet;
 import com.hsystems.lms.web.HomeServlet;
 import com.hsystems.lms.web.IndexServlet;
 import com.hsystems.lms.web.QuestionServlet;
+import com.hsystems.lms.web.QuizServlet;
 import com.hsystems.lms.web.SignInServlet;
 import com.hsystems.lms.web.SignOutServlet;
 import com.hsystems.lms.web.SignUpServlet;
@@ -56,6 +57,7 @@ public class WebModule extends ServletModule {
     bind(AccountServlet.class).in(Singleton.class);
     bind(HomeServlet.class).in(Singleton.class);
     bind(UserServlet.class).in(Singleton.class);
+    bind(QuizServlet.class).in(Singleton.class);
     bind(QuestionServlet.class).in(Singleton.class);
     bind(StorageServlet.class).in(Singleton.class);
     bind(IndexServlet.class).in(Singleton.class);
@@ -70,6 +72,7 @@ public class WebModule extends ServletModule {
     serveRegex("/web/account(\\/\\w+)*").with(AccountServlet.class);
     serveRegex("/web/home(\\/\\w+)*").with(HomeServlet.class);
     serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
+    serveRegex("/web/quizzes(\\/\\w+)*").with(QuizServlet.class);
     serveRegex("/web/questions(\\/\\w+)*").with(QuestionServlet.class);
     serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);
     serveRegex("/web/index(\\/\\w+)*").with(IndexServlet.class);

@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.security.Principal;
@@ -12,13 +13,14 @@ import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.UserEnrollment;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignUpModel;
+import com.hsystems.lms.service.model.UserEnrollmentModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.Properties;
@@ -26,18 +28,18 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class UserService extends BaseService {
+public class UserService extends AbstractService {
 
-  private final Properties properties;
+  private final Provider<Properties> propertiesProvider;
 
   private final IndexRepository indexRepository;
 
   @Inject
   UserService(
-      Properties properties,
+      Provider<Properties> propertiesProvider,
       IndexRepository indexRepository) {
 
-    this.properties = properties;
+    this.propertiesProvider = propertiesProvider;
     this.indexRepository = indexRepository;
   }
 
@@ -84,7 +86,10 @@ public class UserService extends BaseService {
         "last name cannot be empty");
   }
 
-  private User createUser(SignUpModel signUpModel) throws IOException {
+  private User createUser(SignUpModel signUpModel)
+      throws IOException {
+
+    Properties properties = propertiesProvider.get();
     String schoolId = properties.getProperty("app.default.school.id");
     String groupId = properties.getProperty("app.default.group.id");
     Optional<School> schoolOptional
@@ -102,37 +107,44 @@ public class UserService extends BaseService {
     String randomSalt = SecurityUtils.getRandomSalt();
     String hashedPassword = SecurityUtils.getPassword(
         signUpModel.getPassword(), randomSalt);
-
     LocalDateTime dateOfBirth = DateTimeUtils.toLocalDateTime(
         signUpModel.getDateOfBirth());
 
-    User createdBy = new User(
-        "system",
-        "LMS",
-        "System"
-    );
-
-    return new User(
+    return new User.Builder(
         CommonUtils.genUniqueKey(),
-        signUpModel.getAccount(),
-        hashedPassword,
-        randomSalt,
         signUpModel.getFirstName(),
-        signUpModel.getLastName(),
-        dateOfBirth,
-        signUpModel.getGender(),
-        signUpModel.getMobile(),
-        signUpModel.getEmail(),
-        school.getLocale(),
-        school.getDateFormat(),
-        school.getDateTimeFormat(),
-        Collections.list(group.getPermissions()),
-        school,
-        Arrays.asList(group),
-        createdBy,
-        LocalDateTime.now(),
-        null,
-        null
-    );
+        signUpModel.getLastName())
+        .account(signUpModel.getAccount())
+        .password(hashedPassword)
+        .salt(randomSalt)
+        .dateOfBirth(dateOfBirth)
+        .gender(signUpModel.getGender())
+        .mobile(signUpModel.getMobile())
+        .email(signUpModel.getEmail())
+        .locale(school.getLocale())
+        .dateFormat(school.getDateFormat())
+        .dateTimeFormat(school.getDateTimeFormat())
+        .permissions(Collections.list(group.getPermissions()))
+        .school(school)
+        .build();
+  }
+
+  @Log
+  public Optional<UserEnrollmentModel> findEnrollmentBy(
+      String id, Principal principal)
+      throws IOException {
+
+    Optional<UserEnrollment> enrollmentOptional
+        = indexRepository.findBy(id, UserEnrollment.class);
+
+    if (enrollmentOptional.isPresent()) {
+      UserEnrollment enrollment = enrollmentOptional.get();
+      Configuration configuration = Configuration.create(principal);
+      UserEnrollmentModel enrollmentModel = getModel(enrollment,
+          UserEnrollmentModel.class, configuration);
+      return Optional.of(enrollmentModel);
+    }
+
+    return Optional.empty();
   }
 }

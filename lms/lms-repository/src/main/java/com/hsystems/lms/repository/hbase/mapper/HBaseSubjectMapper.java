@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSubjectMapper extends HBaseMapper<Subject> {
+public class HBaseSubjectMapper extends HBaseAbstractMapper<Subject> {
 
   public List<Subject> getEntities(
       List<Result> results, List<Mutation> mutations) {
@@ -36,14 +36,15 @@ public class HBaseSubjectMapper extends HBaseMapper<Subject> {
 
       if (mutationOptional.isPresent()) {
         long timestamp = mutationOptional.get().getTimestamp();
-        Subject subject = getEntity(result, results, timestamp);
-        subjects.add(subject);
+        Optional<Subject> subjectOptional
+            = getEntity(result, results, timestamp);
+        subjects.add(subjectOptional.get());
       }
     });
     return subjects;
   }
 
-  private Subject getEntity(
+  private Optional<Subject> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
@@ -65,19 +66,18 @@ public class HBaseSubjectMapper extends HBaseMapper<Subject> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new Subject(
-        id,
-        name,
-        school,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    Subject subject = new Subject.Builder(id, name)
+        .school(school)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(subject);
   }
 
   @Override
-  public Subject getEntity(List<Result> results) {
+  public Optional<Subject> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

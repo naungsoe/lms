@@ -15,9 +15,10 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(namespace = "lms", name = "groups")
-public class Group implements Entity, Auditable, Serializable {
+public final class Group
+    implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = 8449941063254753142L;
+  private static final long serialVersionUID = -233044280117552333L;
 
   @IndexField
   private String id;
@@ -26,10 +27,10 @@ public class Group implements Entity, Auditable, Serializable {
   private String name;
 
   @IndexField
-  private List<Permission> permissions;
+  private List<User> members;
 
   @IndexField
-  private List<User> members;
+  private List<Permission> permissions;
 
   @IndexField
   private School school;
@@ -50,19 +51,11 @@ public class Group implements Entity, Auditable, Serializable {
 
   }
 
-  public Group(
-      String id,
-      String name) {
-
-    this.id = id;
-    this.name = name;
-  }
-
-  public Group(
+  Group(
       String id,
       String name,
-      List<Permission> permissions,
       List<User> members,
+      List<Permission> permissions,
       School school,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -71,13 +64,81 @@ public class Group implements Entity, Auditable, Serializable {
 
     this.id = id;
     this.name = name;
-    this.permissions = permissions;
     this.members = members;
+    this.permissions = permissions;
     this.school = school;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
+  }
+
+  public static class Builder {
+
+    private String id;
+    private String name;
+
+    private List<Permission> permissions;
+    private List<User> members;
+    private School school;
+    private User createdBy;
+    private LocalDateTime createdDateTime;
+    private User modifiedBy;
+    private LocalDateTime modifiedDateTime;
+
+    public Builder(String id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Builder permissions(List<Permission> permissions) {
+      this.permissions = permissions;
+      return this;
+    }
+
+    public Builder members(List<User> members) {
+      this.members = members;
+      return this;
+    }
+
+    public Builder school(School school) {
+      this.school = school;
+      return this;
+    }
+
+    public Builder createdBy(User createdBy) {
+      this.createdBy = createdBy;
+      return this;
+    }
+
+    public Builder createdDateTime(LocalDateTime createdDateTime) {
+      this.createdDateTime = createdDateTime;
+      return this;
+    }
+
+    public Builder modifiedBy(User modifiedBy) {
+      this.modifiedBy = modifiedBy;
+      return this;
+    }
+
+    public Builder modifiedDateTime(LocalDateTime modifiedDateTime) {
+      this.modifiedDateTime = modifiedDateTime;
+      return this;
+    }
+
+    public Group build() {
+      return new Group(
+          this.id,
+          this.name,
+          this.members,
+          this.permissions,
+          this.school,
+          this.createdBy,
+          this.createdDateTime,
+          this.modifiedBy,
+          this.modifiedDateTime
+      );
+    }
   }
 
   @Override
@@ -89,18 +150,19 @@ public class Group implements Entity, Auditable, Serializable {
     return name;
   }
 
-  public Enumeration<Permission> getPermissions() {
-    return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyEnumeration()
-        : Collections.enumeration(permissions);
-  }
-
   public Enumeration<User> getMembers() {
     return CollectionUtils.isEmpty(members)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(members);
   }
 
+  public Enumeration<Permission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(permissions);
+  }
+
+  @Override
   public School getSchool() {
     return school;
   }
@@ -126,28 +188,13 @@ public class Group implements Entity, Auditable, Serializable {
   }
 
   @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    Group group = (Group) obj;
-    return id.equals(group.getId());
-  }
-
-  @Override
   public String toString() {
     return String.format(
-        "Group{id=%s, name=%s, permissions=%s, members=%s, "
+        "Group{id=%s, name=%s, members=%s, permissions=%s, "
             + "school=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
-        id, name, StringUtils.join(permissions, ","),
-        StringUtils.join(members, ","), school, createdBy,
+        id, name, StringUtils.join(members, ","),
+        StringUtils.join(permissions, ","), school, createdBy,
         createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

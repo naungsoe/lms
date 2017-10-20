@@ -13,7 +13,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class SchoolService extends BaseService {
+public class SchoolService extends AbstractService {
 
   private final IndexRepository indexRepository;
 

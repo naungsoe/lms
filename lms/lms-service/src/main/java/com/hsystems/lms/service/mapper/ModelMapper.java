@@ -15,8 +15,25 @@ import java.util.Queue;
  */
 public class ModelMapper extends Mapper {
 
+  private final Configuration configuration;
+
   public ModelMapper(Configuration configuration) {
     this.configuration = configuration;
+  }
+
+  @Override
+  protected <T, S> Class<?> getSubType(T source, Class<S> type) {
+    String packageName = type.getPackage().getName();
+    String typeName = source.getClass().getSimpleName();
+    typeName = String.format("%s.%sModel", packageName, typeName);
+
+    try {
+      return Class.forName(typeName);
+
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException(
+          "error retrieving sub-type", e);
+    }
   }
 
   @Override

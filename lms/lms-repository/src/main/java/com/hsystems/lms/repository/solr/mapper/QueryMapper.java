@@ -6,6 +6,7 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.Constants;
 
 import org.apache.solr.client.solrj.SolrQuery;
 
@@ -13,7 +14,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -21,36 +21,33 @@ import java.util.function.Predicate;
 /**
  * Created by naungse on 2/12/16.
  */
-public class QueryMapper extends Mapper<SolrQuery> {
+public class QueryMapper {
 
-  protected static final String DEFAULT_QUERY = "*:*";
+  private static final String DEFAULT_QUERY = "*:*";
 
   private static final String FIELD_ALL = "*";
 
-  private static final String QUERY_FORMAT = "%s *%s*";
-  private static final String BLOCK_JOIN_FORMAT = "{!parent which='%s:%s'}";
-  private static final String BLOCK_JOIN_QUERY_FORMAT
+  private static final String FORMAT_QUERY = "%s *%s*";
+  private static final String FORMAT_BLOCK_JOIN = "{!parent which='%s:%s'}";
+  private static final String FORMAT_BLOCK_JOIN_QUERY
       = "(fieldName:%s AND %s:%s)";
-  private static final String TRANSFORM_FORMAT
-      = "[child parentFilter='%s:(%s)' childFilter='%s']";
-  private static final String MAGIC_FIELD_FORMAT = "%s _query_:\"%s\"";
-  private static final String FIELD_FORMAT = "%s^%s";
-  private static final String FILTER_FORMAT = "%s:(%s)";
-  private static final String OR_SEPARATOR = " OR ";
-  private static final String NOT_SEPARATOR = "NOT ";
+  private static final String FORMAT_TRANSFORM
+      = "[child parentFilter='%s:(%s)' childFilter='%s' limit=%s]";
+  private static final String FORMAT_MAGIC_FIELD = "%s _query_:\"%s\"";
+  private static final String FORMAT_FIELD = "%s^%s";
+  private static final String FORMAT_FILTER = "%s:(%s)";
 
-  private Class<?> type;
+  private static final String SEPARATOR_OR = " OR ";
+  private static final String SEPARATOR_NOT = "NOT ";
 
-  public QueryMapper(Class<?> type) {
-    this.type = type;
+  public QueryMapper() {
+
   }
 
-  @Override
-  public <T> SolrQuery map(T source)
+  public <T> SolrQuery map(Query query, Class<T> type)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
-    Query query = (Query) source;
     return getSolrQuery(query, type);
   }
 
@@ -104,7 +101,7 @@ public class QueryMapper extends Mapper<SolrQuery> {
     StringBuilder queryBuilder = new StringBuilder();
     fieldValues.forEach(fieldValue -> {
       String fieldQuery = String.format(
-          QUERY_FORMAT, fieldValue, fieldValue);
+          FORMAT_QUERY, fieldValue, fieldValue);
       queryBuilder.append(fieldQuery);
     });
     solrQuery.setQuery(queryBuilder.toString());
@@ -134,16 +131,16 @@ public class QueryMapper extends Mapper<SolrQuery> {
       String typeFieldName = criterion.getField().substring(0, lastIndex);
       String fieldName = criterion.getField().substring(lastIndex + 1);
       String fieldValue = criterion.getValues().get(0).toString();
-      String fieldQuery = String.format(QUERY_FORMAT, fieldValue, fieldValue);
-      fieldQueries.add(String.format(BLOCK_JOIN_QUERY_FORMAT,
+      String fieldQuery = String.format(FORMAT_QUERY, fieldValue, fieldValue);
+      fieldQueries.add(String.format(FORMAT_BLOCK_JOIN_QUERY,
           typeFieldName, fieldName, fieldQuery));
     }
 
     StringBuilder queryBuilder = new StringBuilder();
-    queryBuilder.append(String.format(BLOCK_JOIN_FORMAT,
-        FIELD_TYPE_NAME, type.getSimpleName()));
-    queryBuilder.append(StringUtils.join(fieldQueries, OR_SEPARATOR));
-    solrQuery.setQuery(String.format(MAGIC_FIELD_FORMAT,
+    queryBuilder.append(String.format(FORMAT_BLOCK_JOIN,
+        Constants.FIELD_TYPE_NAME, type.getSimpleName()));
+    queryBuilder.append(StringUtils.join(fieldQueries, SEPARATOR_OR));
+    solrQuery.setQuery(String.format(FORMAT_MAGIC_FIELD,
         solrQuery.getQuery(), queryBuilder.toString()));
   }
 
@@ -155,8 +152,8 @@ public class QueryMapper extends Mapper<SolrQuery> {
   private <T> void addMainFilterQuery(
       SolrQuery solrQuery, List<Criterion> criteria, Class<T> type) {
 
-    String typeNameFilter = String.format(FILTER_FORMAT,
-        FIELD_TYPE_NAME, type.getSimpleName());
+    String typeNameFilter = String.format(FORMAT_FILTER,
+        Constants.FIELD_TYPE_NAME, type.getSimpleName());
     solrQuery.addFilterQuery(typeNameFilter);
 
     List<Criterion> queryCriteria = new ArrayList<>();
@@ -169,13 +166,13 @@ public class QueryMapper extends Mapper<SolrQuery> {
 
       switch (criterion.getOperator()) {
         case EQUAL:
-          String equalFilter = String.format(FILTER_FORMAT, fieldName,
-              StringUtils.join(criterion.getValues(), OR_SEPARATOR));
+          String equalFilter = String.format(FORMAT_FILTER, fieldName,
+              StringUtils.join(criterion.getValues(), SEPARATOR_OR));
           solrQuery.addFilterQuery(equalFilter);
           break;
         case NOT_EQUAL:
-          String notEqualFilter = String.format(FILTER_FORMAT, fieldName,
-              StringUtils.prepend(criterion.getValues(), NOT_SEPARATOR));
+          String notEqualFilter = String.format(FORMAT_FILTER, fieldName,
+              StringUtils.prepend(criterion.getValues(), SEPARATOR_NOT));
           solrQuery.addFilterQuery(notEqualFilter);
           break;
         default:
@@ -187,8 +184,8 @@ public class QueryMapper extends Mapper<SolrQuery> {
   private <T> void addBlockJoinFilterQuery(
       SolrQuery solrQuery, List<Criterion> criteria, Class<T> type) {
 
-    String typeNameFilter = String.format(BLOCK_JOIN_FORMAT,
-        FIELD_TYPE_NAME, type.getSimpleName());
+    String typeNameFilter = String.format(FORMAT_BLOCK_JOIN,
+        Constants.FIELD_TYPE_NAME, type.getSimpleName());
 
     List<Criterion> queryCriteria = new ArrayList<>();
     criteria.stream().filter(
@@ -200,18 +197,18 @@ public class QueryMapper extends Mapper<SolrQuery> {
       String fieldName = criterion.getField().substring(lastIndex + 1);
       String memberFieldName = criterion.getField().substring(0, lastIndex);
       String memberFieldFilter = String.format(
-          FILTER_FORMAT, MEMBER_FIELD_NAME, memberFieldName);
+          FORMAT_FILTER, Constants.MEMBER_FIELD_NAME, memberFieldName);
 
       switch (criterion.getOperator()) {
         case EQUAL:
-          String equalFilter = String.format(FILTER_FORMAT, fieldName,
-              StringUtils.join(criterion.getValues(), OR_SEPARATOR));
+          String equalFilter = String.format(FORMAT_FILTER, fieldName,
+              StringUtils.join(criterion.getValues(), SEPARATOR_OR));
           solrQuery.addFilterQuery(String.format("%s(%s AND %s)",
               typeNameFilter, memberFieldFilter, equalFilter));
           break;
         case NOT_EQUAL:
-          String notEqualFilter = String.format(FILTER_FORMAT, fieldName,
-              StringUtils.prepend(criterion.getValues(), NOT_SEPARATOR));
+          String notEqualFilter = String.format(FORMAT_FILTER, fieldName,
+              StringUtils.prepend(criterion.getValues(), SEPARATOR_NOT));
           solrQuery.addFilterQuery(String.format("%s(%s AND %s)",
               typeNameFilter, memberFieldFilter, notEqualFilter));
           break;
@@ -247,15 +244,18 @@ public class QueryMapper extends Mapper<SolrQuery> {
           } else {
             childFieldNames.add(fieldName);
           }
+        } else {
+          childFieldNames.add(fieldName);
         }
       }
     }
 
     String childFieldFilter = CollectionUtils.isEmpty(childFieldNames)
-        ? "" : String.format(FILTER_FORMAT, MEMBER_FIELD_NAME,
-        StringUtils.join(childFieldNames, OR_SEPARATOR));
-    String typeNameField = String.format(TRANSFORM_FORMAT,
-        FIELD_TYPE_NAME, type.getSimpleName(), childFieldFilter);
+        ? "" : String.format(FORMAT_FILTER, Constants.MEMBER_FIELD_NAME,
+        StringUtils.join(childFieldNames, SEPARATOR_OR));
+    String typeNameField = String.format(FORMAT_TRANSFORM,
+        Constants.FIELD_TYPE_NAME, type.getSimpleName(),
+        childFieldFilter, Integer.MAX_VALUE);
     solrQuery.addField(typeNameField);
   }
 }

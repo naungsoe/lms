@@ -1,7 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
@@ -21,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseUserMapper extends HBaseMapper<User> {
+public class HBaseUserMapper extends HBaseAbstractMapper<User> {
 
   @Override
   public List<User> getEntities(
@@ -37,23 +36,28 @@ public class HBaseUserMapper extends HBaseMapper<User> {
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        User user = getEntity(result, results, timestamp);
-        users.add(user);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<User> userOptional
+            = getEntity(result, results, timestamp);
+
+        if (userOptional.isPresent()) {
+          users.add(userOptional.get());
+        }
       }
     });
     return users;
   }
 
-  private User getEntity(
+  private Optional<User> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
+    String firstName = getFirstName(mainResult, timestamp);
+    String lastName = getLastName(mainResult, timestamp);
     String account = getAccount(mainResult, timestamp);
     String password = getPassword(mainResult, timestamp);
     String salt = getSalt(mainResult, timestamp);
-    String firstName = getFirstName(mainResult, timestamp);
-    String lastName = getLastName(mainResult, timestamp);
     LocalDateTime dateOfBirth = getDateOfBirth(mainResult, timestamp);
     String gender = getGender(mainResult, timestamp);
     String mobile = getMobile(mainResult, timestamp);
@@ -67,13 +71,6 @@ public class HBaseUserMapper extends HBaseMapper<User> {
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
 
-    List<Group> groups = new ArrayList<>();
-    results.stream().filter(isGroupResult(id))
-        .forEach(groupResult -> {
-          Group group = getGroup(groupResult, timestamp);
-          groups.add(group);
-        });
-
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
     User createdBy = getCreatedBy(createdByResult, timestamp);
@@ -86,32 +83,29 @@ public class HBaseUserMapper extends HBaseMapper<User> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new User(
-        id,
-        account,
-        password,
-        salt,
-        firstName,
-        lastName,
-        dateOfBirth,
-        gender,
-        mobile,
-        email,
-        locale,
-        dateFormat,
-        dateTimeFormat,
-        permissions,
-        school,
-        groups,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    User user = new User.Builder(id, firstName, lastName)
+        .account(account)
+        .password(password)
+        .salt(salt)
+        .dateOfBirth(dateOfBirth)
+        .gender(gender)
+        .mobile(mobile)
+        .email(email)
+        .locale(locale)
+        .dateFormat(dateFormat)
+        .dateTimeFormat(dateTimeFormat)
+        .permissions(permissions)
+        .school(school)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(user);
   }
 
   @Override
-  public User getEntity(List<Result> results) {
+  public Optional<User> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

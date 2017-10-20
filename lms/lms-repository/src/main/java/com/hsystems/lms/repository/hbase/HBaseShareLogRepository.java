@@ -19,20 +19,20 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseShareLogRepository
-    extends HBaseRepository implements ShareLogRepository {
+public class HBaseShareLogRepository extends HBaseAbstractRepository
+    implements ShareLogRepository {
 
   private final HBaseClient client;
 
-  private final HBaseShareLogMapper shareLogMapper;
+  private final HBaseShareLogMapper logMapper;
 
   @Inject
   HBaseShareLogRepository(
       HBaseClient client,
-      HBaseShareLogMapper shareLogMapper) {
+      HBaseShareLogMapper logMapper) {
 
     this.client = client;
-    this.shareLogMapper = shareLogMapper;
+    this.logMapper = logMapper;
   }
 
   @Override
@@ -47,8 +47,7 @@ public class HBaseShareLogRepository
       return Optional.empty();
     }
 
-    ShareLog shareLog = shareLogMapper.getEntity(results);
-    return Optional.of(shareLog);
+    return logMapper.getEntity(results);
   }
 
   @Override

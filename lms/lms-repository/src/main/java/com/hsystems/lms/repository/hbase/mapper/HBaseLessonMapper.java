@@ -1,12 +1,14 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
+import com.hsystems.lms.repository.entity.lesson.LessonResource;
 
 import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
@@ -22,43 +24,48 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseLessonMapper extends HBaseMapper<Lesson> {
+public class HBaseLessonMapper extends HBaseAbstractMapper<LessonResource> {
 
   @Override
-  public List<Lesson> getEntities(
+  public List<LessonResource> getEntities(
       List<Result> results, List<Mutation> mutations) {
 
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
-    List<Lesson> lessons = new ArrayList<>();
+    List<LessonResource> lessonResources = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
       String id = Bytes.toString(result.getRow());
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        Lesson lesson = getEntity(result, results, timestamp);
-        lessons.add(lesson);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<LessonResource> lessonResourceOptional
+            = getEntity(result, results, timestamp);
+
+        if (lessonResourceOptional.isPresent()) {
+          lessonResources.add(lessonResourceOptional.get());
+        }
       }
     });
-    return lessons;
+    return lessonResources;
   }
 
-  private Lesson getEntity(
+  private Optional<LessonResource> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult, timestamp);
     String instructions = getInstructions(mainResult, timestamp);
-    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
     List<Level> levels = getLevels(results, id, timestamp);
     List<Subject> subjects = getSubjects(results, id, timestamp);
+    List<String> keywords = getKeywords(mainResult, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -72,36 +79,36 @@ public class HBaseLessonMapper extends HBaseMapper<Lesson> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new Lesson(
-        id,
-        title,
-        instructions,
-        Collections.emptyList(),
-        school,
-        levels,
-        subjects,
-        keywords,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    List<Component> components = Collections.emptyList();
+    Lesson lesson = new Lesson(title, instructions, components);
+
+    LessonResource lessonResource = new LessonResource.Builder(id, lesson)
+        .school(school)
+        .levels(levels)
+        .subjects(subjects)
+        .keywords(keywords)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(lessonResource);
   }
 
   @Override
-  public Lesson getEntity(List<Result> results) {
+  public Optional<LessonResource> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);
   }
 
   @Override
-  public List<Put> getPuts(Lesson entity, long timestamp) {
+  public List<Put> getPuts(LessonResource entity, long timestamp) {
     return Collections.emptyList();
   }
 
   @Override
-  public List<Delete> getDeletes(Lesson entity, long timestamp) {
+  public List<Delete> getDeletes(LessonResource entity, long timestamp) {
     return Collections.emptyList();
   }
 }

@@ -6,7 +6,7 @@ import java.util.stream.IntStream;
 /**
  * Created by naungsoe on 12/9/16.
  */
-public class StringUtils {
+public final class StringUtils {
 
   public static boolean isEmpty(String value) {
     return (value == null) || (value.length() == 0);

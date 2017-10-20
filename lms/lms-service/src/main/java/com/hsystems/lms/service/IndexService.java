@@ -10,13 +10,17 @@ import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SubjectRepository;
+import com.hsystems.lms.repository.UserEnrollmentRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.quiz.Quiz;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.UserEnrollment;
+import com.hsystems.lms.repository.entity.question.QuestionResource;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
+import com.hsystems.lms.repository.entity.quiz.QuizResource;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,14 +29,15 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class IndexService extends BaseService {
+public class IndexService extends AbstractService {
 
   private static final String COLLECTION_LEVEL = "levels";
   private static final String COLLECTION_SUBJECT = "subjects";
   private static final String COLLECTION_USER = "users";
-  private static final String COLLECTION_QUESTION = "questions";
-  private static final String COLLECTION_QUIZ = "quizzes";
+  private static final String COLLECTION_ENROLLMENT = "enrollments";
   private static final String COLLECTION_LESSON = "lessons";
+  private static final String COLLECTION_QUIZ = "quizzes";
+  private static final String COLLECTION_QUESTION = "questions";
 
   private static final int INDEX_LIMIT = 50;
 
@@ -43,6 +48,8 @@ public class IndexService extends BaseService {
   private final SubjectRepository subjectRepository;
 
   private final UserRepository userRepository;
+
+  private final UserEnrollmentRepository enrollmentRepository;
 
   private final LessonRepository lessonRepository;
 
@@ -58,6 +65,7 @@ public class IndexService extends BaseService {
       LevelRepository levelRepository,
       SubjectRepository subjectRepository,
       UserRepository userRepository,
+      UserEnrollmentRepository enrollmentRepository,
       LessonRepository lessonRepository,
       QuizRepository quizRepository,
       ComponentRepository componentRepository,
@@ -67,6 +75,7 @@ public class IndexService extends BaseService {
     this.levelRepository = levelRepository;
     this.subjectRepository = subjectRepository;
     this.userRepository = userRepository;
+    this.enrollmentRepository = enrollmentRepository;
     this.lessonRepository = lessonRepository;
     this.quizRepository = quizRepository;
     this.componentRepository = componentRepository;
@@ -86,6 +95,12 @@ public class IndexService extends BaseService {
         break;
       case COLLECTION_USER:
         indexAllUsers(schoolId);
+        break;
+      case COLLECTION_ENROLLMENT:
+        indexAllEnrollments(schoolId);
+        break;
+      case COLLECTION_QUIZ:
+        indexAllQuizzes(schoolId);
         break;
       case COLLECTION_QUESTION:
         indexAllQuestions(schoolId);
@@ -113,11 +128,10 @@ public class IndexService extends BaseService {
       throws IOException {
 
     String lastId = schoolId;
-    List<User> users;
     int numFound;
 
     do {
-      users = userRepository.findAllBy(
+      List<User> users = userRepository.findAllBy(
           schoolId, lastId, INDEX_LIMIT);
       indexRepository.save(users);
 
@@ -131,20 +145,63 @@ public class IndexService extends BaseService {
     return (numFound == 0) || (numFound < INDEX_LIMIT);
   }
 
+  private void indexAllEnrollments(String schoolId)
+      throws IOException {
+
+    String lastId = schoolId;
+    int numFound;
+
+    do {
+      List<UserEnrollment> enrollments
+          = enrollmentRepository.findAllBy(
+              schoolId, lastId, INDEX_LIMIT);
+      indexRepository.save(enrollments);
+
+      numFound = enrollments.size();
+      lastId = enrollments.get(numFound - 1).getId();
+
+    } while (!isLastPage(numFound));
+  }
+
+  private void indexAllQuizzes(String schoolId)
+      throws IOException {
+
+    String lastId = schoolId;
+    int numFound;
+
+    do {
+      List<QuizResource> quizResources = quizRepository.findAllBy(
+          schoolId, lastId, INDEX_LIMIT);
+
+      for (QuizResource quizResource : quizResources) {
+        List<Component> components = componentRepository.findAllBy(
+            schoolId, quizResource.getId());
+        quizResource.getQuiz().addComponent(
+            components.toArray(new Component[0]));
+      }
+
+      indexRepository.save(quizResources);
+
+      numFound = quizResources.size();
+      lastId = quizResources.get(numFound - 1).getId();
+
+    } while (!isLastPage(numFound));
+  }
+
   private void indexAllQuestions(String schoolId)
       throws IOException {
 
     String lastId = schoolId;
-    List<Question> questions;
+    List<QuestionResource> questionResources;
     int numFound;
 
     do {
-      questions = questionRepository.findAllBy(
+      questionResources = questionRepository.findAllBy(
           schoolId, lastId, INDEX_LIMIT);
-      indexRepository.save(questions);
+      indexRepository.save(questionResources);
 
-      numFound = questions.size();
-      lastId = questions.get(numFound - 1).getId();
+      numFound = questionResources.size();
+      lastId = questionResources.get(numFound - 1).getId();
 
     } while (!isLastPage(numFound));
   }
@@ -213,39 +270,46 @@ public class IndexService extends BaseService {
   private void indexLesson(String id)
       throws IOException {
 
-    Optional<Quiz> quizOptional = quizRepository.findBy(id);
+    Optional<QuizResource> resourceOptional
+        = quizRepository.findBy(id);
 
-    if (quizOptional.isPresent()) {
-      Quiz quiz = quizOptional.get();
+    if (resourceOptional.isPresent()) {
+      QuizResource quizResource = resourceOptional.get();
+      School school = quizResource.getSchool();
+      Quiz quiz = quizResource.getQuiz();
       List<Component> components = componentRepository.findAllBy(
-          quiz.getSchool().getId(), quiz.getId());
+          school.getId(), quizResource.getId());
       quiz.addComponent(components.toArray(new Component[0]));
-      indexRepository.save(quiz);
+      indexRepository.save(quizResource);
     }
   }
 
   private void indexQuiz(String id)
       throws IOException {
 
-    Optional<Quiz> quizOptional = quizRepository.findBy(id);
+    Optional<QuizResource> resourceOptional
+        = quizRepository.findBy(id);
 
-    if (quizOptional.isPresent()) {
-      Quiz quiz = quizOptional.get();
+    if (resourceOptional.isPresent()) {
+      QuizResource quizResource = resourceOptional.get();
+      School school = quizResource.getSchool();
+      Quiz quiz = quizResource.getQuiz();
       List<Component> components = componentRepository.findAllBy(
-          quiz.getSchool().getId(), quiz.getId());
+          school.getId(), quizResource.getId());
       quiz.addComponent(components.toArray(new Component[0]));
-      indexRepository.save(quiz);
+      indexRepository.save(quizResource);
     }
   }
 
   private void indexQuestion(String id)
       throws IOException {
 
-    Optional<Question> questionOptional = questionRepository.findBy(id);
+    Optional<QuestionResource> resourceOptional
+        = questionRepository.findBy(id);
 
-    if (questionOptional.isPresent()) {
-      Question question = questionOptional.get();
-      indexRepository.save(question);
+    if (resourceOptional.isPresent()) {
+      QuestionResource questionResource = resourceOptional.get();
+      indexRepository.save(questionResource);
     }
   }
 }

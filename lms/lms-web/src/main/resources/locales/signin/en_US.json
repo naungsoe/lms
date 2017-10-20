@@ -2,7 +2,7 @@
   "en_US": {
     "titlePage": "Sign in",
     "titleCard": "HSystems",
-    "errorIdRequired": "Id is required.",
+    "errorAccountRequired": "Id is required.",
     "errorPasswordRequired": "Password is required.",
     "errorCaptchaRequired": "Verification code required.",
     "errorCredential": "Don't recognize your id and password.",
@@ -11,7 +11,7 @@
     "errorPasswordLength": "Please use between 10 and 128 characters.",
     "errorPasswordPattern": "Password must contain letters (A-Z or a-z) and at least one digit (0-9).",
     "labelAltCaptcha": "Visual verification",
-    "inputLabelId": "Username",
+    "inputLabelAccount": "Username",
     "inputLabelPassword": "Password",
     "inputLabelCaptcha": "Enter the letters above",
     "buttonSignIn": "Sign in",

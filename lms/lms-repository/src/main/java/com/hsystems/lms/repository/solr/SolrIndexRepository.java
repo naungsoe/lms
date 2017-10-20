@@ -53,7 +53,9 @@ public class SolrIndexRepository implements IndexRepository {
   public <T extends Entity> void save(List<T> entities)
       throws IOException {
 
-    client.index(entities);
+    if (CollectionUtils.isNotEmpty(entities)) {
+      client.index(entities);
+    }
   }
 
   @Override

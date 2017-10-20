@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 3/11/16.
  */
-public class QueryResult<T> {
+public final class QueryResult<T> {
 
   private long elapsedTime;
 

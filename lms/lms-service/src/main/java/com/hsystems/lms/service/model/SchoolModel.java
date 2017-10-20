@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.util.CollectionUtils;
 
@@ -12,9 +13,11 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SchoolModel implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class SchoolModel extends AuditableModel
+    implements Serializable {
 
-  private static final long serialVersionUID = -8371629223750518583L;
+  private static final long serialVersionUID = 1646439483406673648L;
 
   private String id;
 
@@ -28,24 +31,8 @@ public class SchoolModel implements Serializable {
 
   private List<String> permissions;
 
-  SchoolModel() {
+  public SchoolModel() {
 
-  }
-
-  public SchoolModel(
-      String id,
-      String name,
-      String locale,
-      String dateFormat,
-      String dateTimeFormat,
-      List<String> permissions) {
-
-    this.id = id;
-    this.name = name;
-    this.locale = locale;
-    this.dateFormat = dateFormat;
-    this.dateTimeFormat = dateTimeFormat;
-    this.permissions = permissions;
   }
 
   public String getId() {
@@ -90,8 +77,7 @@ public class SchoolModel implements Serializable {
 
   public List<String> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(permissions);
+        ? Collections.emptyList() : permissions;
   }
 
   public void setPermissions(List<String> permissions) {

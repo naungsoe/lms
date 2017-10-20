@@ -1,8 +1,8 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
@@ -14,6 +14,7 @@ import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -21,7 +22,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
+public class HBaseAuditLogMapper extends HBaseAbstractMapper<AuditLog> {
 
   @Override
   public List<AuditLog> getEntities(
@@ -33,46 +34,45 @@ public class HBaseAuditLogMapper extends HBaseMapper<AuditLog> {
 
     List<AuditLog> auditLogs = new ArrayList<>();
     results.forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<AuditLog> logOptional = getEntity(Arrays.asList(result));
 
-      if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        AuditLog auditLog = getEntity(result, timestamp);
-        auditLogs.add(auditLog);
+      if (logOptional.isPresent()) {
+        auditLogs.add(logOptional.get());
       }
     });
+
     return auditLogs;
   }
 
-  private AuditLog getEntity(Result result, long timestamp) {
-    String row = Bytes.toString(result.getRow());
-    int endIndex = row.indexOf(Constants.SEPARATOR);
+  private final Optional<AuditLog> getEntity(Result result, long timestamp) {
+    String rowKey = Bytes.toString(result.getRow());
+    int endIndex = rowKey.indexOf(Constants.SEPARATOR);
 
-    String id = (endIndex == -1) ? row : row.substring(0, endIndex);
+    String id = (endIndex == -1) ? rowKey : rowKey.substring(0, endIndex);
     EntityType entityType = getEntityType(result, timestamp);
-    User actionBy = new User(
+    User actionBy = new User.Builder(
         getId(result, timestamp),
         getFirstName(result, timestamp),
         getLastName(result, timestamp)
-    );
+    ).build();
 
     ActionType actionType = getActionType(result, timestamp);
     long actionTimestamp = (endIndex == -1)
         ? getTimestamp(result, timestamp)
-        : Long.parseLong(row.substring(endIndex));
+        : Long.parseLong(rowKey.substring(endIndex));
 
-    return new AuditLog(
+    AuditLog auditLog = new AuditLog(
         id,
         entityType,
         actionBy,
         actionType,
         actionTimestamp
     );
+    return Optional.of(auditLog);
   }
 
   @Override
-  public AuditLog getEntity(List<Result> results) {
+  public Optional<AuditLog> getEntity(List<Result> results) {
     Result mainResult = results.get(0);
     return getEntity(mainResult, 0);
   }

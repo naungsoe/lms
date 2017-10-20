@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class AuthenticationFilter extends ServletFilter
+public class AuthenticationFilter extends AbstractFilter
     implements Filter {
 
   private final Injector injector;
@@ -102,8 +102,11 @@ public class AuthenticationFilter extends ServletFilter
     }
 
     String remoteAddr = ServletUtils.getRemoteAddress(httpRequest);
-    SignInModel signInModel = new SignInModel(
-        account, "", "", sessionId, remoteAddr);
+    SignInModel signInModel = new SignInModel();
+    signInModel.setAccount(account);
+    signInModel.setSessionId(sessionId);
+    signInModel.setIpAddress(remoteAddr);
+
     Optional<UserModel> userModelOptional
         = authService.findSignedInUserBy(signInModel);
 

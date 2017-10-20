@@ -13,7 +13,7 @@ import javax.servlet.ServletResponse;
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class CsrfValidationFilter extends ServletFilter
+public class CsrfValidationFilter extends AbstractFilter
     implements Filter {
 
   @Override

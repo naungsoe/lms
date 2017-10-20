@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseLevelRepository extends HBaseRepository
+public class HBaseLevelRepository extends HBaseAbstractRepository
     implements LevelRepository {
 
   private final HBaseClient client;
@@ -66,8 +66,7 @@ public class HBaseLevelRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    Level level = levelMapper.getEntity(results);
-    return Optional.of(level);
+    return levelMapper.getEntity(results);
   }
 
   @Override

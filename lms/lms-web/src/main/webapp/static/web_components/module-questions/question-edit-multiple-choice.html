@@ -64,15 +64,20 @@
     </div>
 
     <div class="question-options">
-      <iron-sorter on-order-changed="_handleOrderChanged">
+      <iron-sorter
+          handle="option-handle"
+          draggable="question-option"
+          on-order-changed="_handleOrderChanged">
         <template
             is="dom-repeat"
             items="[[question.options]]"
             as="option">
-          <div class="question-option">
+          <div
+              class="question-option"
+              data-id$="[[option.id]]">
             <paper-icon-button
                 icon="editor:drag-handle"
-                class="drag-handle">
+                class="option-handle">
             </paper-icon-button>
 
             <paper-radio-button
@@ -100,19 +105,27 @@
       </div>
     </div>
 
-    <div class="question-hint">
-      <paper-text-editor
-          label="Hint"
-          content="[[question.hint]]">
-      </paper-text-editor>
-    </div>
+    <template
+        is="dom-if"
+        if="[[!questionComponent]]">
+      <div class="question-hint">
+        <paper-text-editor
+            label="Hint"
+            content="[[question.hint]]">
+        </paper-text-editor>
+      </div>
+    </template>
 
-    <div class="question-explanation">
-      <paper-text-editor
-          label="Explanation"
-          content="[[question.explanation]]">
-      </paper-text-editor>
-    </div>
+    <template
+        is="dom-if"
+        if="[[!questionComponent]]">
+      <div class="question-explanation">
+        <paper-text-editor
+            label="Explanation"
+            content="[[question.explanation]]">
+        </paper-text-editor>
+      </div>
+    </template>
   </template>
 
   <script>
@@ -130,8 +143,47 @@
             type: Object,
             readOnly: false,
             notify: true
+          },
+          questionComponent: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
           }
         };
+      }
+
+      _handleOrderChanged(event) {
+
+      }
+
+      _handleCheckChanged(event) {
+
+      }
+
+      _handleAddTap(event) {
+        let option = {
+          id: (new Date()).getTime(),
+          body: '',
+          feedback: '',
+          correct: false,
+          order: 0
+        };
+        this.push('question.options', option);
+
+        let root = this.shadowRoot;
+        this.async(function() {
+          var container = root.querySelector('[data-id="' + option.id + '"]');
+          container.querySelector('paper-text-editor').focus();
+        });
+        this.notifyPath('question.options');
+      }
+
+      _handleRemoveTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat');
+        let option = template.itemForElement(event.target);
+        var index = this.question.options.indexOf(option);
+        this.splice('question.options', index, 1);
       }
     }
     customElements.define(QuestionEditMultipleChoice.is, QuestionEditMultipleChoice);

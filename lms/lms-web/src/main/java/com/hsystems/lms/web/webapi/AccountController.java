@@ -1,6 +1,7 @@
 package com.hsystems.lms.web.webapi;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
@@ -27,17 +28,20 @@ import javax.ws.rs.core.Response.Status;
  * Created by naungsoe on 10/9/16.
  */
 @Path("/account")
-public class AccountController {
+public class AccountController extends AbstractController {
 
   private static final String APPLICATION_PNG = "image/png";
 
-  private final Properties properties;
+  private final Provider<Properties> propertiesProvider;
 
   private final UserService userService;
 
   @Inject
-  AccountController(Properties properties, UserService userService) {
-    this.properties = properties;
+  AccountController(
+      Provider<Properties> propertiesProvider,
+      UserService userService) {
+
+    this.propertiesProvider = propertiesProvider;
     this.userService = userService;
   }
 
@@ -61,10 +65,11 @@ public class AccountController {
     CommonUtils.checkArgument(StringUtils.isNotEmpty(captcha),
         "error retrieving captcha");
 
-    int width = Integer.parseInt(
-        properties.getProperty("captcha.image.width"));
-    int height = Integer.parseInt(
-        properties.getProperty("captcha.image.height"));
+    Properties properties = propertiesProvider.get();
+    String imgWidth = properties.getProperty("captcha.image.width");
+    String imgHeight = properties.getProperty("captcha.image.height");
+    int width = Integer.parseInt(imgWidth);
+    int height = Integer.parseInt(imgHeight);
     byte[] image = SecurityUtils.createCaptchaPng(captcha, width, height);
     return Response.ok(image).build();
   }

@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class ComponentService extends BaseService {
+public class ComponentService extends AbstractService {
 
   private final ComponentRepository componentRepository;
 

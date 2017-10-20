@@ -22,8 +22,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public class HBaseSchoolRepository
-    extends HBaseRepository implements SchoolRepository {
+public class HBaseSchoolRepository extends HBaseAbstractRepository
+    implements SchoolRepository {
 
   private final HBaseClient client;
 
@@ -70,8 +70,7 @@ public class HBaseSchoolRepository
       return Optional.empty();
     }
 
-    School school = schoolMapper.getEntity(results);
-    return Optional.of(school);
+    return schoolMapper.getEntity(results);
   }
 
   @Override

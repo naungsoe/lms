@@ -19,6 +19,22 @@ public class EntityMapper extends Mapper {
   }
 
   @Override
+  protected <T, S> Class<?> getSubType(T source, Class<S> type) {
+    String packageName = type.getPackage().getName();
+    String typeName = source.getClass().getSimpleName();
+    typeName = String.format("%s.%", packageName,
+        typeName.replace("Model", ""));
+
+    try {
+      return Class.forName(typeName);
+
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException(
+          "error retrieving sub-type", e);
+    }
+  }
+
+  @Override
   protected Object getDateTimeValue(Object dateTime) {
     return DateTimeUtils.toLocalDateTime(dateTime.toString(),
         configuration.getDateTimeFormat());

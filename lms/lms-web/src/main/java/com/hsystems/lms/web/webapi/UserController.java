@@ -22,7 +22,7 @@ import javax.ws.rs.core.Response;
  * Created by naungsoe on 10/9/16.
  */
 @Path("/users")
-public class UserController {
+public class UserController extends AbstractController {
 
   private final Provider<Principal> principalProvider;
 

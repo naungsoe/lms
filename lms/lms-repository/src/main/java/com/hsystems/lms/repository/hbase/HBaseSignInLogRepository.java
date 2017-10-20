@@ -21,20 +21,20 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseSignInLogRepository extends HBaseRepository
+public class HBaseSignInLogRepository extends HBaseAbstractRepository
     implements SignInLogRepository {
 
   private final HBaseClient client;
 
-  private final HBaseSignInLogMapper signInLogMapper;
+  private final HBaseSignInLogMapper logMapper;
 
   @Inject
   HBaseSignInLogRepository(
       HBaseClient client,
-      HBaseSignInLogMapper signInLogMapper) {
+      HBaseSignInLogMapper logMapper) {
 
     this.client = client;
-    this.signInLogMapper = signInLogMapper;
+    this.logMapper = logMapper;
   }
 
   @Override
@@ -48,8 +48,7 @@ public class HBaseSignInLogRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    SignInLog signInLog = signInLogMapper.getEntity(Arrays.asList(result));
-    return Optional.of(signInLog);
+    return logMapper.getEntity(Arrays.asList(result));
   }
 
   @Override
@@ -57,7 +56,7 @@ public class HBaseSignInLogRepository extends HBaseRepository
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    List<Put> puts = signInLogMapper.getPuts(signInLog, timestamp);
+    List<Put> puts = logMapper.getPuts(signInLog, timestamp);
     client.put(puts, SignInLog.class);
   }
 

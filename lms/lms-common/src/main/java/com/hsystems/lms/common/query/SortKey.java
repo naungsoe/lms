@@ -3,7 +3,7 @@ package com.hsystems.lms.common.query;
 /**
  * Created by naungsoe on 24/11/16.
  */
-public class SortKey {
+public final class SortKey {
 
   private String field;
 

@@ -41,11 +41,16 @@ public final class DateTimeUtils {
     return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
   }
 
-  public static String toPrettyTime(LocalDateTime dateTime) {
+  public static String toPrettyTime(LocalDateTime dateTime, String format) {
     LocalDateTime now = LocalDateTime.now();
-    long seconds = ChronoUnit.SECONDS.between(dateTime, now);
-    long minutes = ChronoUnit.MINUTES.between(dateTime, now);
     long hours = ChronoUnit.HOURS.between(dateTime, now);
+
+    if (hours > 23) {
+      return toString(dateTime, format);
+    }
+
+    long minutes = ChronoUnit.MINUTES.between(dateTime, now);
+    long seconds = ChronoUnit.SECONDS.between(dateTime, now);
 
     if (hours > 0) {
       String suffix = (hours == 1)

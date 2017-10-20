@@ -10,9 +10,10 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 1/11/16.
  */
 @IndexCollection(namespace = "lms", name = "levels")
-public class Level implements Entity, Auditable, Serializable {
+public final class Level
+    implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = -2000226388145752537L;
+  private static final long serialVersionUID = 7143973403104990683L;
 
   @IndexField
   private String id;
@@ -39,15 +40,7 @@ public class Level implements Entity, Auditable, Serializable {
 
   }
 
-  public Level(
-      String id,
-      String name) {
-
-    this.id = id;
-    this.name = name;
-  }
-
-  public Level(
+  Level(
       String id,
       String name,
       School school,
@@ -65,6 +58,61 @@ public class Level implements Entity, Auditable, Serializable {
     this.modifiedDateTime = modifiedDateTime;
   }
 
+  public static class Builder {
+
+    private String id;
+    private String name;
+
+    private School school;
+    private User createdBy;
+    private LocalDateTime createdDateTime;
+    private User modifiedBy;
+    private LocalDateTime modifiedDateTime;
+
+    public Builder(String id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Builder school(School school) {
+      this.school = school;
+      return this;
+    }
+
+    public Builder createdBy(User createdBy) {
+      this.createdBy = createdBy;
+      return this;
+    }
+
+    public Builder createdDateTime(LocalDateTime createdDateTime) {
+      this.createdDateTime = createdDateTime;
+      return this;
+    }
+
+    public Builder modifiedBy(User modifiedBy) {
+      this.modifiedBy = modifiedBy;
+      return this;
+    }
+
+    public Builder modifiedDateTime(LocalDateTime modifiedDateTime) {
+      this.modifiedDateTime = modifiedDateTime;
+      return this;
+    }
+
+    public Level build() {
+      return new Level(
+          this.id,
+          this.name,
+          this.school,
+          this.createdBy,
+          this.createdDateTime,
+          this.modifiedBy,
+          this.modifiedDateTime
+      );
+    }
+  }
+
+  @Override
   public String getId() {
     return id;
   }
@@ -73,6 +121,7 @@ public class Level implements Entity, Auditable, Serializable {
     return name;
   }
 
+  @Override
   public School getSchool() {
     return school;
   }
@@ -95,21 +144,6 @@ public class Level implements Entity, Auditable, Serializable {
   @Override
   public LocalDateTime getModifiedDateTime() {
     return modifiedDateTime;
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    Level level = (Level) obj;
-    return id.equals(level.getId());
   }
 
   @Override

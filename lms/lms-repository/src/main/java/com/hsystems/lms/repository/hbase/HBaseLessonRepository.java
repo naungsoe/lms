@@ -2,17 +2,18 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.MutationRepository;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
+import com.hsystems.lms.repository.entity.lesson.LessonResource;
+import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLessonMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -31,8 +32,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseLessonRepository
-    extends HBaseRepository implements LessonRepository {
+public class HBaseLessonRepository extends HBaseAbstractRepository
+    implements LessonRepository {
 
   private final HBaseClient client;
 
@@ -56,7 +57,7 @@ public class HBaseLessonRepository
   }
 
   @Override
-  public Optional<Lesson> findBy(String id)
+  public Optional<LessonResource> findBy(String id)
       throws IOException {
 
     Optional<Mutation> mutationOptional
@@ -70,25 +71,24 @@ public class HBaseLessonRepository
     return findBy(id, mutation.getTimestamp());
   }
 
-  private Optional<Lesson> findBy(String id, long timestamp)
+  private Optional<LessonResource> findBy(String id, long timestamp)
       throws IOException {
 
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
     scan.setTimeStamp(timestamp);
 
-    List<Result> results = client.scan(scan, Question.class);
+    List<Result> results = client.scan(scan, QuestionResource.class);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
     }
 
-    Lesson lesson = lessonMapper.getEntity(results);
-    return Optional.of(lesson);
+    return lessonMapper.getEntity(results);
   }
 
   @Override
-  public List<Lesson> findAllBy(
+  public List<LessonResource> findAllBy(
       String schoolId, String lastId, int limit)
       throws IOException {
 
@@ -112,39 +112,38 @@ public class HBaseLessonRepository
   }
 
   @Override
-  public void save(Lesson entity)
-      throws IOException {
-
-    Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(entity.getId(), EntityType.LESSON);
-
-    if (mutationOptional.isPresent()) {
-      saveLesson(entity);
-
-    } else {
-      createLesson(entity);
-    }
-  }
-
-  private void saveLesson(Lesson entity)
+  public void save(LessonResource entity)
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
     List<Put> puts = lessonMapper.getPuts(entity, timestamp);
     client.put(puts, Lesson.class);
 
-    Mutation mutation = getMutation(entity, ActionType.MODIFIED, timestamp);
-    mutationRepository.save(mutation);
+    Optional<Mutation> mutationOptional
+        = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
 
-    AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
-        ActionType.MODIFIED, timestamp);
-    auditLogRepository.save(auditLog);
+    if (mutationOptional.isPresent()) {
+      Mutation mutation = getMutation(entity, ActionType.MODIFIED, timestamp);
+      mutationRepository.save(mutation);
 
-    List<String> rowKeys = getPutRowKeys(puts);
-    deleteUnusedRows(entity, rowKeys);
+      AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
+          ActionType.MODIFIED, timestamp);
+      auditLogRepository.save(auditLog);
+
+      List<String> rowKeys = getPutRowKeys(puts);
+      deleteUnusedRows(entity, rowKeys);
+
+    } else {
+      Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
+      mutationRepository.save(mutation);
+
+      AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
+          ActionType.CREATED, timestamp);
+      auditLogRepository.save(auditLog);
+    }
   }
 
-  private void deleteUnusedRows(Lesson entity, List<String> rowKeys)
+  private void deleteUnusedRows(LessonResource entity, List<String> rowKeys)
       throws IOException {
 
     String startRowKey = entity.getId();
@@ -167,23 +166,8 @@ public class HBaseLessonRepository
     client.delete(deletes, Lesson.class);
   }
 
-  private void createLesson(Lesson entity)
-      throws IOException {
-
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    List<Put> puts = lessonMapper.getPuts(entity, timestamp);
-    client.put(puts, Lesson.class);
-
-    Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
-    mutationRepository.save(mutation);
-
-    AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
-        ActionType.CREATED, timestamp);
-    auditLogRepository.save(auditLog);
-  }
-
   @Override
-  public void delete(Lesson entity)
+  public void delete(LessonResource entity)
       throws IOException {
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();

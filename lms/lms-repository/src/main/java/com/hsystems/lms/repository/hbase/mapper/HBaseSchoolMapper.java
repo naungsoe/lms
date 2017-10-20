@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSchoolMapper extends HBaseMapper<School> {
+public class HBaseSchoolMapper extends HBaseAbstractMapper<School> {
 
   @Override
   public List<School> getEntities(
@@ -36,15 +36,20 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        School school = getEntity(result, results, timestamp);
-        schools.add(school);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<School> schoolOptional
+            = getEntity(result, results, timestamp);
+
+        if (schoolOptional.isPresent()) {
+          schools.add(schoolOptional.get());
+        }
       }
     });
     return schools;
   }
 
-  private School getEntity(
+  private Optional<School> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
@@ -66,22 +71,21 @@ public class HBaseSchoolMapper extends HBaseMapper<School> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new School(
-        id,
-        name,
-        locale,
-        dateFormat,
-        dateTimeFormat,
-        permissions,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    School school = new School.Builder(id, name)
+        .locale(locale)
+        .dateFormat(dateFormat)
+        .dateTimeFormat(dateTimeFormat)
+        .permissions(permissions)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(school);
   }
 
   @Override
-  public School getEntity(List<Result> results) {
+  public Optional<School> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

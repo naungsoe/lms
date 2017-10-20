@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 /**
  * Created by naungsoe on 3/11/16.
  */
-public class Query {
+public final class Query {
 
   private static final String PARAM_PATTERN = "([a-zA-Z0-9]*)=([^\\&]*)";
   private static final String FILTER_PATTERN

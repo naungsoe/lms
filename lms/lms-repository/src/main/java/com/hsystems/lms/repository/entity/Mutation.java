@@ -8,9 +8,9 @@ import java.io.Serializable;
  * Created by naungsoe on 2/11/16.
  */
 @IndexCollection(namespace = "lms", name = "mutations")
-public class Mutation implements Entity, Serializable {
+public final class Mutation implements Entity, Serializable {
 
-  private static final long serialVersionUID = 1810669316250096511L;
+  private static final long serialVersionUID = 2286300390937074376L;
 
   private String id;
 
@@ -54,26 +54,9 @@ public class Mutation implements Entity, Serializable {
   }
 
   @Override
-  public int hashCode() {
-    int prime = 31;
-    int result = id.hashCode();
-    return result * prime + Long.hashCode(timestamp);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    Mutation auditLog = (Mutation) obj;
-    return id.equals(auditLog.getId());
-  }
-
-  @Override
   public String toString() {
     return String.format(
-        "AuditLog{id=%s, entityType=%s, timestamp=%s, actionType=%s}",
-        id, entityType, timestamp, actionType);
+        "AuditLog{id=%s, entityType=%s, actionType=%s, timestamp=%s}",
+        id, entityType, actionType, timestamp);
   }
 }

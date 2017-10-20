@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 10/8/16.
  */
-public class Criterion {
+public final class Criterion {
 
   private Operator operator;
 

@@ -106,12 +106,16 @@
               [[localize('titlePage')]]
             </div>
 
-            <app-search
-                query-fields="[[queryFields]]"
-                query="{{query}}"
-                language="[[language]]"
-                resources="[[resources]]">
-            </app-search>
+            <template
+                is="dom-if"
+                if="[[showSearch]]">
+              <app-search
+                  query-fields="[[queryFields]]"
+                  query="{{query}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </app-search>
+            </template>
           </app-toolbar>
         </app-header>
 
@@ -124,6 +128,7 @@
               user="[[user]]"
               filter-options="[[filterOptions]]"
               query="[[query]]"
+              page="{{page}}"
               error="[[error]]"
               language="[[language]]"
               resources="[[resources]]">
@@ -150,8 +155,11 @@
         const contextRoot = '<c:out value="/web"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
-        const queryFields = 'body,hint,explanation,keywords,'
-          + 'components.question.body,components.question.hint';
+        const queryFields = 'question.body,question.hint,'
+          + 'question.explanation,keywords,'
+          + 'question.components.question.body,'
+          + 'question.components.question.hint,'
+          + 'question.components.question.explanation';
         const MainElementBase = Polymer.mixinBehaviors(
           [Polymer.AppLocalizeBehavior], Polymer.Element);
 
@@ -231,12 +239,32 @@
                 readOnly: false,
                 notify: true
               },
+              page: {
+                type: String,
+                readOnly: false,
+                notify: true
+              },
               loading: {
                 type: String,
                 readOnly: false,
                 notify: true
+              },
+              showSearch: {
+                type: Boolean,
+                readOnly: false,
+                notify: true
               }
             }
+          }
+
+          static get observers() {
+            return [
+              '_updatePage(page)'
+            ];
+          }
+
+          _updatePage(page) {
+            this.showSearch = (page === 'questions');
           }
 
           _handleMenuTap(event) {

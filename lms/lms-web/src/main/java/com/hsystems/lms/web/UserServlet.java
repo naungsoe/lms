@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class UserServlet extends BaseServlet {
+public class UserServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 

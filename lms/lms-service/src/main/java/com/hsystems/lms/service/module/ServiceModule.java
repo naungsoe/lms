@@ -17,6 +17,7 @@ import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.SubjectRepository;
+import com.hsystems.lms.repository.UserEnrollmentRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseComponentRepository;
@@ -31,6 +32,7 @@ import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
 import com.hsystems.lms.repository.hbase.HBaseShareLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSignInLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSubjectRepository;
+import com.hsystems.lms.repository.hbase.HBaseUserEnrollmentRepository;
 import com.hsystems.lms.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import com.hsystems.lms.repository.hbase.provider.HBaseClientProvider;
@@ -71,6 +73,9 @@ public class ServiceModule extends AbstractModule {
     bind(GroupRepository.class).to(HBaseGroupRepository.class)
         .in(Singleton.class);
     bind(UserRepository.class).to(HBaseUserRepository.class)
+        .in(Singleton.class);
+    bind(UserEnrollmentRepository.class)
+        .to(HBaseUserEnrollmentRepository.class)
         .in(Singleton.class);
     bind(LessonRepository.class).to(HBaseLessonRepository.class)
         .in(Singleton.class);

@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.entity.quiz;
 
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.CompositeComponent;
 
@@ -16,9 +15,10 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class SectionComponent implements CompositeComponent, Serializable {
+public final class SectionComponent
+    implements CompositeComponent, Serializable {
 
-  private static final long serialVersionUID = 739829542487117998L;
+  private static final long serialVersionUID = -7042940258475264330L;
 
   @IndexField
   protected String id;
@@ -30,10 +30,10 @@ public class SectionComponent implements CompositeComponent, Serializable {
   protected String instructions;
 
   @IndexField
-  protected List<Component> components;
+  protected int order;
 
   @IndexField
-  protected int order;
+  protected List<Component> components;
 
   SectionComponent() {
 
@@ -43,14 +43,14 @@ public class SectionComponent implements CompositeComponent, Serializable {
       String id,
       String title,
       String instructions,
-      List<Component> components,
-      int order) {
+      int order,
+      List<Component> components) {
 
     this.id = id;
     this.title = title;
     this.instructions = instructions;
-    this.components = components;
     this.order = order;
+    this.components = components;
   }
 
   @Override
@@ -64,6 +64,11 @@ public class SectionComponent implements CompositeComponent, Serializable {
 
   public String getInstructions() {
     return instructions;
+  }
+
+  @Override
+  public int getOrder() {
+    return order;
   }
 
   @Override
@@ -85,33 +90,5 @@ public class SectionComponent implements CompositeComponent, Serializable {
   @Override
   public void removeComponent(Component component) {
     this.components.remove(component);
-  }
-
-  @Override
-  public int getOrder() {
-    return order;
-  }
-
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    SectionComponent component = (SectionComponent) obj;
-    return id.equals(component.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "SectionComponent{id=%s, title=%s, instructions=%s, "
-            + "components=%s, order=%s}",
-        id, title, instructions, StringUtils.join(components, ","), order);
   }
 }

@@ -12,6 +12,7 @@
         --paper-card-header-text: {
           background-color: var(--primary-color);
           color: white;
+          padding: 20px 16px;
         };
         width: 320px;
       }
@@ -45,11 +46,11 @@
           <div class="card-content">
             <paper-input required autofocus no-label-float
                 name="account"
-                label="[[localize('inputLabelId')]]"
+                label="[[localize('inputLabelAccount')]]"
                 value="{{account}}"
                 type="text"
                 autocomplete="off"
-                error-message="[[localize('errorIdRequired')]]"
+                error-message="[[localize('errorAccountRequired')]]"
                 on-keydown="_handleInputKeydown">
             </paper-input>
 
@@ -65,7 +66,7 @@
 
             <template is="dom-if" if="[[captchaRequired]]">
               <br/>
-              <img src="[[restRoot]]/account/captcha"
+              <img src="[[captchaUrl]]"
                   alt="[[localize('labelAltCaptcha')]]"/>
 
               <paper-input required no-label-float

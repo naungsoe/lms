@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class ErrorServlet extends BaseServlet {
+public class ErrorServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -1943733219860896344L;
 

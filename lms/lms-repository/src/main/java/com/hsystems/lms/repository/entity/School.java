@@ -15,9 +15,9 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexCollection(namespace = "lms", name = "schools")
-public class School implements Entity, Auditable, Serializable {
+public final class School implements Entity, Auditable, Serializable {
 
-  private static final long serialVersionUID = -2792764271066500681L;
+  private static final long serialVersionUID = 7609115857251030515L;
 
   @IndexField
   private String id;
@@ -53,15 +53,7 @@ public class School implements Entity, Auditable, Serializable {
 
   }
 
-  public School(
-      String id,
-      String name) {
-
-    this.id = id;
-    this.name = name;
-  }
-
-  public School(
+  School(
       String id,
       String name,
       String locale,
@@ -83,6 +75,81 @@ public class School implements Entity, Auditable, Serializable {
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
     this.modifiedDateTime = modifiedDateTime;
+  }
+
+  public static class Builder {
+
+    private String id;
+    private String name;
+
+    private String locale;
+    private String dateFormat;
+    private String dateTimeFormat;
+    private List<Permission> permissions;
+    private User createdBy;
+    private LocalDateTime createdDateTime;
+    private User modifiedBy;
+    private LocalDateTime modifiedDateTime;
+
+    public Builder(String id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Builder locale(String locale) {
+      this.locale = locale;
+      return this;
+    }
+
+    public Builder dateFormat(String dateFormat) {
+      this.dateFormat = dateFormat;
+      return this;
+    }
+
+    public Builder dateTimeFormat(String dateTimeFormat) {
+      this.dateTimeFormat = dateTimeFormat;
+      return this;
+    }
+
+    public Builder permissions(List<Permission> permissions) {
+      this.permissions = permissions;
+      return this;
+    }
+
+    public Builder createdBy(User createdBy) {
+      this.createdBy = createdBy;
+      return this;
+    }
+
+    public Builder createdDateTime(LocalDateTime createdDateTime) {
+      this.createdDateTime = createdDateTime;
+      return this;
+    }
+
+    public Builder modifiedBy(User modifiedBy) {
+      this.modifiedBy = modifiedBy;
+      return this;
+    }
+
+    public Builder modifiedDateTime(LocalDateTime modifiedDateTime) {
+      this.modifiedDateTime = modifiedDateTime;
+      return this;
+    }
+
+    public School build() {
+      return new School(
+          this.id,
+          this.name,
+          this.locale,
+          this.dateFormat,
+          this.dateTimeFormat,
+          this.permissions,
+          this.createdBy,
+          this.createdDateTime,
+          this.modifiedBy,
+          this.modifiedDateTime
+      );
+    }
   }
 
   @Override
@@ -133,26 +200,11 @@ public class School implements Entity, Auditable, Serializable {
   }
 
   @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    School school = (School) obj;
-    return id.equals(school.getId());
-  }
-
-  @Override
   public String toString() {
     return String.format(
-        "School{id=%s, name=%s, locale=%s, dateFormat=%s, "
-            + "dateTimeFormat=%s, permissions=%s, createdBy=%s, "
-            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
+        "School{id=%s, name=%s, locale=%s, dateFormat=%s, dateTimeFormat=%s, "
+            + "permissions=%s, createdBy=%s, createdDateTime=%s, "
+            + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, locale, dateFormat, dateTimeFormat,
         StringUtils.join(permissions, ","), createdBy, createdDateTime,
         modifiedBy, modifiedDateTime);

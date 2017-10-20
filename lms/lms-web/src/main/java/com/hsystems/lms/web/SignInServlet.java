@@ -22,7 +22,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class SignInServlet extends BaseServlet {
+public class SignInServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
@@ -40,13 +40,15 @@ public class SignInServlet extends BaseServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    String id = ServletUtils.getCookie(request, "id");
+    String account = ServletUtils.getCookie(request, "account");
 
-    if (StringUtils.isNotEmpty(id)) {
+    if (StringUtils.isNotEmpty(account)) {
       String sessionId = request.getRequestedSessionId();
       String ipAddress = ServletUtils.getRemoteAddress(request);
-      SignInModel signInModel = new SignInModel(
-          id, "", "", sessionId, ipAddress);
+      SignInModel signInModel = new SignInModel();
+      signInModel.setAccount(account);
+      signInModel.setSessionId(sessionId);
+      signInModel.setIpAddress(ipAddress);
 
       if (authService.isCaptchaRequired(signInModel)) {
         loadCaptchaAttributes(request);
@@ -54,7 +56,7 @@ public class SignInServlet extends BaseServlet {
       }
     }
 
-    request.setAttribute("id", id);
+    request.setAttribute("account", account);
     loadSignIn(request, response);
   }
 

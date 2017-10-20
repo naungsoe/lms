@@ -22,10 +22,8 @@
       <div class="title">
       </div>
 
-      <paper-icon-button
-          icon="save"
-          on-tap="_handleSaveTap">
-      </paper-icon-button>
+      <slot name="status">
+      </slot>
 
       <paper-icon-button
           icon="social:share"
@@ -69,6 +67,10 @@
             notify: true
           }
         }
+      }
+
+      _handleBackTap(event) {
+        window.history.back();
       }
     }
     customElements.define(PageQuestionEditToolbar.is, PageQuestionEditToolbar);

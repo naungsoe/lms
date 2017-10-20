@@ -19,6 +19,10 @@
         @apply --paper-font-subhead;
         margin-bottom: 8px;
       }
+
+      .question .component {
+        padding: 8px 0 0 0;
+      }
     </style>
 
     <iron-ajax
@@ -41,23 +45,23 @@
         <div class="list-item">
           <div class="question">
             <div class="question-type">
-              [[question.type]]
+              [[question.question.type]]
             </div>
 
             <div class="question-body">
-              [[question.body]]
+              [[question.question.body]]
             </div>
 
             <template
                 is="dom-if"
-                if="[[question.questions]]">
+                if="[[question.question.components]]">
               <template
                   is="dom-repeat"
-                  items="[[question.questions]]"
-                  as="question">
-                <div class="question">
-                  <div class="question-body">
-                    [[question.body]]
+                  items="[[question.question.components]]"
+                  as="component">
+                <div class="component">
+                  <div class="component-body">
+                    [[component.question.body]]
                   </div>
                 </div>
               </template>
@@ -108,6 +112,11 @@
             readOnly: false,
             notify: true
           },
+          questions: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
           numFound: {
             type: Number,
             readOnly: false,
@@ -151,8 +160,8 @@
         let response = event.detail.response;
         response.items.forEach(function(item) {
           this.types.forEach(function(type) {
-            if (item.type === type.value) {
-              item.type = type.name;
+            if (item.question.type === type.value) {
+              item.question.type = type.name;
             }
           }, this);
 
@@ -179,6 +188,9 @@
         if (selectedQuestion === null) {
           return;
         }
+
+        let root = this.shadowRoot;
+        root.querySelector('iron-list').clearSelection();
 
         let data = {bubbles: true, composed: true,
           detail: {question: selectedQuestion}

@@ -148,8 +148,10 @@
         this.selectedType = 'ALL';
         this.selectedOwner = 'ANYONE';
 
-        this.fields = 'id,type,body,questions,'
-          + 'school,createdBy,createdDateTime,'
+        this.fields = 'id,question,'
+          + 'question.components,'
+          + 'question.components.question,'
+          + 'createdBy,createdDateTime,'
           + 'modifiedBy,modifiedDateTime';
         this.query = this.query || '';
         this.filters = this.filters || '';

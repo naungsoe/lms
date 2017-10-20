@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 
@@ -13,20 +13,21 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseMutationMapper extends HBaseMapper<Mutation> {
+public class HBaseMutationMapper extends HBaseAbstractMapper<Mutation> {
 
-  private static final String KEY_PATTERN = "^([A-Za-z0-9]*)_([A-Za-z0-9]*)$";
+  private static final String PATTERN_KEY = "^([A-Za-z0-9]*)_([A-Za-z0-9]*)$";
 
-  private static final String KEY_FORMAT = "%s_%s";
+  private static final String FORMAT_KEY = "%s_%s";
 
   public String getId(EntityType type, String id) {
-    return String.format(HBaseMutationMapper.KEY_FORMAT, type, id);
+    return String.format(HBaseMutationMapper.FORMAT_KEY, type, id);
   }
 
   @Override
@@ -39,15 +40,18 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
 
     List<Mutation> mutations = new ArrayList<>();
     results.forEach(result -> {
-      Mutation mutation = getEntity(result);
-      mutations.add(mutation);
+      Optional<Mutation> mutationOptional = getEntity(result);
+
+      if (mutationOptional.isPresent()) {
+        mutations.add(mutationOptional.get());
+      }
     });
     return mutations;
   }
 
-  public Mutation getEntity(Result result) {
+  public Optional<Mutation> getEntity(Result result) {
     String row = Bytes.toString(result.getRow());
-    Pattern pattern = Pattern.compile(KEY_PATTERN);
+    Pattern pattern = Pattern.compile(PATTERN_KEY);
     Matcher matcher = pattern.matcher(row);
 
     if (!matcher.matches()) {
@@ -58,11 +62,18 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
     EntityType entityType = EntityType.valueOf(matcher.group(1));
     ActionType actionType = getActionType(result, 0);
     long timestamp = getTimestamp(result, 0);
-    return new Mutation(id, entityType, actionType, timestamp);
+
+    Mutation mutation = new Mutation(
+        id,
+        entityType,
+        actionType,
+        timestamp
+    );
+    return Optional.of(mutation);
   }
 
   @Override
-  public Mutation getEntity(List<Result> results) {
+  public Optional<Mutation> getEntity(List<Result> results) {
     Result mainResult = results.get(0);
     return getEntity(mainResult);
   }
@@ -70,7 +81,7 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   @Override
   public List<Put> getPuts(Mutation entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
-    String id = String.format(KEY_FORMAT,
+    String id = String.format(FORMAT_KEY,
         entity.getEntityType(), entity.getId());
     byte[] row = Bytes.toBytes(id);
     Put logPut = new Put(row, timestamp);
@@ -84,7 +95,7 @@ public class HBaseMutationMapper extends HBaseMapper<Mutation> {
   @Override
   public List<Delete> getDeletes(Mutation entity, long timestamp) {
     List<Delete> deletes = new ArrayList<>();
-    String id = String.format(KEY_FORMAT,
+    String id = String.format(FORMAT_KEY,
         entity.getEntityType(), entity.getId());
     byte[] row = Bytes.toBytes(id);
     Delete delete = new Delete(row, timestamp);

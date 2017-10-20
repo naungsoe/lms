@@ -8,7 +8,7 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.LessonService;
-import com.hsystems.lms.service.model.LessonModel;
+import com.hsystems.lms.service.model.lesson.LessonResourceModel;
 import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
@@ -28,19 +28,19 @@ import javax.ws.rs.core.UriInfo;
  * Created by naungsoe on 10/9/16.
  */
 @Path("/lessons")
-public class LessonController {
+public class LessonController extends AbstractController {
 
   private final Provider<Principal> principalProvider;
 
-  private final LessonService lessonService;
+  private final LessonService resourceService;
 
   @Inject
   LessonController(
       Provider<Principal> principalProvider,
-      LessonService lessonService) {
+      LessonService resourceService) {
 
     this.principalProvider = principalProvider;
-    this.lessonService = lessonService;
+    this.resourceService = resourceService;
   }
 
   @GET
@@ -52,8 +52,8 @@ public class LessonController {
 
     Principal principal = principalProvider.get();
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
-    QueryResult<LessonModel> queryResult
-        = lessonService.findAllBy(query, principal);
+    QueryResult<LessonResourceModel> queryResult
+        = resourceService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
   }
 
@@ -65,15 +65,15 @@ public class LessonController {
       throws IOException {
 
     Principal principal = principalProvider.get();
-    Optional<LessonModel> lessonModelOptional
-        = lessonService.findBy(id, principal);
+    Optional<LessonResourceModel> lessonModelOptional
+        = resourceService.findBy(id, principal);
 
     if (!lessonModelOptional.isPresent()) {
       throw new WebApplicationException(
           Response.Status.NOT_FOUND);
     }
 
-    LessonModel lessonModel = lessonModelOptional.get();
-    return Response.ok(lessonModel).build();
+    LessonResourceModel resourceModel = lessonModelOptional.get();
+    return Response.ok(resourceModel).build();
   }
 }

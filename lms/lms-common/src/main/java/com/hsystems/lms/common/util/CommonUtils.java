@@ -6,7 +6,7 @@ import java.util.UUID;
 /**
  * Created by naungsoe on 12/9/16.
  */
-public class CommonUtils {
+public final class CommonUtils {
 
   private static final char[] HEX_CHARS
       = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',

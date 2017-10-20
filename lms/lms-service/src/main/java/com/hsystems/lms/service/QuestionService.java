@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -12,16 +13,14 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.question.CompositeQuestion;
-import com.hsystems.lms.repository.entity.question.MultipleChoice;
-import com.hsystems.lms.repository.entity.question.Question;
+import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.service.mapper.Configuration;
-import com.hsystems.lms.service.model.CompositeQuestionModel;
-import com.hsystems.lms.service.model.MultipleChoiceModel;
-import com.hsystems.lms.service.model.QuestionComponentModel;
-import com.hsystems.lms.service.model.QuestionModel;
-import com.hsystems.lms.service.model.QuestionOptionModel;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.service.model.question.ChoiceOptionModel;
+import com.hsystems.lms.service.model.question.MultipleChoiceModel;
+import com.hsystems.lms.service.model.question.MultipleChoiceResourceModel;
+import com.hsystems.lms.service.model.question.QuestionModel;
+import com.hsystems.lms.service.model.question.QuestionResourceModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -35,9 +34,9 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class QuestionService extends BaseService {
+public class QuestionService extends AbstractService {
 
-  private final Properties properties;
+  private final Provider<Properties> propertiesProvider;
 
   private final QuestionRepository questionRepository;
 
@@ -45,25 +44,27 @@ public class QuestionService extends BaseService {
 
   @Inject
   QuestionService(
-      Properties properties,
+      Provider<Properties> propertiesProvider,
       QuestionRepository questionRepository,
       IndexRepository indexRepository) {
 
-    this.properties = properties;
+    this.propertiesProvider = propertiesProvider;
     this.questionRepository = questionRepository;
     this.indexRepository = indexRepository;
   }
 
   @Log
-  public QueryResult<QuestionModel> findAllBy(Query query, Principal principal)
+  public QueryResult<QuestionResourceModel> findAllBy(
+      Query query, Principal principal)
       throws IOException {
 
     addSchoolFilter(query, principal);
 
-    QueryResult<Question> queryResult
-        = indexRepository.findAllBy(query, Question.class);
+    QueryResult<QuestionResource> queryResult
+        = indexRepository.findAllBy(query, QuestionResource.class);
+    List<QuestionResource> questionResources = queryResult.getItems();
 
-    if (CollectionUtils.isEmpty(queryResult.getItems())) {
+    if (CollectionUtils.isEmpty(questionResources)) {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
@@ -73,235 +74,212 @@ public class QuestionService extends BaseService {
     }
 
     Configuration configuration = Configuration.create(principal);
-    List<Question> questions = queryResult.getItems();
+    List<QuestionResourceModel> resourceModels
+        = getQuestionResourceModels(questionResources, configuration);
     return new QueryResult<>(
         queryResult.getElapsedTime(),
         queryResult.getStart(),
         queryResult.getNumFound(),
-        getQuestionModels(questions, configuration)
+        resourceModels
     );
   }
 
-  private List<QuestionModel> getQuestionModels(
-      List<Question> questions, Configuration configuration) {
+  private List<QuestionResourceModel> getQuestionResourceModels(
+      List<QuestionResource> questionResources, Configuration configuration) {
 
-    List<QuestionModel> questionModels = new ArrayList<>();
+    List<QuestionResourceModel> resourceModels = new ArrayList<>();
 
-    for (Question question : questions) {
-      QuestionModel questionModel = getQuestionModel(question, configuration);
-      LocalDateTime createdDateTime = question.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = question.getModifiedDateTime();
+    for (QuestionResource questionResource : questionResources) {
+      QuestionResourceModel resourceModel
+          = getQuestionResourceModel(questionResource, configuration);
+      LocalDateTime createdDateTime = questionResource.getCreatedDateTime();
+      LocalDateTime modifiedDateTime = questionResource.getModifiedDateTime();
+      String dateFormat = configuration.getDateFormat();
 
       if (DateTimeUtils.isToday(createdDateTime)) {
-        questionModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime));
+        resourceModel.setCreatedTime(
+            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
       }
 
       if (DateTimeUtils.isNotEmpty(modifiedDateTime)
           && DateTimeUtils.isToday(modifiedDateTime)) {
 
-        questionModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime));
+        resourceModel.setModifiedTime(
+            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
       }
 
-      questionModels.add(questionModel);
+      resourceModels.add(resourceModel);
     }
 
-    return questionModels;
+    return resourceModels;
   }
 
-  private QuestionModel getQuestionModel(
-      Question question, Configuration configuration) {
+  private QuestionResourceModel getQuestionResourceModel(
+      QuestionResource questionResource, Configuration configuration) {
 
-    QuestionModel questionModel = getModel(question,
-        QuestionModel.class, configuration);
+    QuestionResourceModel resourceModel = getModel(questionResource,
+        QuestionResourceModel.class, configuration);
     String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = question.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = question.getModifiedDateTime();
+    LocalDateTime createdDateTime = questionResource.getCreatedDateTime();
+    LocalDateTime modifiedDateTime = questionResource.getModifiedDateTime();
 
-    questionModel.setCreatedDate(
+    resourceModel.setCreatedDate(
         DateTimeUtils.toString(createdDateTime, dateFormat));
 
     if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      questionModel.setModifiedDate(DateTimeUtils.toString(
-          question.getModifiedDateTime(), dateFormat));
+      resourceModel.setModifiedDate(DateTimeUtils.toString(
+          questionResource.getModifiedDateTime(), dateFormat));
     }
 
-    return questionModel;
+    return resourceModel;
   }
 
   @Log
-  public Optional<QuestionModel> findBy(String id, Principal principal)
+  public Optional<QuestionResourceModel> findBy(String id, Principal principal)
       throws IOException {
 
-    Optional<Question> questionOptional
-        = indexRepository.findBy(id, Question.class);
+    Optional<QuestionResource> resourceOptional
+        = indexRepository.findBy(id, QuestionResource.class);
 
-    if (questionOptional.isPresent()) {
-      Question question = questionOptional.get();
+    if (resourceOptional.isPresent()) {
+      QuestionResource questionResource = resourceOptional.get();
       Configuration configuration = Configuration.create(principal);
-      QuestionModel questionModel = getQuestionModel(question, configuration);
-      return Optional.of(questionModel);
+      QuestionResourceModel resourceModel
+          = getQuestionResourceModel(questionResource, configuration);
+      return Optional.of(resourceModel);
     }
 
     return Optional.empty();
   }
 
   @Log
-  public void create(
-      CompositeQuestionModel questionModel, Principal principal)
-      throws IOException {
-
-    checkQuestionModel(questionModel);
-    checkCompositeQuestionModel(questionModel);
-    populateCreatedByAndDate(questionModel, principal);
-    saveQuestion(questionModel, principal, CompositeQuestion.class);
+  public List<String> findAllTypes() {
+    Properties properties = propertiesProvider.get();
+    String questionTypes = properties.getProperty("question.types");
+    return Arrays.asList(questionTypes.split(","));
   }
 
-  private void checkQuestionModel(QuestionModel questionModel) {
+  @Log
+  public void createMultipleChoice(
+      MultipleChoiceResourceModel resourceModel,
+      Principal principal)
+      throws IOException {
+
+    checkQuestionModel(resourceModel);
+    populateCreatedByAndDate(resourceModel, principal);
+    saveQuestionResource(resourceModel, principal);
+  }
+
+  private void checkQuestionModel(
+      QuestionResourceModel resourceModel) {
+
+    QuestionModel questionModel = resourceModel.getQuestion();
     String questionBody = questionModel.getBody();
     CommonUtils.checkNotNull(questionBody, "question body cannot be null");
     CommonUtils.checkArgument(StringUtils.isNotEmpty(questionBody),
         "question body cannot be empty");
   }
 
-  private void checkCompositeQuestionModel(
-      CompositeQuestionModel questionModel) {
+  private void checkMultipleChoiceModel(
+      MultipleChoiceResourceModel resourceModel) {
 
-    List<QuestionComponentModel> models = questionModel.getComponents();
-    CommonUtils.checkNotNull(models, "question components cannot be null");
-    CommonUtils.checkArgument(CollectionUtils.isNotEmpty(models),
-        "question components cannot be empty");
-  }
-
-  private void populateCreatedByAndDate(
-      QuestionModel questionModel, Principal principal) {
-
-    String dateTime = DateTimeUtils.toString(LocalDateTime.now(),
-        principal.getDateTimeFormat());
-    questionModel.setCreatedBy((UserModel) principal);
-    questionModel.setCreatedDateTime(dateTime);
-  }
-
-  private <T extends Question> void saveQuestion(
-      QuestionModel questionModel, Principal principal, Class<T> type)
-      throws IOException {
-
-    Configuration configuration = Configuration.create(principal);
-    T question = getEntity(questionModel, type, configuration);
-    questionRepository.save(question);
-    indexRepository.save(question);
-  }
-
-  @Log
-  public void create(
-      MultipleChoiceModel questionModel, Principal principal)
-      throws IOException {
-
-    checkQuestionModel(questionModel);
-    checkMultipleChoiceModel(questionModel);
-    populateCreatedByAndDate(questionModel, principal);
-    saveQuestion(questionModel, principal, MultipleChoice.class);
-  }
-
-  private void checkMultipleChoiceModel(MultipleChoiceModel questionModel) {
-    List<QuestionOptionModel> models = questionModel.getOptions();
-    CommonUtils.checkNotNull(models, "question options cannot be null");
-    CommonUtils.checkArgument(CollectionUtils.isNotEmpty(models),
+    MultipleChoiceModel questionModel = resourceModel.getQuestion();
+    List<ChoiceOptionModel> optionModels = questionModel.getOptions();
+    CommonUtils.checkArgument(CollectionUtils.isEmpty(optionModels),
         "question options cannot be empty");
   }
 
-  @Log
-  public void save(
-      CompositeQuestionModel questionModel, Principal principal)
+  private void saveQuestionResource(
+      QuestionResourceModel resourceModel, Principal principal)
       throws IOException {
 
-    checkQuestionModel(questionModel);
-    checkCompositeQuestionModel(questionModel);
+    Configuration configuration = Configuration.create(principal);
+    QuestionResource questionResource = getEntity(resourceModel,
+        QuestionResource.class, configuration);
+    questionRepository.save(questionResource);
+    indexRepository.save(questionResource);
+  }
 
-    Optional<CompositeQuestion> questionOptional = indexRepository.findBy(
-        questionModel.getId(), CompositeQuestion.class);
+  @Log
+  public void saveMultipleChoice(
+      MultipleChoiceResourceModel resourceModel,
+      Principal principal)
+      throws IOException {
 
-    if (questionOptional.isPresent()) {
-      CompositeQuestion question = questionOptional.get();
-      CompositeQuestionModel exModel
-          = getModel(question, CompositeQuestionModel.class);
-      copyQuestionProperties(exModel, questionModel);
-      populateModifiedByAndDate(exModel, principal);
-      saveQuestion(exModel, principal, CompositeQuestion.class);
+    checkQuestionModel(resourceModel);
+    checkMultipleChoiceModel(resourceModel);
+
+    Optional<QuestionResource> resourceOptional = indexRepository.findBy(
+        resourceModel.getId(), QuestionResource.class);
+
+    if (resourceOptional.isPresent()) {
+      QuestionResource questionResource = resourceOptional.get();
+      MultipleChoiceResourceModel exResourceModel
+          = getModel(questionResource, MultipleChoiceResourceModel.class);
+      populateChoiceQuestionProperties(exResourceModel, resourceModel);
+      populateQuestionProperties(exResourceModel, resourceModel);
+      populateModifiedByAndDate(exResourceModel, principal);
+      updateQuestionResource(exResourceModel, principal);
     }
   }
 
-  private void copyQuestionProperties(
-      QuestionModel destModel, QuestionModel sourceModel) {
+  private void populateQuestionProperties(
+      QuestionResourceModel destModel,
+      QuestionResourceModel sourceModel) {
 
-    destModel.setBody(sourceModel.getBody());
-    destModel.setHint(sourceModel.getHint());
-    destModel.setExplanation(sourceModel.getExplanation());
+    QuestionModel destQuestionModel = destModel.getQuestion();
+    QuestionModel sourceQuestionModel = sourceModel.getQuestion();
+    destQuestionModel.setBody(sourceQuestionModel.getBody());
+    destQuestionModel.setHint(sourceQuestionModel.getHint());
+    destQuestionModel.setExplanation(sourceQuestionModel.getExplanation());
     destModel.setSchool(sourceModel.getSchool());
     destModel.setLevels(sourceModel.getLevels());
     destModel.setSubjects(sourceModel.getSubjects());
     destModel.setKeywords(sourceModel.getKeywords());
   }
 
-  private void populateModifiedByAndDate(
-      QuestionModel questionModel, Principal principal) {
+  private void populateChoiceQuestionProperties(
+      MultipleChoiceResourceModel destModel,
+      MultipleChoiceResourceModel sourceModel) {
 
-    questionModel.setModifiedBy((UserModel) principal);
-    questionModel.setModifiedDateTime(DateTimeUtils.toString(
-        LocalDateTime.now(), principal.getDateTimeFormat()));
+    MultipleChoiceModel destQuestionModel = destModel.getQuestion();
+    MultipleChoiceModel sourceQuestionModel = sourceModel.getQuestion();
+    destQuestionModel.setOptions(sourceQuestionModel.getOptions());
   }
 
-  @Log
-  public void save(
-      MultipleChoiceModel questionModel, Principal principal)
+  private void updateQuestionResource(
+      QuestionResourceModel resourceModel, Principal principal)
       throws IOException {
 
-    checkQuestionModel(questionModel);
-    checkMultipleChoiceModel(questionModel);
-
-    Optional<MultipleChoice> questionOptional = indexRepository.findBy(
-        questionModel.getId(), MultipleChoice.class);
-
-    if (questionOptional.isPresent()) {
-      MultipleChoice question = questionOptional.get();
-      MultipleChoiceModel exModel
-          = getModel(question, MultipleChoiceModel.class);
-      copyQuestionProperties(exModel, questionModel);
-      populateModifiedByAndDate(exModel, principal);
-      saveQuestion(exModel, principal, MultipleChoice.class);
-    }
+    Configuration configuration = Configuration.create(principal);
+    QuestionResource questionResource = getEntity(resourceModel,
+        QuestionResource.class, configuration);
+    questionRepository.save(questionResource);
+    indexRepository.save(questionResource);
   }
 
   @Log
   public void delete(String id, Principal principal)
-      throws IOException, IllegalAccessException {
+      throws IOException {
 
-    Optional<Question> questionOptional
-        = indexRepository.findBy(id, Question.class);
+    Optional<QuestionResource> resourceOptional
+        = indexRepository.findBy(id, QuestionResource.class);
 
-    if (questionOptional.isPresent()) {
-      Question question = questionOptional.get();
-      checkDeletePreconditions(question, principal);
-
-      questionRepository.delete(question);
-      indexRepository.delete(question);
+    if (resourceOptional.isPresent()) {
+      QuestionResource questionResource = resourceOptional.get();
+      checkDeletePreconditions(questionResource, principal);
+      questionRepository.delete(questionResource);
+      indexRepository.delete(questionResource);
     }
   }
 
   private void checkDeletePreconditions(
-      Question question, Principal principal) {
+      QuestionResource questionResource, Principal principal) {
 
     UserModel userModel = (UserModel) principal;
-    boolean createdByUser = question.getCreatedBy()
-        .getId().equals(userModel.getId());
+    boolean createdByUser = userModel.getId().equals(
+        questionResource.getCreatedBy().getId());
     CommonUtils.checkArgument(createdByUser,
         "current user should be question created user");
-  }
-
-  @Log
-  public List<String> findAllTypes() {
-    String questionTypes = properties.getProperty("question.types");
-    return Arrays.asList(questionTypes.split(","));
   }
 }

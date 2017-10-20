@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseGroupMapper extends HBaseMapper<Group> {
+public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
 
   @Override
   public List<Group> getEntities (
@@ -37,27 +37,25 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        Group group = getEntity(result, results, timestamp);
-        groups.add(group);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<Group> groupOptional
+            = getEntity(result, results, timestamp);
+
+        if (groupOptional.isPresent()) {
+          groups.add(groupOptional.get());
+        }
       }
     });
     return groups;
   }
 
-  public Group getEntity(
+  public Optional<Group> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult, timestamp);
     List<Permission> permissions = getPermissions(mainResult, timestamp);
-
-    List<User> members = new ArrayList<>();
-    results.stream().filter(isMemberResult(id))
-        .forEach(memberResult -> {
-          User member = getMember(memberResult, timestamp);
-          members.add(member);
-        });
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
@@ -75,21 +73,19 @@ public class HBaseGroupMapper extends HBaseMapper<Group> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new Group(
-        id,
-        name,
-        permissions,
-        members,
-        school,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    Group group = new Group.Builder(id, name)
+        .permissions(permissions)
+        .school(school)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(group);
   }
 
   @Override
-  public Group getEntity(List<Result> results) {
+  public Optional<Group> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

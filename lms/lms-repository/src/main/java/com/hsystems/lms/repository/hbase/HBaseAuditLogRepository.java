@@ -5,6 +5,7 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
+import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.hbase.mapper.HBaseAuditLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -13,8 +14,6 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -22,20 +21,20 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseAuditLogRepository extends HBaseRepository
+public class HBaseAuditLogRepository extends HBaseAbstractRepository
     implements AuditLogRepository {
 
   private final HBaseClient client;
 
-  private final HBaseAuditLogMapper auditLogMapper;
+  private final HBaseAuditLogMapper logMapper;
 
   @Inject
   HBaseAuditLogRepository(
       HBaseClient client,
-      HBaseAuditLogMapper auditLogMapper) {
+      HBaseAuditLogMapper logMapper) {
 
     this.client = client;
-    this.auditLogMapper = auditLogMapper;
+    this.logMapper = logMapper;
   }
 
   @Override
@@ -49,19 +48,15 @@ public class HBaseAuditLogRepository extends HBaseRepository
 
     Scan scan = getRowKeyFilterScan(entityId);
     scan.setStartRow(Bytes.toBytes(entityId));
+
     List<Result> results = client.scan(scan, AuditLog.class);
 
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
-    List<AuditLog> auditLogs = new ArrayList<>();
-    results.forEach(result -> {
-      AuditLog auditLog = auditLogMapper.getEntity(Arrays.asList(result));
-      auditLogs.add(auditLog);
-    });
-
-    return auditLogs;
+    List<Mutation> mutations = Collections.emptyList();
+    return logMapper.getEntities(results, mutations);
   }
 
   @Override

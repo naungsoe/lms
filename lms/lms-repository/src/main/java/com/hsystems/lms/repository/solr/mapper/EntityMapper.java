@@ -5,7 +5,7 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.Entity;
+import com.hsystems.lms.repository.Constants;
 
 import org.apache.solr.common.SolrDocument;
 
@@ -16,35 +16,27 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
  * Created by naungse on 2/12/16.
  */
-public class EntityMapper extends Mapper<Entity> {
+public class EntityMapper {
 
-  private Class<?> type;
+  private final Map<String, Class> typeMap;
 
-  public EntityMapper(Class<?> type) {
-    this.type = type;
+  public EntityMapper(Map<String, Class> typeMap) {
+    this.typeMap = typeMap;
   }
 
-  @Override
-  public <T> Entity map(T source)
-      throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
-
-    SolrDocument document = (SolrDocument) source;
-    return getEntity(document);
-  }
-
-  protected <T> T getEntity(SolrDocument document)
+  public <T> T map(SolrDocument document, Class<T> type)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
     T entity = (T) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
-    String id = document.getFieldValue(FIELD_ID).toString();
+    String id = document.getFieldValue(Constants.FIELD_ID).toString();
 
     for (Field field : fields) {
       if (!field.isAnnotationPresent(IndexField.class)) {
@@ -93,14 +85,18 @@ public class EntityMapper extends Mapper<Entity> {
             ReflectionUtils.setValue(entity, fieldName, values);
           }
         } else {
-          List<?> childEntities = getChildEntities(
-              document.getChildDocuments(), listType, id, fieldName);
+          List<SolrDocument> documents = document.getChildDocuments();
+          List<?> childEntities = getChildEntities(documents, id, fieldName);
           ReflectionUtils.setValue(entity, fieldName, childEntities);
         }
       } else {
-        Object childEntity = getChildEntity(
-            document.getChildDocuments(), field.getType(), id, fieldName);
-        ReflectionUtils.setValue(entity, fieldName, childEntity);
+        List<SolrDocument> documents = document.getChildDocuments();
+        Optional<?> entityOptional = getChildEntity(documents, id, fieldName);
+
+        if (entityOptional.isPresent()) {
+          ReflectionUtils.setValue(entity,
+              fieldName, entityOptional.get());
+        }
       }
     }
 
@@ -114,8 +110,7 @@ public class EntityMapper extends Mapper<Entity> {
   }
 
   protected <T> List<T> getChildEntities(
-      List<SolrDocument> documents, Class<T> type,
-      String parentId, String fieldName)
+      List<SolrDocument> documents, String parentId, String fieldName)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
@@ -127,8 +122,12 @@ public class EntityMapper extends Mapper<Entity> {
 
     for (SolrDocument document : documents) {
       if (isChildDocument(document, parentId, fieldName)) {
-        T entity = getChildEntity(documents, type, parentId, fieldName);
-        entities.add(entity);
+        Optional<T> entityOptional
+            = getChildEntity(documents, parentId, fieldName);
+
+        if (entityOptional.isPresent()) {
+          entities.add(entityOptional.get());
+        }
       }
     }
 
@@ -138,15 +137,14 @@ public class EntityMapper extends Mapper<Entity> {
   protected boolean isChildDocument(
       SolrDocument document, String parentId, String fieldName) {
 
-    Object fullFieldName = document.getFieldValue(MEMBER_FIELD_NAME);
+    Object fullFieldName = document.getFieldValue(Constants.MEMBER_FIELD_NAME);
     return document.getFieldValue("parentId").equals(parentId)
         && fullFieldName.toString().endsWith(fieldName)
         && !"true".equals(document.getFieldValue("processed"));
   }
 
-  protected <T> T getChildEntity(
-      List<SolrDocument> documents, Class<T> type,
-      String parentId, String fieldName)
+  protected <T> Optional<T> getChildEntity(
+      List<SolrDocument> documents, String parentId, String fieldName)
       throws InstantiationException, IllegalAccessException,
       InvocationTargetException, NoSuchFieldException {
 
@@ -155,15 +153,16 @@ public class EntityMapper extends Mapper<Entity> {
         .findFirst();
 
     if (!documentOptional.isPresent()) {
-      return null;
+      return Optional.empty();
     }
 
     SolrDocument document = documentOptional.get();
-    String id = document.getFieldValue(FIELD_ID).toString();
-    String packageName = type.getPackage().getName();
-    String typeName = String.format("%s.%s", packageName,
-        document.getFieldValue(MEMBER_FIELD_TYPE_NAME).toString());
-    T entity = (T) ReflectionUtils.getInstance(typeName);
+    String id = document.getFieldValue(Constants.FIELD_ID).toString();
+    id = (id.indexOf(Constants.SEPARATOR) == -1)
+        ? id : id.substring(id.indexOf(Constants.SEPARATOR) + 1);
+    String typeName = document.getFieldValue(
+        Constants.MEMBER_FIELD_TYPE_NAME).toString();
+    T entity = (T) ReflectionUtils.getInstance(typeMap.get(typeName));
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
 
     for (Field field : fields) {
@@ -213,19 +212,23 @@ public class EntityMapper extends Mapper<Entity> {
             ReflectionUtils.setValue(entity, memberFieldName, values);
           }
         } else {
-          List<?> childEntities = getChildEntities(
-              documents, listType, id, memberFieldName);
+          List<?> childEntities
+              = getChildEntities(documents, id, memberFieldName);
           ReflectionUtils.setValue(entity, memberFieldName, childEntities);
         }
       } else {
-        Object childEntity = getChildEntity(
-            documents, field.getType(), id, memberFieldName);
-        ReflectionUtils.setValue(entity, memberFieldName, childEntity);
+        Optional<?> entityOptional
+            = getChildEntity(documents, id, memberFieldName);
+
+        if (entityOptional.isPresent()) {
+          ReflectionUtils.setValue(entity,
+              memberFieldName, entityOptional.get());
+        }
       }
     }
 
     document.setField("processed", "true");
-    return entity;
+    return Optional.of(entity);
   }
 
   protected <T> void populateProperty(
@@ -236,8 +239,10 @@ public class EntityMapper extends Mapper<Entity> {
     String fieldName = getFieldName(field);
     Class<?> fieldType = field.getType();
 
-    if (fieldName.equals(FIELD_ID)) {
-      Object id = document.getFieldValue(FIELD_ID);
+    if (fieldName.equals(Constants.FIELD_ID)) {
+      String id = document.getFieldValue(Constants.FIELD_ID).toString();
+      id = (id.indexOf(Constants.SEPARATOR) == -1)
+          ? id : id.substring(id.indexOf(Constants.SEPARATOR) + 1);
       ReflectionUtils.setValue(entity, field.getName(), id);
 
     } else if (fieldType.isPrimitive()) {

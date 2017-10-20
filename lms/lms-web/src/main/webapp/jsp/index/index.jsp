@@ -38,7 +38,17 @@
       </paper-button>
       <paper-button raised
           disabled$="[[loading]]"
-          on-tap="_handleQuestionTap">
+          on-tap="_handleEnrollmentsTap">
+        Index Enrollments
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleQuizzesTap">
+        Index Quizzes
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleQuestionsTap">
         Index Questions
       </paper-button>
 
@@ -69,31 +79,40 @@
           }
 
           _handleLevelsTap(event) {
+            let url = '/webapi/index/levels';
+            this._generateRequest(url);
+          }
+
+          _generateRequest(url) {
             let root = this.shadowRoot;
             let request = root.querySelector('iron-ajax');
-            request.url = '/webapi/index/levels';
+            request.url = url;
             request.generateRequest();
           }
 
           _handleSubjectsTap(event) {
-            let root = this.shadowRoot;
-            let request = root.querySelector('iron-ajax');
-            request.url = '/webapi/index/subjects';
-            request.generateRequest();
+            let url = '/webapi/index/subjects';
+            this._generateRequest(url);
           }
 
           _handleUsersTap(event) {
-            let root = this.shadowRoot;
-            let request = root.querySelector('iron-ajax');
-            request.url = '/webapi/index/users';
-            request.generateRequest();
+            let url = '/webapi/index/users';
+            this._generateRequest(url);
           }
 
-          _handleQuestionTap(event) {
-            let root = this.shadowRoot;
-            let request = root.querySelector('iron-ajax');
-            request.url = '/webapi/index/questions';
-            request.generateRequest();
+          _handleEnrollmentsTap(event) {
+            let url = '/webapi/index/enrollments';
+            this._generateRequest(url);
+          }
+
+          _handleQuizzesTap(event) {
+            let url = '/webapi/index/quizzes';
+            this._generateRequest(url);
+          }
+
+          _handleQuestionsTap(event) {
+            let url = '/webapi/index/questions';
+            this._generateRequest(url);
           }
         }
         customElements.define(MainElement.is, MainElement);

@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.util.CollectionUtils;
 
@@ -9,11 +10,14 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Created by naungsoe on 5/11/16.
+ * Created by naucngsoe on 5/11/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class ResourceModel
-    extends AuditableModel implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public abstract class ResourceModel extends AuditableModel
+    implements Serializable {
+
+  private String id;
 
   private SchoolModel school;
 
@@ -22,6 +26,18 @@ public abstract class ResourceModel
   private List<SubjectModel> subjects;
 
   private List<String> keywords;
+
+  public ResourceModel() {
+
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
 
   public SchoolModel getSchool() {
     return school;
@@ -33,8 +49,7 @@ public abstract class ResourceModel
 
   public List<LevelModel> getLevels() {
     return CollectionUtils.isEmpty(levels)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(levels);
+        ? Collections.emptyList() : levels;
   }
 
   public void setLevels(List<LevelModel> levels) {
@@ -44,8 +59,7 @@ public abstract class ResourceModel
 
   public List<SubjectModel> getSubjects() {
     return CollectionUtils.isEmpty(subjects)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(subjects);
+        ? Collections.emptyList() : subjects;
   }
 
   public void setSubjects(List<SubjectModel> subjects) {
@@ -55,8 +69,7 @@ public abstract class ResourceModel
 
   public List<String> getKeywords() {
     return CollectionUtils.isEmpty(keywords)
-        ? Collections.emptyList()
-        : Collections.unmodifiableList(keywords);
+        ? Collections.emptyList() : keywords;
   }
 
   public void setKeywords(List<String> keywords) {

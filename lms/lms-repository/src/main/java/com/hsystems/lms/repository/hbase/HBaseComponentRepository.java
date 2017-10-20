@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseComponentRepository extends HBaseRepository
+public class HBaseComponentRepository extends HBaseAbstractRepository
     implements ComponentRepository {
 
   private final HBaseClient client;
@@ -48,7 +48,7 @@ public class HBaseComponentRepository extends HBaseRepository
       throws IOException {
 
     Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.QUESTION);
+        = mutationRepository.findBy(id, EntityType.COMPONENT);
 
     if (!mutationOptional.isPresent()) {
       return Optional.empty();
@@ -71,8 +71,7 @@ public class HBaseComponentRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    Component component = componentMapper.getEntity(results);
-    return Optional.of(component);
+    return componentMapper.getEntity(results);
   }
 
   @Override

@@ -4,6 +4,7 @@ import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,13 +20,15 @@ import java.util.regex.Pattern;
  */
 public abstract class Mapper {
 
-  private static final String NAME_TOKEN_PATTERN = "([A-Za-z][a-z]+)";
+  private static final String FIELD_TYPE = "type";
 
-  protected Configuration configuration;
+  private static final String PATTERN_NAME_TOKEN = "([A-Za-z][a-z]+)";
 
-  public <T, S> S map(T source, Class<S> type) {
-    S instance = (S) ReflectionUtils.getInstance(type);
-    List<Field> fields = ReflectionUtils.getFields(type);
+  public <T, S, U extends S> S map(T source, Class<S> type) {
+    S instance = isInstantiable(type)
+        ? (S) ReflectionUtils.getInstance(type)
+        : (U) ReflectionUtils.getInstance(getSubType(source, type));
+    List<Field> fields = ReflectionUtils.getFields(instance.getClass());
     List<Field> sourceFields = ReflectionUtils.getFields(source.getClass());
 
     for (Field field : fields) {
@@ -45,6 +48,16 @@ public abstract class Mapper {
         ReflectionUtils.setValue(instance, fieldName,
             getCompositeFieldValue(source, sourceFields,
                 fieldName, fieldType));
+      }
+    }
+
+    if (!isInstantiable(type)) {
+      boolean fieldTypeFound = fields.stream()
+          .anyMatch(field -> field.getName().equals(FIELD_TYPE));
+
+      if (fieldTypeFound) {
+        ReflectionUtils.setValue(instance, FIELD_TYPE,
+            source.getClass().getSimpleName());
       }
     }
 
@@ -106,7 +119,7 @@ public abstract class Mapper {
   }
 
   protected Queue<String> getNameTokens(String name) {
-    Pattern pattern = Pattern.compile(NAME_TOKEN_PATTERN);
+    Pattern pattern = Pattern.compile(PATTERN_NAME_TOKEN);
     Matcher matcher = pattern.matcher(name);
     Queue<String> tokens = new LinkedList<>();
 
@@ -123,6 +136,14 @@ public abstract class Mapper {
             .equals(StringUtils.uncapitalize(fieldName)))
         .findFirst();
   }
+
+  protected <T> boolean isInstantiable(Class<T> type) {
+    int modifiers = type.getModifiers();
+    return !Modifier.isInterface(modifiers)
+        && !Modifier.isAbstract(modifiers);
+  }
+
+  protected abstract <T, S> Class<?> getSubType(T source, Class<S> type);
 
   protected abstract Object getDateTimeValue(Object dateTime);
 

@@ -1,5 +1,6 @@
 package com.hsystems.lms.service.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
 import java.io.Serializable;
@@ -8,9 +9,11 @@ import java.io.Serializable;
  * Created by naungsoe on 7/10/16.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SubjectModel extends AuditableModel implements Serializable {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public final class SubjectModel extends AuditableModel
+    implements Serializable {
 
-  private static final long serialVersionUID = -7346338122798568748L;
+  private static final long serialVersionUID = 1569794172623941087L;
 
   private String id;
 

@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class SignUpServlet extends BaseServlet {
+public class SignUpServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -528977780154917729L;
 

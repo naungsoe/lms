@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.LoggerType;
 import com.hsystems.lms.common.annotation.Log;
@@ -26,9 +27,9 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class AuthenticationService extends BaseService {
+public class AuthenticationService extends AbstractService {
 
-  private final Properties properties;
+  private final Provider<Properties> propertiesProvider;
 
   private final SignInLogRepository signInLogRepository;
 
@@ -36,11 +37,11 @@ public class AuthenticationService extends BaseService {
 
   @Inject
   AuthenticationService(
-      Properties properties,
+      Provider<Properties> propertiesProvider,
       SignInLogRepository signInLogRepository,
       IndexRepository indexRepository) {
 
-    this.properties = properties;
+    this.propertiesProvider = propertiesProvider;
     this.signInLogRepository = signInLogRepository;
     this.indexRepository = indexRepository;
   }
@@ -156,6 +157,7 @@ public class AuthenticationService extends BaseService {
         = signInLogRepository.findBy(user.getId());
 
     if (signInLogOptional.isPresent()) {
+      Properties properties = propertiesProvider.get();
       SignInLog signInLog = signInLogOptional.get();
       int captchaMaxFails = Integer.parseInt(
           properties.getProperty("captcha.required.max.fails"));

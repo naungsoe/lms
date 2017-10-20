@@ -21,51 +21,65 @@ import javax.servlet.http.HttpSession;
  */
 public class PrincipalProvider implements Provider<Principal> {
 
-  private Principal principal;
+  private AuthenticationService authService;
+
+  private HttpServletRequest servletRequest;
 
   @Inject
   PrincipalProvider(
-      HttpServletRequest request, AuthenticationService authService) {
+      AuthenticationService authService,
+      HttpServletRequest request) {
 
-    HttpSession session = request.getSession();
-    Principal principal = (Principal) session.getAttribute("principal");
-
-    this.principal = (principal == null)
-        ? getPrincipal(request, authService) : principal;
+    this.authService = authService;
+    this.servletRequest = request;
   }
 
-  private Principal getPrincipal(
-      HttpServletRequest request, AuthenticationService authService) {
+  public Principal get() {
+    HttpSession session = servletRequest.getSession();
+    Principal principal = (Principal) session.getAttribute("principal");
 
-    String id = ServletUtils.getAccessToken(request);
-    String sessionId = ServletUtils.getSessionToken(request);
-    String remoteAddress = ServletUtils.getRemoteAddress(request);
+    if (principal == null) {
+      Optional<Principal> principalOptional = getPrincipal();
 
-    if (StringUtils.isEmpty(id)
+      if (principalOptional.isPresent()) {
+        principal = principalOptional.get();
+        session.setAttribute("principal", principal);
+      }
+    }
+
+    return principal;
+  }
+
+  private Optional<Principal> getPrincipal() {
+
+    String account = ServletUtils.getAccessToken(servletRequest);
+    String sessionId = ServletUtils.getSessionToken(servletRequest);
+    String remoteAddress = ServletUtils.getRemoteAddress(servletRequest);
+
+    if (StringUtils.isEmpty(account)
         || StringUtils.isEmpty(sessionId)
         || StringUtils.isEmpty(remoteAddress)) {
 
-      return null;
+      return Optional.empty();
     }
 
     try {
-      SignInModel signInModel = new SignInModel(
-          id, "", "", sessionId, remoteAddress);
+      SignInModel signInModel = new SignInModel();
+      signInModel.setAccount(account);
+      signInModel.setSessionId(sessionId);
+      signInModel.setIpAddress(remoteAddress);
+
       Optional<UserModel> userModelOptional
           = authService.findSignedInUserBy(signInModel);
 
       if (userModelOptional.isPresent()) {
-        return userModelOptional.get();
+        return Optional.of(userModelOptional.get());
       }
     } catch (IOException ex) {
       throw new IllegalArgumentException(
           "error retrieving signed-in user", ex);
     }
 
-    return null;
-  }
-
-  public Principal get() {
-    return principal;
+    return Optional.empty();
   }
 }

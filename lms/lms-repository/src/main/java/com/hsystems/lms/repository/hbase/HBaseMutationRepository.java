@@ -23,7 +23,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/10/16.
  */
-public class HBaseMutationRepository extends HBaseRepository
+public class HBaseMutationRepository extends HBaseAbstractRepository
     implements MutationRepository {
 
   private final HBaseClient client;
@@ -58,8 +58,7 @@ public class HBaseMutationRepository extends HBaseRepository
       return Optional.empty();
     }
 
-    Mutation mutation = mutationMapper.getEntity(Arrays.asList(result));
-    return Optional.of(mutation);
+    return mutationMapper.getEntity(Arrays.asList(result));
   }
 
   @Override

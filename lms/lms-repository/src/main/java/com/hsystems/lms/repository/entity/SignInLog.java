@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 2/11/16.
  */
 @IndexCollection(namespace = "lms", name = "signinlogs")
-public class SignInLog implements Entity, Serializable {
+public final class SignInLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = 3323322144069322930L;
+  private static final long serialVersionUID = 5151641476549637651L;
 
   private String id;
 
@@ -68,30 +68,6 @@ public class SignInLog implements Entity, Serializable {
 
   public int getFails() {
     return fails;
-  }
-
-  @Override
-  public int hashCode() {
-    int prime = 31;
-    int result = id.hashCode();
-    result = result * prime + account.hashCode();
-    result = result * prime + sessionId.hashCode();
-    result = result * prime + ipAddress.hashCode();
-    result = result * prime + dateTime.hashCode();
-    return result * prime + Integer.hashCode(fails);
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    SignInLog signInLog = (SignInLog) obj;
-
-    return id.equals(signInLog.getId())
-        && account.equals(signInLog.getSessionId())
-        && sessionId.equals(signInLog.getSessionId());
   }
 
   @Override

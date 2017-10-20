@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseLevelMapper extends HBaseMapper<Level> {
+public class HBaseLevelMapper extends HBaseAbstractMapper<Level> {
 
   public List<Level> getEntities(
       List<Result> results, List<Mutation> mutations) {
@@ -35,15 +35,20 @@ public class HBaseLevelMapper extends HBaseMapper<Level> {
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        Level level = getEntity(result, results, timestamp);
-        levels.add(level);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<Level> levelOptional
+            = getEntity(result, results, timestamp);
+
+        if (levelOptional.isPresent()) {
+          levels.add(levelOptional.get());
+        }
       }
     });
     return levels;
   }
 
-  private Level getEntity(
+  private Optional<Level> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
@@ -65,19 +70,18 @@ public class HBaseLevelMapper extends HBaseMapper<Level> {
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
-    return new Level(
-        id,
-        name,
-        school,
-        createdBy,
-        createdDateTime,
-        modifiedBy,
-        modifiedDateTime
-    );
+    Level level = new Level.Builder(id, name)
+        .school(school)
+        .createdBy(createdBy)
+        .createdDateTime(createdDateTime)
+        .modifiedBy(modifiedBy)
+        .modifiedDateTime(modifiedDateTime)
+        .build();
+    return Optional.of(level);
   }
 
   @Override
-  public Level getEntity(List<Result> results) {
+  public Optional<Level> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

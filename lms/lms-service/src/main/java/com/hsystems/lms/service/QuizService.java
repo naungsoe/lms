@@ -10,9 +10,9 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
-import com.hsystems.lms.repository.entity.quiz.Quiz;
+import com.hsystems.lms.repository.entity.quiz.QuizResource;
 import com.hsystems.lms.service.mapper.Configuration;
-import com.hsystems.lms.service.model.QuizModel;
+import com.hsystems.lms.service.model.quiz.QuizResourceModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class QuizService extends BaseService {
+public class QuizService extends AbstractService {
 
   private final QuizRepository quizRepository;
 
@@ -40,16 +40,17 @@ public class QuizService extends BaseService {
   }
 
   @Log
-  public QueryResult<QuizModel> findAllBy(Query query, Principal principal)
+  public QueryResult<QuizResourceModel> findAllBy(
+      Query query, Principal principal)
       throws IOException {
 
     addSchoolFilter(query, principal);
 
-    QueryResult<Quiz> queryResult
-        = indexRepository.findAllBy(query, Quiz.class);
-    List<Quiz> quizzes = queryResult.getItems();
+    QueryResult<QuizResource> queryResult
+        = indexRepository.findAllBy(query, QuizResource.class);
+    List<QuizResource> quizResources = queryResult.getItems();
 
-    if (CollectionUtils.isEmpty(quizzes)) {
+    if (CollectionUtils.isEmpty(quizResources)) {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
@@ -59,72 +60,79 @@ public class QuizService extends BaseService {
     }
 
     Configuration configuration = Configuration.create(principal);
+    List<QuizResourceModel> resourceModels
+        = getQuizResourceModels(quizResources, configuration);
     return new QueryResult<>(
         queryResult.getElapsedTime(),
         queryResult.getStart(),
         queryResult.getNumFound(),
-        getQuizModels(quizzes, configuration)
+        resourceModels
     );
   }
 
-  private List<QuizModel> getQuizModels(
-      List<Quiz> quizzes, Configuration configuration) {
+  private List<QuizResourceModel> getQuizResourceModels(
+      List<QuizResource> quizResources, Configuration configuration) {
 
-    List<QuizModel> quizModels = new ArrayList<>();
+    List<QuizResourceModel> resourceModels = new ArrayList<>();
 
-    for (Quiz quiz : quizzes) {
-      QuizModel quizModel = getQuizModel(quiz, configuration);
-      LocalDateTime createdDateTime = quiz.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = quiz.getModifiedDateTime();
+    for (QuizResource quizResource : quizResources) {
+      QuizResourceModel resourceModel
+          = getQuizResourceModel(quizResource, configuration);
+      LocalDateTime createdDateTime = quizResource.getCreatedDateTime();
+      LocalDateTime modifiedDateTime = quizResource.getModifiedDateTime();
+      String dateFormat = configuration.getDateFormat();
 
       if (DateTimeUtils.isToday(createdDateTime)) {
-        quizModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime));
+        resourceModel.setCreatedTime(
+            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
       }
 
       if (DateTimeUtils.isNotEmpty(modifiedDateTime)
           && DateTimeUtils.isToday(modifiedDateTime)) {
 
-        quizModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime));
+        resourceModel.setModifiedTime(
+            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
       }
 
-      quizModels.add(quizModel);
+      resourceModels.add(resourceModel);
     }
 
-    return quizModels;
+    return resourceModels;
   }
 
-  private QuizModel getQuizModel(
-      Quiz quiz, Configuration configuration) {
+  private QuizResourceModel getQuizResourceModel(
+      QuizResource quizResource, Configuration configuration) {
 
-    QuizModel quizModel = getModel(quiz, QuizModel.class, configuration);
+    QuizResourceModel resourceModel = getModel(quizResource,
+        QuizResourceModel.class, configuration);
     String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = quiz.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = quiz.getModifiedDateTime();
+    LocalDateTime createdDateTime = quizResource.getCreatedDateTime();
+    LocalDateTime modifiedDateTime = quizResource.getModifiedDateTime();
 
-    quizModel.setCreatedDate(
+    resourceModel.setCreatedDate(
         DateTimeUtils.toString(createdDateTime, dateFormat));
 
     if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      quizModel.setModifiedDate(DateTimeUtils.toString(
-          quiz.getModifiedDateTime(), dateFormat));
+      resourceModel.setModifiedDate(DateTimeUtils.toString(
+          quizResource.getModifiedDateTime(), dateFormat));
     }
 
-    return quizModel;
+    return resourceModel;
   }
 
   @Log
-  public Optional<QuizModel> findBy(String id, Principal principal)
+  public Optional<QuizResourceModel> findBy(String id, Principal principal)
       throws IOException {
 
-    Optional<Quiz> quizOptional = indexRepository.findBy(id, Quiz.class);
+    Optional<QuizResource> resourceOptional
+        = indexRepository.findBy(id, QuizResource.class);
 
-    if (quizOptional.isPresent()) {
-      Quiz quiz = quizOptional.get();
+    if (resourceOptional.isPresent()) {
+      QuizResource quizResource = resourceOptional.get();
       Configuration configuration = Configuration.create(principal);
-      QuizModel quizModel = getQuizModel(quiz, configuration);
-      return Optional.of(quizModel);
+      QuizResourceModel resourceModel
+          = getQuizResourceModel(quizResource, configuration);
+      return Optional.of(resourceModel);
     }
 
     return Optional.empty();

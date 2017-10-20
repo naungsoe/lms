@@ -2,7 +2,7 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.ResourcePermission;
+import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.User;
 
@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
+public class HBaseShareLogMapper extends HBaseAbstractMapper<ShareLog> {
 
   @Override
   public List<ShareLog> getEntities(
@@ -36,43 +36,48 @@ public class HBaseShareLogMapper extends HBaseMapper<ShareLog> {
       Optional<Mutation> mutationOptional = getMutationById(mutations, id);
 
       if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        ShareLog shareLog = getEntity(result, results, timestamp);
-        shareLogs.add(shareLog);
+        Mutation mutation = mutationOptional.get();
+        long timestamp = mutation.getTimestamp();
+        Optional<ShareLog> shareLogOptional
+            = getEntity(result, results, timestamp);
+
+        if (shareLogOptional.isPresent()) {
+          shareLogs.add(shareLogOptional.get());
+        }
       }
     });
     return shareLogs;
   }
 
-  private ShareLog getEntity(
+  private Optional<ShareLog> getEntity(
       Result mainResult, List<Result> results, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
-    User sharedBy = new User(
+    User sharedBy = new User.Builder(
         getId(mainResult, timestamp),
         getFirstName(mainResult, timestamp),
         getLastName(mainResult, timestamp)
-    );
+    ).build();
     LocalDateTime sharedDateTime = getDateTime(mainResult, timestamp);
 
-    List<ResourcePermission> permissions = new ArrayList<>();
-    results.stream().filter(isPermissionResult(id))
-        .forEach(permissionResult -> {
-          ResourcePermission permission
-              = getResourcePermission(permissionResult, timestamp);
-          permissions.add(permission);
+    List<ShareEntry> shareEntries = new ArrayList<>();
+    results.stream().filter(isEntryResult(id))
+        .forEach(entryResult -> {
+          ShareEntry shareEntry = getShareEntry(entryResult, timestamp);
+          shareEntries.add(shareEntry);
         });
 
-    return new ShareLog(
+    ShareLog shareLog = new ShareLog(
         id,
+        shareEntries,
         sharedBy,
-        sharedDateTime,
-        permissions
+        sharedDateTime
     );
+    return Optional.of(shareLog);
   }
 
   @Override
-  public ShareLog getEntity(List<Result> results) {
+  public Optional<ShareLog> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
     return getEntity(mainResult, results, 0);

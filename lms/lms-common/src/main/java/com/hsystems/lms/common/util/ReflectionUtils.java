@@ -1,5 +1,8 @@
 package com.hsystems.lms.common.util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -7,14 +10,49 @@ import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.jar.JarEntry;
+import java.util.jar.JarInputStream;
 
 /**
  * Created by naungsoe on 13/8/16.
  */
 public final class ReflectionUtils {
+
+  public static Map<String, Class> getClasses(String packageName)
+      throws ClassNotFoundException, IOException {
+
+    String packagePath = packageName.replace('.', '/');
+    ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+    String resourcePath = classLoader.getResource(packagePath).getPath();
+    String jarPath = resourcePath.substring(5, resourcePath.indexOf('!'));
+    InputStream inputStream = new FileInputStream(jarPath);
+    JarInputStream jarFile = new JarInputStream(inputStream);
+    Map<String, Class> classMap = new HashMap<>();
+
+    while (true) {
+      JarEntry jarEntry = jarFile.getNextJarEntry();
+
+      if (jarEntry == null) {
+        break;
+      }
+
+      String entryPath = jarEntry.getName();
+
+      if (entryPath.startsWith(packagePath) && entryPath.endsWith(".class")) {
+        String typeName = entryPath.replace('/', '.')
+            .substring(0, entryPath.indexOf(".class"));
+        String simpleName = typeName.substring(typeName.lastIndexOf('.') + 1);
+        classMap.put(simpleName, Class.forName(typeName));
+      }
+    }
+
+    return classMap;
+  }
 
   public static Object getInstance(String typeName, Object... initargs) {
     try {

@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by naungsoe on 8/8/16.
  */
-public class SignOutServlet extends BaseServlet {
+public class SignOutServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 758849204180820238L;
 
