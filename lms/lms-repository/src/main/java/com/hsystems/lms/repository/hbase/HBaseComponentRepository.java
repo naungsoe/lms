@@ -75,11 +75,11 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Component> findAllBy(String schoolId, String resourceId)
+  public List<Component> findAllBy(String parentId)
       throws IOException {
 
     List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, resourceId, Integer.MAX_VALUE, EntityType.COMPONENT);
+        parentId, parentId, Integer.MAX_VALUE, EntityType.COMPONENT);
 
     if (CollectionUtils.isEmpty(mutations)) {
       return Collections.emptyList();
@@ -89,7 +89,7 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
     Mutation stopMutation = mutations.get(mutations.size() - 1);
     String startRowKey = startMutation.getId();
     String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
-    Scan scan = getRowKeyFilterScan(schoolId);
+    Scan scan = getRowKeyFilterScan(parentId);
     scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
@@ -100,6 +100,12 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
 
   @Override
   public void save(Component entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void save(Component entity, String parentId)
       throws IOException {
 
   }

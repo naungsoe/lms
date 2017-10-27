@@ -3,6 +3,7 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
@@ -12,17 +13,23 @@ import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserEnrollmentRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.beans.ComponentBean;
+import com.hsystems.lms.repository.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.beans.SectionComponentBean;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.UserEnrollment;
+import com.hsystems.lms.repository.entity.lesson.LessonResource;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.QuestionResource;
-import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;
+import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -174,10 +181,10 @@ public class IndexService extends AbstractService {
           schoolId, lastId, INDEX_LIMIT);
 
       for (QuizResource quizResource : quizResources) {
-        List<Component> components = componentRepository.findAllBy(
-            schoolId, quizResource.getId());
-        quizResource.getQuiz().addComponent(
-            components.toArray(new Component[0]));
+        String resourceId = quizResource.getId();
+        List<Component> components
+            = componentRepository.findAllBy(resourceId);
+        indexComponents(components, resourceId);
       }
 
       indexRepository.save(quizResources);
@@ -186,6 +193,37 @@ public class IndexService extends AbstractService {
       lastId = quizResources.get(numFound - 1).getId();
 
     } while (!isLastPage(numFound));
+  }
+
+  private void indexComponents(List<Component> components, String parentId)
+      throws IOException {
+
+    List<ComponentBean> componentBeans = new ArrayList<>();
+
+    for (Component component : components) {
+      if (component instanceof SectionComponent) {
+        SectionComponent sectionComponent = (SectionComponent) component;
+        String sectionId = sectionComponent.getId();
+        SectionComponentBean sectionComponentBean
+            = new SectionComponentBean(sectionComponent, parentId);
+        componentBeans.add(sectionComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(sectionComponent.getComponents());
+        indexComponents(childComponents, sectionId);
+
+      } else if (component instanceof QuestionComponent) {
+        QuestionComponent<?> questionComponent
+            = (QuestionComponent<?>) component;
+        QuestionComponentBean<?> questionComponentBean
+            = new QuestionComponentBean(questionComponent, parentId);
+        componentBeans.add(questionComponentBean);
+      }
+    }
+
+    if (CollectionUtils.isNotEmpty(componentBeans)) {
+      indexRepository.save(componentBeans);
+    }
   }
 
   private void indexAllQuestions(String schoolId)
@@ -270,17 +308,16 @@ public class IndexService extends AbstractService {
   private void indexLesson(String id)
       throws IOException {
 
-    Optional<QuizResource> resourceOptional
-        = quizRepository.findBy(id);
+    Optional<LessonResource> resourceOptional
+        = lessonRepository.findBy(id);
 
     if (resourceOptional.isPresent()) {
-      QuizResource quizResource = resourceOptional.get();
-      School school = quizResource.getSchool();
-      Quiz quiz = quizResource.getQuiz();
-      List<Component> components = componentRepository.findAllBy(
-          school.getId(), quizResource.getId());
-      quiz.addComponent(components.toArray(new Component[0]));
-      indexRepository.save(quizResource);
+      LessonResource lessonResource = resourceOptional.get();
+      String resourceId = lessonResource.getId();
+      List<Component> components
+          = componentRepository.findAllBy(resourceId);
+      indexComponents(components, resourceId);
+      indexRepository.save(lessonResource);
     }
   }
 
@@ -292,11 +329,10 @@ public class IndexService extends AbstractService {
 
     if (resourceOptional.isPresent()) {
       QuizResource quizResource = resourceOptional.get();
-      School school = quizResource.getSchool();
-      Quiz quiz = quizResource.getQuiz();
-      List<Component> components = componentRepository.findAllBy(
-          school.getId(), quizResource.getId());
-      quiz.addComponent(components.toArray(new Component[0]));
+      String resourceId = quizResource.getId();
+      List<Component> components
+          = componentRepository.findAllBy(resourceId);
+      indexComponents(components, resourceId);
       indexRepository.save(quizResource);
     }
   }

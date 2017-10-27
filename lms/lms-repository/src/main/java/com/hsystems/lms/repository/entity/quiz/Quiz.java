@@ -24,7 +24,6 @@ public final class Quiz implements Serializable {
   @IndexField
   private String instructions;
 
-  @IndexField
   protected List<Component> components;
 
   Quiz() {

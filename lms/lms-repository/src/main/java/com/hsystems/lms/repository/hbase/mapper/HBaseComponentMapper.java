@@ -61,7 +61,8 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
               childComponents.get(parentId).add(component);
 
             } else {
-              List<Component> components = Arrays.asList(component);
+              List<Component> components = new ArrayList<>(
+                  Arrays.asList(component));
               childComponents.put(parentId, components);
             }
           } else {

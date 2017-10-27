@@ -212,9 +212,11 @@ public class DocumentMapper {
 
   protected void updateChildrenId(SolrInputDocument document, String parentId) {
     if (StringUtils.isNotEmpty(parentId)) {
-      String id = document.getFieldValue(Constants.FIELD_ID).toString();
-      document.setField(Constants.FIELD_ID,
-          String.format(Constants.FORMAT_FIELD_ID, parentId, id));
+      String entityId = document.getFieldValue(Constants.FIELD_ID).toString();
+      document.setField(Constants.FIELD_ENTITY_ID, entityId);
+
+      String id = String.format(Constants.FORMAT_FIELD_ID, parentId, entityId);
+      document.setField(Constants.FIELD_ID, id);
     }
 
     List<SolrInputDocument> childDocuments = document.getChildDocuments();

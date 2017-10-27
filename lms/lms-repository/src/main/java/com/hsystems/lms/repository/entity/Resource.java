@@ -21,5 +21,5 @@ public interface Resource extends SchoolScoped {
 
   Enumeration<ShareEntry> getShareEntries();
 
-  void addShareEntry(ShareEntry... entries);
+  void addShareEntry(ShareEntry... shareEntries);
 }

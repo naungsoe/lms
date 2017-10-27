@@ -1,8 +1,7 @@
 {
   "en_US": {
     "titlePage": "Questions",
-    "titleQuestion": "Question",
-    "titleDetails": "Details",
+    "labelQuestion": "Question",
     "labelAllLevels": "All grades",
     "labelLevel": "Grade",
     "labelAllSubjects": "All subjects",
@@ -11,7 +10,6 @@
     "labelOwnedByMe": "Owned by me",
     "labelNotOwnerByMe": "Owned by others",
     "labelAllQuestionTypes": "All question types",
-    "labelFetchingQuestion": "Fetching question",
     "labelFetchingQuestions": "Fetching questions",
     "labelQuestion": "question",
     "labelQuestions": "questions",

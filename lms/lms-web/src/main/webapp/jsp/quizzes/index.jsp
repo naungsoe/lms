@@ -22,7 +22,7 @@
   <link rel="import" href="<c:url value="/static/bower_components/paper-icon-button/paper-icon-button.html"/>">
   <link rel="import" href="<c:url value="/static/web_components/app-navigation.html"/>">
   <link rel="import" href="<c:url value="/static/web_components/app-search.html"/>">
-  <link rel="import" href="<c:url value="/static/web_components/module-questions/module-quizzes.html"/>">
+  <link rel="import" href="<c:url value="/static/web_components/module-quizzes/module-quizzes.html"/>">
   <title>
     <c:out value="${titlePage}"/>
   </title>
@@ -60,7 +60,7 @@
           z-index: 3;
         }
 
-        module-questions {
+        module-quizzes {
           padding-top: 64px;
         }
       </style>
@@ -145,8 +145,8 @@
         const localesUrl = '<c:out value="/webapi/locales/quizzes"/>';
         const filtersUrl = '<c:out value="/webapi/filters/quizzes"/>';
         const userUrl = '<c:out value="/webapi/users/${userId}"/>';
-        const restUrl = '<c:out value="/webapi/questions"/>';
-        const rootUrl = '<c:out value="/web/questions"/>';
+        const restUrl = '<c:out value="/webapi/quizzes"/>';
+        const rootUrl = '<c:out value="/web/quizzes"/>';
         const contextRoot = '<c:out value="/web"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';

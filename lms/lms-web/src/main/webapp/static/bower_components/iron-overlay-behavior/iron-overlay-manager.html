@@ -366,5 +366,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   };
 
+  Polymer.IronOverlayManagerClass.prototype.__onCaptureClick
+    = Polymer.IronOverlayManagerClass.prototype._onCaptureClick;
+  Polymer.IronOverlayManagerClass.prototype._onCaptureClick = function(event) {
+    if (this._overlays.length > 0) {
+      let overlays = this._overlays.filter(function(overlay) {
+        let path = Polymer.dom(event).path;
+        return this._overlayInPath(path) === overlay;
+      }.bind(this));
+
+      if (overlays.length === 0) {
+        this._overlays.forEach(function(overlay) {
+          overlay._onCaptureClick(event);
+        });
+      } else {
+        this.__onCaptureClick(event);
+      }
+    }
+  };
+
   Polymer.IronOverlayManager = new Polymer.IronOverlayManagerClass();
 </script>

@@ -63,7 +63,8 @@ public class HBaseShareLogMapper extends HBaseAbstractMapper<ShareLog> {
     List<ShareEntry> shareEntries = new ArrayList<>();
     results.stream().filter(isEntryResult(id))
         .forEach(entryResult -> {
-          ShareEntry shareEntry = getShareEntry(entryResult, timestamp);
+          ShareEntry
+              shareEntry = getShareEntry(entryResult, timestamp);
           shareEntries.add(shareEntry);
         });
 

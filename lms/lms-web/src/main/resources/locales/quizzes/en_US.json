@@ -1,5 +1,19 @@
 {
   "en_US": {
-    "titlePage": "Quizzes"
+    "titlePage": "Quizzes",
+    "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
+    "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
+    "labelOwnedByAnyone": "Owned by anyone",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelFetchingQuizzes": "Fetching quizzes",
+    "labelQuiz": "quiz",
+    "labelQuizzes": "quizzes",
+    "labelTitle": "Title",
+    "labelInstructions": "Instructions",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply"
   }
 }

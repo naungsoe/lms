@@ -109,7 +109,7 @@
         if (this.showing) {
           let query = input.value;
 
-          if (query.trim() === '') {
+          if ((query === undefined) || (query.trim() === '')) {
             input.querySelector('input').focus();
 
           } else {

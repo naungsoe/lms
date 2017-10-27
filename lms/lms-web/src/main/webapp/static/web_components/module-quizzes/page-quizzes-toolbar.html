@@ -9,7 +9,7 @@
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
 <link rel="import" href="../../web_components/page-toolbar.html">
 
-<dom-module id="page-questions-toolbar">
+<dom-module id="page-quizzes-toolbar">
   <template>
     <style>
       paper-menu-button .filter-content {
@@ -99,28 +99,6 @@
                 restore-focus-on-close="[[restoreFocusOnClose]]">
               <paper-listbox
                   slot="dropdown-content"
-                  name="types"
-                  selected="{{selectedType}}"
-                  attr-for-selected="value">
-                <paper-item value="ALL">
-                  [[localize('labelAllQuestionTypes')]]
-                </paper-item>
-
-                <template
-                    is="dom-repeat"
-                    items="[[types]]"
-                    as="type">
-                  <paper-item value="[[type.value]]">
-                    [[type.name]]
-                  </paper-item>
-                </template>
-              </paper-listbox>
-            </paper-dropdown-menu>
-
-            <paper-dropdown-menu no-label-float
-                restore-focus-on-close="[[restoreFocusOnClose]]">
-              <paper-listbox
-                  slot="dropdown-content"
                   name="owners"
                   selected="{{selectedOwner}}"
                   attr-for-selected="value">
@@ -154,12 +132,12 @@
   </template>
 
   <script>
-    const PageQuestionsToolbarBase = Polymer.mixinBehaviors(
+    const PageQuizzesToolbarBase = Polymer.mixinBehaviors(
       [Polymer.AppLocalizeBehavior], Polymer.Element);
 
-    class PageQuestionsToolbar extends PageQuestionsToolbarBase {
+    class PageQuizzesToolbar extends PageQuizzesToolbarBase {
       static get is() {
-        return 'page-questions-toolbar';
+        return 'page-quizzes-toolbar';
       }
 
       static get properties() {
@@ -219,7 +197,6 @@
       _handleResetTap(event) {
         this.selectedLevel = 'ALL';
         this.selectedSubject = 'ALL';
-        this.selectedType = 'ALL';
         this.selectedOwner = 'ANYONE';
         this.filters = '';
 
@@ -238,10 +215,6 @@
           filters.push('subjects.id:MUST ' + this.selectedSubject);
         }
 
-        if (this.selectedType !== 'ALL') {
-          filters.push('question.fieldTypeName:MUST ' + this.selectedType);
-        }
-
         if (this.selectedOwner === "ME") {
           filters.push('createdBy.id:MUST ' + this.user.id);
 
@@ -255,6 +228,6 @@
         root.querySelector('paper-menu-button').close();
       }
     }
-    customElements.define(PageQuestionsToolbar.is, PageQuestionsToolbar);
+    customElements.define(PageQuizzesToolbar.is, PageQuizzesToolbar);
   </script>
 </dom-module>

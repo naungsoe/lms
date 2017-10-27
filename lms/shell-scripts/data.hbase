@@ -433,7 +433,7 @@ put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b
 create 'lms:quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
 put 'lms:quizzes', 'c784ae9', 'd:name', 'Default School Questions', 1480299712295
 
-put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions 1', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions within 10', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:keywords', 'additions', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sch_c784ae9', 'd:name', 'Default School', 1480299712295
@@ -485,27 +485,27 @@ put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:type', 'QuestionComponent', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:qid', 'c784ae940b0afdf9bf3497290bdda68ad2ffc35', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:qtype', 'MultipleResponse', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:order', '2', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:parent', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:body', '2 + 3 = ?', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:hint', 'Addition within 10.', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:explanation', '2 + 3 = 5', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712391', 'd:body', '3', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712391', 'd:correct', 'false', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712391', 'd:order', '1', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712392', 'd:body', '4', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712392', 'd:correct', 'false', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712392', 'd:order', '2', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712393', 'd:body', '5', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712393', 'd:correct', 'true', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712393', 'd:order', '3', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712394', 'd:body', '6', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712394', 'd:correct', 'false', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712394', 'd:order', '4', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712391', 'd:body', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712391', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712391', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712391', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712392', 'd:body', '4', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712392', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712392', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712392', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712393', 'd:body', '5', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712393', 'd:feedback', 'Correct.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712393', 'd:correct', 'true', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712393', 'd:order', '3', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712394', 'd:body', '6', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712394', 'd:feedback', 'Incorrect.', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712394', 'd:correct', 'false', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_1480299712394', 'd:order', '4', 1480299712295
 
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:type', 'ActivityComponent', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712110', 'd:title', 'Activity 1', 1480299712295
@@ -540,10 +540,10 @@ put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712350_opt_
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 'd:type', 'ActivityComponent', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 'd:title', 'Activity 2', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 'd:instructions', 'Answer a quiz.', 1480299712295
-put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 'd:order', '2', 1480299712295
 
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:type', 'QuizComponent', 1480299712295
-put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:order', '1', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:title', 'Additions 1', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712410', 'd:instructions', 'Answer all questions.', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712400', 1480299712295
@@ -698,6 +698,9 @@ put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae78148029971
 
 put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:action', 'MODIFIED'
 put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:timestamp', '1480299712295'
 
 put 'lms:mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Resource Components'
 

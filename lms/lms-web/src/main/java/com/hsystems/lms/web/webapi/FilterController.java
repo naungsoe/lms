@@ -53,7 +53,7 @@ public class FilterController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/questions")
-  public Response findFiltersBy(
+  public Response findQuestionFilters(
       @Context HttpServletRequest request)
       throws IOException {
 
@@ -70,7 +70,6 @@ public class FilterController extends AbstractController {
     ObjectNode moduleNode = mapper.createObjectNode();
     populateEnrollments(moduleNode, localeNode);
     populateQuestionTypes(moduleNode, localeNode);
-
     return moduleNode;
   }
 
@@ -140,5 +139,27 @@ public class FilterController extends AbstractController {
       typeNode.put("value", questionType);
       typesNode.add(typeNode);
     });
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/quizzes")
+  public Response findQuizFilters(
+      @Context HttpServletRequest request)
+      throws IOException {
+
+    JsonNode localeNode = findLocaleNode(request);
+    JsonNode moduleNode = findQuizFilters(localeNode);
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
+  }
+
+  private JsonNode findQuizFilters(JsonNode localeNode)
+      throws IOException {
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
+    populateEnrollments(moduleNode, localeNode);
+    return moduleNode;
   }
 }

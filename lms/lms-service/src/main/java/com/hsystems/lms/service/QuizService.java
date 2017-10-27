@@ -54,7 +54,7 @@ public class QuizService extends AbstractService {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
-          query.getLimit(),
+          NUMBER_FOUND_ZERO,
           Collections.emptyList()
       );
     }

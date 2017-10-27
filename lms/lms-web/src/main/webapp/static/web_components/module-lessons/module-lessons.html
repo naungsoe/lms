@@ -3,10 +3,10 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../web_components/module-questions/page-questions.html">
-<link rel="import" href="../../web_components/module-questions/page-question-edit.html">
+<link rel="import" href="../../web_components/module-questions/page-lessons.html">
+<link rel="import" href="../../web_components/module-questions/page-lesson-edit.html">
 
-<dom-module id="module-questions">
+<dom-module id="module-lessons">
   <template>
     <style>
 
@@ -24,37 +24,37 @@
     <iron-pages
         selected="[[page]]"
         attr-for-selected="name">
-      <page-questions
-          name="questions"
+      <page-lessons
+          name="lessons"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
-          user="[[user]]"
+          user="[[users]]"
           filter-options="[[filterOptions]]"
           query="[[query]]"
           language="[[language]]"
           resources="[[resources]]">
-      </page-questions>
+      </page-lessons>
 
-      <page-question-edit
+      <page-lesson-edit
           name="question"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
-          user="[[user]]"
+          user="[[users]]"
           filter-options="[[filterOptions]]"
           question-id="[[routeData.id]]"
           language="[[language]]"
           resources="[[resources]]">
-      </page-question-edit>
+      </page-lesson-edit>
     </iron-pages>
   </template>
 
   <script>
-    const ModuleQuestionsBase = Polymer.mixinBehaviors(
+    const ModuleLessonsBase = Polymer.mixinBehaviors(
       [Polymer.AppLocalizeBehavior], Polymer.Element);
 
-    class ModuleQuestions extends ModuleQuestionsBase {
+    class ModuleLessons extends ModuleLessonsBase {
       static get is() {
-        return 'module-questions';
+        return 'module-lessons';
       }
 
       static get properties() {
@@ -116,20 +116,20 @@
 
       _updateRoute(route) {
         if (route.path === this.rootUrl) {
-          this.page = 'questions';
+          this.page = 'lessons';
         }
       }
 
       _updatePage(routeData) {
         if (routeData.id === undefined) {
-          this.page = 'questions';
+          this.page = 'lessons';
 
         } else {
-          this.page = 'question';
+          this.page = 'lesson';
         }
       }
     }
-    customElements.define(ModuleQuestions.is, ModuleQuestions);
+    customElements.define(ModuleLessons.is, ModuleLessons);
   </script>
 
 </dom-module>

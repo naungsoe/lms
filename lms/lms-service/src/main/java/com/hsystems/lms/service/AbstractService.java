@@ -18,6 +18,8 @@ import java.time.LocalDateTime;
  */
 public abstract class AbstractService {
 
+  protected final int NUMBER_FOUND_ZERO = 0;
+
   protected void addSchoolFilter(Query query, Principal principal) {
     UserModel userModel = (UserModel) principal;
     String schoolId = userModel.getSchool().getId();

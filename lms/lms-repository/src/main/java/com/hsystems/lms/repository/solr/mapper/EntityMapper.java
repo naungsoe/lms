@@ -157,9 +157,7 @@ public class EntityMapper {
     }
 
     SolrDocument document = documentOptional.get();
-    String id = document.getFieldValue(Constants.FIELD_ID).toString();
-    id = (id.indexOf(Constants.SEPARATOR) == -1)
-        ? id : id.substring(id.indexOf(Constants.SEPARATOR) + 1);
+    String id = document.getFieldValue(Constants.FIELD_ENTITY_ID).toString();
     String typeName = document.getFieldValue(
         Constants.MEMBER_FIELD_TYPE_NAME).toString();
     T entity = (T) ReflectionUtils.getInstance(typeMap.get(typeName));
@@ -240,9 +238,9 @@ public class EntityMapper {
     Class<?> fieldType = field.getType();
 
     if (fieldName.equals(Constants.FIELD_ID)) {
-      String id = document.getFieldValue(Constants.FIELD_ID).toString();
-      id = (id.indexOf(Constants.SEPARATOR) == -1)
-          ? id : id.substring(id.indexOf(Constants.SEPARATOR) + 1);
+      String id = (document.getFieldValue(Constants.FIELD_ENTITY_ID) != null)
+          ? document.getFieldValue(Constants.FIELD_ENTITY_ID).toString()
+          : document.getFieldValue(Constants.FIELD_ID).toString();
       ReflectionUtils.setValue(entity, field.getName(), id);
 
     } else if (fieldType.isPrimitive()) {

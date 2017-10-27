@@ -7,8 +7,8 @@ import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Resource;
-import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.ShareEntry;
+import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 

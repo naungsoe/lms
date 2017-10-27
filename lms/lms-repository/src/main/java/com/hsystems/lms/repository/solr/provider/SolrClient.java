@@ -153,13 +153,28 @@ public class SolrClient {
   }
 
   private <T extends Entity> String getNamespace(Class<T> type) {
-    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+    IndexCollection annotation = getAnnotation(type);
     String namespace = annotation.namespace();
     return StringUtils.isEmpty(namespace) ? "default" : namespace;
   }
 
-  private <T extends Entity> String getCollection(Class<T> type) {
+  private <T extends Entity> IndexCollection getAnnotation(Class<T> type) {
     IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+
+    if (annotation == null) {
+      Class<?> superType = type.getInterfaces()[0];
+
+      while (annotation == null) {
+        annotation = superType.getAnnotation(IndexCollection.class);
+        superType = superType.getInterfaces()[0];
+      }
+    }
+
+    return annotation;
+  }
+
+  private <T extends Entity> String getCollection(Class<T> type) {
+    IndexCollection annotation = getAnnotation(type);
     String collection = annotation.name();
     return StringUtils.isEmpty(collection)
         ? type.getSimpleName() : collection;

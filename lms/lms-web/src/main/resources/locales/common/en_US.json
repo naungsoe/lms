@@ -2,10 +2,13 @@
   "en_US": {
     "menuHome": "Home",
     "menuAssignments": "Assignments",
+    "menuCourses": "Courses",
     "menuLessons": "Lessons",
     "menuQuizzes": "Quizzes",
     "menuQuestions": "Questions",
     "menuStorage": "Storage",
+    "menuGroups": "Groups",
+    "menuUsers": "Users",
     "menuSignOut": "Sign out",
     "labelMultipleChoice": "Multiple choice",
     "labelMultipleResponse": "Multiple response",

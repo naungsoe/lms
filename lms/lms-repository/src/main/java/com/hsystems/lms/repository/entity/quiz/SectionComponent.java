@@ -15,10 +15,10 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public final class SectionComponent
+public class SectionComponent
     implements CompositeComponent, Serializable {
 
-  private static final long serialVersionUID = -7042940258475264330L;
+  private static final long serialVersionUID = -5447976097360755766L;
 
   @IndexField
   protected String id;
@@ -32,7 +32,6 @@ public final class SectionComponent
   @IndexField
   protected int order;
 
-  @IndexField
   protected List<Component> components;
 
   SectionComponent() {

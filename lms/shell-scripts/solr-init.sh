@@ -12,6 +12,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":false,"stored":true}
 }' http://localhost:8983/solr/schools/schema
 
@@ -28,6 +29,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/levels/schema
 
@@ -44,6 +46,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/subjects/schema
 
@@ -71,6 +74,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/users/schema
 
@@ -87,6 +91,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/enrollments/schema
 
@@ -106,6 +111,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/quizzes/schema
 
@@ -131,6 +137,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/questions/schema
 
@@ -152,6 +159,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/components/schema
 
