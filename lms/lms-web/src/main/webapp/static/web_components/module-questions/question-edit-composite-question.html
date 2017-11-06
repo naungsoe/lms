@@ -3,21 +3,38 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-response.html">
 <link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
 <link rel="import" href="../../web_components/module-questions/question-edit-multiple-response.html">
 
 <dom-module id="question-edit-composite-question">
   <template>
     <style>
+      .question-body,
+      .question-hint,
+      .question-explanation {
+        padding: 0 16px;
+      }
+
       .question-components,
       .question-hint,
       .question-explanation {
-        margin-top: 16px;
+        margin-top: 8px;
       }
 
       .question-components .question-component {
         @apply --layout-vertical;
-        padding: 8px 0;
+        padding: 8px 16px 8px 8px;
+      }
+
+      .question-components .question-component[active] {
+        @apply --shadow-elevation-2dp;
       }
 
       .question-components .question-component .actions {
@@ -25,7 +42,8 @@
         @apply --layout-end-justified;
       }
 
-      .question-components .question-component .actions paper-icon-button {
+      .question-components .question-component .actions paper-icon-button,
+      .question-components .question-component .content paper-icon-button {
         color: var(--divider-color);
       }
 
@@ -41,7 +59,8 @@
         @apply --layout-flex;
       }
 
-      .question-components .question-component:hover .actions paper-icon-button {
+      .question-components .question-component:hover .actions paper-icon-button,
+      .question-components .question-component:hover .content paper-icon-button{
         color: var(--primary-text-color);
       }
 
@@ -58,8 +77,14 @@
         background-color: var(--secondary-background-color);
       }
 
-      .question-actions {
+      .question-components .question-actions {
         margin-top: 12px;
+        padding: 0 16px;
+      }
+
+      .question-components .question-actions paper-button {
+        color: var(--primary-color);
+        margin: 0;
       }
     </style>
 
@@ -79,13 +104,25 @@
             is="dom-repeat"
             items="[[question.components]]"
             as="component">
-          <div class="question-component">
-            <div class="actions">
-              <paper-icon-button
-                  icon="clear"
-                  on-tap="_handleRemoveTap">
-              </paper-icon-button>
-            </div>
+          <div
+              class="question-component"
+              active$="[[_equals(component, editingComponent)]]"
+              on-tap="_handleEditTap">
+            <template
+                is="dom-if"
+                if="[[_equals(component, editingComponent)]]">
+              <div class="actions">
+                <paper-icon-button
+                    icon="content-copy"
+                    on-tap="_handleCloneTap">
+                </paper-icon-button>
+
+                <paper-icon-button
+                    icon="delete"
+                    on-tap="_handleDeleteTap">
+                </paper-icon-button>
+              </div>
+            </template>
 
             <div class="content">
               <div class="component">
@@ -97,24 +134,50 @@
                 <div class="question">
                   <template
                       is="dom-if"
-                      if="[[_isMultipleChoice(component)]]">
-                    <question-edit-multiple-choice
-                        question-component
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-edit-multiple-choice>
+                      if="[[_notEquals(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-view-multiple-choice question-component
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component)]]">
+                      <question-view-multiple-response question-component
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-response>
+                    </template>
                   </template>
 
                   <template
                       is="dom-if"
-                      if="[[_isMultipleResponse(component)]]">
-                    <question-edit-multiple-response
-                        question-component
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-edit-multiple-response>
+                      if="[[_equals(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-edit-multiple-choice question-component
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-edit-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component)]]">
+                      <question-view-multiple-response question-component
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-response>
+                    </template>
                   </template>
                 </div>
               </div>
@@ -124,10 +187,27 @@
       </iron-sorter>
 
       <div class="question-actions">
-        <paper-button raised
-            on-tap="_handleAddTap">
-          [[localize('buttonAddQuestion')]]
-        </paper-button>
+        <paper-menu-button>
+          <paper-button slot="dropdown-trigger">
+            <iron-icon icon="add"></iron-icon>
+            [[localize('buttonAddQuestion')]]
+          </paper-button>
+
+          <paper-listbox slot="dropdown-content">
+            <template
+                is="dom-repeat"
+                items="[[types]]"
+                as="type">
+              <template
+                  is="dom-if"
+                  if="[[_notEquals(type.value, 'CompositeQuestion')]]">
+                <paper-item>
+                  [[type.name]]
+                </paper-item>
+              </template>
+            </template>
+          </paper-listbox>
+        </paper-menu-button>
       </div>
     </div>
 
@@ -157,7 +237,23 @@
 
       static get properties() {
         return {
+          types: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
           question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          questionComponent: {
+            type: Boolean,
+            readOnly: false,
+            notify: true,
+            value: false
+          },
+          editingComponent: {
             type: Object,
             readOnly: false,
             notify: true
@@ -165,8 +261,12 @@
         };
       }
 
-      _getQuestionLabel(index) {
-        return (index + 1) + ')';
+      _equals(value1, value2) {
+        return value1 === value2;
+      }
+
+      _notEquals(value1, value2) {
+        return value1 !== value2;
       }
 
       _isMultipleChoice(component) {
@@ -177,15 +277,23 @@
         return component.question.type === 'MultipleResponse';
       }
 
-      _handleOrderChanged2(event) {
+      _handleOrderChanged(event) {
+
+      }
+
+      _handleEditTap(event) {
+        if (this.editingComponent === null) {
+
+        }
+
+        this.editingComponent = event.model.component;
+      }
+
+      _handleDeleteTap(event) {
 
       }
 
       _handleAddTap(event) {
-
-      }
-
-      _handleRemoveTap(event) {
 
       }
     }

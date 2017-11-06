@@ -4,5 +4,7 @@ import com.hsystems.lms.repository.entity.Component;
 
 public interface ComponentBean extends Component {
 
+  String getResourceId();
+
   String getParentId();
 }

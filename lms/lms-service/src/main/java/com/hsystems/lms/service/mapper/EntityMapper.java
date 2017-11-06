@@ -22,7 +22,7 @@ public class EntityMapper extends Mapper {
   protected <T, S> Class<?> getSubType(T source, Class<S> type) {
     String packageName = type.getPackage().getName();
     String typeName = source.getClass().getSimpleName();
-    typeName = String.format("%s.%", packageName,
+    typeName = String.format("%s.%s", packageName,
         typeName.replace("Model", ""));
 
     try {

@@ -1,0 +1,80 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/paper-radio-button/paper-radio-button.html">
+
+<dom-module id="question-view-multiple-choice">
+  <template>
+    <style>
+      .question-body {
+        padding: 10px 0;
+      }
+
+      .question-options {
+        margin-top: 8px;
+      }
+
+      .question-options .question-option {
+        @apply --layout-horizontal;
+        padding: 4px 0;
+      }
+
+      .question-options .question-option paper-radio-button {
+        padding: 8px 4px;
+      }
+
+      .question-options .question-option .option-body {
+        padding: 6px 0 10px 0;
+      }
+    </style>
+
+    <div class="question-body">
+      [[question.body]]
+    </div>
+
+    <div class="question-options">
+      <template
+          is="dom-repeat"
+          items="[[question.options]]"
+          as="option">
+        <div class="question-option">
+          <paper-radio-button disabled
+              checked="{{option.correct}}">
+          </paper-radio-button>
+
+          <div class="option-body">
+            [[option.body]]
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    const QuestionViewMultipleChoiceBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionViewMultipleChoice extends QuestionViewMultipleChoiceBase {
+      static get is() {
+        return 'question-view-multiple-choice';
+      }
+
+      static get properties() {
+        return {
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          questionComponent: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(QuestionViewMultipleChoice.is, QuestionViewMultipleChoice);
+  </script>
+</dom-module>

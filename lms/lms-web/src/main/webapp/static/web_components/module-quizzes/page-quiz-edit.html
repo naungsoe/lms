@@ -2,22 +2,55 @@
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
 <link rel="import" href="../../web_components/page-header-panel.html">
 <link rel="import" href="../../web_components/module-quizzes/page-quiz-edit-toolbar.html">
+<link rel="import" href="../../web_components/module-quizzes/quiz-edit-attributes.html">
 
 <dom-module id="page-quiz-edit">
   <template>
     <style>
-      .quiz {
-        border: 1px solid var(--border-color);
-        margin: 8px 0 16px 0;
-        padding: 16px;
+      .page-content {
+        padding: 8px 0;
       }
 
-      .quiz .quiz-content .title {
+      .page-content .quiz {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .quiz .quiz-questions,
+      .page-content .quiz .quiz-attributes {
+        margin-top: 32px;
+      }
+
+      .page-content .quiz .quiz-content .title,
+      .page-content .quiz .quiz-questions .title,
+      .page-content .quiz .quiz-attributes .title {
         @apply --paper-font-subhead;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        padding: 0 16px;
+      }
+
+      .page-content .quiz .quiz-content .quiz-title,
+      .page-content .quiz .quiz-content .quiz-instructions {
+        padding: 0 16px;
+      }
+
+      .page-content .quiz .quiz-questions .quiz-actions {
+        margin-top: 12px;
+        padding: 0 16px;
+      }
+
+      .page-content .quiz .quiz-questions .quiz-actions paper-button {
+        color: var(--primary-color);
+        margin: 0;
       }
     </style>
 
@@ -52,22 +85,76 @@
         </page-quiz-edit-toolbar>
       </div>
 
-      <div class="quiz">
-        <section class="quiz-content">
-          <div class="quiz-title">
-            <paper-input
-                label="[[localize('labelTitle')]]"
-                value="[[quiz.quiz.title]]">
-            </paper-input>
-          </div>
+      <div class="page-content">
+        <div class="quiz">
+          <section class="quiz-content">
+            <div class="title">
+              [[localize('labelQuiz')]]
+            </div>
 
-          <div class="quiz-instructions">
-            <paper-text-editor
-                label="[[localize('labelInstructions')]]"
-                content="[[quiz.quiz.instructions]]">
-            </paper-text-editor>
-          </div>
-        </section>
+            <div class="quiz-title">
+              <paper-input
+                  label="[[localize('labelTitle')]]"
+                  value="[[quiz.quiz.title]]">
+              </paper-input>
+            </div>
+
+            <div class="quiz-instructions">
+              <paper-text-editor
+                  label="[[localize('labelInstructions')]]"
+                  content="[[quiz.quiz.instructions]]">
+              </paper-text-editor>
+            </div>
+          </section>
+
+          <section class="quiz-questions">
+            <div class="title">
+              [[localize('labelQuizQuestions')]]
+            </div>
+
+            <div class="quiz-actions">
+              <paper-button slot="dropdown-trigger">
+                <iron-icon icon="add"></iron-icon>
+                [[localize('buttonAddSection')]]
+              </paper-button>
+
+              <paper-menu-button>
+                <paper-button slot="dropdown-trigger">
+                  <iron-icon icon="add"></iron-icon>
+                  [[localize('buttonAddQuestion')]]
+                </paper-button>
+
+                <paper-listbox slot="dropdown-content">
+                  <template
+                      is="dom-repeat"
+                      items="[[types]]"
+                      as="type">
+                    <template
+                        is="dom-if"
+                        if="[[_notEquals(type.value, 'CompositeQuestion')]]">
+                      <paper-item>
+                        [[type.name]]
+                      </paper-item>
+                    </template>
+                  </template>
+                </paper-listbox>
+              </paper-menu-button>
+            </div>
+          </section>
+
+          <section class="quiz-attributes">
+            <div class="title">
+              [[localize('labelQuizAttributes')]]
+            </div>
+
+            <quiz-edit-attributes
+                filter-options="[[filterOptions]]"
+                quiz="{{quiz}}"
+                language="[[language]]"
+                resources="[[resources]]">
+            </quiz-edit-attributes>
+          </section>
+        </div>
       </div>
     </page-header-panel>
   </template>

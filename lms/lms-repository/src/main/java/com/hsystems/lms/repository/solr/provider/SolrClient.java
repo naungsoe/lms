@@ -97,7 +97,7 @@ public class SolrClient {
       );
     } catch (SolrServerException | InstantiationException
         | IllegalAccessException | InvocationTargetException
-        | NoSuchFieldException e) {
+        | NoSuchFieldException | ClassNotFoundException e) {
 
       throw new IOException(
           "error querying entities", e);
@@ -136,7 +136,7 @@ public class SolrClient {
           String packageName = Entity.class.getPackage().getName();
 
           try {
-            Map<String, Class> typeMap
+            Map<String, Class<?>> typeMap
                 = ReflectionUtils.getClasses(packageName);
             entityMapper = new EntityMapper(typeMap);
             instance = entityMapper;
@@ -183,7 +183,8 @@ public class SolrClient {
   protected <T extends Entity> List<T> getEntities(
       SolrDocumentList documents, Class<T> type)
       throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
+      InvocationTargetException, NoSuchFieldException,
+      ClassNotFoundException {
 
     if (CollectionUtils.isEmpty(documents)) {
       Collections.emptyList();

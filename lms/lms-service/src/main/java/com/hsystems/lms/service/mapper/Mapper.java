@@ -4,7 +4,6 @@ import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,7 +24,7 @@ public abstract class Mapper {
   private static final String PATTERN_NAME_TOKEN = "([A-Za-z][a-z]+)";
 
   public <T, S, U extends S> S map(T source, Class<S> type) {
-    S instance = isInstantiable(type)
+    S instance = ReflectionUtils.isInstantiable(type)
         ? (S) ReflectionUtils.getInstance(type)
         : (U) ReflectionUtils.getInstance(getSubType(source, type));
     List<Field> fields = ReflectionUtils.getFields(instance.getClass());
@@ -51,7 +50,7 @@ public abstract class Mapper {
       }
     }
 
-    if (!isInstantiable(type)) {
+    if (!ReflectionUtils.isInstantiable(type)) {
       boolean fieldTypeFound = fields.stream()
           .anyMatch(field -> field.getName().equals(FIELD_TYPE));
 
@@ -135,12 +134,6 @@ public abstract class Mapper {
         .filter(field -> field.getName()
             .equals(StringUtils.uncapitalize(fieldName)))
         .findFirst();
-  }
-
-  protected <T> boolean isInstantiable(Class<T> type) {
-    int modifiers = type.getModifiers();
-    return !Modifier.isInterface(modifiers)
-        && !Modifier.isAbstract(modifiers);
   }
 
   protected abstract <T, S> Class<?> getSubType(T source, Class<S> type);

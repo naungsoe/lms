@@ -8,10 +8,18 @@ public class QuestionComponentBean<T extends Question>
     extends QuestionComponent implements ComponentBean {
 
   @IndexField
+  private String resourceId;
+
+  @IndexField
   private String parentId;
 
+  QuestionComponentBean() {
+    super("", null, 0, 0);
+  }
+
   public QuestionComponentBean(
-      QuestionComponent component,
+      QuestionComponent<T> component,
+      String resourceId,
       String parentId) {
 
     super(
@@ -20,7 +28,13 @@ public class QuestionComponentBean<T extends Question>
         component.getScore(),
         component.getOrder()
     );
+    this.resourceId = resourceId;
     this.parentId = parentId;
+  }
+
+  @Override
+  public String getResourceId() {
+    return resourceId;
   }
 
   @Override

@@ -24,6 +24,16 @@ public class ModelMapper extends Mapper {
   @Override
   protected <T, S> Class<?> getSubType(T source, Class<S> type) {
     String packageName = type.getPackage().getName();
+    String sourcePackageName = source.getClass().getPackage().getName();
+
+    if (packageName.endsWith("model")
+        && !sourcePackageName.endsWith("entity")) {
+
+      int startIndex = sourcePackageName.lastIndexOf('.');
+      packageName = String.format("%s%s", packageName,
+          sourcePackageName.substring(startIndex));
+    }
+
     String typeName = source.getClass().getSimpleName();
     typeName = String.format("%s.%sModel", packageName, typeName);
 

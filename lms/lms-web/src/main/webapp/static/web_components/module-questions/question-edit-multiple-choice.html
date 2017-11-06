@@ -10,10 +10,15 @@
 <dom-module id="question-edit-multiple-choice">
   <template>
     <style>
+      :host(:not([question-component])) {
+        display: block;
+        padding: 0 16px;
+      }
+
       .question-options,
       .question-hint,
       .question-explanation {
-        margin-top: 16px;
+        margin-top: 8px;
       }
 
       .question-options .question-option {
@@ -51,16 +56,34 @@
         background-color: var(--secondary-background-color);
       }
 
-      .option-actions {
+      .question-options .option-actions {
         margin-top: 12px;
+      }
+
+      .question-options .option-actions paper-button {
+        color: var(--primary-color);
+        margin: 0;
       }
     </style>
 
     <div class="question-body">
-      <paper-text-editor
-          label="[[localize('labelQuestion')]]"
-          content="[[question.body]]">
-      </paper-text-editor>
+      <template
+          is="dom-if"
+          if="[[!questionComponent]]">
+        <paper-text-editor
+            label="[[localize('labelQuestion')]]"
+            content="[[question.body]]">
+        </paper-text-editor>
+      </template>
+
+      <template
+          is="dom-if"
+          if="[[questionComponent]]">
+        <paper-text-editor
+            no-label-float
+            content="[[question.body]]">
+        </paper-text-editor>
+      </template>
     </div>
 
     <div class="question-options">
@@ -98,8 +121,9 @@
       </iron-sorter>
 
       <div class="option-actions">
-        <paper-button raised
+        <paper-button
             on-tap="_handleAddTap">
+          <iron-icon icon="add"></iron-icon>
           [[localize('buttonAddOption')]]
         </paper-button>
       </div>
@@ -147,7 +171,8 @@
           questionComponent: {
             type: Boolean,
             readOnly: false,
-            notify: true
+            notify: true,
+            value: false
           }
         };
       }

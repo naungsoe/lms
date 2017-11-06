@@ -1,6 +1,7 @@
 {
   "en_US": {
     "titlePage": "Quizzes",
+    "labelQuiz": "Quiz",
     "labelAllLevels": "All grades",
     "labelLevel": "Grade",
     "labelAllSubjects": "All subjects",
@@ -9,11 +10,15 @@
     "labelOwnedByMe": "Owned by me",
     "labelNotOwnerByMe": "Owned by others",
     "labelFetchingQuizzes": "Fetching quizzes",
-    "labelQuiz": "quiz",
-    "labelQuizzes": "quizzes",
+    "labelQuizFound": "{numFound} quiz",
+    "labelQuizzesFound": "{numFound} quizzes",
     "labelTitle": "Title",
     "labelInstructions": "Instructions",
+    "labelQuizQuestions": "Questions",
+    "labelQuizAttributes": "Attributes",
     "buttonResetFilter": "Reset",
-    "buttonApplyFilter": "Apply"
+    "buttonApplyFilter": "Apply",
+    "buttonAddSection": "Add section",
+    "buttonAddQuestion": "Add question"
   }
 }

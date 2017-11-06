@@ -9,10 +9,6 @@
 <dom-module id="page-quizzes">
   <template>
     <style>
-      quiz-list {
-        margin: 16px 0;
-      }
-
       paper-fab {
         --paper-fab-background: var(--primary-color);
         --paper-fab-keyboard-focus-background: var(--primary-color);
@@ -48,19 +44,21 @@
         </page-quizzes-toolbar>
       </div>
 
-      <quiz-list
-          rest-url="[[restUrl]]"
-          rest-params="[[params]]"
-          num-found="{{numFound}}"
-          language="[[language]]"
-          resources="[[resources]]"
-          on-quiz-selected="_handleQuizSelected">
-      </quiz-list>
+      <div class="page-content">
+        <quiz-list
+            rest-url="[[restUrl]]"
+            rest-params="[[params]]"
+            num-found="{{numFound}}"
+            language="[[language]]"
+            resources="[[resources]]"
+            on-quiz-selected="_handleQuizSelected">
+        </quiz-list>
 
-      <paper-fab
-          icon="add"
-          on-tap="_handleCreateTap">
-      </paper-fab>
+        <paper-fab
+            icon="add"
+            on-tap="_handleCreateTap">
+        </paper-fab>
+      </div>
     </page-header-panel>
   </template>
 
@@ -150,10 +148,10 @@
       }
 
       _updateToolbarTitle(numFound) {
-        let label = (numFound > 1)
-          ? this.localize('labelQuizzes')
-          : this.localize('labelQuiz');
-        this.toolbarTitle = numFound + ' ' + label;
+        let toolbarTitle = (numFound > 1)
+          ? this.localize('labelQuizzesFound', 'numFound', numFound)
+          : this.localize('labelQuizFound', 'numFound', numFound);
+        this.toolbarTitle = toolbarTitle;
       }
 
       _handleQuizSelected(event) {

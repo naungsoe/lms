@@ -4,7 +4,7 @@
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
 
-<dom-module id="question-edit-attributes">
+<dom-module id="quiz-edit-attributes">
   <template>
     <style>
       :host {
@@ -12,22 +12,22 @@
         padding: 0 16px;
       }
 
-      .question-attribute:not(.first) {
+      .quiz-attribute:not(.first) {
         margin-top: 8px;
       }
 
-      .question-attribute label {
+      .quiz-attribute label {
         display: block;
         padding: 8px 0;
       }
 
-      .question-attribute paper-checkbox {
+      .quiz-attribute paper-checkbox {
         min-width: 160px;
         padding: 8px;
       }
     </style>
 
-    <div class="question-attribute first">
+    <div class="quiz-attribute first">
       <label>
         [[localize('labelLevel')]]
       </label>
@@ -47,7 +47,7 @@
       </iron-selector>
     </div>
 
-    <div class="question-attribute">
+    <div class="quiz-attribute">
       <label>
         [[localize('labelSubject')]]
       </label>
@@ -67,25 +67,25 @@
       </iron-selector>
     </div>
 
-    <div class="question-attribute">
+    <div class="quiz-attribute">
       <label>
         [[localize('labelKeywords')]]
       </label>
 
       <paper-chips-input
           label="[[localize('labelKeywords')]]"
-          values="[[question.keywords]]">
+          values="[[quiz.keywords]]">
       </paper-chips-input>
     </div>
   </template>
 
   <script>
-  	const QuestionEditAttributesBase = Polymer.mixinBehaviors(
+  	const QuizEditAttributesBase = Polymer.mixinBehaviors(
       [Polymer.AppLocalizeBehavior], Polymer.Element);
 
-    class QuestionEditAttributes extends QuestionEditAttributesBase {
+    class QuizEditAttributes extends QuizEditAttributesBase {
       static get is() {
-        return 'question-edit-attributes';
+        return 'quiz-edit-attributes';
       }
 
       static get properties() {
@@ -95,7 +95,7 @@
             readOnly: false,
             notify: true
         	},
-          question: {
+          quiz: {
             type: Object,
             readOnly: false,
             notify: true
@@ -115,26 +115,26 @@
 
       static get observers() {
         return [
-          '_updateSelection(question)'
+          '_updateSelection(quiz)'
         ];
       }
 
-      _updateSelection(question) {
+      _updateSelection(quiz) {
         var selectedLevels = [];
-        question.levels.forEach(function(level) {
+        quiz.levels.forEach(function(level) {
           selectedLevels.push(level.id);
         });
 
         var selectedSubjects = [];
-        question.subjects.forEach(function(subject) {
+        quiz.subjects.forEach(function(subject) {
           selectedSubjects.push(subject.id);
         });
 
         this.selectedLevels = selectedLevels;
         this.selectedSubjects = selectedSubjects;
-        this.keywords = question.keywords;
+        this.keywords = quiz.keywords;
       }
     }
-    customElements.define(QuestionEditAttributes.is, QuestionEditAttributes);
+    customElements.define(QuizEditAttributes.is, QuizEditAttributes);
   </script>
 </dom-module>

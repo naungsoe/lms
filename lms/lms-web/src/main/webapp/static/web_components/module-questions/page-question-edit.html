@@ -11,20 +11,24 @@
 <dom-module id="page-question-edit">
   <template>
     <style>
-      .question {
-        border: 1px solid var(--border-color);
-        margin: 8px 0 16px 0;
-        padding: 16px;
+      .page-content {
+        padding: 8px 0;
       }
 
-      .question .question-attributes {
+      .page-content .question {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .question .question-attributes {
         margin-top: 32px;
       }
 
-      .question .question-content .title,
-      .question .question-attributes .title {
+      .page-content .question .question-content .title,
+      .page-content .question .question-attributes .title {
         @apply --paper-font-subhead;
-        margin-bottom: 8px;
+        margin-bottom: 4px;
+        padding: 0 16px;
       }
     </style>
 
@@ -59,63 +63,66 @@
         </page-question-edit-toolbar>
       </div>
 
-      <div class="question">
-        <section class="question-content">
-          <template
-              is="dom-if"
-              if="[[_isMultipleChoice(question)]]">
+      <div class="page-content">
+        <div class="question">
+          <section class="question-content">
+            <template
+                is="dom-if"
+                if="[[_isMultipleChoice(question)]]">
+              <div class="title">
+                [[localize('labelMultipleChoice')]]
+              </div>
+
+              <question-edit-multiple-choice
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-multiple-choice>
+            </template>
+
+            <template
+                is="dom-if"
+                if="[[_isMultipleResponse(question)]]">
+              <div class="title">
+                [[localize('labelMultipleResponse')]]
+              </div>
+
+              <question-edit-multiple-response
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-multiple-response>
+            </template>
+
+            <template
+                is="dom-if"
+                if="[[_isCompositeQuestion(question)]]">
+              <div class="title">
+                [[localize('labelCompositeQuestion')]]
+              </div>
+
+              <question-edit-composite-question
+                  types="[[filterOptions.types]]"
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-composite-question>
+            </template>
+          </section>
+
+          <section class="question-attributes">
             <div class="title">
-              [[localize('labelMultipleChoice')]]
+              [[localize('labelQuestionAttributes')]]
             </div>
 
-            <question-edit-multiple-choice
-                question="{{question.question}}"
+            <question-edit-attributes
+                filter-options="[[filterOptions]]"
+                question="{{question}}"
                 language="[[language]]"
                 resources="[[resources]]">
-            </question-edit-multiple-choice>
-          </template>
-
-          <template
-              is="dom-if"
-              if="[[_isMultipleResponse(question)]]">
-            <div class="title">
-              [[localize('labelMultipleResponse')]]
-            </div>
-
-            <question-edit-multiple-response
-                question="{{question.question}}"
-                language="[[language]]"
-                resources="[[resources]]">
-            </question-edit-multiple-response>
-          </template>
-
-          <template
-              is="dom-if"
-              if="[[_isCompositeQuestion(question)]]">
-            <div class="title">
-              [[localize('labelCompositeQuestion')]]
-            </div>
-
-            <question-edit-composite-question
-                question="{{question.question}}"
-                language="[[language]]"
-                resources="[[resources]]">
-            </question-edit-composite-question>
-          </template>
-        </section>
-
-        <section class="question-attributes">
-          <div class="title">
-            Attributes
-          </div>
-
-          <question-edit-attributes
-              filter-options="[[filterOptions]]"
-              question="{{question}}"
-              language="[[language]]"
-              resources="[[resources]]">
-          </question-edit-attributes>
-        </section>
+            </question-edit-attributes>
+          </section>
+        </div>
       </div>
     </page-header-panel>
   </template>

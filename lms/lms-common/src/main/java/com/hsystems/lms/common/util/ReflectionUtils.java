@@ -23,7 +23,13 @@ import java.util.jar.JarInputStream;
  */
 public final class ReflectionUtils {
 
-  public static Map<String, Class> getClasses(String packageName)
+  public static <T> boolean isInstantiable(Class<T> type) {
+    int modifiers = type.getModifiers();
+    return !Modifier.isInterface(modifiers)
+        && !Modifier.isAbstract(modifiers);
+  }
+
+  public static Map<String, Class<?>> getClasses(String packageName)
       throws ClassNotFoundException, IOException {
 
     String packagePath = packageName.replace('.', '/');
@@ -32,7 +38,7 @@ public final class ReflectionUtils {
     String jarPath = resourcePath.substring(5, resourcePath.indexOf('!'));
     InputStream inputStream = new FileInputStream(jarPath);
     JarInputStream jarFile = new JarInputStream(inputStream);
-    Map<String, Class> classMap = new HashMap<>();
+    Map<String, Class<?>> classMap = new HashMap<>();
 
     while (true) {
       JarEntry jarEntry = jarFile.getNextJarEntry();

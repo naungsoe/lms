@@ -155,8 +155,10 @@ public class QueryMapper {
   private <T> void addMainFilterQuery(
       SolrQuery solrQuery, List<Criterion> criteria, Class<T> type) {
 
+    String typeName = type.getSimpleName();
+    typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
     String typeNameFilter = String.format(FORMAT_FILTER,
-        Constants.FIELD_TYPE_NAME, type.getSimpleName());
+        Constants.FIELD_TYPE_NAME, typeName);
     solrQuery.addFilterQuery(typeNameFilter);
 
     List<Criterion> queryCriteria = new ArrayList<>();
@@ -187,8 +189,10 @@ public class QueryMapper {
   private <T> void addBlockJoinFilterQuery(
       SolrQuery solrQuery, List<Criterion> criteria, Class<T> type) {
 
+    String typeName = type.getSimpleName();
+    typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
     String typeNameFilter = String.format(FORMAT_BLOCK_JOIN,
-        Constants.FIELD_TYPE_NAME, type.getSimpleName());
+        Constants.FIELD_TYPE_NAME, typeName);
 
     List<Criterion> queryCriteria = new ArrayList<>();
     criteria.stream().filter(
@@ -258,8 +262,10 @@ public class QueryMapper {
     String childFieldFilter = CollectionUtils.isEmpty(childFieldNames)
         ? "" : String.format(FORMAT_FILTER, Constants.MEMBER_FIELD_NAME,
         StringUtils.join(childFieldNames, SEPARATOR_OR));
+    String typeName = type.getSimpleName();
+    typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
     String typeNameField = String.format(FORMAT_TRANSFORM,
-        Constants.FIELD_TYPE_NAME, type.getSimpleName(),
+        Constants.FIELD_TYPE_NAME, typeName,
         childFieldFilter, Integer.MAX_VALUE);
     solrQuery.addField(typeNameField);
   }

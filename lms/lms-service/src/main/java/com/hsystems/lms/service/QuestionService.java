@@ -13,12 +13,15 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.model.question.ChoiceOptionModel;
+import com.hsystems.lms.service.model.question.CompositeQuestionModel;
 import com.hsystems.lms.service.model.question.MultipleChoiceModel;
 import com.hsystems.lms.service.model.question.MultipleChoiceResourceModel;
+import com.hsystems.lms.service.model.question.QuestionComponentModel;
 import com.hsystems.lms.service.model.question.QuestionModel;
 import com.hsystems.lms.service.model.question.QuestionResourceModel;
 

@@ -3,6 +3,7 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
@@ -10,7 +11,14 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
+import com.hsystems.lms.repository.beans.ComponentBean;
+import com.hsystems.lms.repository.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.beans.SectionComponentBean;
+import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;
+import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.quiz.QuizResourceModel;
 
@@ -129,6 +137,10 @@ public class QuizService extends AbstractService {
 
     if (resourceOptional.isPresent()) {
       QuizResource quizResource = resourceOptional.get();
+      Quiz quiz = quizResource.getQuiz();
+      List<Component> sectionComponents = getSectionComponents(id);
+      quiz.addComponent(sectionComponents.toArray(new Component[0]));
+
       Configuration configuration = Configuration.create(principal);
       QuizResourceModel resourceModel
           = getQuizResourceModel(quizResource, configuration);
@@ -136,5 +148,68 @@ public class QuizService extends AbstractService {
     }
 
     return Optional.empty();
+  }
+
+  private List<Component> getSectionComponents(String id)
+      throws IOException {
+
+    Query query = Query.create();
+    query.addCriterion(Criterion.createEqual("resourceId", id));
+    QueryResult<ComponentBean> queryResult
+        = indexRepository.findAllBy(query, ComponentBean.class);
+    List<ComponentBean> componentBeans = queryResult.getItems();
+
+    if (CollectionUtils.isEmpty(componentBeans)) {
+      return Collections.emptyList();
+    }
+
+    List<Component> sectionComponents = new ArrayList<>();
+
+    componentBeans.forEach(componentBean -> {
+      if (componentBean instanceof SectionComponentBean) {
+        SectionComponentBean sectionComponentBean
+            = (SectionComponentBean) componentBean;
+        String sectionId = sectionComponentBean.getId();
+        List<Component> questionComponents
+            = getQuestionComponents(componentBeans, sectionId);
+
+        SectionComponent sectionComponent = new SectionComponent(
+            sectionComponentBean.getId(),
+            sectionComponentBean.getTitle(),
+            sectionComponentBean.getInstructions(),
+            sectionComponentBean.getOrder(),
+            questionComponents
+        );
+        sectionComponents.add(sectionComponent);
+      }
+    });
+
+    return sectionComponents;
+  }
+
+  private List<Component> getQuestionComponents(
+      List<ComponentBean> componentBeans, String parentId) {
+
+    List<Component> questionComponents = new ArrayList<>();
+
+    componentBeans.forEach(componentBean -> {
+      if (componentBean instanceof QuestionComponentBean) {
+        QuestionComponentBean questionComponentBean
+            = (QuestionComponentBean) componentBean;
+        String parentBeanId = questionComponentBean.getParentId();
+
+        if (parentBeanId.equals(parentId)) {
+          QuestionComponent questionComponent = new QuestionComponent(
+              questionComponentBean.getId(),
+              questionComponentBean.getQuestion(),
+              questionComponentBean.getScore(),
+              questionComponentBean.getOrder()
+          );
+          questionComponents.add(questionComponent);
+        }
+      }
+    });
+
+    return questionComponents;
   }
 }

@@ -11,10 +11,12 @@
     "labelNotOwnerByMe": "Owned by others",
     "labelAllQuestionTypes": "All question types",
     "labelFetchingQuestions": "Fetching questions",
-    "labelQuestion": "question",
-    "labelQuestions": "questions",
+    "labelQuestionFound": "{numFound} question",
+    "labelQuestionsFound": "{numFound} questions",
+    "labelQuestionAttributes": "Attributes",
     "buttonResetFilter": "Reset",
     "buttonApplyFilter": "Apply",
-    "buttonAddOption": "Add option"
+    "buttonAddOption": "Add option",
+    "buttonAddQuestion": "Add question"
   }
 }

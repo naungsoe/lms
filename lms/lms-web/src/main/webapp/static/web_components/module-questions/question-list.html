@@ -7,20 +7,20 @@
 <dom-module id="question-list">
   <template>
     <style>
-      .question {
+      .list-item .question {
         @apply --layout-vertical;
         background-color: var(--primary-background-color);
         border: 1px solid var(--border-color);
+        margin: 8px 0 4px 0;
         padding: 16px;
-        margin: 8px 0;
       }
 
-      .question .question-type {
+      .list-item .question .question-type {
         @apply --paper-font-subhead;
         margin-bottom: 8px;
       }
 
-      .question .component {
+      .list-item .question .component {
         padding: 8px 0 0 0;
       }
     </style>

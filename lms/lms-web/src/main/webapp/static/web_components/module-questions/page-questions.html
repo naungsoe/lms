@@ -9,10 +9,6 @@
 <dom-module id="page-questions">
   <template>
     <style>
-      question-list {
-        margin: 16px 0;
-      }
-
       paper-fab {
         --paper-fab-background: var(--primary-color);
         --paper-fab-keyboard-focus-background: var(--primary-color);
@@ -49,20 +45,22 @@
         </page-questions-toolbar>
       </div>
 
-      <question-list
-          rest-url="[[restUrl]]"
-          rest-params="[[params]]"
-          types="[[filterOptions.types]]"
-          num-found="{{numFound}}"
-          language="[[language]]"
-          resources="[[resources]]"
-          on-question-selected="_handleQuestionSelected">
-      </question-list>
+      <div class="page-content">
+        <question-list
+            rest-url="[[restUrl]]"
+            rest-params="[[params]]"
+            types="[[filterOptions.types]]"
+            num-found="{{numFound}}"
+            language="[[language]]"
+            resources="[[resources]]"
+            on-question-selected="_handleQuestionSelected">
+        </question-list>
 
-      <paper-fab
-          icon="add"
-          on-tap="_handleCreateTap">
-      </paper-fab>
+        <paper-fab
+            icon="add"
+            on-tap="_handleCreateTap">
+        </paper-fab>
+      </div>
     </page-header-panel>
   </template>
 
@@ -160,10 +158,10 @@
       }
 
       _updateToolbarTitle(numFound) {
-        let label = (numFound > 1)
-          ? this.localize('labelQuestions')
-          : this.localize('labelQuestion');
-        this.toolbarTitle = numFound + ' ' + label;
+        let toolbarTitle = (numFound > 1)
+          ? this.localize('labelQuestionsFound', 'numFound', numFound)
+          : this.localize('labelQuestionFound', 'numFound', numFound);
+        this.toolbarTitle = toolbarTitle;
       }
 
       _handleQuestionSelected(event) {

@@ -160,6 +160,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"resourceId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
 }' http://localhost:8983/solr/components/schema
 

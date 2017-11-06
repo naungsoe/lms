@@ -9,10 +9,18 @@ public class SectionComponentBean
     extends SectionComponent implements ComponentBean {
 
   @IndexField
+  private String resourceId;
+
+  @IndexField
   private String parentId;
+
+  SectionComponentBean() {
+    super("", "", "", 0, Collections.emptyList());
+  }
 
   public SectionComponentBean(
       SectionComponent component,
+      String resourceId,
       String parentId) {
 
     super(
@@ -22,7 +30,13 @@ public class SectionComponentBean
         component.getOrder(),
         Collections.emptyList()
     );
+    this.resourceId = resourceId;
     this.parentId = parentId;
+  }
+
+  @Override
+  public String getResourceId() {
+    return resourceId;
   }
 
   @Override

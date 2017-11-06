@@ -24,17 +24,20 @@ import java.util.Optional;
  */
 public class EntityMapper {
 
-  private final Map<String, Class> typeMap;
+  private final Map<String, Class<?>> typeMap;
 
-  public EntityMapper(Map<String, Class> typeMap) {
+  public EntityMapper(Map<String, Class<?>> typeMap) {
     this.typeMap = typeMap;
   }
 
   public <T> T map(SolrDocument document, Class<T> type)
       throws InstantiationException, IllegalAccessException,
-      InvocationTargetException, NoSuchFieldException {
+      InvocationTargetException, NoSuchFieldException,
+      ClassNotFoundException {
 
-    T entity = (T) ReflectionUtils.getInstance(type);
+    T entity = ReflectionUtils.isInstantiable(type)
+        ? (T) ReflectionUtils.getInstance(type)
+        : (T) ReflectionUtils.getInstance(getSubType(document, type));
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
     String id = document.getFieldValue(Constants.FIELD_ID).toString();
 
@@ -101,6 +104,23 @@ public class EntityMapper {
     }
 
     return entity;
+  }
+
+  protected <T> Class<?> getSubType(
+      SolrDocument document, Class<T> type) {
+
+    String packageName = type.getPackage().getName();
+    String typeName = document.getFieldValue(
+        Constants.FIELD_TYPE_NAME).toString();
+    typeName = String.format("%s.%s", packageName, typeName);
+
+    try {
+      return Class.forName(typeName);
+
+    } catch (ClassNotFoundException e) {
+      throw new IllegalArgumentException(
+          "error retrieving sub-type", e);
+    }
   }
 
   protected String getFieldName(Field field) {

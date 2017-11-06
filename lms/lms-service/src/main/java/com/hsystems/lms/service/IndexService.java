@@ -184,7 +184,7 @@ public class IndexService extends AbstractService {
         String resourceId = quizResource.getId();
         List<Component> components
             = componentRepository.findAllBy(resourceId);
-        indexComponents(components, resourceId);
+        indexComponents(components, resourceId, resourceId);
       }
 
       indexRepository.save(quizResources);
@@ -195,7 +195,8 @@ public class IndexService extends AbstractService {
     } while (!isLastPage(numFound));
   }
 
-  private void indexComponents(List<Component> components, String parentId)
+  private void indexComponents(
+      List<Component> components, String resourceId, String parentId)
       throws IOException {
 
     List<ComponentBean> componentBeans = new ArrayList<>();
@@ -205,18 +206,20 @@ public class IndexService extends AbstractService {
         SectionComponent sectionComponent = (SectionComponent) component;
         String sectionId = sectionComponent.getId();
         SectionComponentBean sectionComponentBean
-            = new SectionComponentBean(sectionComponent, parentId);
+            = new SectionComponentBean(
+                sectionComponent, resourceId, parentId);
         componentBeans.add(sectionComponentBean);
 
         List<Component> childComponents
             = Collections.list(sectionComponent.getComponents());
-        indexComponents(childComponents, sectionId);
+        indexComponents(childComponents, resourceId, sectionId);
 
       } else if (component instanceof QuestionComponent) {
         QuestionComponent<?> questionComponent
             = (QuestionComponent<?>) component;
         QuestionComponentBean<?> questionComponentBean
-            = new QuestionComponentBean(questionComponent, parentId);
+            = new QuestionComponentBean(
+                questionComponent, resourceId, parentId);
         componentBeans.add(questionComponentBean);
       }
     }
@@ -316,7 +319,7 @@ public class IndexService extends AbstractService {
       String resourceId = lessonResource.getId();
       List<Component> components
           = componentRepository.findAllBy(resourceId);
-      indexComponents(components, resourceId);
+      indexComponents(components, resourceId, resourceId);
       indexRepository.save(lessonResource);
     }
   }
@@ -332,7 +335,7 @@ public class IndexService extends AbstractService {
       String resourceId = quizResource.getId();
       List<Component> components
           = componentRepository.findAllBy(resourceId);
-      indexComponents(components, resourceId);
+      indexComponents(components, resourceId, resourceId);
       indexRepository.save(quizResource);
     }
   }

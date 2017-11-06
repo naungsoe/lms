@@ -50,10 +50,10 @@ public class SignInServlet extends AbstractServlet {
       signInModel.setSessionId(sessionId);
       signInModel.setIpAddress(ipAddress);
 
-      if (authService.isCaptchaRequired(signInModel)) {
-        loadCaptchaAttributes(request);
-        request.setAttribute("error", "errorCredential");
-      }
+//      if (authService.isCaptchaRequired(signInModel)) {
+//        loadCaptchaAttributes(request);
+//        request.setAttribute("error", "errorCredential");
+//      }
     }
 
     request.setAttribute("account", account);
