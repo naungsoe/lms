@@ -30,7 +30,7 @@
     <repository>
       <id>in-project</id>
       <name>In Project Repo</name>
-      <url>file://${project.basedir}/libs</url>
+      <url>file://${basedir}/libs</url>
     </repository>
   </repositories>
 
