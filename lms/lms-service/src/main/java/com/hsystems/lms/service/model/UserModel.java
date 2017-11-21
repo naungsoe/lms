@@ -18,7 +18,7 @@ import java.util.List;
 public final class UserModel extends AuditableModel
     implements Principal, Serializable {
 
-  private static final long serialVersionUID = -2456428527121361705L;
+  private static final long serialVersionUID = 3127034969293821777L;
 
   private String id;
 
@@ -37,6 +37,8 @@ public final class UserModel extends AuditableModel
   private String email;
 
   private String locale;
+
+  private String timeFormat;
 
   private String dateFormat;
 
@@ -124,6 +126,11 @@ public final class UserModel extends AuditableModel
 
   public void setLocale(String locale) {
     this.locale = locale;
+  }
+
+  @Override
+  public String getTimeFormat() {
+    return timeFormat;
   }
 
   @Override

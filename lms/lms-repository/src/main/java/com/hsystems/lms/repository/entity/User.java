@@ -18,7 +18,7 @@ import java.util.List;
 public final class User
     implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = 4840917913674865805L;
+  private static final long serialVersionUID = -4602729636176647790L;
 
   @IndexField
   private String id;
@@ -52,6 +52,9 @@ public final class User
 
   @IndexField
   private String locale;
+
+  @IndexField
+  private String timeFormat;
 
   @IndexField
   private String dateFormat;
@@ -93,6 +96,7 @@ public final class User
       String mobile,
       String email,
       String locale,
+      String timeFormat,
       String dateFormat,
       String dateTimeFormat,
       List<Permission> permissions,
@@ -113,6 +117,7 @@ public final class User
     this.mobile = mobile;
     this.email = email;
     this.locale = locale;
+    this.timeFormat = timeFormat;
     this.dateFormat = dateFormat;
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
@@ -137,6 +142,7 @@ public final class User
     private String mobile;
     private String email;
     private String locale;
+    private String timeFormat;
     private String dateFormat;
     private String dateTimeFormat;
     private List<Permission> permissions;
@@ -189,6 +195,11 @@ public final class User
 
     public Builder locale(String locale) {
       this.locale = locale;
+      return this;
+    }
+
+    public Builder timeFormat(String timeFormat) {
+      this.timeFormat = timeFormat;
       return this;
     }
 
@@ -245,6 +256,7 @@ public final class User
           this.mobile,
           this.email,
           this.locale,
+          this.timeFormat,
           this.dateFormat,
           this.dateTimeFormat,
           this.permissions,
@@ -302,6 +314,10 @@ public final class User
     return locale;
   }
 
+  public String getTimeFormat() {
+    return timeFormat;
+  }
+
   public String getDateFormat() {
     return dateFormat;
   }
@@ -346,11 +362,11 @@ public final class User
     return String.format(
         "User{id=%s, firstName=%s, lastName=%s, account=%s, password=%s, "
             + "salt=%s, dateOfBirth=%s, gender=%s, mobile=%s, email=%s, "
-            + "locale=%s, dateFormat=%s, dateTimeFormat=%s, "
+            + "locale=%s, dateFormat=%s, timeFormat=%s, dateTimeFormat=%s, "
             + "permissions=%s, school=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, firstName, lastName, account, password, salt, dateOfBirth,
-        gender, mobile, email, locale, dateFormat, dateTimeFormat,
+        gender, mobile, email, locale, timeFormat, dateFormat, dateTimeFormat,
         StringUtils.join(permissions, ","), school, createdBy, createdDateTime,
         modifiedBy, modifiedDateTime);
   }

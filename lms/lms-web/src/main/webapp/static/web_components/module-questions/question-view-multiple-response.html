@@ -40,7 +40,7 @@
           as="option">
         <div class="question-option">
           <paper-checkbox disabled
-              checked="{{option.correct}}">
+              checked="[[option.correct]]">
           </paper-checkbox>
 
           <div class="option-body">
@@ -67,10 +67,11 @@
             readOnly: false,
             notify: true
           },
-          questionComponent: {
+          standalone: {
             type: Boolean,
             readOnly: false,
-            notify: true
+            notify: true,
+            value: false
           }
         };
       }

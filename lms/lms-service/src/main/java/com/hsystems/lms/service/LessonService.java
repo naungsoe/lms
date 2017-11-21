@@ -16,7 +16,6 @@ import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.lesson.LessonResourceModel;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -83,22 +82,6 @@ public class LessonService extends AbstractService {
     for (LessonResource lessonResource : lessonResources) {
       LessonResourceModel resourceModel
           = getLessonResourceModel(lessonResource, configuration);
-      LocalDateTime createdDateTime = lessonResource.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = lessonResource.getModifiedDateTime();
-      String dateFormat = configuration.getDateFormat();
-
-      if (DateTimeUtils.isToday(createdDateTime)) {
-        resourceModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
-      }
-
-      if (DateTimeUtils.isNotEmpty(modifiedDateTime)
-          && DateTimeUtils.isToday(modifiedDateTime)) {
-
-        resourceModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
-      }
-
       resourceModels.add(resourceModel);
     }
 
@@ -110,16 +93,10 @@ public class LessonService extends AbstractService {
 
     LessonResourceModel resourceModel = getModel(lessonResource,
         LessonResourceModel.class, configuration);
-    String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = lessonResource.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = lessonResource.getModifiedDateTime();
+    populatedCreatedDateTime(resourceModel, lessonResource, configuration);
 
-    resourceModel.setCreatedDate(
-        DateTimeUtils.toString(createdDateTime, dateFormat));
-
-    if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      resourceModel.setModifiedDate(DateTimeUtils.toString(
-          lessonResource.getModifiedDateTime(), dateFormat));
+    if (DateTimeUtils.isNotEmpty(lessonResource.getModifiedDateTime())) {
+      populatedModifiedDateTime(resourceModel, lessonResource, configuration);
     }
 
     return resourceModel;

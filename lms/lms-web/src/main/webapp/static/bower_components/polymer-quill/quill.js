@@ -7154,7 +7154,9 @@ var BaseTheme = function (_Theme) {
         return document.body.removeEventListener('click', listener);
       }
       if (_this.tooltip != null && !_this.tooltip.root.contains(e.target) && document.activeElement !== _this.tooltip.textbox && !_this.quill.hasFocus()) {
-        _this.tooltip.hide();
+        if (!quill.options.shadowRoot && quill.options.shadowRoot.activeElement !== _this.tooltip.textbox) {
+          _this.tooltip.hide();
+        }
       }
       if (_this.pickers != null) {
         var target = e.target.shadowRoot && (e.path && e.path[0]) || e.target;

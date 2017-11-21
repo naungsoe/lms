@@ -77,9 +77,4 @@ public final class MultipleResponse implements Question, Serializable {
   public void removeOption(ChoiceOption option) {
     this.options.remove(option);
   }
-
-  @Override
-  public QuestionGradingStrategy getGradingStrategy() {
-    return new MultipleResponseGradingStrategy(this);
-  }
 }

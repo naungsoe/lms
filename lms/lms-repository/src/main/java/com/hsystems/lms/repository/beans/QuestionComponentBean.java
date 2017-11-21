@@ -4,8 +4,24 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 
+import java.io.Serializable;
+
 public class QuestionComponentBean<T extends Question>
-    extends QuestionComponent implements ComponentBean {
+    implements ComponentBean, Serializable {
+
+  private static final long serialVersionUID = 3742622771669513564L;
+
+  @IndexField
+  private String id;
+
+  @IndexField
+  private T question;
+
+  @IndexField
+  private long score;
+
+  @IndexField
+  private int order;
 
   @IndexField
   private String resourceId;
@@ -14,7 +30,7 @@ public class QuestionComponentBean<T extends Question>
   private String parentId;
 
   QuestionComponentBean() {
-    super("", null, 0, 0);
+
   }
 
   public QuestionComponentBean(
@@ -22,14 +38,30 @@ public class QuestionComponentBean<T extends Question>
       String resourceId,
       String parentId) {
 
-    super(
-        component.getId(),
-        component.getQuestion(),
-        component.getScore(),
-        component.getOrder()
-    );
+    this.id = component.getId();
+    this.question = component.getQuestion();
+    this.score = component.getScore();
+    this.order = component.getOrder();
     this.resourceId = resourceId;
     this.parentId = parentId;
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  public T getQuestion() {
+    return question;
+  }
+
+  public long getScore() {
+    return score;
+  }
+
+  @Override
+  public int getOrder() {
+    return order;
   }
 
   @Override

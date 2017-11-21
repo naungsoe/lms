@@ -70,7 +70,7 @@
             readOnly: false,
             notify: true
           },
-          showing: {
+          _showing: {
             type: Boolean,
             readOnly: false,
             value: false
@@ -96,9 +96,9 @@
         if (event.target === this) {
           event.stopPropagation();
 
-        } else if (this.showing) {
+        } else if (this._showing) {
           this.removeAttribute('active');
-          this.showing = false;
+          this._showing = false;
         }
       }
 
@@ -106,7 +106,7 @@
         let root = this.shadowRoot;
         let input = root.querySelector('iron-input');
 
-        if (this.showing) {
+        if (this._showing) {
           let query = input.value;
 
           if ((query === undefined) || (query.trim() === '')) {
@@ -114,13 +114,13 @@
 
           } else {
             this.removeAttribute('active');
-            this.showing = false;
+            this._showing = false;
             this.query = this.queryFields + ':LIKE ' + query;
           }
         } else {
           input.querySelector('input').focus();
           this.setAttribute('active', '');
-          this.showing = true;
+          this._showing = true;
         }
       }
     }

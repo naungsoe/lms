@@ -1,0 +1,95 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+
+<dom-module id="quiz-view-section">
+  <template>
+    <style>
+      .section .section-title,
+      .section .section-instructions {
+        padding: 8px;
+      }
+
+      .section .section-title[empty],
+      .section .section-instructions[empty] {
+        color: var(--secondary-text-color);
+      }
+    </style>
+
+    <div class="section">
+      <div
+          class="section-title"
+          empty$="[[_emptyTitle]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyTitle]]">
+          [[section.title]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyTitle]]">
+          [[localize('labelTitle')]]
+        </template>
+      </div>
+
+      <div
+          class="section-instructions"
+          empty$="[[_emptyInstructions]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyInstructions]]">
+          [[section.instructions]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyInstructions]]">
+          [[localize('labelInstructions')]]
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const QuizViewSectionBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuizViewSection extends QuizViewSectionBase {
+      static get is() {
+        return 'quiz-view-section';
+      }
+
+      static get properties() {
+        return {
+          section: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          _emptyTitle: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          },
+          _emptyInstructions: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateSection(section)'
+        ];
+      }
+
+      _updateSection(section) {
+        this._emptyTitle = (section.title === '');
+        this._emptyInstructions = (section.instructions === '');
+      }
+    }
+    customElements.define(QuizViewSection.is, QuizViewSection);
+  </script>
+</dom-module>

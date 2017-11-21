@@ -13,6 +13,8 @@
     "labelFetchingQuestions": "Fetching questions",
     "labelQuestionFound": "{numFound} question",
     "labelQuestionsFound": "{numFound} questions",
+    "labelQuestionHint": "Hint",
+    "labelQuestionExplanation": "Explanation",
     "labelQuestionAttributes": "Attributes",
     "buttonResetFilter": "Reset",
     "buttonApplyFilter": "Apply",

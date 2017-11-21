@@ -64,6 +64,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"mobile","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"email","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"locale","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"timeFormat","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"dateFormat","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"dateTimeFormat","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"permissions","type":"strings","indexed":false,"stored":true},

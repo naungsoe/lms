@@ -11,6 +11,7 @@ import com.hsystems.lms.web.webapi.LocaleController;
 import com.hsystems.lms.web.webapi.QuestionController;
 import com.hsystems.lms.web.webapi.QuizController;
 import com.hsystems.lms.web.webapi.SchoolController;
+import com.hsystems.lms.web.webapi.UploadController;
 import com.hsystems.lms.web.webapi.UserController;
 
 /**
@@ -22,6 +23,7 @@ public class WebAPIModule extends AbstractModule {
   protected void configure() {
     bind(LocaleController.class).in(Singleton.class);
     bind(FilterController.class).in(Singleton.class);
+    bind(UploadController.class).in(Singleton.class);
     bind(AccountController.class).in(Singleton.class);
     bind(SchoolController.class).in(Singleton.class);
     bind(UserController.class).in(Singleton.class);

@@ -13,20 +13,16 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuestionRepository;
-import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.service.model.question.ChoiceOptionModel;
-import com.hsystems.lms.service.model.question.CompositeQuestionModel;
 import com.hsystems.lms.service.model.question.MultipleChoiceModel;
 import com.hsystems.lms.service.model.question.MultipleChoiceResourceModel;
-import com.hsystems.lms.service.model.question.QuestionComponentModel;
 import com.hsystems.lms.service.model.question.QuestionModel;
 import com.hsystems.lms.service.model.question.QuestionResourceModel;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -95,22 +91,6 @@ public class QuestionService extends AbstractService {
     for (QuestionResource questionResource : questionResources) {
       QuestionResourceModel resourceModel
           = getQuestionResourceModel(questionResource, configuration);
-      LocalDateTime createdDateTime = questionResource.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = questionResource.getModifiedDateTime();
-      String dateFormat = configuration.getDateFormat();
-
-      if (DateTimeUtils.isToday(createdDateTime)) {
-        resourceModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
-      }
-
-      if (DateTimeUtils.isNotEmpty(modifiedDateTime)
-          && DateTimeUtils.isToday(modifiedDateTime)) {
-
-        resourceModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
-      }
-
       resourceModels.add(resourceModel);
     }
 
@@ -122,16 +102,10 @@ public class QuestionService extends AbstractService {
 
     QuestionResourceModel resourceModel = getModel(questionResource,
         QuestionResourceModel.class, configuration);
-    String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = questionResource.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = questionResource.getModifiedDateTime();
+    populatedCreatedDateTime(resourceModel, questionResource, configuration);
 
-    resourceModel.setCreatedDate(
-        DateTimeUtils.toString(createdDateTime, dateFormat));
-
-    if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      resourceModel.setModifiedDate(DateTimeUtils.toString(
-          questionResource.getModifiedDateTime(), dateFormat));
+    if (DateTimeUtils.isNotEmpty(questionResource.getModifiedDateTime())) {
+      populatedModifiedDateTime(resourceModel, questionResource, configuration);
     }
 
     return resourceModel;

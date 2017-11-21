@@ -1,7 +1,9 @@
 package com.hsystems.lms.common.util;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -12,10 +14,30 @@ import java.util.Date;
  */
 public final class DateTimeUtils {
 
-  private static final String DEFAULT_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  private static final String TIME_FORMAT = "HH:mm:ss.SSS";
+  private static final String DATE_FORMAT = "yyyy-MM-dd";
+  private static final String DATETIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+
+  public static String toString(LocalTime time) {
+    return toString(time, TIME_FORMAT);
+  }
+
+  public static String toString(LocalTime time, String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+    return time.format(formatter);
+  }
+
+  public static String toString(LocalDate date) {
+    return toString(date, DATE_FORMAT);
+  }
+
+  public static String toString(LocalDate date, String format) {
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
+    return date.format(formatter);
+  }
 
   public static String toString(LocalDateTime dateTime) {
-    return toString(dateTime, DEFAULT_FORMAT);
+    return toString(dateTime, DATETIME_FORMAT);
   }
 
   public static String toString(LocalDateTime dateTime, String format) {
@@ -24,12 +46,22 @@ public final class DateTimeUtils {
   }
 
   public static LocalDateTime toLocalDateTime(String value) {
-    return toLocalDateTime(value, DEFAULT_FORMAT);
+    return toLocalDateTime(value, DATETIME_FORMAT);
   }
 
   public static LocalDateTime toLocalDateTime(String value, String format) {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(format);
     return LocalDateTime.parse(value, formatter);
+  }
+
+  public static LocalTime toLocalTime(long value) {
+    return Instant.ofEpochMilli(value)
+        .atZone(ZoneId.systemDefault()).toLocalTime();
+  }
+
+  public static LocalDate toLocalDate(long value) {
+    return Instant.ofEpochMilli(value)
+        .atZone(ZoneId.systemDefault()).toLocalDate();
   }
 
   public static LocalDateTime toLocalDateTime(long value) {
@@ -39,34 +71,6 @@ public final class DateTimeUtils {
 
   public static LocalDateTime toLocalDateTime(Date date) {
     return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
-  }
-
-  public static String toPrettyTime(LocalDateTime dateTime, String format) {
-    LocalDateTime now = LocalDateTime.now();
-    long hours = ChronoUnit.HOURS.between(dateTime, now);
-
-    if (hours > 23) {
-      return toString(dateTime, format);
-    }
-
-    long minutes = ChronoUnit.MINUTES.between(dateTime, now);
-    long seconds = ChronoUnit.SECONDS.between(dateTime, now);
-
-    if (hours > 0) {
-      String suffix = (hours == 1)
-          ? " hour ago" : " hours ago";
-      return hours + suffix;
-
-    } else if (minutes > 0) {
-      String suffix = (minutes == 1)
-          ? " minutes ago" : " minutes ago";
-      return minutes + suffix;
-
-    } else {
-      String suffix = (seconds == 1)
-          ? " seconds ago" : " seconds ago";
-      return seconds + suffix;
-    }
   }
 
   public static long getCurrentMilliseconds() {

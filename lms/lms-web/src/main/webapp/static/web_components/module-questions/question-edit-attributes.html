@@ -3,10 +3,11 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="question-edit-attributes">
   <template>
-    <style>
+    <style include="paper-button-styles">
       :host {
         display: block;
         padding: 0 16px;
@@ -120,12 +121,12 @@
       }
 
       _updateSelection(question) {
-        var selectedLevels = [];
+        let selectedLevels = [];
         question.levels.forEach(function(level) {
           selectedLevels.push(level.id);
         });
 
-        var selectedSubjects = [];
+        let selectedSubjects = [];
         question.subjects.forEach(function(subject) {
           selectedSubjects.push(subject.id);
         });

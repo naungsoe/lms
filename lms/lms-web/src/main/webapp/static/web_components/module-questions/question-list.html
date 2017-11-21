@@ -35,12 +35,11 @@
         on-response="_handleAjaxResponse">
     </iron-ajax>
 
-    <iron-list
+    <iron-list selection-enabled
         items="[[questions]]"
         as="question"
         scroll-target="document"
-        selected-item="{{selectedQuestion}}"
-        selection-enabled>
+        on-selected-item-changed="_handleQuestionSelect">
       <template>
         <div class="list-item">
           <div class="question">
@@ -122,11 +121,6 @@
             readOnly: false,
             notify: true
           },
-          selectedQuestion: {
-            type: Object,
-            readOnly: false,
-            notify: true
-          },
           loading: {
             type: Boolean,
             readOnly: false,
@@ -137,8 +131,7 @@
 
       static get observers() {
         return [
-          '_generateRequest(restUrl, restParams)',
-          '_notifySelection(selectedQuestion)'
+          '_generateRequest(restUrl, restParams)'
         ];
       }
 
@@ -184,8 +177,8 @@
         }
       }
 
-      _notifySelection(selectedQuestion) {
-        if (selectedQuestion === null) {
+      _handleQuestionSelect(event) {
+        if (event.detail.value === null) {
           return;
         }
 
@@ -193,10 +186,10 @@
         root.querySelector('iron-list').clearSelection();
 
         let data = {bubbles: true, composed: true,
-          detail: {question: selectedQuestion}
+          detail: {question: event.detail.value}
         };
-        let event = new CustomEvent('question-selected', data);
-        this.dispatchEvent(event);
+        let questionEvent = new CustomEvent('question-selected', data);
+        this.dispatchEvent(questionEvent);
       }
     }
     customElements.define(QuestionList.is, QuestionList);

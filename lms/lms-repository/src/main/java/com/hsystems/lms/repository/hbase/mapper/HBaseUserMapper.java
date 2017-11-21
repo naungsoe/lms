@@ -63,6 +63,7 @@ public class HBaseUserMapper extends HBaseAbstractMapper<User> {
     String mobile = getMobile(mainResult, timestamp);
     String email = getEmail(mainResult, timestamp);
     String locale = getLocale(mainResult, timestamp);
+    String timeFormat = getTimeFormat(mainResult, timestamp);
     String dateFormat = getDateFormat(mainResult, timestamp);
     String dateTimeFormat = getDateTimeFormat(mainResult, timestamp);
     List<Permission> permissions = getPermissions(mainResult, timestamp);
@@ -92,6 +93,7 @@ public class HBaseUserMapper extends HBaseAbstractMapper<User> {
         .mobile(mobile)
         .email(email)
         .locale(locale)
+        .timeFormat(timeFormat)
         .dateFormat(dateFormat)
         .dateTimeFormat(dateTimeFormat)
         .permissions(permissions)

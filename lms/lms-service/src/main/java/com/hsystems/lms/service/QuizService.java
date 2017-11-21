@@ -12,18 +12,13 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.beans.ComponentBean;
-import com.hsystems.lms.repository.beans.QuestionComponentBean;
-import com.hsystems.lms.repository.beans.SectionComponentBean;
 import com.hsystems.lms.repository.entity.Component;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;
-import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.quiz.QuizResourceModel;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -86,22 +81,6 @@ public class QuizService extends AbstractService {
     for (QuizResource quizResource : quizResources) {
       QuizResourceModel resourceModel
           = getQuizResourceModel(quizResource, configuration);
-      LocalDateTime createdDateTime = quizResource.getCreatedDateTime();
-      LocalDateTime modifiedDateTime = quizResource.getModifiedDateTime();
-      String dateFormat = configuration.getDateFormat();
-
-      if (DateTimeUtils.isToday(createdDateTime)) {
-        resourceModel.setCreatedTime(
-            DateTimeUtils.toPrettyTime(createdDateTime, dateFormat));
-      }
-
-      if (DateTimeUtils.isNotEmpty(modifiedDateTime)
-          && DateTimeUtils.isToday(modifiedDateTime)) {
-
-        resourceModel.setModifiedTime(
-            DateTimeUtils.toPrettyTime(modifiedDateTime, dateFormat));
-      }
-
       resourceModels.add(resourceModel);
     }
 
@@ -113,16 +92,10 @@ public class QuizService extends AbstractService {
 
     QuizResourceModel resourceModel = getModel(quizResource,
         QuizResourceModel.class, configuration);
-    String dateFormat = configuration.getDateFormat();
-    LocalDateTime createdDateTime = quizResource.getCreatedDateTime();
-    LocalDateTime modifiedDateTime = quizResource.getModifiedDateTime();
+    populatedCreatedDateTime(resourceModel, quizResource, configuration);
 
-    resourceModel.setCreatedDate(
-        DateTimeUtils.toString(createdDateTime, dateFormat));
-
-    if (DateTimeUtils.isNotEmpty(modifiedDateTime)) {
-      resourceModel.setModifiedDate(DateTimeUtils.toString(
-          quizResource.getModifiedDateTime(), dateFormat));
+    if (DateTimeUtils.isNotEmpty(quizResource.getModifiedDateTime())) {
+      populatedModifiedDateTime(resourceModel, quizResource, configuration);
     }
 
     return resourceModel;
@@ -138,8 +111,8 @@ public class QuizService extends AbstractService {
     if (resourceOptional.isPresent()) {
       QuizResource quizResource = resourceOptional.get();
       Quiz quiz = quizResource.getQuiz();
-      List<Component> sectionComponents = getSectionComponents(id);
-      quiz.addComponent(sectionComponents.toArray(new Component[0]));
+      List<Component> components = getComponents(id);
+      quiz.addComponent(components.toArray(new Component[0]));
 
       Configuration configuration = Configuration.create(principal);
       QuizResourceModel resourceModel
@@ -150,7 +123,7 @@ public class QuizService extends AbstractService {
     return Optional.empty();
   }
 
-  private List<Component> getSectionComponents(String id)
+  private List<Component> getComponents(String id)
       throws IOException {
 
     Query query = Query.create();
@@ -163,53 +136,7 @@ public class QuizService extends AbstractService {
       return Collections.emptyList();
     }
 
-    List<Component> sectionComponents = new ArrayList<>();
-
-    componentBeans.forEach(componentBean -> {
-      if (componentBean instanceof SectionComponentBean) {
-        SectionComponentBean sectionComponentBean
-            = (SectionComponentBean) componentBean;
-        String sectionId = sectionComponentBean.getId();
-        List<Component> questionComponents
-            = getQuestionComponents(componentBeans, sectionId);
-
-        SectionComponent sectionComponent = new SectionComponent(
-            sectionComponentBean.getId(),
-            sectionComponentBean.getTitle(),
-            sectionComponentBean.getInstructions(),
-            sectionComponentBean.getOrder(),
-            questionComponents
-        );
-        sectionComponents.add(sectionComponent);
-      }
-    });
-
-    return sectionComponents;
-  }
-
-  private List<Component> getQuestionComponents(
-      List<ComponentBean> componentBeans, String parentId) {
-
-    List<Component> questionComponents = new ArrayList<>();
-
-    componentBeans.forEach(componentBean -> {
-      if (componentBean instanceof QuestionComponentBean) {
-        QuestionComponentBean questionComponentBean
-            = (QuestionComponentBean) componentBean;
-        String parentBeanId = questionComponentBean.getParentId();
-
-        if (parentBeanId.equals(parentId)) {
-          QuestionComponent questionComponent = new QuestionComponent(
-              questionComponentBean.getId(),
-              questionComponentBean.getQuestion(),
-              questionComponentBean.getScore(),
-              questionComponentBean.getOrder()
-          );
-          questionComponents.add(questionComponent);
-        }
-      }
-    });
-
-    return questionComponents;
+    List<Component> components = getComponents(componentBeans);
+    return components;
   }
 }

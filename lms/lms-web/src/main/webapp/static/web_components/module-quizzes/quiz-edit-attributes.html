@@ -120,12 +120,12 @@
       }
 
       _updateSelection(quiz) {
-        var selectedLevels = [];
+        let selectedLevels = [];
         quiz.levels.forEach(function(level) {
           selectedLevels.push(level.id);
         });
 
-        var selectedSubjects = [];
+        let selectedSubjects = [];
         quiz.subjects.forEach(function(subject) {
           selectedSubjects.push(subject.id);
         });

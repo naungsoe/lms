@@ -18,11 +18,15 @@ import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.question.ChoiceOption;
 import com.hsystems.lms.repository.entity.question.CompositeQuestion;
+import com.hsystems.lms.repository.entity.question.CompositeQuestionComponent;
 import com.hsystems.lms.repository.entity.question.MultipleChoice;
+import com.hsystems.lms.repository.entity.question.MultipleChoiceComponent;
 import com.hsystems.lms.repository.entity.question.MultipleResponse;
+import com.hsystems.lms.repository.entity.question.MultipleResponseComponent;
 import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.special.UnknownQuestion;
+import com.hsystems.lms.repository.entity.question.special.UnknownQuestionComponent;
 
 import org.apache.hadoop.hbase.Cell;
 import org.apache.hadoop.hbase.CellUtil;
@@ -201,6 +205,18 @@ public abstract class HBaseAbstractMapper<T> {
     } else {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.QUALIFIER_LOCALE);
+      return getString(cells, timestamp);
+    }
+  }
+
+  protected String getTimeFormat(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_TIME_FORMAT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_TIME_FORMAT);
       return getString(cells, timestamp);
     }
   }
@@ -775,17 +791,39 @@ public abstract class HBaseAbstractMapper<T> {
   protected QuestionComponent getQuestionComponent(
       Result mainResult, List<Result> results, long timestamp) {
 
-    String id = getId(mainResult, Constants.SEPARATOR_COMPONENT);
+    String questionType = getQuestionType(mainResult, timestamp);
+    String rowKey = Bytes.toString(mainResult.getRow());
+    String id = rowKey.contains(Constants.SEPARATOR_COMPONENT)
+        ? getId(mainResult, Constants.SEPARATOR_COMPONENT) : rowKey;
     Question question = getQuestion(mainResult, results, timestamp);
     long score = getScore(mainResult, timestamp);
     int order = getOrder(mainResult, timestamp);
 
-    return new QuestionComponent(
-        id,
-        question,
-        score,
-        order
-    );
+    switch (questionType) {
+      case "CompositeQuestion":
+        return new CompositeQuestionComponent(
+            id,
+            (CompositeQuestion) question,
+            score,
+            order
+        );
+      case "MultipleChoice":
+        return new MultipleChoiceComponent(
+            id,
+            (MultipleChoice) question,
+            score,
+            order
+        );
+      case "MultipleResponse":
+        return new MultipleResponseComponent(
+            id,
+            (MultipleResponse) question,
+            score,
+            order
+        );
+      default:
+        return new UnknownQuestionComponent();
+    }
   }
 
   protected Question getQuestion(

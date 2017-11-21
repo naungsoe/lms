@@ -6,51 +6,96 @@ import java.util.Enumeration;
  * Created by naungsoe on 6/1/17.
  */
 public final class MultipleResponseGradingStrategy
-    implements QuestionGradingStrategy<MultipleResponseAttempt> {
+    implements QuestionGradingStrategy<QuestionComponentAttempt> {
 
-  private MultipleResponse question;
+  private MultipleResponseComponent component;
 
-  private long score;
+  MultipleResponseGradingStrategy() {
 
-  public MultipleResponseGradingStrategy(MultipleResponse question) {
-    this.question = question;
+  }
+
+  public MultipleResponseGradingStrategy(MultipleResponseComponent component) {
+    this.component = component;
   }
 
   @Override
-  public void gradeAttempt(MultipleResponseAttempt attempt, long maxScore) {
+  public void gradeAttempt(QuestionComponentAttempt componentAttempt) {
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
     Enumeration<ChoiceOptionAttempt> enumeration = attempt.getAttempts();
-    score = enumeration.hasMoreElements() ? maxScore : 0;
 
     while (enumeration.hasMoreElements()) {
       ChoiceOptionAttempt element = enumeration.nextElement();
-      gradeAttempt(element);
-    }
-
-    while (enumeration.hasMoreElements()) {
-      ChoiceOptionAttempt element = enumeration.nextElement();
-
-      if (!element.isCorrect()) {
-        score = 0;
-        break;
-      }
+      gradeOptionAttempt(element);
     }
   }
 
-  private void gradeAttempt(ChoiceOptionAttempt optionAttempt) {
+  private void gradeOptionAttempt(ChoiceOptionAttempt optionAttempt) {
+    MultipleResponse question = component.getQuestion();
     Enumeration<ChoiceOption> enumeration = question.getOptions();
 
     while (enumeration.hasMoreElements()) {
       ChoiceOption element = enumeration.nextElement();
 
-      if (optionAttempt.getId().equals(element.getId())) {
+      if (element.getId().equals(optionAttempt.getId())) {
         optionAttempt.setCorrect(element.isCorrect());
-        break;
       }
     }
   }
 
   @Override
-  public long getScore() {
-    return score;
+  public long calculateScore(QuestionComponentAttempt componentAttempt) {
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
+    Enumeration<ChoiceOptionAttempt> enumeration = attempt.getAttempts();
+
+    while (enumeration.hasMoreElements()) {
+      ChoiceOptionAttempt element = enumeration.nextElement();
+
+      if (!element.isCorrect()) {
+        return 0;
+      }
+    }
+
+    int correctOptionCount = getCorrectOptionCount();
+    int correctOptionAttemptCount
+        = getCorrectOptionAttemptCount(componentAttempt);
+    return (correctOptionCount == correctOptionAttemptCount)
+        ? component.getScore() : 0;
+  }
+
+  private int getCorrectOptionCount() {
+    MultipleResponse question = component.getQuestion();
+    Enumeration<ChoiceOption> enumeration = question.getOptions();
+    int correctOptionCount = 0;
+
+    while (enumeration.hasMoreElements()) {
+      ChoiceOption element = enumeration.nextElement();
+
+      if (element.isCorrect()) {
+        correctOptionCount++;
+      }
+    }
+
+    return correctOptionCount;
+  }
+
+  private int getCorrectOptionAttemptCount(
+      QuestionComponentAttempt componentAttempt) {
+
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
+    Enumeration<ChoiceOptionAttempt> enumeration = attempt.getAttempts();
+    int correctOptionCount = 0;
+
+    while (enumeration.hasMoreElements()) {
+      ChoiceOptionAttempt element = enumeration.nextElement();
+
+      if (element.isCorrect()) {
+        correctOptionCount++;
+      }
+    }
+
+    return correctOptionCount;
   }
 }

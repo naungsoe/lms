@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
  */
 public final class Query {
 
-  private static final String PARAM_PATTERN = "([a-zA-Z0-9]*)=([^\\&]*)";
+  //private static final String PARAM_PATTERN = "([a-zA-Z0-9]*)=([^\\&]*)";
+  private static final String PARAM_PATTERN = "%s=([^\\&]*)";
   private static final String FILTER_PATTERN
       = "([a-zA-Z0-9\\.\\,]*):([a-zA-Z0-9\\_\\s\\'\\\"]*)(\\s|$)";
   private static final String SORT_PATTERN = "([a-zA-Z0-9]*)\\s([a-zA-Z]*)";
@@ -57,41 +58,36 @@ public final class Query {
       return query;
     }
 
-    Pattern pattern = Pattern.compile(PARAM_PATTERN);
+    populateFields(query, queryString);
+    populateQueryCriteria(query, queryString);
+    populateFilterCriteria(query, queryString);
+    populateSortKeys(query, queryString);
+    populateOffset(query, queryString);
+    populateLimit(query, queryString);
+    return query;
+  }
+
+  private static void populateFields(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "fields");
+    Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(queryString);
 
     while (matcher.find()) {
-      String name = matcher.group(1);
-      String value = matcher.group(2);
-
-      switch (name) {
-        case "fields":
-          query.addField(value.split(","));
-          break;
-        case "query":
-          List<Criterion> queryCriteria = getQueryCriteria(value);
-          query.addCriterion(queryCriteria.toArray(new Criterion[0]));
-          break;
-        case "filters":
-          List<Criterion> filterCriteria = getFilterCriteria(value);
-          query.addCriterion(filterCriteria.toArray(new Criterion[0]));
-          break;
-        case "sort":
-          List<SortKey> sortKeys = getSortKeys(value);
-          query.addSortKey(sortKeys.toArray(new SortKey[0]));
-          break;
-        case "offset":
-          query.offset = Integer.valueOf(value);
-          break;
-        case "limit":
-          query.limit = Integer.valueOf(value);
-          break;
-        default:
-          break;
-      }
+      String value = matcher.group(1);
+      query.addField(value.split(","));
     }
+  }
 
-    return query;
+  private static void populateQueryCriteria(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "query");
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(queryString);
+
+    while (matcher.find()) {
+      String value = matcher.group(1);
+      List<Criterion> queryCriteria = getQueryCriteria(value);
+      query.addCriterion(queryCriteria.toArray(new Criterion[0]));
+    }
   }
 
   private static List<Criterion> getQueryCriteria(String query) {
@@ -108,6 +104,18 @@ public final class Query {
     }
 
     return criteria;
+  }
+
+  private static void populateFilterCriteria(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "filters");
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(queryString);
+
+    while (matcher.find()) {
+      String value = matcher.group(1);
+      List<Criterion> filterCriteria = getFilterCriteria(value);
+      query.addCriterion(filterCriteria.toArray(new Criterion[0]));
+    }
   }
 
   private static List<Criterion> getFilterCriteria(String query) {
@@ -197,6 +205,18 @@ public final class Query {
     }
   }
 
+  private static void populateSortKeys(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "sort");
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(queryString);
+
+    while (matcher.find()) {
+      String value = matcher.group(1);
+      List<SortKey> sortKeys = getSortKeys(value);
+      query.addSortKey(sortKeys.toArray(new SortKey[0]));
+    }
+  }
+
   private static List<SortKey> getSortKeys(String query) {
     List<SortKey> sortKeys = new ArrayList<>();
     String[] params = query.split(",");
@@ -217,6 +237,28 @@ public final class Query {
     }
 
     return sortKeys;
+  }
+
+  private static void populateOffset(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "offset");
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(queryString);
+
+    if (matcher.find()) {
+      String value = matcher.group(1);
+      query.offset = Integer.valueOf(value);
+    }
+  }
+
+  private static void populateLimit(Query query, String queryString) {
+    String regex = String.format(PARAM_PATTERN, "limit");
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(queryString);
+
+    if (matcher.find()) {
+      String value = matcher.group(1);
+      query.limit = Integer.valueOf(value);
+    }
   }
 
   public List<String> getFields() {

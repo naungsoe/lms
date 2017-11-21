@@ -1,7 +1,6 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
-<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
-<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
@@ -9,85 +8,166 @@
 <link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
 <link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-quizzes/quiz-view-section.html">
+<link rel="import" href="../../web_components/module-quizzes/quiz-edit-section.html">
 <link rel="import" href="../../web_components/module-questions/question-view-multiple-choice.html">
 <link rel="import" href="../../web_components/module-questions/question-view-multiple-response.html">
 <link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
 <link rel="import" href="../../web_components/module-questions/question-edit-multiple-response.html">
 
-<dom-module id="question-edit-composite-question">
+<dom-module id="quiz-edit-components">
   <template>
     <style include="paper-button-styles">
-      .question-body,
-      .question-hint,
-      .question-explanation {
-        padding: 0 16px;
-      }
-
-      .question-components,
-      .question-hint,
-      .question-explanation {
-        margin-top: 8px;
-      }
-
-      .question-components .question-component {
+      .quiz-component {
         @apply --layout-vertical;
         padding: 8px 16px 8px 8px;
       }
 
-      .question-components .question-component[active] {
+      .quiz-component[active]:not(.section-component) {
         @apply --shadow-elevation-4dp;
       }
 
-      .question-components .question-component .header {
+      .quiz-component .content {
+        @apply --layout-horizontal;
+      }
+
+      .quiz-component .content .component {
+        @apply --layout-flex;
+      }
+
+      .quiz-component .header {
         @apply --layout-horizontal;
         @apply --layout-end-justified;
       }
 
-      .question-components .question-component .content {
-        @apply --layout-horizontal;
-      }
-
-      .question-components .question-component .content .component {
-        @apply --layout-flex;
-      }
-
-      .question-components .question-component.drop-placeholder {
+      .quiz-component.drop-placeholder {
         border: 1px dashed var(--border-color);
       }
 
-      .question-components .question-component.drop-placeholder * {
+      .quiz-component.drop-placeholder * {
         @apply --layout-invisible;
       }
 
-      .question-components .question-component.drag-item {
+      .quiz-component.drag-item {
         @apply --shadow-elevation-2dp;
         background-color: var(--secondary-background-color);
       }
 
-      .question-components .component-actions {
+      .section-component {
+        border-top: 1px solid var(--border-color);
+        margin: 24px 0 8px;
+        padding: 0 8px;
+      }
+
+      .section-component .header .title {
+        @apply --paper-font-subhead;
+        @apply --layout-flex;
+        color: var(--secondary-text-color);
+        padding: 8px;
+      }
+
+      .component-actions {
         margin-top: 12px;
         padding: 0 16px;
       }
     </style>
 
-    <div class="question-body">
-      <paper-text-editor
-          label="[[localize('labelQuestion')]]"
-          content="[[question.body]]">
-      </paper-text-editor>
-    </div>
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[quizId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{quiz}}">
+    </iron-ajax>
 
-    <div class="question-components">
+    <iron-ajax
+        name="post"
+        body="[[quiz]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <template
+        name="section"
+        is="dom-repeat"
+        items="[[quiz.components]]"
+        as="component">
+      <div
+          class="quiz-component section-component"
+          active$="[[_isEditingComponent(component, editingComponent)]]"
+          on-tap="_handleComponentTap">
+        <div class="header">
+          <div class="title">
+            [[localize('labelSection', 'offset', component.order,
+              'length', quiz.components.length)]]
+          </div>
+
+          <paper-menu-button
+              restore-focus-on-close="[[restoreFocusOnClose]]"
+              horizontal-align="right"
+              vertical-align="top">
+            <paper-icon-button
+                slot="dropdown-trigger"
+                icon="more-vert">
+            </paper-icon-button>
+
+            <div slot="dropdown-content">
+              <paper-listbox slot="dropdown-content">
+                <paper-item value="move">
+                  [[localize('labelSectionMove')]]
+                </paper-item>
+                <paper-item value="clone">
+                  [[localize('labelSectionDuplicate')]]
+                </paper-item>
+                <paper-item value="delete">
+                  [[localize('labelSectionDelete')]]
+                </paper-item>
+              </paper-listbox>
+            </div>
+          </paper-menu-button>
+        </div>
+
+        <div class="content">
+          <div class="component">
+            <template
+                is="dom-if"
+                if="[[!_isEditingComponent(component, editingComponent)]]">
+              <quiz-view-section
+                  section="{{component}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </quiz-view-section>
+            </template>
+
+            <template
+                is="dom-if"
+                if="[[_isEditingComponent(component, editingComponent)]]">
+              <quiz-edit-section
+                  section="{{component}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </quiz-edit-section>
+            </template>
+          </div>
+        </div>
+      </div>
+
       <iron-sorter
           handle="component-handle"
-          draggable="question-component"
+          draggable="draggable-component"
           on-order-changed="_handleOrderChange">
         <template
+            name="component"
             is="dom-repeat"
-            items="[[question.components]]"
+            items="[[component.components]]"
             as="component">
           <div
-              class="question-component"
+              class="quiz-component draggable-component"
               active$="[[_isEditingComponent(component, editingComponent)]]"
               on-tap="_handleComponentTap">
             <template
@@ -152,12 +232,12 @@
 
                   <template
                       is="dom-if"
-                      if="[[_isMultipleResponse(component)]]">
-                    <question-view-multiple-response
+                      if="[[_isMultipleResponse(component, editingComponent)]]">
+                    <question-edit-multiple-response
                         question="{{component.question}}"
                         language="[[language]]"
                         resources="[[resources]]">
-                    </question-view-multiple-response>
+                    </question-edit-multiple-response>
                   </template>
                 </template>
               </div>
@@ -167,6 +247,11 @@
       </iron-sorter>
 
       <div class="component-actions">
+        <paper-button on-tap="_handleAddSectionTap">
+          <iron-icon icon="add"></iron-icon>
+          [[localize('buttonAddSection')]]
+        </paper-button>
+
         <paper-menu-button>
           <paper-button slot="dropdown-trigger">
             <iron-icon icon="add"></iron-icon>
@@ -181,68 +266,41 @@
                 is="dom-repeat"
                 items="[[types]]"
                 as="type">
-              <template
-                  is="dom-if"
-                  if="[[!_isCompositeType(type)]]">
-                <paper-item value="[[type.value]]">
-                  [[type.name]]
-                </paper-item>
-              </template>
+              <paper-item value="[[type.value]]">
+                [[type.name]]
+              </paper-item>
             </template>
           </paper-listbox>
         </paper-menu-button>
-      </div>
-    </div>
-
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-hint">
-        <paper-text-editor
-            label="[[localize('labelQuestionHint')]]"
-            content="[[question.hint]]">
-        </paper-text-editor>
-      </div>
-    </template>
-
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-explanation">
-        <paper-text-editor
-            label="[[localize('labelQuestionExplanation')]]"
-            content="[[question.explanation]]">
-        </paper-text-editor>
       </div>
     </template>
   </template>
 
   <script>
-    const QuestionEditCompositeQuestionBase = Polymer.mixinBehaviors(
+    const QuizEditComponentsBase = Polymer.mixinBehaviors(
       [Polymer.AppLocalizeBehavior], Polymer.Element);
 
-    class QuestionEditCompositeQuestion extends QuestionEditCompositeQuestionBase {
+    class QuizEditComponents extends QuizEditComponentsBase {
       static get is() {
-        return 'question-edit-composite-question';
+        return 'quiz-edit-components';
       }
 
       static get properties() {
         return {
-          types: {
-            type: Array,
+          restUrl: {
+            type: String,
             readOnly: false,
             notify: true
           },
-          question: {
+          filterOptions: {
             type: Object,
             readOnly: false,
             notify: true
           },
-          standalone: {
-            type: Boolean,
+          quiz: {
+            type: Object,
             readOnly: false,
-            notify: true,
-            value: false
+            notify: true
           },
           editingComponent: {
             type: Object,
@@ -256,10 +314,6 @@
         return component === editingComponent;
       }
 
-      _isCompositeType(type) {
-        return type.value === 'CompositeQuestion';
-      }
-
       _isMultipleChoice(component) {
         return component.question.type === 'MultipleChoice';
       }
@@ -268,20 +322,44 @@
         return component.question.type === 'MultipleResponse';
       }
 
-      _handleOrderChange(event) {
-
-      }
-
       _handleComponentTap(event) {
-        this.editingComponent = event.model.component;
+        let path = Polymer.dom(event).path;
+        let menuInPath = false;
+
+        for (var i = 0; i < path.length; i++) {
+          if (path[i].tagName === 'PAPER-MENU-BUTTON') {
+            menuInPath = true;
+            break;
+          }
+        }
+
+        if (!menuInPath) {
+          this.editingComponent = event.model.component;
+        }
       }
 
-      _handleCloneTap(event) {
+      _handleAddSectionTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat[name=section]');
+        let section = template.itemForElement(event.target);
+        var index = this.quiz.components.indexOf(section);
+        this.quiz.components.forEach(function(component, compIndex) {
+          if (compIndex > index) {
+            component.order = component.order + 1;
+          }
+        });
 
-      }
-
-      _handleDeleteTap(event) {
-
+        let order = section.order + 1;
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.quiz.components.splice((index + 1), 0, component);
+        this.notifySplices('quiz.components');
       }
 
       _handleMenuSelect(event) {
@@ -290,7 +368,11 @@
         }
 
         let root = this.shadowRoot;
-        let order = this.question.components.length + 1;
+        let template = root.querySelector('dom-repeat[name=section]');
+        let section = template.itemForElement(event.target);
+        var index = this.quiz.components.indexOf(section);
+
+        let order = section.components.length + 1;
         let component = {
           id: '',
           question: {
@@ -319,10 +401,12 @@
           order: order
         };
         this.editingComponent = component;
-        this.question.components.push(component);
-        this.notifySplices('question.components');
+        section.components.push(component);
+
+        let path = 'quiz.components.' + index + '.components';
+        this.notifySplices(path);
       }
     }
-    customElements.define(QuestionEditCompositeQuestion.is, QuestionEditCompositeQuestion);
+    customElements.define(QuizEditComponents.is, QuizEditComponents);
   </script>
 </dom-module>

@@ -14,11 +14,16 @@
     "labelQuizzesFound": "{numFound} quizzes",
     "labelTitle": "Title",
     "labelInstructions": "Instructions",
-    "labelQuizQuestions": "Questions",
-    "labelQuizAttributes": "Attributes",
+    "labelSection": "Section {offset} of {length}",
+    "labelSectionMove": "Move section",
+    "labelSectionDuplicate": "Duplicate section",
+    "labelSectionDelete": "Delete section",
+    "labelQuestion": "Question",
+    "labelAttributes": "Attributes",
     "buttonResetFilter": "Reset",
     "buttonApplyFilter": "Apply",
     "buttonAddSection": "Add section",
-    "buttonAddQuestion": "Add question"
+    "buttonAddQuestion": "Add question",
+    "buttonAddOption": "Add option"
   }
 }

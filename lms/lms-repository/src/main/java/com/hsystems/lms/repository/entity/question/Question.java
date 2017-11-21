@@ -10,6 +10,4 @@ public interface Question {
   String getHint();
 
   String getExplanation();
-
-  QuestionGradingStrategy getGradingStrategy();
 }

@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 6/1/17.
  */
 public class QuestionComponentAttempt<T extends QuestionAttempt>
-		implements GradableComponentAttempt, Serializable {
+		implements GradableComponentAttempt<QuestionGradingStrategy>, Serializable {
 
-  private static final long serialVersionUID = 5517618524514244154L;
+	private static final long serialVersionUID = 5517618524514244154L;
 
 	@IndexField
 	private String id;
@@ -55,12 +55,14 @@ public class QuestionComponentAttempt<T extends QuestionAttempt>
 		return score;
 	}
 
-	public void setScore(long score) {
-		this.score = score;
-	}
-
 	@Override
 	public LocalDateTime getAttemptedDateTime() {
 		return attemptedDateTime;
+	}
+
+	@Override
+	public void gradeAttempt(QuestionGradingStrategy gradingStrategy) {
+		gradingStrategy.gradeAttempt(this);
+		score = gradingStrategy.calculateScore(this);
 	}
 }

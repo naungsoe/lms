@@ -6,19 +6,24 @@ import java.util.Enumeration;
  * Created by naungsoe on 6/1/17.
  */
 public final class MultipleChoiceGradingStrategy
-    implements QuestionGradingStrategy<MultipleChoiceAttempt> {
+    implements QuestionGradingStrategy<QuestionComponentAttempt> {
 
-  private MultipleChoice question;
+  private MultipleChoiceComponent component;
 
-  private long score;
+  MultipleChoiceGradingStrategy() {
 
-  public MultipleChoiceGradingStrategy(MultipleChoice question) {
-    this.question = question;
+  }
+
+  public MultipleChoiceGradingStrategy(MultipleChoiceComponent component) {
+    this.component = component;
   }
 
   @Override
-  public void gradeAttempt(MultipleChoiceAttempt attempt, long maxScore) {
+  public void gradeAttempt(QuestionComponentAttempt componentAttempt) {
+    MultipleChoice question = component.getQuestion();
     Enumeration<ChoiceOption> enumeration = question.getOptions();
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    MultipleChoiceAttempt attempt =  (MultipleChoiceAttempt) questionAttempt;
     ChoiceOptionAttempt optionAttempt = attempt.getOptionAttempt();
 
     while (enumeration.hasMoreElements()) {
@@ -29,14 +34,13 @@ public final class MultipleChoiceGradingStrategy
         break;
       }
     }
-
-    if (optionAttempt.isCorrect()) {
-      score = maxScore;
-    }
   }
 
   @Override
-  public long getScore() {
-    return score;
+  public long calculateScore(QuestionComponentAttempt componentAttempt) {
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    MultipleChoiceAttempt attempt = (MultipleChoiceAttempt) questionAttempt;
+    ChoiceOptionAttempt optionAttempt = attempt.getOptionAttempt();
+    return optionAttempt.isCorrect() ? component.getScore() : 0;
   }
 }

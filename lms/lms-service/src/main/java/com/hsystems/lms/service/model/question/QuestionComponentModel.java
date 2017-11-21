@@ -11,12 +11,12 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class QuestionComponentModel<T extends QuestionModel>
+public abstract class QuestionComponentModel<T extends QuestionModel>
     extends ComponentModel implements Serializable {
 
-  private static final long serialVersionUID = 6488637843336854367L;
-
   private T question;
+
+  private long score;
 
   public QuestionComponentModel() {
 
@@ -28,5 +28,13 @@ public class QuestionComponentModel<T extends QuestionModel>
 
   public void setQuestion(T question) {
     this.question = question;
+  }
+
+  public long getScore() {
+    return score;
+  }
+
+  public void setScore(long score) {
+    this.score = score;
   }
 }

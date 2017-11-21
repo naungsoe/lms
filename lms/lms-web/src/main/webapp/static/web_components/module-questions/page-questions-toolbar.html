@@ -7,11 +7,12 @@
 <link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
 <link rel="import" href="../../bower_components/paper-item/paper-item.html">
 <link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 <link rel="import" href="../../web_components/page-toolbar.html">
 
 <dom-module id="page-questions-toolbar">
   <template>
-    <style>
+    <style include="paper-button-styles paper-menu-styles">
       paper-menu-button .filter-content {
         @apply --layout-vertical;
         padding: 8px 16px;
@@ -24,14 +25,7 @@
       }
 
       paper-dropdown-menu {
-        --paper-input-container: {
-          padding: 16px 0 8px 0;
-        };
         min-width: 240px;
-      }
-
-      paper-button {
-        @apply --paper-font-body1;
       }
     </style>
 

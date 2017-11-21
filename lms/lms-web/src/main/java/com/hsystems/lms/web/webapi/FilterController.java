@@ -160,6 +160,7 @@ public class FilterController extends AbstractController {
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
     populateEnrollments(moduleNode, localeNode);
+    populateQuestionTypes(moduleNode, localeNode);
     return moduleNode;
   }
 }

@@ -6,8 +6,13 @@
 <dom-module id="paper-text-editor">
   <template>
     <style include="quill-core quill-snow">
+      .ql-editor.ql-blank::before {
+        color: var(--secondary-text-color);
+        font-style: normal;
+      }
+
       .editor-container {
-        border-bottom: 1px solid var(--border-color);
+        border-bottom: 1px solid var(--secondary-text-color);
         position: relative;
       }
 
@@ -39,10 +44,10 @@
 
       .editor-container .editor .editor-content {
         border: 0;
-        min-height: 26px;
+        min-height: 28px;
         max-height: 240px;
         overflow: auto;
-        padding: 6px 0;
+        padding: 4px 0;
       }
 
       .editor-container[no-label] .editor .editor-label {
@@ -202,7 +207,8 @@
           strict: false,
           readOnly: this.readOnly,
           placeholder: this.placeholder,
-          bounds: editor
+          bounds: editor,
+          shadowRoot: root
         });
 
         this._boundEditorFocus = this._handleEditorFocus.bind(this);

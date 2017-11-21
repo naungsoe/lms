@@ -7,8 +7,6 @@ import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonComponent;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
@@ -92,7 +90,9 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
       case "SectionComponent":
         component = getSectionComponent(mainResult, timestamp);
         break;
-      case "QuestionComponent":
+      case "CompositeQuestionComponent":
+      case "MultipleChoiceComponent":
+      case "MultipleResponseComponent":
         component = getQuestionComponent(mainResult, results, timestamp);
         break;
       case "FileComponent":
@@ -179,23 +179,6 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
         instructions,
         order,
         components
-    );
-  }
-
-  @Override
-  protected QuestionComponent getQuestionComponent(
-      Result mainResult, List<Result> results, long timestamp) {
-
-    String id = Bytes.toString(mainResult.getRow());
-    Question question = getQuestion(mainResult, results, timestamp);
-    long score = getScore(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
-
-    return new QuestionComponent(
-        id,
-        question,
-        score,
-        order
     );
   }
 

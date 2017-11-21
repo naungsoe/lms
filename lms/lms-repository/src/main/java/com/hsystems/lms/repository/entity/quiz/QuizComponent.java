@@ -9,7 +9,7 @@ import java.io.Serializable;
  * Created by naungsoe on 19/12/16.
  */
 public final class QuizComponent
-    implements GradableComponent<QuizComponentAttempt>, Serializable {
+    implements GradableComponent<QuizGradingStrategy>, Serializable {
 
   private static final long serialVersionUID = 1129182302928930252L;
 
@@ -51,7 +51,7 @@ public final class QuizComponent
   }
 
   @Override
-  public void gradeAttempt(QuizComponentAttempt attempt) {
-
+  public QuizGradingStrategy getGradingStrategy() {
+    return new QuizGradingStrategy(this);
   }
 }

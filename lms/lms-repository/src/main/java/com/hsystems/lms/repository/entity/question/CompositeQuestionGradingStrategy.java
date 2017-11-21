@@ -3,41 +3,59 @@ package com.hsystems.lms.repository.entity.question;
 import java.util.Enumeration;
 
 public class CompositeQuestionGradingStrategy
-    implements QuestionGradingStrategy<CompositeQuestionAttempt> {
+    implements QuestionGradingStrategy<QuestionComponentAttempt> {
 
-  private CompositeQuestion question;
+  private CompositeQuestionComponent component;
 
-  private long score;
+  CompositeQuestionGradingStrategy() {
 
-  public CompositeQuestionGradingStrategy(CompositeQuestion question) {
-    this.question = question;
+  }
+
+  public CompositeQuestionGradingStrategy(
+      CompositeQuestionComponent component) {
+
+    this.component = component;
   }
 
   @Override
-  public void gradeAttempt(CompositeQuestionAttempt attempt, long maxScore) {
+  public void gradeAttempt(QuestionComponentAttempt componentAttempt) {
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    CompositeQuestionAttempt attempt
+        = (CompositeQuestionAttempt) questionAttempt;
     Enumeration<QuestionComponentAttempt> enumeration = attempt.getAttempts();
 
     while (enumeration.hasMoreElements()) {
       QuestionComponentAttempt element = enumeration.nextElement();
-      gradeAttempt(element);
-      score += element.getScore();
+      gradeComponentAttempt(element);
     }
   }
 
-  public void gradeAttempt(QuestionComponentAttempt attempt) {
+  private void gradeComponentAttempt(
+      QuestionComponentAttempt componentAttempt) {
+
+    CompositeQuestion question = component.getQuestion();
     Enumeration<QuestionComponent> enumeration = question.getComponents();
 
     while (enumeration.hasMoreElements()) {
-      QuestionComponent element = enumeration.nextElement();
-
-      if (element.getId().equals(attempt.getId())) {
-        element.gradeAttempt(attempt);
-      }
+      QuestionComponent component = enumeration.nextElement();
+      QuestionGradingStrategy gradingStrategy = component.getGradingStrategy();
+      componentAttempt.gradeAttempt(gradingStrategy);
     }
   }
 
   @Override
-  public long getScore() {
-    return score;
+  public long calculateScore(QuestionComponentAttempt componentAttempt) {
+    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
+    CompositeQuestionAttempt attempt
+        = (CompositeQuestionAttempt) questionAttempt;
+    Enumeration<QuestionComponentAttempt> enumeration = attempt.getAttempts();
+    long totalScore = 0;
+
+    while (enumeration.hasMoreElements()) {
+      QuestionComponentAttempt element = enumeration.nextElement();
+      totalScore += element.getScore();
+    }
+
+    return totalScore;
   }
 }

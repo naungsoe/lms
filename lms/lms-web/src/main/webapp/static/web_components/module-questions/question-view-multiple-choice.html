@@ -11,6 +11,10 @@
         padding: 10px 0;
       }
 
+      .question-body[empty] {
+        color: var(--secondary-text-color);
+      }
+
       .question-options {
         margin-top: 8px;
       }
@@ -29,8 +33,20 @@
       }
     </style>
 
-    <div class="question-body">
-      [[question.body]]
+    <div
+        class="question-body"
+        empty$="[[_emptyBody]]">
+      <template
+          is="dom-if"
+          if="[[!_emptyBody]]">
+        [[question.body]]
+      </template>
+
+      <template
+          is="dom-if"
+          if="[[_emptyBody]]">
+        [[localize('labelQuestion')]]
+      </template>
     </div>
 
     <div class="question-options">
@@ -40,7 +56,7 @@
           as="option">
         <div class="question-option">
           <paper-radio-button disabled
-              checked="{{option.correct}}">
+              checked="[[option.correct]]">
           </paper-radio-button>
 
           <div class="option-body">
@@ -67,12 +83,28 @@
             readOnly: false,
             notify: true
           },
-          questionComponent: {
+          standalone: {
+            type: Boolean,
+            readOnly: false,
+            notify: true,
+            value: false
+          },
+          _emptyBody: {
             type: Boolean,
             readOnly: false,
             notify: true
           }
         };
+      }
+
+      static get observers() {
+        return [
+          '_updateQuestion(question)'
+        ];
+      }
+
+      _updateQuestion(question) {
+        this._emptyBody = (question.body === '');
       }
     }
     customElements.define(QuestionViewMultipleChoice.is, QuestionViewMultipleChoice);

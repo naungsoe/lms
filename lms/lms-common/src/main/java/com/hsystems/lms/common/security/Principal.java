@@ -11,6 +11,8 @@ public interface Principal {
 
   String getLocale();
 
+  String getTimeFormat();
+
   String getDateFormat();
 
   String getDateTimeFormat();

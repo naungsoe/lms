@@ -6,11 +6,12 @@
 <link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="question-edit-multiple-response">
   <template>
-    <style>
-      :host(:not([question-component])) {
+    <style include="paper-button-styles">
+      :host([standalone]) {
         display: block;
         padding: 0 16px;
       }
@@ -26,10 +27,6 @@
         padding: 6px 0;
       }
 
-      .question-options .question-option paper-icon-button {
-        color: var(--divider-color);
-      }
-
       .question-options .question-option paper-checkbox {
         padding: 12px 4px;
       }
@@ -37,10 +34,6 @@
       .question-options .question-option paper-text-editor {
         @apply --layout-flex;
         padding: 0 4px;
-      }
-
-      .question-options .question-option:hover paper-icon-button {
-        color: var(--primary-text-color);
       }
 
       .question-options .question-option.drop-placeholder {
@@ -56,25 +49,34 @@
         background-color: var(--secondary-background-color);
       }
 
-      .option-actions {
+      .question-options .option-actions {
         margin-top: 12px;
-      }
-
-      .option-actions paper-button {
-        color: var(--primary-color);
-        margin: 0;
       }
     </style>
 
     <div class="question-body">
-      <paper-text-editor
-          label="[[localize('labelQuestion')]]"
-          content="[[question.body]]">
-      </paper-text-editor>
+      <template
+          is="dom-if"
+          if="[[!standalone]]">
+        <paper-text-editor no-label-float
+            placeholder="[[localize('labelQuestion')]]"
+            content="[[question.body]]">
+        </paper-text-editor>
+      </template>
+
+      <template
+          is="dom-if"
+          if="[[standalone]]">
+        <paper-text-editor
+            label="[[localize('labelQuestion')]]"
+            content="[[question.body]]">
+        </paper-text-editor>
+      </template>
     </div>
 
     <div class="question-options">
-      <iron-sorter on-order-changed="_handleOrderChanged">
+      <iron-sorter
+          on-order-changed="_handleOrderChanged">
         <template
             is="dom-repeat"
             items="[[question.options]]"
@@ -114,10 +116,10 @@
 
     <template
         is="dom-if"
-        if="[[!questionComponent]]">
+        if="[[standalone]]">
       <div class="question-hint">
         <paper-text-editor
-            label="Hint"
+            label="[[localize('labelQuestionHint')]]"
             content="[[question.hint]]">
         </paper-text-editor>
       </div>
@@ -125,10 +127,10 @@
 
     <template
         is="dom-if"
-        if="[[!questionComponent]]">
+        if="[[standalone]]">
       <div class="question-explanation">
         <paper-text-editor
-            label="Explanation"
+            label="[[localize('labelQuestionExplanation')]]"
             content="[[question.explanation]]">
         </paper-text-editor>
       </div>
@@ -151,7 +153,7 @@
             readOnly: false,
             notify: true
           },
-          questionComponent: {
+          standalone: {
             type: Boolean,
             readOnly: false,
             notify: true,
@@ -183,6 +185,15 @@
           var container = root.querySelector('[data-id="' + option.id + '"]');
           container.querySelector('paper-text-editor').focus();
         });
+        this.notifyPath('question.options');
+      }
+
+      _handleRemoveTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat');
+        let option = template.itemForElement(event.target);
+        var index = this.question.options.indexOf(option);
+        this.splice('question.options', index, 1);
       }
     }
     customElements.define(QuestionEditMultipleResponse.is, QuestionEditMultipleResponse);

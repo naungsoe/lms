@@ -77,9 +77,4 @@ public final class CompositeQuestion implements Question, Serializable {
   public void removeComponent(QuestionComponent component) {
     this.components.remove(component);
   }
-
-  @Override
-  public QuestionGradingStrategy getGradingStrategy() {
-    return new CompositeQuestionGradingStrategy(this);
-  }
 }

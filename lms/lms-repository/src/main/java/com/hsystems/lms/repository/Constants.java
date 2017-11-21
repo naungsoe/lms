@@ -7,6 +7,7 @@ import org.apache.hadoop.hbase.util.Bytes;
  */
 public final class Constants {
 
+  public static final String FORMAT_TIME = "HH:mm:ss.SSS";
   public static final String FORMAT_DATE = "yyyy-MM-dd";
   public static final String FORMAT_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
@@ -25,10 +26,10 @@ public final class Constants {
   public static final byte[] QUALIFIER_MOBILE = Bytes.toBytes("mobile");
   public static final byte[] QUALIFIER_EMAIL = Bytes.toBytes("email");
   public static final byte[] QUALIFIER_LOCALE = Bytes.toBytes("locale");
-  public static final byte[] QUALIFIER_DATE_FORMAT
-      = Bytes.toBytes("dateFormat");
+  public static final byte[] QUALIFIER_TIME_FORMAT = Bytes.toBytes("tformat");
+  public static final byte[] QUALIFIER_DATE_FORMAT = Bytes.toBytes("dformat");
   public static final byte[] QUALIFIER_DATE_TIME_FORMAT
-      = Bytes.toBytes("dateTimeFormat");
+      = Bytes.toBytes("dtformat");
   public static final byte[] QUALIFIER_PERMISSIONS
       = Bytes.toBytes("permissions");
   public static final byte[] QUALIFIER_TYPE = Bytes.toBytes("type");

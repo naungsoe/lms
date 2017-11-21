@@ -4,10 +4,11 @@
 <link rel="import" href="../bower_components/paper-card/paper-card.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../web_components/app-component-styles.html">
 
 <dom-module id="app-signin">
   <template>
-    <style>
+    <style include="paper-text-field-styles paper-button-styles">
       paper-card {
         --paper-card-header-text: {
           background-color: var(--primary-color);
@@ -17,6 +18,10 @@
         width: 320px;
       }
 
+      paper-card .card-content paper-input:not(:first-child) {
+        margin-top: 8px
+      }
+
       paper-card .card-content .error-credential {
         color: var(--error-color);
       }
@@ -24,15 +29,6 @@
       paper-card .card-actions {
         border-top: 0;
         padding-bottom: 16px;
-      }
-
-      paper-card .card-actions paper-button[primary] {
-        background-color: var(--primary-color);
-        color: white;
-      }
-
-      paper-input:not(:first-child) {
-        margin-top: 8px
       }
     </style>
 

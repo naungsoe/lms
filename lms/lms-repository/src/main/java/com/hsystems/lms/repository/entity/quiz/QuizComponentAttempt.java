@@ -7,7 +7,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class QuizComponentAttempt
-    implements GradableComponentAttempt, Serializable {
+    implements GradableComponentAttempt<QuizGradingStrategy>, Serializable {
 
   private static final long serialVersionUID = -2773908334045867221L;
 
@@ -46,5 +46,10 @@ public class QuizComponentAttempt
   @Override
   public LocalDateTime getAttemptedDateTime() {
     return attemptedDateTime;
+  }
+
+  @Override
+  public void gradeAttempt(QuizGradingStrategy strategy) {
+
   }
 }

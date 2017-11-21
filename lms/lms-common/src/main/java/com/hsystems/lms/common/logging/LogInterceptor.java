@@ -1,5 +1,6 @@
 package com.hsystems.lms.common.logging;
 
+import com.hsystems.lms.common.LoggerType;
 import com.hsystems.lms.common.annotation.Log;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -40,14 +41,11 @@ public class LogInterceptor implements MethodInterceptor {
         .getDeclaredAnnotation(Log.class);
     String message = getMessage(invocation);
 
-    switch (annotation.value()) {
-      case SIGNIN:
-        signInLogger.info(message);
-        break;
-      default:
-        rootLogger.info(message);
-        break;
+    if (annotation.value() == LoggerType.SIGNIN) {
+      signInLogger.info(message);
     }
+
+    rootLogger.info(message);
   }
 
   private String getMessage(MethodInvocation invocation) {
@@ -62,13 +60,10 @@ public class LogInterceptor implements MethodInterceptor {
         .getDeclaredAnnotation(Log.class);
     String message = getMessage(invocation);
 
-    switch (annotation.value()) {
-      case SIGNIN:
-        signInLogger.error(message, e);
-        break;
-      default:
-        rootLogger.error(message, e);
-        break;
+    if (annotation.value() == LoggerType.SIGNIN) {
+      signInLogger.error(message, e);
     }
+
+    rootLogger.error(message, e);
   }
 }

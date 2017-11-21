@@ -3,10 +3,23 @@ package com.hsystems.lms.repository.beans;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 
-import java.util.Collections;
+import java.io.Serializable;
 
-public class SectionComponentBean
-    extends SectionComponent implements ComponentBean {
+public class SectionComponentBean implements ComponentBean, Serializable {
+
+  private static final long serialVersionUID = -2481521481131584333L;
+
+  @IndexField
+  protected String id;
+
+  @IndexField
+  protected String title;
+
+  @IndexField
+  protected String instructions;
+
+  @IndexField
+  protected int order;
 
   @IndexField
   private String resourceId;
@@ -15,7 +28,7 @@ public class SectionComponentBean
   private String parentId;
 
   SectionComponentBean() {
-    super("", "", "", 0, Collections.emptyList());
+
   }
 
   public SectionComponentBean(
@@ -23,15 +36,30 @@ public class SectionComponentBean
       String resourceId,
       String parentId) {
 
-    super(
-        component.getId(),
-        component.getTitle(),
-        component.getInstructions(),
-        component.getOrder(),
-        Collections.emptyList()
-    );
+    this.id = component.getId();
+    this.title = component.getTitle();
+    this.instructions = component.getInstructions();
+    this.order = component.getOrder();
     this.resourceId = resourceId;
     this.parentId = parentId;
+  }
+
+  @Override
+  public String getId() {
+    return id;
+  }
+
+  public String getTitle() {
+    return title;
+  }
+
+  public String getInstructions() {
+    return instructions;
+  }
+
+  @Override
+  public int getOrder() {
+    return order;
   }
 
   @Override
