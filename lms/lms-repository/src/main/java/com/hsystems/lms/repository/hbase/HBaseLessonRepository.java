@@ -13,7 +13,6 @@ import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
-import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLessonMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
@@ -78,7 +77,7 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
     scan.setStartRow(Bytes.toBytes(id));
     scan.setTimeStamp(timestamp);
 
-    List<Result> results = client.scan(scan, QuestionResource.class);
+    List<Result> results = client.scan(scan, LessonResource.class);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();

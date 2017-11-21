@@ -2,7 +2,7 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.ShareEntry;
+import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.User;
 
@@ -60,12 +60,12 @@ public class HBaseShareLogMapper extends HBaseAbstractMapper<ShareLog> {
     ).build();
     LocalDateTime sharedDateTime = getDateTime(mainResult, timestamp);
 
-    List<ShareEntry> shareEntries = new ArrayList<>();
+    List<PermissionSet> shareEntries = new ArrayList<>();
     results.stream().filter(isEntryResult(id))
         .forEach(entryResult -> {
-          ShareEntry
-              shareEntry = getShareEntry(entryResult, timestamp);
-          shareEntries.add(shareEntry);
+          PermissionSet
+              permissionSet = getShareEntry(entryResult, timestamp);
+          shareEntries.add(permissionSet);
         });
 
     ShareLog shareLog = new ShareLog(

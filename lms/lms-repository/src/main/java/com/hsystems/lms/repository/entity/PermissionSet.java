@@ -5,21 +5,21 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 2/11/16.
  */
-public final class ShareEntry implements Serializable {
+public final class PermissionSet implements Serializable {
 
-  private static final long serialVersionUID = 5918154532815469595L;
+  private static final long serialVersionUID = 153860840208808248L;
 
   private User user;
 
-  private SharePermission permission;
+  private Permission permission;
 
-  ShareEntry() {
+  PermissionSet() {
 
   }
 
-  public ShareEntry(
+  public PermissionSet(
       User user,
-      SharePermission permission) {
+      Permission permission) {
 
     this.user = user;
     this.permission = permission;
@@ -29,14 +29,14 @@ public final class ShareEntry implements Serializable {
     return user;
   }
 
-  public SharePermission getPermission() {
+  public Permission getPermission() {
     return permission;
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ShareEntry{user=%s, permission=%s}",
+        "PermissionSet{user=%s, permission=%s}",
         user, permission);
   }
 }

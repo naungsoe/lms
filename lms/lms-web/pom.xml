@@ -4,6 +4,14 @@
          xmlns="http://maven.apache.org/POM/4.0.0">
   <modelVersion>4.0.0</modelVersion>
 
+  <repositories>
+    <repository>
+      <id>in-project</id>
+      <name>In Project Repo</name>
+      <url>file://${project.parent.basedir}/libs</url>
+    </repository>
+  </repositories>
+
   <parent>
     <groupId>com.hsystems.lms</groupId>
     <artifactId>lms</artifactId>

@@ -16,11 +16,11 @@ import java.util.List;
 @IndexCollection(namespace = "lms", name = "sharelogs")
 public final class ShareLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = -8655950641727343796L;
+  private static final long serialVersionUID = 7872836504845254592L;
 
   private String id;
 
-  private List<ShareEntry> shareEntries;
+  private List<PermissionSet> permissionSets;
 
   private User sharedBy;
 
@@ -32,12 +32,12 @@ public final class ShareLog implements Entity, Serializable {
 
   public ShareLog(
       String id,
-      List<ShareEntry> shareEntries,
+      List<PermissionSet> permissionSets,
       User sharedBy,
       LocalDateTime sharedDateTime) {
 
     this.id = id;
-    this.shareEntries = shareEntries;
+    this.permissionSets = permissionSets;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
   }
@@ -55,16 +55,16 @@ public final class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public Enumeration<ShareEntry> getShareEntries() {
-    return CollectionUtils.isEmpty(shareEntries)
+  public Enumeration<PermissionSet> getPermissionSets() {
+    return CollectionUtils.isEmpty(permissionSets)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(shareEntries);
+        : Collections.enumeration(permissionSets);
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, shareEntries=%s}",
-        id, sharedBy, sharedDateTime, StringUtils.join(shareEntries, ","));
+        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, permissionSets=%s}",
+        id, sharedBy, sharedDateTime, StringUtils.join(permissionSets, ","));
   }
 }

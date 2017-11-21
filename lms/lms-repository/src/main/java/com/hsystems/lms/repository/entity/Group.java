@@ -18,7 +18,7 @@ import java.util.List;
 public final class Group
     implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = -233044280117552333L;
+  private static final long serialVersionUID = -7834562249899617220L;
 
   @IndexField
   private String id;
@@ -30,7 +30,7 @@ public final class Group
   private List<User> members;
 
   @IndexField
-  private List<Permission> permissions;
+  private List<String> permissions;
 
   @IndexField
   private School school;
@@ -55,7 +55,7 @@ public final class Group
       String id,
       String name,
       List<User> members,
-      List<Permission> permissions,
+      List<String> permissions,
       School school,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -78,8 +78,8 @@ public final class Group
     private String id;
     private String name;
 
-    private List<Permission> permissions;
     private List<User> members;
+    private List<String> permissions;
     private School school;
     private User createdBy;
     private LocalDateTime createdDateTime;
@@ -91,13 +91,13 @@ public final class Group
       this.name = name;
     }
 
-    public Builder permissions(List<Permission> permissions) {
-      this.permissions = permissions;
+    public Builder members(List<User> members) {
+      this.members = members;
       return this;
     }
 
-    public Builder members(List<User> members) {
-      this.members = members;
+    public Builder permissions(List<String> permissions) {
+      this.permissions = permissions;
       return this;
     }
 
@@ -156,7 +156,7 @@ public final class Group
         : Collections.enumeration(members);
   }
 
-  public Enumeration<Permission> getPermissions() {
+  public Enumeration<String> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(permissions);
@@ -194,7 +194,7 @@ public final class Group
             + "school=%s, createdBy=%s, createdDateTime=%s, "
             + "modifiedBy=%s, modifiedDateTime=%s}",
         id, name, StringUtils.join(members, ","),
-        StringUtils.join(permissions, ","), school, createdBy,
-        createdDateTime, modifiedBy, modifiedDateTime);
+        StringUtils.join(permissions, ","), school,
+        createdBy, createdDateTime, modifiedBy, modifiedDateTime);
   }
 }

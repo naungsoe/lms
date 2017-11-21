@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
@@ -55,7 +54,7 @@ public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
 
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult, timestamp);
-    List<Permission> permissions = getPermissions(mainResult, timestamp);
+    List<String> permissions = getPermissions(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();

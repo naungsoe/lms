@@ -6,9 +6,9 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.Resource;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
@@ -27,7 +27,7 @@ import java.util.List;
 public final class CourseResource
     implements Entity, Resource, Auditable, Serializable {
 
-  private static final long serialVersionUID = 238216381268170396L;
+  private static final long serialVersionUID = -275348266450573440L;
 
   @IndexField
   private String id;
@@ -48,7 +48,7 @@ public final class CourseResource
   private List<String> keywords;
 
   @IndexField
-  private List<ShareEntry> shareEntries;
+  private List<PermissionSet> permissionSets;
 
   @IndexField
   private User createdBy;
@@ -73,7 +73,7 @@ public final class CourseResource
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<ShareEntry> shareEntries,
+      List<PermissionSet> permissionSets,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -85,7 +85,7 @@ public final class CourseResource
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.shareEntries = shareEntries;
+    this.permissionSets = permissionSets;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -101,7 +101,7 @@ public final class CourseResource
     private List<Level> levels;
     private List<Subject> subjects;
     private List<String> keywords;
-    private List<ShareEntry> shareEntries;
+    private List<PermissionSet> permissionSets;
     private User createdBy;
     private LocalDateTime createdDateTime;
     private User modifiedBy;
@@ -132,8 +132,8 @@ public final class CourseResource
       return this;
     }
 
-    public Builder shareEntries(List<ShareEntry> shareEntries) {
-      this.shareEntries = shareEntries;
+    public Builder permissionSets(List<PermissionSet> permissionSets) {
+      this.permissionSets = permissionSets;
       return this;
     }
 
@@ -165,7 +165,7 @@ public final class CourseResource
           this.levels,
           this.subjects,
           this.keywords,
-          this.shareEntries,
+          this.permissionSets,
           this.createdBy,
           this.createdDateTime,
           this.modifiedBy,
@@ -237,19 +237,19 @@ public final class CourseResource
   }
 
   @Override
-  public Enumeration<ShareEntry> getShareEntries() {
-    return CollectionUtils.isEmpty(shareEntries)
+  public Enumeration<PermissionSet> getPermissionSets() {
+    return CollectionUtils.isEmpty(permissionSets)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(shareEntries);
+        : Collections.enumeration(permissionSets);
   }
 
   @Override
-  public void addShareEntry(ShareEntry... shareEntries) {
-    if (CollectionUtils.isEmpty(this.shareEntries)) {
-      this.shareEntries = new ArrayList<>();
+  public void addPermissionSet(PermissionSet... permissionSets) {
+    if (CollectionUtils.isEmpty(this.permissionSets)) {
+      this.permissionSets = new ArrayList<>();
     }
 
-    Arrays.stream(shareEntries).forEach(this.shareEntries::add);
+    Arrays.stream(permissionSets).forEach(this.permissionSets::add);
   }
 
   @Override

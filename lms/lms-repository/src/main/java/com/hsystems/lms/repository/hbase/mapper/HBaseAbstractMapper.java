@@ -10,10 +10,9 @@ import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.Permission;
+import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.ShareEntry;
-import com.hsystems.lms.repository.entity.SharePermission;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.question.ChoiceOption;
@@ -669,7 +668,7 @@ public abstract class HBaseAbstractMapper<T> {
     return getUser(result, Constants.SEPARATOR_MODIFIED_BY, timestamp);
   }
 
-  protected List<Permission> getPermissions(Result result, long timestamp) {
+  protected List<String> getPermissions(Result result, long timestamp) {
     String value;
 
     if (timestamp == 0) {
@@ -686,27 +685,21 @@ public abstract class HBaseAbstractMapper<T> {
       return Collections.emptyList();
     }
 
-    List<Permission> permissions = new ArrayList<>();
     String[] items = value.split(SEPARATOR_VALUE);
-    Arrays.asList(items).forEach(item -> {
-      Permission permission = Enum.valueOf(Permission.class, item);
-      permissions.add(permission);
-    });
-
-    return permissions;
+    return Arrays.asList(items);
   }
 
-  protected SharePermission getSharePermission(
+  protected Permission getSharePermission(
       Result result, long timestamp) {
 
     if (timestamp == 0) {
       return getEnum(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ACTION, SharePermission.class);
+          Constants.QUALIFIER_ACTION, Permission.class);
 
     } else {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.QUALIFIER_ACTION);
-      return getEnum(cells, timestamp, SharePermission.class);
+      return getEnum(cells, timestamp, Permission.class);
     }
   }
 
@@ -906,7 +899,7 @@ public abstract class HBaseAbstractMapper<T> {
     return new ChoiceOption(id, body, feedback, correct, order);
   }
 
-  protected ShareEntry getShareEntry(
+  protected PermissionSet getShareEntry(
       Result result, long timestamp) {
 
     String id = getId(result, Constants.SEPARATOR_ENTRY);
@@ -914,8 +907,8 @@ public abstract class HBaseAbstractMapper<T> {
     String lastName = getLastName(result, timestamp);
 
     User user = new User.Builder(id, firstName, lastName).build();
-    SharePermission permission = getSharePermission(result, timestamp);
-    return new ShareEntry(user, permission);
+    Permission permission = getSharePermission(result, timestamp);
+    return new PermissionSet(user, permission);
   }
 
   protected void addFirstNameColumn(Put put, String value) {

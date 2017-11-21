@@ -35,7 +35,7 @@ public final class School implements Entity, Auditable, Serializable {
   private String dateTimeFormat;
 
   @IndexField
-  private List<Permission> permissions;
+  private List<String> permissions;
 
   @IndexField
   private User createdBy;
@@ -59,7 +59,7 @@ public final class School implements Entity, Auditable, Serializable {
       String locale,
       String dateFormat,
       String dateTimeFormat,
-      List<Permission> permissions,
+      List<String> permissions,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -85,7 +85,7 @@ public final class School implements Entity, Auditable, Serializable {
     private String locale;
     private String dateFormat;
     private String dateTimeFormat;
-    private List<Permission> permissions;
+    private List<String> permissions;
     private User createdBy;
     private LocalDateTime createdDateTime;
     private User modifiedBy;
@@ -111,7 +111,7 @@ public final class School implements Entity, Auditable, Serializable {
       return this;
     }
 
-    public Builder permissions(List<Permission> permissions) {
+    public Builder permissions(List<String> permissions) {
       this.permissions = permissions;
       return this;
     }
@@ -173,7 +173,7 @@ public final class School implements Entity, Auditable, Serializable {
     return dateTimeFormat;
   }
 
-  public Enumeration<Permission> getPermissions() {
+  public Enumeration<String> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(permissions);

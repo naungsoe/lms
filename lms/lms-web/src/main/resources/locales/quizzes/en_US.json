@@ -18,6 +18,7 @@
     "labelSectionMove": "Move section",
     "labelSectionDuplicate": "Duplicate section",
     "labelSectionDelete": "Delete section",
+    "labelSectionMerge": "Merge with above",
     "labelQuestion": "Question",
     "labelAttributes": "Attributes",
     "buttonResetFilter": "Reset",

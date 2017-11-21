@@ -63,7 +63,7 @@ public final class User
   private String dateTimeFormat;
 
   @IndexField
-  private List<Permission> permissions;
+  private List<String> permissions;
 
   @IndexField
   private School school;
@@ -99,7 +99,7 @@ public final class User
       String timeFormat,
       String dateFormat,
       String dateTimeFormat,
-      List<Permission> permissions,
+      List<String> permissions,
       School school,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -145,7 +145,7 @@ public final class User
     private String timeFormat;
     private String dateFormat;
     private String dateTimeFormat;
-    private List<Permission> permissions;
+    private List<String> permissions;
     private School school;
     private User createdBy;
     private LocalDateTime createdDateTime;
@@ -213,7 +213,7 @@ public final class User
       return this;
     }
 
-    public Builder permissions(List<Permission> permissions) {
+    public Builder permissions(List<String> permissions) {
       this.permissions = permissions;
       return this;
     }
@@ -326,7 +326,7 @@ public final class User
     return dateTimeFormat;
   }
 
-  public Enumeration<Permission> getPermissions() {
+  public Enumeration<String> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(permissions);

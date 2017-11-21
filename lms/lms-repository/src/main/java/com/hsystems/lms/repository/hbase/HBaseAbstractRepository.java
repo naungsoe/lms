@@ -5,8 +5,8 @@ import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.Resource;
-import com.hsystems.lms.repository.entity.ShareEntry;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.User;
 
@@ -166,12 +166,12 @@ public abstract class HBaseAbstractRepository {
     );
   }
 
-  protected void populateShareEntries(Resource resource, ShareLog shareLog) {
-    Enumeration<ShareEntry> enumeration = shareLog.getShareEntries();
+  protected void populatePermissionSets(Resource resource, ShareLog shareLog) {
+    Enumeration<PermissionSet> enumeration = shareLog.getPermissionSets();
 
     while (enumeration.hasMoreElements()) {
-      ShareEntry element = enumeration.nextElement();
-      resource.addShareEntry(element);
+      PermissionSet element = enumeration.nextElement();
+      resource.addPermissionSet(element);
     }
   }
 }

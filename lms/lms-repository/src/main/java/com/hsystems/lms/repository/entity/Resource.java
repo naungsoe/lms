@@ -19,7 +19,7 @@ public interface Resource extends SchoolScoped {
 
   void addKeyword(String... keywords);
 
-  Enumeration<ShareEntry> getShareEntries();
+  Enumeration<PermissionSet> getPermissionSets();
 
-  void addShareEntry(ShareEntry... shareEntries);
+  void addPermissionSet(PermissionSet... permissionSets);
 }
