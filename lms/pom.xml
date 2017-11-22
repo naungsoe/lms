@@ -29,7 +29,7 @@
     </repository>
     <repository>
       <id>snapshots</id>
-      <url>http://192.168.33.11:9091/feeds/snapshots</url>
+      <url>http://192.168.33.11:9091/repository/snapshots</url>
       <releases>
         <enabled>false</enabled>
       </releases>
