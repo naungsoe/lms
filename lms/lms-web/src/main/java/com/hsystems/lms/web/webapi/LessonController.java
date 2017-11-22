@@ -53,8 +53,6 @@ public class LessonController extends AbstractController {
     Query query = Query.create(uriInfo.getRequestUri().getQuery());
     QueryResult<LessonResourceModel> queryResult
         = resourceService.findAllBy(query, principal);
-    String conflictString = "string";
-    String conflictString = "conflict";
     return Response.ok(queryResult).build();
   }
 
