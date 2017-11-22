@@ -10,9 +10,9 @@ import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.School;
-import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.question.ChoiceOption;
@@ -899,7 +899,7 @@ public abstract class HBaseAbstractMapper<T> {
     return new ChoiceOption(id, body, feedback, correct, order);
   }
 
-  protected PermissionSet getShareEntry(
+  protected PermissionSet getPermissionSet(
       Result result, long timestamp) {
 
     String id = getId(result, Constants.SEPARATOR_ENTRY);

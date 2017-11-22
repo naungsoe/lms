@@ -46,8 +46,7 @@ public class LessonController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Requires(Permission.VIEW_LESSONS)
-  public Response findAllBy(
-      @Context UriInfo uriInfo)
+  public Response findAllBy(@Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
