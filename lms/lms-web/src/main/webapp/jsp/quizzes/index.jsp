@@ -142,12 +142,12 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/quizzes"/>';
-        const filtersUrl = '<c:out value="/webapi/filters/quizzes"/>';
-        const userUrl = '<c:out value="/webapi/users/${userId}"/>';
-        const restUrl = '<c:out value="/webapi/quizzes"/>';
-        const rootUrl = '<c:out value="/web/quizzes"/>';
-        const contextRoot = '<c:out value="/web"/>';
+        const localesUrl = '<c:url value="/webapi/locales/quizzes"/>';
+        const filtersUrl = '<c:url value="/webapi/filters/quizzes"/>';
+        const userUrl = '<c:url value="/webapi/users/${userId}"/>';
+        const restUrl = '<c:url value="/webapi/quizzes"/>';
+        const rootUrl = '<c:url value="/web/quizzes"/>';
+        const contextRoot = '<c:url value="/web"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
         const queryFields = 'quiz.title,quiz.instructions,keywords';

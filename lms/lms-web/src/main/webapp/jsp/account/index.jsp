@@ -90,9 +90,9 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/account"/>';
-        const signInUrl = '<c:out value="/web/signin"/>';
-        const actionUrl = '<c:out value="/web/account"/>';
+        const localesUrl = '<c:url value="/webapi/locales/account"/>';
+        const signInUrl = '<c:url value="/web/signin"/>';
+        const actionUrl = '<c:url value="/web/account"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
         const MainElementBase = Polymer.mixinBehaviors(

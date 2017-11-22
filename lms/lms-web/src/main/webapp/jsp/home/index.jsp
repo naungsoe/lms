@@ -106,9 +106,9 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/home"/>';
-        const rootUrl = '<c:out value="/web/home"/>';
-        const contextRoot = '<c:out value="/web"/>';
+        const localesUrl = '<c:url value="/webapi/locales/home"/>';
+        const rootUrl = '<c:url value="/web/home"/>';
+        const contextRoot = '<c:url value="/web"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
         const MainElementBase = Polymer.mixinBehaviors(

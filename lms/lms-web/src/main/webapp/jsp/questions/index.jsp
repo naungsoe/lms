@@ -147,12 +147,12 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/questions"/>';
-        const filtersUrl = '<c:out value="/webapi/filters/questions"/>';
-        const userUrl = '<c:out value="/webapi/users/${userId}"/>';
-        const restUrl = '<c:out value="/webapi/questions"/>';
-        const rootUrl = '<c:out value="/web/questions"/>';
-        const contextRoot = '<c:out value="/web"/>';
+        const localesUrl = '<c:url value="/webapi/locales/questions"/>';
+        const filtersUrl = '<c:url value="/webapi/filters/questions"/>';
+        const userUrl = '<c:url value="/webapi/users/${userId}"/>';
+        const restUrl = '<c:url value="/webapi/questions"/>';
+        const rootUrl = '<c:url value="/web/questions"/>';
+        const contextRoot = '<c:url value="/web"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
         const queryFields = 'question.body,question.hint,'

@@ -90,9 +90,9 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/signup"/>';
-        const signInUrl = '<c:out value="/web/signin"/>';
-        const actionUrl = '<c:out value="/web/signup"/>';
+        const localesUrl = '<c:url value="/webapi/locales/signup"/>';
+        const signInUrl = '<c:url value="/web/signin"/>';
+        const actionUrl = '<c:url value="/web/signup"/>';
         const language = '<c:out value="${locale}"/>';
         const datePattern = '<c:out value="${datePattern}"/>';
         const error = '<c:out value="${error}"/>';

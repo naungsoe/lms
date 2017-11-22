@@ -66,12 +66,12 @@
 
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:out value="/webapi/locales/signin"/>';
-        const captchaUrl = '<c:out value="/webapi/account/captcha"/>';
+        const localesUrl = '<c:url value="/webapi/locales/signin"/>';
+        const captchaUrl = '<c:url value="/webapi/account/captcha"/>';
         const captchaRequired = ('<c:out value="${captchaRequired}"/>' === 'true');
-        const accountHelpUrl = '<c:out value="/web/account"/>';
-        const signUpUrl = '<c:out value="/web/signup"/>';
-        const actionUrl = '<c:out value="/web/signin"/>';
+        const accountHelpUrl = '<c:url value="/web/account"/>';
+        const signUpUrl = '<c:url value="/web/signup"/>';
+        const actionUrl = '<c:url value="/web/signin"/>';
         const language = '<c:out value="${locale}"/>';
         const account = '<c:out value="${account}"/>';
         const error = '<c:out value="${error}"/>';
