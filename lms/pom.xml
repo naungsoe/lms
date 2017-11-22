@@ -28,6 +28,16 @@
       </snapshots>
     </repository>
     <repository>
+      <id>snapshots</id>
+      <url>http://192.168.33.11:9091/feeds/snapshots</url>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+    </repository>
+    <repository>
       <id>in-project</id>
       <name>In Project Repo</name>
       <url>file://${basedir}/libs</url>
