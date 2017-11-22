@@ -1,6 +1,7 @@
 package com.hsystems.lms.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.JsonUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.web.util.ServletUtils;
@@ -25,6 +26,7 @@ public abstract class AbstractServlet extends HttpServlet {
 
   private static final String REFERER_HEADER = "referer";
 
+  @Log
   protected void forwardRequest(
       HttpServletRequest request, HttpServletResponse response, String path)
       throws ServletException, IOException {
