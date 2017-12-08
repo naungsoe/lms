@@ -15,7 +15,7 @@ import java.util.List;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class ResourceModel extends AuditableModel
-    implements Serializable {
+    implements EntityModel, Serializable {
 
   private String id;
 
@@ -27,14 +27,18 @@ public abstract class ResourceModel extends AuditableModel
 
   private List<String> keywords;
 
+  private String status;
+
   public ResourceModel() {
 
   }
 
+  @Override
   public String getId() {
     return id;
   }
 
+  @Override
   public void setId(String id) {
     this.id = id;
   }
@@ -75,5 +79,13 @@ public abstract class ResourceModel extends AuditableModel
   public void setKeywords(List<String> keywords) {
     this.keywords = new ArrayList<>();
     this.keywords.addAll(keywords);
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
   }
 }

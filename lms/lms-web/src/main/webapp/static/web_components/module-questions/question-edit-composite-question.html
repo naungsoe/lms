@@ -16,31 +16,35 @@
 
 <dom-module id="question-edit-composite-question">
   <template>
-    <style include="paper-button-styles">
-      .question-body,
-      .question-hint,
-      .question-explanation {
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
+      :host .question-body,
+      :host .question-hint,
+      :host .question-explanation {
+        padding: 0 16px 0 8px;
+      }
+
+      :host([standalone]) .question-body,
+      :host([standalone]) .question-hint,
+      :host([standalone]) .question-explanation {
         padding: 0 16px;
       }
 
+      .question-body,
       .question-components,
-      .question-hint,
-      .question-explanation {
-        margin-top: 16px;
+      .question-hint {
+        margin-bottom: 12px;
+      }
+
+      .question-body {
+        margin: 0 0 16px 0;
       }
 
       .question-components .question-component {
         @apply --layout-vertical;
-        padding: 8px 16px 8px 8px;
-      }
-
-      .question-components .question-component[active] {
-        @apply --shadow-elevation-4dp;
-      }
-
-      .question-components .question-component .header {
-        @apply --layout-horizontal;
-        @apply --layout-end-justified;
       }
 
       .question-components .question-component .content {
@@ -49,6 +53,21 @@
 
       .question-components .question-component .content .component {
         @apply --layout-flex;
+      }
+
+      .question-components .question-component[active] {
+        @apply --shadow-elevation-4dp;
+      }
+
+      .question-components .question-component[active] .content {
+        padding: 16px 0;
+      }
+
+      .question-components .question-component[active] .footer {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        border-top: 1px solid var(--border-color);
+        padding: 8px;
       }
 
       .question-components .question-component.drop-placeholder {
@@ -65,14 +84,14 @@
       }
 
       .question-components .component-actions {
-        margin-top: 12px;
+        margin: 8px 0;
         padding: 0 16px;
       }
     </style>
 
     <div class="question-body">
-      <paper-text-editor
-          label="[[localize('labelQuestion')]]"
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestion')]]"
           content="[[question.body]]">
       </paper-text-editor>
     </div>
@@ -90,22 +109,6 @@
               class="question-component"
               active$="[[_isEditingComponent(component, editingComponent)]]"
               on-tap="_handleComponentTap">
-            <template
-                is="dom-if"
-                if="[[_isEditingComponent(component, editingComponent)]]">
-              <div class="header">
-                <paper-icon-button
-                    icon="content-copy"
-                    on-tap="_handleCloneTap">
-                </paper-icon-button>
-
-                <paper-icon-button
-                    icon="delete"
-                    on-tap="_handleDeleteTap">
-                </paper-icon-button>
-              </div>
-            </template>
-
             <div class="content">
               <paper-icon-button
                   icon="editor:drag-handle"
@@ -162,6 +165,22 @@
                 </template>
               </div>
             </div>
+
+            <template
+                is="dom-if"
+                if="[[_isEditingComponent(component, editingComponent)]]">
+              <div class="footer">
+                <paper-icon-button
+                    icon="content-copy"
+                    on-tap="_handleCloneTap">
+                </paper-icon-button>
+
+                <paper-icon-button
+                    icon="delete"
+                    on-tap="_handleDeleteTap">
+                </paper-icon-button>
+              </div>
+            </template>
           </div>
         </template>
       </iron-sorter>
@@ -194,27 +213,19 @@
       </div>
     </div>
 
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-hint">
-        <paper-text-editor
-            label="[[localize('labelQuestionHint')]]"
-            content="[[question.hint]]">
-        </paper-text-editor>
-      </div>
-    </template>
+    <div class="question-hint">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionHint')]]"
+          content="[[question.hint]]">
+      </paper-text-editor>
+    </div>
 
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-explanation">
-        <paper-text-editor
-            label="[[localize('labelQuestionExplanation')]]"
-            content="[[question.explanation]]">
-        </paper-text-editor>
-      </div>
-    </template>
+    <div class="question-explanation">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionExplanation')]]"
+          content="[[question.explanation]]">
+      </paper-text-editor>
+    </div>
   </template>
 
   <script>
@@ -237,12 +248,6 @@
             type: Object,
             readOnly: false,
             notify: true
-          },
-          standalone: {
-            type: Boolean,
-            readOnly: false,
-            notify: true,
-            value: false
           },
           editingComponent: {
             type: Object,

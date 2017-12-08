@@ -10,9 +10,9 @@ import java.lang.annotation.Target;
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
-public @interface IndexCollection {
+public @interface IndexDocument {
 
   String namespace() default "";
 
-  String name() default "";
+  String collection() default "";
 }

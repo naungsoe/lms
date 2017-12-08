@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class ComponentModel implements Serializable {
+public abstract class ComponentModel implements EntityModel, Serializable {
 
   private String id;
 
@@ -20,10 +20,12 @@ public abstract class ComponentModel implements Serializable {
 
   }
 
+  @Override
   public String getId() {
     return id;
   }
 
+  @Override
   public void setId(String id) {
     this.id = id;
   }

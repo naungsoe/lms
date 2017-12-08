@@ -47,6 +47,6 @@ public class SignUpServlet extends AbstractServlet {
     SignUpModel signUpModel = ServletUtils.getModel(request, SignUpModel.class);
     userService.signUp(signUpModel);
 
-    redirectRequest(response, SIGNIN_PATH);
+    redirectRequest(request, response, SIGNIN_PATH);
   }
 }

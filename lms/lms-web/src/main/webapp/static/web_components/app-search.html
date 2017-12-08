@@ -2,10 +2,11 @@
 <link rel="import" href="../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../web_components/app-component-styles.html">
 
 <dom-module id="app-search">
   <template>
-    <style>
+    <style include="app-component-styles">
       :host {
         @apply --layout-horizontal;
       }
@@ -36,6 +37,7 @@
 
       paper-icon-button {
         color: white;
+        margin: 0;
       }
     </style>
 

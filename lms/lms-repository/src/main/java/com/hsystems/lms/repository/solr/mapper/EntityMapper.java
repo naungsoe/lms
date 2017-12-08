@@ -6,9 +6,11 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.Entity;
 
 import org.apache.solr.common.SolrDocument;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.time.LocalDateTime;
@@ -24,9 +26,11 @@ import java.util.Optional;
  */
 public class EntityMapper {
 
+  private static EntityMapper instance;
+
   private final Map<String, Class<?>> typeMap;
 
-  public EntityMapper(Map<String, Class<?>> typeMap) {
+  EntityMapper(Map<String, Class<?>> typeMap) {
     this.typeMap = typeMap;
   }
 
@@ -37,7 +41,7 @@ public class EntityMapper {
 
     T entity = ReflectionUtils.isInstantiable(type)
         ? (T) ReflectionUtils.getInstance(type)
-        : (T) ReflectionUtils.getInstance(getSubType(document, type));
+        : (T) ReflectionUtils.getInstance(getType(document));
     List<Field> fields = ReflectionUtils.getFields(entity.getClass());
     String id = document.getFieldValue(Constants.FIELD_ID).toString();
 
@@ -106,21 +110,10 @@ public class EntityMapper {
     return entity;
   }
 
-  protected <T> Class<?> getSubType(
-      SolrDocument document, Class<T> type) {
-
-    String packageName = type.getPackage().getName();
+  protected Class<?> getType(SolrDocument document) {
     String typeName = document.getFieldValue(
         Constants.FIELD_TYPE_NAME).toString();
-    typeName = String.format("%s.%s", packageName, typeName);
-
-    try {
-      return Class.forName(typeName);
-
-    } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException(
-          "error retrieving sub-type", e);
-    }
+    return typeMap.get(typeName);
   }
 
   protected String getFieldName(Field field) {
@@ -269,10 +262,12 @@ public class EntityMapper {
 
     } else if (fieldType.isEnum()) {
       Object value = document.getFieldValue(fieldName);
-      Class<Enum> enumType = (Class<Enum>) field.getType();
-      ReflectionUtils.setValue(entity, field.getName(),
-          Enum.valueOf(enumType, value.toString()));
 
+      if (value != null) {
+        Class<Enum> enumType = (Class<Enum>) field.getType();
+        ReflectionUtils.setValue(entity, field.getName(),
+            Enum.valueOf(enumType, value.toString()));
+      }
     } else if (fieldType == LocalDateTime.class) {
       Object value = document.getFieldValue(fieldName);
 
@@ -284,5 +279,26 @@ public class EntityMapper {
       ReflectionUtils.setValue(entity, field.getName(),
           document.getFieldValue(fieldName));
     }
+  }
+
+  public static EntityMapper getInstance() {
+    if (instance == null) {
+      synchronized (EntityMapper.class) {
+        if (instance == null) {
+          try {
+            String packageName = Entity.class.getPackage().getName();
+            Map<String, Class<?>> typeMap
+                = ReflectionUtils.getClasses(packageName);
+            instance = new EntityMapper(typeMap);
+
+          } catch (ClassNotFoundException | IOException e) {
+            throw new IllegalArgumentException(
+                "error retrieving classes", e);
+          }
+        }
+      }
+    }
+
+    return instance;
   }
 }

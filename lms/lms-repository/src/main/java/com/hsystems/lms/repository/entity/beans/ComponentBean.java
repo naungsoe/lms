@@ -1,4 +1,4 @@
-package com.hsystems.lms.repository.beans;
+package com.hsystems.lms.repository.entity.beans;
 
 import com.hsystems.lms.repository.entity.Component;
 

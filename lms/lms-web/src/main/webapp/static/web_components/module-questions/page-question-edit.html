@@ -1,6 +1,7 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 <link rel="import" href="../../web_components/page-header-panel.html">
 <link rel="import" href="../../web_components/module-questions/page-question-edit-toolbar.html">
 <link rel="import" href="../../web_components/module-questions/question-edit-composite-question.html">
@@ -10,7 +11,7 @@
 
 <dom-module id="page-question-edit">
   <template>
-    <style>
+    <style include="app-component-styles">
       .page-content {
         padding: 8px 0;
       }
@@ -20,15 +21,14 @@
         padding: 16px 0;
       }
 
-      .page-content .question .question-attributes {
-        margin-top: 32px;
+      .page-content .question .question-content .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+        padding: 0 16px;
       }
 
-      .page-content .question .question-content .title,
-      .page-content .question .question-attributes .title {
-        @apply --paper-font-subhead;
-        margin-bottom: 4px;
-        padding: 0 16px;
+      .page-content .question .question-attributes {
+        margin-top: 16px;
       }
     </style>
 
@@ -111,10 +111,6 @@
           </section>
 
           <section class="question-attributes">
-            <div class="title">
-              [[localize('labelQuestionAttributes')]]
-            </div>
-
             <question-edit-attributes
                 filter-options="[[filterOptions]]"
                 question="{{question}}"

@@ -1,13 +1,13 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(namespace = "lms", name = "mutations")
+@IndexDocument(namespace = "lms", collection = "mutations")
 public final class Mutation implements Entity, Serializable {
 
   private static final long serialVersionUID = 2286300390937074376L;

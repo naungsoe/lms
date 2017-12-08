@@ -12,7 +12,7 @@
 
 <dom-module id="page-quizzes-toolbar">
   <template>
-    <style include="paper-button-styles paper-menu-styles">
+    <style include="app-component-styles">
       paper-menu-button .filter-content {
         @apply --layout-vertical;
         padding: 8px 16px;
@@ -155,22 +155,12 @@
             readOnly: false,
             notify: true
           },
-          types: {
-            type: Array,
-            readOnly: false,
-            notify: true
-          },
           selectedLevel: {
             type: String,
             readOnly: false,
             notify: true
           },
           selectedSubject: {
-            type: String,
-            readOnly: false,
-            notify: true
-          },
-          selectedType: {
             type: String,
             readOnly: false,
             notify: true

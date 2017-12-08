@@ -2,11 +2,10 @@ package com.hsystems.lms.repository.solr.provider;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Entity;
@@ -27,7 +26,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -41,8 +39,6 @@ public class SolrClient {
   private static final String FORMAT_COMPOSITE_ID = "%s!%s";
 
   private Provider<Properties> propertiesProvider;
-
-  private volatile EntityMapper entityMapper;
 
   private volatile CloudSolrClient cloudClient;
 
@@ -125,47 +121,20 @@ public class SolrClient {
     return instance;
   }
 
-  protected synchronized EntityMapper getMapper() {
-    EntityMapper instance = entityMapper;
-
-    if (instance == null) {
-      synchronized (this) {
-        instance = entityMapper;
-
-        if (instance == null) {
-          String packageName = Entity.class.getPackage().getName();
-
-          try {
-            Map<String, Class<?>> typeMap
-                = ReflectionUtils.getClasses(packageName);
-            entityMapper = new EntityMapper(typeMap);
-            instance = entityMapper;
-
-          } catch (ClassNotFoundException | IOException e) {
-            throw new IllegalArgumentException(
-                "error retrieving classes", e);
-          }
-        }
-      }
-    }
-
-    return instance;
-  }
-
   private <T extends Entity> String getNamespace(Class<T> type) {
-    IndexCollection annotation = getAnnotation(type);
+    IndexDocument annotation = getAnnotation(type);
     String namespace = annotation.namespace();
     return StringUtils.isEmpty(namespace) ? "default" : namespace;
   }
 
-  private <T extends Entity> IndexCollection getAnnotation(Class<T> type) {
-    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+  private <T extends Entity> IndexDocument getAnnotation(Class<T> type) {
+    IndexDocument annotation = type.getAnnotation(IndexDocument.class);
 
     if (annotation == null) {
       Class<?> superType = type.getInterfaces()[0];
 
       while (annotation == null) {
-        annotation = superType.getAnnotation(IndexCollection.class);
+        annotation = superType.getAnnotation(IndexDocument.class);
         superType = superType.getInterfaces()[0];
       }
     }
@@ -174,8 +143,8 @@ public class SolrClient {
   }
 
   private <T extends Entity> String getCollection(Class<T> type) {
-    IndexCollection annotation = getAnnotation(type);
-    String collection = annotation.name();
+    IndexDocument annotation = getAnnotation(type);
+    String collection = annotation.collection();
     return StringUtils.isEmpty(collection)
         ? type.getSimpleName() : collection;
   }
@@ -190,7 +159,7 @@ public class SolrClient {
       Collections.emptyList();
     }
 
-    EntityMapper mapper = getMapper();
+    EntityMapper mapper = EntityMapper.getInstance();
     List<T> entities = new ArrayList<>();
 
     for (SolrDocument document : documents) {
@@ -209,7 +178,7 @@ public class SolrClient {
       CloudSolrClient client = getCloudClient();
       client.setDefaultCollection(collection);
 
-      DocumentMapper mapper = new DocumentMapper();
+      DocumentMapper mapper = DocumentMapper.getInstance();
 
       for (Entity entity : entities) {
         SolrInputDocument document = mapper.map(entity);
@@ -245,7 +214,7 @@ public class SolrClient {
       CloudSolrClient client = getCloudClient();
       client.setDefaultCollection(collection);
 
-      DocumentMapper mapper = new DocumentMapper();
+      DocumentMapper mapper = DocumentMapper.getInstance();
       SolrInputDocument document = mapper.map(entity);
       updateDocumentId(document, entity);
       client.add(document);

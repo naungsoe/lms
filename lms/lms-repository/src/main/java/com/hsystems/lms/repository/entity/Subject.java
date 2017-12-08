@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 /**
  * Created by naungsoe on 1/11/16.
  */
-@IndexCollection(namespace = "lms", name = "subjects")
+@IndexDocument(namespace = "lms", collection = "subjects")
 public final class Subject
     implements Entity, SchoolScoped, Auditable, Serializable {
 

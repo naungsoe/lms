@@ -5,11 +5,17 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
-import com.hsystems.lms.repository.beans.ComponentBean;
-import com.hsystems.lms.repository.beans.QuestionComponentBean;
-import com.hsystems.lms.repository.beans.SectionComponentBean;
+import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
+import com.hsystems.lms.repository.entity.beans.ComponentBean;
+import com.hsystems.lms.repository.entity.beans.ContentComponentBean;
+import com.hsystems.lms.repository.entity.beans.FileComponentBean;
+import com.hsystems.lms.repository.entity.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.entity.beans.SectionComponentBean;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.file.FileComponent;
+import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
+import com.hsystems.lms.repository.entity.lesson.ContentComponent;
 import com.hsystems.lms.repository.entity.question.CompositeQuestion;
 import com.hsystems.lms.repository.entity.question.CompositeQuestionComponent;
 import com.hsystems.lms.repository.entity.question.MultipleChoice;
@@ -93,25 +99,57 @@ public abstract class AbstractService {
     List<Component> components = new ArrayList<>();
 
     componentBeans.forEach(componentBean -> {
-      if (componentBean instanceof SectionComponentBean) {
-        SectionComponentBean sectionComponentBean
-            = (SectionComponentBean) componentBean;
-        String sectionId = sectionComponentBean.getId();
-        List<Component> questionComponents
-            = getComponents(componentBeans, sectionId);
+      if (componentBean instanceof ActivityComponentBean) {
+        ActivityComponent activityComponent
+            = getActivityComponent(componentBean, componentBeans);
+        components.add(activityComponent);
 
-        SectionComponent sectionComponent = new SectionComponent(
-            sectionComponentBean.getId(),
-            sectionComponentBean.getTitle(),
-            sectionComponentBean.getInstructions(),
-            sectionComponentBean.getOrder(),
-            questionComponents
-        );
+      } else if (componentBean instanceof SectionComponentBean) {
+        SectionComponent sectionComponent
+            = getSectionComponent(componentBean, componentBeans);
         components.add(sectionComponent);
       }
     });
 
     return components;
+  }
+
+  protected ActivityComponent getActivityComponent(
+      ComponentBean componentBean, List<ComponentBean> componentBeans) {
+
+    ActivityComponentBean activityComponentBean
+        = (ActivityComponentBean) componentBean;
+    String activityId = activityComponentBean.getId();
+    List<Component> resourceComponents
+        = getComponents(componentBeans, activityId);
+
+    ActivityComponent activityComponent = new ActivityComponent(
+        activityComponentBean.getId(),
+        activityComponentBean.getTitle(),
+        activityComponentBean.getInstructions(),
+        activityComponentBean.getOrder(),
+        resourceComponents
+    );
+    return activityComponent;
+  }
+
+  private SectionComponent getSectionComponent(
+      ComponentBean componentBean, List<ComponentBean> componentBeans) {
+
+    SectionComponentBean sectionComponentBean
+        = (SectionComponentBean) componentBean;
+    String sectionId = sectionComponentBean.getId();
+    List<Component> questionComponents
+        = getComponents(componentBeans, sectionId);
+
+    SectionComponent sectionComponent = new SectionComponent(
+        sectionComponentBean.getId(),
+        sectionComponentBean.getTitle(),
+        sectionComponentBean.getInstructions(),
+        sectionComponentBean.getOrder(),
+        questionComponents
+    );
+    return sectionComponent;
   }
 
   protected List<Component> getComponents(
@@ -120,45 +158,85 @@ public abstract class AbstractService {
     List<Component> questionComponents = new ArrayList<>();
 
     componentBeans.forEach(componentBean -> {
-      if (componentBean instanceof QuestionComponentBean) {
-        QuestionComponentBean questionComponentBean
-            = (QuestionComponentBean) componentBean;
-        String parentBeanId = questionComponentBean.getParentId();
+      String parentBeanId = componentBean.getParentId();
 
-        if (parentBeanId.equals(parentId)) {
-          Question question = questionComponentBean.getQuestion();
-          QuestionComponent questionComponent;
-
-          if (question instanceof CompositeQuestion) {
-            questionComponent = new CompositeQuestionComponent(
-                questionComponentBean.getId(),
-                (CompositeQuestion) question,
-                questionComponentBean.getScore(),
-                questionComponentBean.getOrder()
-            );
-          } else if (question instanceof MultipleChoice) {
-            questionComponent = new MultipleChoiceComponent(
-                questionComponentBean.getId(),
-                (MultipleChoice) question,
-                questionComponentBean.getScore(),
-                questionComponentBean.getOrder()
-            );
-          } else if (question instanceof MultipleResponse) {
-            questionComponent = new MultipleResponseComponent(
-                questionComponentBean.getId(),
-                (MultipleResponse) question,
-                questionComponentBean.getScore(),
-                questionComponentBean.getOrder()
-            );
-          } else {
-            questionComponent = new UnknownQuestionComponent();
-          }
+      if (parentBeanId.equals(parentId)) {
+        if (componentBean instanceof QuestionComponentBean) {
+          QuestionComponent questionComponent
+              = getQuestionComponent(componentBean);
           questionComponents.add(questionComponent);
+
+        } else if (componentBean instanceof FileComponentBean) {
+          FileComponent fileComponent
+              = getFileComponent(componentBean);
+          questionComponents.add(fileComponent);
+
+        } else if (componentBean instanceof ContentComponentBean) {
+          ContentComponent contentComponent
+              = getContentComponent(componentBean);
+          questionComponents.add(contentComponent);
         }
       }
     });
 
     return questionComponents;
+  }
+
+  protected QuestionComponent getQuestionComponent(
+      ComponentBean componentBean) {
+
+    QuestionComponentBean questionComponentBean
+        = (QuestionComponentBean) componentBean;
+    Question question = questionComponentBean.getQuestion();
+    QuestionComponent questionComponent;
+
+    if (question instanceof CompositeQuestion) {
+      questionComponent = new CompositeQuestionComponent(
+          questionComponentBean.getId(),
+          (CompositeQuestion) question,
+          questionComponentBean.getScore(),
+          questionComponentBean.getOrder()
+      );
+    } else if (question instanceof MultipleChoice) {
+      questionComponent = new MultipleChoiceComponent(
+          questionComponentBean.getId(),
+          (MultipleChoice) question,
+          questionComponentBean.getScore(),
+          questionComponentBean.getOrder()
+      );
+    } else if (question instanceof MultipleResponse) {
+      questionComponent = new MultipleResponseComponent(
+          questionComponentBean.getId(),
+          (MultipleResponse) question,
+          questionComponentBean.getScore(),
+          questionComponentBean.getOrder()
+      );
+    } else {
+      questionComponent = new UnknownQuestionComponent();
+    }
+
+    return questionComponent;
+  }
+
+  protected FileComponent getFileComponent(ComponentBean componentBean) {
+    FileComponentBean fileComponentBean = (FileComponentBean) componentBean;
+    FileComponent fileComponent = new FileComponent(
+        fileComponentBean.getId(),
+        fileComponentBean.getFileObject(),
+        fileComponentBean.getOrder()
+    );
+    return fileComponent;
+  }
+
+  protected ContentComponent getContentComponent(ComponentBean componentBean) {
+    ContentComponentBean contentComponentBean
+        = (ContentComponentBean) componentBean;
+    ContentComponent contentComponent = new ContentComponent(
+        contentComponentBean.getId(),
+        contentComponentBean.getContent(),
+        contentComponentBean.getOrder()
+    );
+    return contentComponent;
   }
 
   protected <T, S> S getModel(T entity, Class<S> type) {
@@ -168,8 +246,8 @@ public abstract class AbstractService {
   protected <T, S> S getModel(
       T entity, Class<S> type, Configuration configuration) {
 
-    ModelMapper mapper = new ModelMapper(configuration);
-    return mapper.map(entity, type);
+    ModelMapper mapper = ModelMapper.getInstance();
+    return mapper.map(entity, type, configuration);
   }
 
   protected <T, S> S getEntity(T model, Class<S> type) {
@@ -179,7 +257,7 @@ public abstract class AbstractService {
   protected <T, S> S getEntity(
       T model, Class<S> type, Configuration configuration) {
 
-    EntityMapper mapper = new EntityMapper(configuration);
-    return mapper.map(model, type);
+    EntityMapper mapper = EntityMapper.getInstance();
+    return mapper.map(model, type, configuration);
   }
 }

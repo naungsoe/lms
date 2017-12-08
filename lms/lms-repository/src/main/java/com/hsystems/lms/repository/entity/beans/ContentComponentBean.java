@@ -1,24 +1,20 @@
-package com.hsystems.lms.repository.beans;
+package com.hsystems.lms.repository.entity.beans;
 
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.repository.entity.question.Question;
-import com.hsystems.lms.repository.entity.question.QuestionComponent;
+import com.hsystems.lms.repository.entity.lesson.ContentComponent;
 
 import java.io.Serializable;
 
-public class QuestionComponentBean<T extends Question>
+public class ContentComponentBean
     implements ComponentBean, Serializable {
 
-  private static final long serialVersionUID = 3742622771669513564L;
+  private static final long serialVersionUID = 8249781720338863168L;
 
   @IndexField
   private String id;
 
   @IndexField
-  private T question;
-
-  @IndexField
-  private long score;
+  private String content;
 
   @IndexField
   private int order;
@@ -29,18 +25,17 @@ public class QuestionComponentBean<T extends Question>
   @IndexField
   private String parentId;
 
-  QuestionComponentBean() {
+  ContentComponentBean() {
 
   }
 
-  public QuestionComponentBean(
-      QuestionComponent<T> component,
+  public ContentComponentBean(
+      ContentComponent component,
       String resourceId,
       String parentId) {
 
     this.id = component.getId();
-    this.question = component.getQuestion();
-    this.score = component.getScore();
+    this.content = component.getContent();
     this.order = component.getOrder();
     this.resourceId = resourceId;
     this.parentId = parentId;
@@ -51,12 +46,8 @@ public class QuestionComponentBean<T extends Question>
     return id;
   }
 
-  public T getQuestion() {
-    return question;
-  }
-
-  public long getScore() {
-    return score;
+  public String getContent() {
+    return content;
   }
 
   @Override

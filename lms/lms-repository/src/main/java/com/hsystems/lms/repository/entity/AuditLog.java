@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(namespace = "lms", name = "groups")
+@IndexDocument(namespace = "lms", collection = "groups")
 public final class AuditLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 3128314081684414981L;

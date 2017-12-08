@@ -378,6 +378,18 @@ public abstract class HBaseAbstractMapper<T> {
     }
   }
 
+  protected String getContent(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_CONTENT);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_CONTENT);
+      return getString(cells, timestamp);
+    }
+  }
+
   protected LocalDateTime getDateTime(Result result, long timestamp) {
     if (timestamp == 0) {
       return getLocalDateTime(result, Constants.FAMILY_DATA,
@@ -414,18 +426,6 @@ public abstract class HBaseAbstractMapper<T> {
     }
   }
 
-  protected int getOrder(Result result, long timestamp) {
-    if (timestamp == 0) {
-      return getInteger(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ORDER);
-
-    } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ORDER);
-      return getInteger(cells, timestamp);
-    }
-  }
-
   protected long getScore(Result result, long timestamp) {
     if (timestamp == 0) {
       return getLong(result, Constants.FAMILY_DATA,
@@ -435,6 +435,18 @@ public abstract class HBaseAbstractMapper<T> {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.QUALIFIER_SCORE);
       return getLong(cells, timestamp);
+    }
+  }
+
+  protected int getOrder(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getInteger(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_ORDER);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_ORDER);
+      return getInteger(cells, timestamp);
     }
   }
 

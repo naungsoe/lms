@@ -3,25 +3,34 @@
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="question-list">
   <template>
-    <style>
+    <style include="app-component-styles">
       .list-item .question {
         @apply --layout-vertical;
         background-color: var(--primary-background-color);
         border: 1px solid var(--border-color);
-        margin: 8px 0 4px 0;
+        margin: 8px 0;
         padding: 16px;
       }
 
       .list-item .question .question-type {
         @apply --paper-font-subhead;
-        margin-bottom: 8px;
+      }
+
+      .list-item .question .question-body,
+      .list-item .question .component {
+        margin-top: 12px;
       }
 
       .list-item .question .component {
-        padding: 8px 0 0 0;
+        @apply --layout-horizontal;
+      }
+
+      .list-item .question .component .component-title {
+        margin-right: 4px;
       }
     </style>
 
@@ -59,6 +68,9 @@
                   items="[[question.question.components]]"
                   as="component">
                 <div class="component">
+                  <div class="component-title">
+                    [[localize('labelQuestionNumber', 'number', component.order)]]
+                  </div>
                   <div class="component-body">
                     [[component.question.body]]
                   </div>

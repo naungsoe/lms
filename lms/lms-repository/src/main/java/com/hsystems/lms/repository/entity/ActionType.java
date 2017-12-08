@@ -5,7 +5,7 @@ package com.hsystems.lms.repository.entity;
  */
 public enum ActionType {
 
-  LOGGEDIN,
+  LOGGED_IN,
   CREATED,
   MODIFIED,
   DELETED,

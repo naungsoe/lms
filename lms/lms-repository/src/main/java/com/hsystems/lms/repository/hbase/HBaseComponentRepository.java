@@ -95,7 +95,10 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, Component.class);
-    return componentMapper.getEntities(results, mutations);
+    List<Component> components
+        = componentMapper.getEntities(results, mutations);
+
+    return components;
   }
 
   @Override

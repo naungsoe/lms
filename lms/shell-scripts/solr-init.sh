@@ -97,12 +97,55 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
 }' http://localhost:8983/solr/enrollments/schema
 
 
+solr-6.2.1/bin/solr delete -c courses
+solr-6.2.1/bin/solr create -c courses
+curl -X POST -H 'Content-type:application/json' --data-binary '{
+  "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"keywords","type":"strings","indexed":true,"stored":true},
+  "add-field":{"name":"status","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
+}' http://localhost:8983/solr/courses/schema
+
+
+solr-6.2.1/bin/solr delete -c lessons
+solr-6.2.1/bin/solr create -c lessons
+curl -X POST -H 'Content-type:application/json' --data-binary '{
+  "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"keywords","type":"strings","indexed":true,"stored":true},
+  "add-field":{"name":"status","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"modifiedDateTime","type":"date","indexed":true,"stored":true},
+  "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
+  "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"schoolId","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
+  "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
+  "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
+}' http://localhost:8983/solr/lessons/schema
+
+
 solr-6.2.1/bin/solr delete -c quizzes
 solr-6.2.1/bin/solr create -c quizzes
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"instructions","type":"text_general","indexed":true,"stored":true,"multiValued":false},
-  "add-field":{"name":"keywords","type":"strings","indexed":false,"stored":true},
+  "add-field":{"name":"keywords","type":"strings","indexed":true,"stored":true},
+  "add-field":{"name":"status","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"lastName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"createdDateTime","type":"date","indexed":true,"stored":true},
@@ -124,7 +167,8 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"body","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"hint","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"explanation","type":"string","indexed":true,"stored":true},
-  "add-field":{"name":"keywords","type":"strings","indexed":false,"stored":true},
+  "add-field":{"name":"keywords","type":"strings","indexed":true,"stored":true},
+  "add-field":{"name":"status","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"feedback","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"correct","type":"boolean","indexed":false,"stored":true},
   "add-field":{"name":"score","type":"long","indexed":false,"stored":true},
@@ -157,6 +201,7 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"correct","type":"boolean","indexed":false,"stored":true},
   "add-field":{"name":"score","type":"long","indexed":false,"stored":true},
   "add-field":{"name":"order","type":"int","indexed":false,"stored":true},
+  "add-field":{"name":"content","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},

@@ -10,21 +10,39 @@
 
 <dom-module id="question-edit-multiple-choice">
   <template>
-    <style include="paper-button-styles">
-      :host([standalone]) {
+    <style include="app-component-styles">
+      :host {
         display: block;
+      }
+
+      :host .question-body,
+      :host .question-hint,
+      :host .question-explanation {
+        padding: 0 16px 0 8px;
+      }
+
+      :host .question-options {
+        padding: 0 8px 0 0;
+      }
+
+      :host([standalone]) .question-body,
+      :host([standalone]) .question-hint,
+      :host([standalone]) .question-explanation {
         padding: 0 16px;
       }
 
-      .question-options,
-      .question-hint,
-      .question-explanation {
-        margin-top: 8px;
+      :host([standalone]) .question-options {
+        padding: 0 8px;
+      }
+
+      .question-body,
+      .question-hint {
+        margin-bottom: 12px;
       }
 
       .question-options .question-option {
         @apply --layout-horizontal;
-        padding: 6px 0;
+        margin-bottom: 8px;
       }
 
       .question-options .question-option paper-radio-button {
@@ -50,28 +68,15 @@
       }
 
       .question-options .option-actions {
-        margin-top: 12px;
+        margin: 8px 0;
       }
     </style>
 
     <div class="question-body">
-      <template
-          is="dom-if"
-          if="[[!standalone]]">
-        <paper-text-editor no-label-float
-            placeholder="[[localize('labelQuestion')]]"
-            content="[[question.body]]">
-        </paper-text-editor>
-      </template>
-
-      <template
-          is="dom-if"
-          if="[[standalone]]">
-        <paper-text-editor
-            label="[[localize('labelQuestion')]]"
-            content="[[question.body]]">
-        </paper-text-editor>
-      </template>
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestion')]]"
+          content="[[question.body]]">
+      </paper-text-editor>
     </div>
 
     <div class="question-options">
@@ -117,27 +122,19 @@
       </div>
     </div>
 
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-hint">
-        <paper-text-editor
-            label="[[localize('labelQuestionHint')]]"
-            content="[[question.hint]]">
-        </paper-text-editor>
-      </div>
-    </template>
+    <div class="question-hint">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionHint')]]"
+          content="[[question.hint]]">
+      </paper-text-editor>
+    </div>
 
-    <template
-        is="dom-if"
-        if="[[standalone]]">
-      <div class="question-explanation">
-        <paper-text-editor
-            label="[[localize('labelQuestionExplanation')]]"
-            content="[[question.explanation]]">
-        </paper-text-editor>
-      </div>
-    </template>
+    <div class="question-explanation">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionExplanation')]]"
+          content="[[question.explanation]]">
+      </paper-text-editor>
+    </div>
   </template>
 
   <script>
@@ -155,12 +152,6 @@
             type: Object,
             readOnly: false,
             notify: true
-          },
-          standalone: {
-            type: Boolean,
-            readOnly: false,
-            notify: true,
-            value: false
           }
         };
       }

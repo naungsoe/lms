@@ -22,4 +22,6 @@ public interface Resource extends SchoolScoped {
   Enumeration<PermissionSet> getPermissionSets();
 
   void addPermissionSet(PermissionSet... permissionSets);
+
+  ResourceStatus getStatus();
 }

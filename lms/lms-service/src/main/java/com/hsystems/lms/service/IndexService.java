@@ -13,14 +13,18 @@ import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.UserEnrollmentRepository;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.beans.ComponentBean;
-import com.hsystems.lms.repository.beans.QuestionComponentBean;
-import com.hsystems.lms.repository.beans.SectionComponentBean;
+import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
+import com.hsystems.lms.repository.entity.beans.ComponentBean;
+import com.hsystems.lms.repository.entity.beans.ContentComponentBean;
+import com.hsystems.lms.repository.entity.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.entity.beans.SectionComponentBean;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.UserEnrollment;
+import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
+import com.hsystems.lms.repository.entity.lesson.ContentComponent;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.QuestionResource;
@@ -106,6 +110,9 @@ public class IndexService extends AbstractService {
       case COLLECTION_ENROLLMENT:
         indexAllEnrollments(schoolId);
         break;
+      case COLLECTION_LESSON:
+        indexAllLessons(schoolId);
+        break;
       case COLLECTION_QUIZ:
         indexAllQuizzes(schoolId);
         break;
@@ -170,6 +177,85 @@ public class IndexService extends AbstractService {
     } while (!isLastPage(numFound));
   }
 
+  private void indexAllLessons(String schoolId)
+      throws IOException {
+
+    String lastId = schoolId;
+    int numFound;
+
+    do {
+      List<LessonResource> lessonResources = lessonRepository.findAllBy(
+          schoolId, lastId, INDEX_LIMIT);
+
+      for (LessonResource lessonResource : lessonResources) {
+        String resourceId = lessonResource.getId();
+        List<Component> components
+            = componentRepository.findAllBy(resourceId);
+        indexComponents(components, resourceId, resourceId);
+      }
+
+      indexRepository.save(lessonResources);
+
+      numFound = lessonResources.size();
+      lastId = lessonResources.get(numFound - 1).getId();
+
+    } while (!isLastPage(numFound));
+  }
+
+  private void indexComponents(
+      List<Component> components, String resourceId, String parentId)
+      throws IOException {
+
+    List<ComponentBean> componentBeans = new ArrayList<>();
+
+    for (Component component : components) {
+      if (component instanceof ActivityComponent) {
+        ActivityComponent activityComponent = (ActivityComponent) component;
+        String activityId = activityComponent.getId();
+        ActivityComponentBean activityComponentBean
+            = new ActivityComponentBean(
+            activityComponent, resourceId, parentId);
+        componentBeans.add(activityComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(activityComponent.getComponents());
+        indexComponents(childComponents, resourceId, activityId);
+
+      } else if (component instanceof SectionComponent) {
+        SectionComponent sectionComponent = (SectionComponent) component;
+        String sectionId = sectionComponent.getId();
+        SectionComponentBean sectionComponentBean
+            = new SectionComponentBean(
+                sectionComponent, resourceId, parentId);
+        componentBeans.add(sectionComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(sectionComponent.getComponents());
+        indexComponents(childComponents, resourceId, sectionId);
+
+      } else if (component instanceof QuestionComponent) {
+        QuestionComponent<?> questionComponent
+            = (QuestionComponent<?>) component;
+        QuestionComponentBean<?> questionComponentBean
+            = new QuestionComponentBean(
+                questionComponent, resourceId, parentId);
+        componentBeans.add(questionComponentBean);
+
+      } else if (component instanceof ContentComponent) {
+        ContentComponent contentComponent
+            = (ContentComponent) component;
+        ContentComponentBean contentComponentBean
+            = new ContentComponentBean(
+            contentComponent, resourceId, parentId);
+        componentBeans.add(contentComponentBean);
+      }
+    }
+
+    if (CollectionUtils.isNotEmpty(componentBeans)) {
+      indexRepository.save(componentBeans);
+    }
+  }
+
   private void indexAllQuizzes(String schoolId)
       throws IOException {
 
@@ -193,40 +279,6 @@ public class IndexService extends AbstractService {
       lastId = quizResources.get(numFound - 1).getId();
 
     } while (!isLastPage(numFound));
-  }
-
-  private void indexComponents(
-      List<Component> components, String resourceId, String parentId)
-      throws IOException {
-
-    List<ComponentBean> componentBeans = new ArrayList<>();
-
-    for (Component component : components) {
-      if (component instanceof SectionComponent) {
-        SectionComponent sectionComponent = (SectionComponent) component;
-        String sectionId = sectionComponent.getId();
-        SectionComponentBean sectionComponentBean
-            = new SectionComponentBean(
-                sectionComponent, resourceId, parentId);
-        componentBeans.add(sectionComponentBean);
-
-        List<Component> childComponents
-            = Collections.list(sectionComponent.getComponents());
-        indexComponents(childComponents, resourceId, sectionId);
-
-      } else if (component instanceof QuestionComponent) {
-        QuestionComponent<?> questionComponent
-            = (QuestionComponent<?>) component;
-        QuestionComponentBean<?> questionComponentBean
-            = new QuestionComponentBean(
-                questionComponent, resourceId, parentId);
-        componentBeans.add(questionComponentBean);
-      }
-    }
-
-    if (CollectionUtils.isNotEmpty(componentBeans)) {
-      indexRepository.save(componentBeans);
-    }
   }
 
   private void indexAllQuestions(String schoolId)

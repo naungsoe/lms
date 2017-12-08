@@ -1,0 +1,470 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-view-activity.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-edit-activity.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-view-content.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-edit-content.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-response.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-response.html">
+
+<dom-module id="lesson-edit-components">
+  <template>
+    <style include="app-component-styles">
+      .activity-component {
+        border: 1px solid var(--border-color);
+      }
+
+      .activity-component .lesson-component {
+        @apply --layout-vertical;
+      }
+
+      .activity-component .lesson-component[active]:not(.activity) {
+        @apply --shadow-elevation-4dp;
+      }
+
+      .activity-component .lesson-component[active]:not(.activity) .content {
+        padding: 16px 0;
+      }
+
+      .activity-component .lesson-component[active]:not(.activity) .footer {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        border-top: 1px solid var(--border-color);
+        padding: 8px;
+      }
+
+      .activity-component .lesson-component.activity {
+        padding: 8px 0;
+      }
+
+      .activity-component .lesson-component .content {
+        @apply --layout-horizontal;
+      }
+
+      .activity-component .lesson-component .content .component {
+        @apply --layout-flex;
+      }
+
+      .activity-component .lesson-component .header {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+      }
+
+      .activity-component .lesson-component .header .title {
+        @apply --paper-font-subhead;
+        @apply --layout-flex;
+        color: var(--secondary-text-color);
+        padding: 8px 16px;
+      }
+
+      .activity-component .lesson-component.drop-placeholder {
+        border: 1px dashed var(--border-color);
+      }
+
+      .activity-component .lesson-component.drop-placeholder * {
+        @apply --layout-invisible;
+      }
+
+      .activity-component .lesson-component.drag-item {
+        @apply --shadow-elevation-2dp;
+        background-color: var(--secondary-background-color);
+      }
+
+      .activity-component .component-actions {
+        margin: 8px 0;
+        padding: 0 16px;
+      }
+
+      .component-actions {
+        margin: 8px 0 24px 0;
+      }
+    </style>
+
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[lessonId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{lesson}}">
+    </iron-ajax>
+
+    <iron-ajax
+        name="post"
+        body="[[lesson]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <div class="component-actions">
+      <paper-button on-tap="_handleAddActivityTap">
+        <iron-icon icon="add"></iron-icon>
+        [[localize('buttonAddActivity')]]
+      </paper-button>
+    </div>
+
+    <template
+        name="activity"
+        is="dom-repeat"
+        items="[[lesson.components]]"
+        as="component">
+      <section class="activity-component">
+        <div
+            class="lesson-component activity"
+            active$="[[_isEditingComponent(component, editingComponent)]]"
+            on-tap="_handleComponentTap">
+          <div class="header">
+            <div class="title">
+              [[localize('labelActivity', 'offset', component.order,
+                'length', lesson.components.length)]]
+            </div>
+
+            <paper-menu-button
+                restore-focus-on-close="[[restoreFocusOnClose]]"
+                horizontal-align="right"
+                vertical-align="top">
+              <paper-icon-button
+                  slot="dropdown-trigger"
+                  icon="more-vert">
+              </paper-icon-button>
+
+              <div slot="dropdown-content">
+                <paper-listbox slot="dropdown-content">
+                  <paper-item value="move">
+                    [[localize('labelActivityMove')]]
+                  </paper-item>
+                  <paper-item value="clone">
+                    [[localize('labelActivityDuplicate')]]
+                  </paper-item>
+                  <paper-item value="delete">
+                    [[localize('labelActivityDelete')]]
+                  </paper-item>
+                  <paper-item value="merge">
+                    [[localize('labelActivityMerge')]]
+                  </paper-item>
+                </paper-listbox>
+              </div>
+            </paper-menu-button>
+          </div>
+
+          <div class="content">
+            <div class="component">
+              <template
+                  is="dom-if"
+                  if="[[!_isEditingComponent(component, editingComponent)]]">
+                <lesson-view-activity
+                    activity="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </lesson-view-activity>
+              </template>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <lesson-edit-activity
+                    activity="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </lesson-edit-activity>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <iron-sorter
+            handle="component-handle"
+            draggable="draggable-component"
+            on-order-changed="_handleOrderChange">
+          <template
+              name="component"
+              is="dom-repeat"
+              items="[[component.components]]"
+              as="component">
+            <div
+                class="lesson-component draggable-component"
+                active$="[[_isEditingComponent(component, editingComponent)]]"
+                on-tap="_handleComponentTap">
+              <div class="content">
+                <paper-icon-button
+                    icon="editor:drag-handle"
+                    class="component-handle">
+                </paper-icon-button>
+
+                <div class="component">
+                  <template
+                      is="dom-if"
+                      if="[[!_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-view-multiple-choice
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component)]]">
+                      <question-view-multiple-response
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-response>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isContentComponent(component)]]">
+                      <lesson-view-content
+                          content="{{component}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </lesson-view-content>
+                    </template>
+                  </template>
+
+                  <template
+                      is="dom-if"
+                      if="[[_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-edit-multiple-choice
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-edit-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component, editingComponent)]]">
+                      <question-edit-multiple-response
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-edit-multiple-response>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isContentComponent(component)]]">
+                      <lesson-edit-content
+                          content="{{component}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </lesson-edit-content>
+                    </template>
+                  </template>
+                </div>
+              </div>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <div class="footer">
+                  <paper-icon-button
+                      icon="content-copy"
+                      on-tap="_handleCloneTap">
+                  </paper-icon-button>
+
+                  <paper-icon-button
+                      icon="delete"
+                      on-tap="_handleDeleteTap">
+                  </paper-icon-button>
+                </div>
+              </template>
+            </div>
+          </template>
+        </iron-sorter>
+
+        <div class="component-actions">
+          <paper-menu-button>
+            <paper-button slot="dropdown-trigger">
+              <iron-icon icon="add"></iron-icon>
+              [[localize('buttonAddComponent')]]
+            </paper-button>
+
+            <paper-listbox
+                slot="dropdown-content"
+                attr-for-selected="value"
+                on-selected-item-changed="_handleMenuSelect">
+              <template
+                  is="dom-repeat"
+                  items="[[types]]"
+                  as="type">
+                <paper-item value="[[type.value]]">
+                  [[type.name]]
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+      </section>
+
+      <div class="component-actions">
+        <paper-button on-tap="_handleAddActivityTap">
+          <iron-icon icon="add"></iron-icon>
+          [[localize('buttonAddActivity')]]
+        </paper-button>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    const LessonEditComponentsBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonEditComponents extends LessonEditComponentsBase {
+      static get is() {
+        return 'lesson-edit-components';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          editingComponent: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _isEditingComponent(component, editingComponent) {
+        return component === editingComponent;
+      }
+
+      _isMultipleChoice(component) {
+        return (component.question !== undefined)
+          && (component.question.type === 'MultipleChoice');
+      }
+
+      _isMultipleResponse(component) {
+        return (component.question !== undefined)
+          && (component.question.type === 'MultipleResponse');
+      }
+
+      _isContentComponent(component) {
+        return component.content !== undefined;
+      }
+
+      _handleComponentTap(event) {
+        let path = Polymer.dom(event).path;
+        let menuInPath = false;
+
+        for (var i = 0; i < path.length; i++) {
+          if (path[i].tagName === 'PAPER-MENU-BUTTON') {
+            menuInPath = true;
+            break;
+          }
+        }
+
+        if (!menuInPath) {
+          this.editingComponent = event.model.component;
+        }
+      }
+
+      _handleAddActivityTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat[name=activity]');
+        let activity = template.itemForElement(event.target);
+        var index = this.lesson.components.indexOf(activity);
+        this.lesson.components.forEach(function(component, compIndex) {
+          if (compIndex > index) {
+            component.order = component.order + 1;
+          }
+        });
+
+        let order = activity.order + 1;
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.lesson.components.splice((index + 1), 0, component);
+        this.notifySplices('lesson.components');
+      }
+
+      _handleMenuSelect(event) {
+        if (event.detail.value === null) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat[name=activity]');
+        let activity = template.itemForElement(event.target);
+        var index = this.lesson.components.indexOf(activity);
+
+        let order = activity.components.length + 1;
+        let component = {
+          id: '',
+          question: {
+            type: 'MultipleChoice',
+            body: '',
+            hint: '',
+            explanation: '',
+            options: [
+              {
+                id: '',
+                body: 'Option 1',
+                feedback: '',
+                correct: false,
+                order: 1
+              },
+              {
+                id: '',
+                body: 'Option 2',
+                feedback: '',
+                correct: false,
+                order: 2
+              }
+            ]
+          },
+          score: 0,
+          order: order
+        };
+        this.editingComponent = component;
+        activity.components.push(component);
+
+        let path = 'lesson.components.' + index + '.components';
+        this.notifySplices(path);
+      }
+    }
+    customElements.define(LessonEditComponents.is, LessonEditComponents);
+  </script>
+</dom-module>

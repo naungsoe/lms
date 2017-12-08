@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(namespace = "lms", name = "groups")
+@IndexDocument(namespace = "lms", collection = "groups")
 public final class Group
     implements Entity, SchoolScoped, Auditable, Serializable {
 

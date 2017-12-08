@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(namespace = "lms", name = "signinlogs")
+@IndexDocument(namespace = "lms", collection = "signinlogs")
 public final class SignInLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 5151641476549637651L;

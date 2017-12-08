@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity.file;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -8,7 +8,7 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "files")
+@IndexDocument(namespace = "lms", collection = "files")
 public final class FileObject implements Serializable {
 
   private static final long serialVersionUID = -2798310873506817051L;

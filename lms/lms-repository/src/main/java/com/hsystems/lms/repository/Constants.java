@@ -33,7 +33,9 @@ public final class Constants {
   public static final byte[] QUALIFIER_PERMISSIONS
       = Bytes.toBytes("permissions");
   public static final byte[] QUALIFIER_TYPE = Bytes.toBytes("type");
-  public static final byte[] QUALIFIER_QUESTION_TYPE = Bytes.toBytes("qtype");
+  public static final byte[] QUALIFIER_QUESTION_TYPE = Bytes.toBytes("qntype");
+  public static final byte[] QUALIFIER_LESSON_ID = Bytes.toBytes("lesson");
+  public static final byte[] QUALIFIER_QUIZ_ID = Bytes.toBytes("quiz");
   public static final byte[] QUALIFIER_SESSION_ID = Bytes.toBytes("session");
   public static final byte[] QUALIFIER_IP_ADDRESS = Bytes.toBytes("ip");
   public static final byte[] QUALIFIER_FAILS = Bytes.toBytes("fails");
@@ -46,6 +48,7 @@ public final class Constants {
   public static final byte[] QUALIFIER_EXPLANATION
       = Bytes.toBytes("explanation");
   public static final byte[] QUALIFIER_FEEDBACK = Bytes.toBytes("feedback");
+  public static final byte[] QUALIFIER_CONTENT = Bytes.toBytes("content");
   public static final byte[] QUALIFIER_CORRECT = Bytes.toBytes("correct");
   public static final byte[] QUALIFIER_ORDER = Bytes.toBytes("order");
   public static final byte[] QUALIFIER_SCORE = Bytes.toBytes("score");

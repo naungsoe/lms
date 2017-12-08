@@ -5,6 +5,8 @@ import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.file.FileComponent;
+import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
+import com.hsystems.lms.repository.entity.lesson.ContentComponent;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonComponent;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
@@ -87,16 +89,20 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
       case "QuizComponent":
         component = getQuizComponent(mainResult, results, timestamp);
         break;
+      case "ActivityComponent":
+        component = getActivityComponent(mainResult, timestamp);
+        break;
       case "SectionComponent":
         component = getSectionComponent(mainResult, timestamp);
         break;
-      case "CompositeQuestionComponent":
-      case "MultipleChoiceComponent":
-      case "MultipleResponseComponent":
+      case "QuestionComponent":
         component = getQuestionComponent(mainResult, results, timestamp);
         break;
       case "FileComponent":
         component = getFileComponent(mainResult, results, timestamp);
+        break;
+      case "ContentComponent":
+        component = getContentComponent(mainResult, results, timestamp);
         break;
       default:
         component = new UnknownComponent();
@@ -164,6 +170,24 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
+  protected ActivityComponent getActivityComponent(
+      Result mainResult, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    String title = getTitle(mainResult, timestamp);
+    String instructions = getInstructions(mainResult, timestamp);
+    int order = getOrder(mainResult, timestamp);
+    List<Component> components = Collections.emptyList();
+
+    return new ActivityComponent(
+        id,
+        title,
+        instructions,
+        order,
+        components
+    );
+  }
+
   protected SectionComponent getSectionComponent(
       Result mainResult, long timestamp) {
 
@@ -195,6 +219,20 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
+  protected ContentComponent getContentComponent(
+      Result mainResult, List<Result> results, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    String content = getContent(mainResult, timestamp);
+    int order = getOrder(mainResult, timestamp);
+
+    return new ContentComponent(
+        id,
+        content,
+        order
+    );
+  }
+
   protected void addChildToParent(
       List<Component> rootComponents,
       Map<String, List<Component>> childComponents) {
@@ -219,6 +257,13 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
               QuizComponent quizComponent
                   = (QuizComponent) rootComponent;
               quizComponent.getQuiz().addComponent(
+                  components.toArray(new Component[0]));
+              addChildToParent(components, childComponents);
+
+            } else if (rootComponent instanceof ActivityComponent) {
+              ActivityComponent activityComponent
+                  = (ActivityComponent) rootComponent;
+              activityComponent.addComponent(
                   components.toArray(new Component[0]));
               addChildToParent(components, childComponents);
 

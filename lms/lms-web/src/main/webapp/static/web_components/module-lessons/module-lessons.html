@@ -3,12 +3,13 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../web_components/module-questions/page-lessons.html">
-<link rel="import" href="../../web_components/module-questions/page-lesson-edit.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-lessons/page-lessons.html">
+<link rel="import" href="../../web_components/module-lessons/page-lesson-edit.html">
 
 <dom-module id="module-lessons">
   <template>
-    <style>
+    <style include="app-component-styles">
 
     </style>
 
@@ -36,12 +37,12 @@
       </page-lessons>
 
       <page-lesson-edit
-          name="question"
+          name="lesson"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
           user="[[users]]"
           filter-options="[[filterOptions]]"
-          question-id="[[routeData.id]]"
+          lesson-id="[[routeData.id]]"
           language="[[language]]"
           resources="[[resources]]">
       </page-lesson-edit>
@@ -131,5 +132,4 @@
     }
     customElements.define(ModuleLessons.is, ModuleLessons);
   </script>
-
 </dom-module>

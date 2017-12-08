@@ -105,12 +105,12 @@ public class SignInServlet extends AbstractServlet {
       ServletContext servletContext = request.getServletContext();
       String signInUrl = servletContext.getInitParameter("signInUrl");
 
-      if (signInUrl.equalsIgnoreCase(refererPath)) {
+      if (refererPath.endsWith(signInUrl)) {
         String homeUrl = servletContext.getInitParameter("homeUrl");
-        redirectRequest(response, homeUrl);
+        redirectRequest(request, response, homeUrl);
 
       } else {
-        redirectRequest(response, refererPath);
+        redirectRequest(request, response, refererPath);
       }
     } else {
       if (authService.isCaptchaRequired(signInModel)) {

@@ -3,22 +3,25 @@
 <link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
 <link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="quiz-edit-attributes">
   <template>
-    <style>
+    <style include="app-component-styles">
       :host {
         display: block;
         padding: 0 16px;
       }
 
       .quiz-attribute:not(.first) {
-        margin-top: 8px;
+        margin-top: 12px;
       }
 
       .quiz-attribute label {
+        @apply --paper-font-caption;
+        color: var(--secondary-text-color);
         display: block;
-        padding: 8px 0;
+        margin: 4px 0;
       }
 
       .quiz-attribute paper-checkbox {

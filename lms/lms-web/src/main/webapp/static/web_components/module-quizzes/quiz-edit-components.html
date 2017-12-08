@@ -17,58 +17,74 @@
 
 <dom-module id="quiz-edit-components">
   <template>
-    <style include="paper-button-styles">
-      .quiz-component {
-        @apply --layout-vertical;
-        padding: 8px 16px 8px 8px;
+    <style include="app-component-styles">
+      .section-component {
+        border: 1px solid var(--border-color);
       }
 
-      .quiz-component[active]:not(.section-component) {
+      .section-component .quiz-component {
+        @apply --layout-vertical;
+      }
+
+      .section-component .quiz-component[active]:not(.section) {
         @apply --shadow-elevation-4dp;
       }
 
-      .quiz-component .content {
+      .section-component .quiz-component[active]:not(.section) .content {
+        padding: 16px 0;
+      }
+
+      .section-component .quiz-component[active]:not(.section) .footer {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        border-top: 1px solid var(--border-color);
+        padding: 8px;
+      }
+
+      .section-component .quiz-component.section {
+        padding: 8px 0;
+      }
+
+      .section-component .quiz-component .content {
         @apply --layout-horizontal;
       }
 
-      .quiz-component .content .component {
+      .section-component .quiz-component .content .component {
         @apply --layout-flex;
       }
 
-      .quiz-component .header {
+      .section-component .quiz-component .header {
         @apply --layout-horizontal;
         @apply --layout-end-justified;
       }
 
-      .quiz-component.drop-placeholder {
+      .section-component .quiz-component .header .title {
+        @apply --paper-font-subhead;
+        @apply --layout-flex;
+        color: var(--secondary-text-color);
+        padding: 8px 16px;
+      }
+
+      .section-component .quiz-component.drop-placeholder {
         border: 1px dashed var(--border-color);
       }
 
-      .quiz-component.drop-placeholder * {
+      .section-component .quiz-component.drop-placeholder * {
         @apply --layout-invisible;
       }
 
-      .quiz-component.drag-item {
+      .section-component .quiz-component.drag-item {
         @apply --shadow-elevation-2dp;
         background-color: var(--secondary-background-color);
       }
 
-      .section-component {
-        border-top: 1px solid var(--border-color);
-        margin: 24px 0 8px;
-        padding: 0 8px;
-      }
-
-      .section-component .header .title {
-        @apply --paper-font-subhead;
-        @apply --layout-flex;
-        color: var(--secondary-text-color);
-        padding: 8px;
+      .section-component .component-actions {
+        margin: 8px 0;
+        padding: 0 16px;
       }
 
       .component-actions {
-        margin-top: 12px;
-        padding: 0 16px;
+        margin: 8px 0 24px 0;
       }
     </style>
 
@@ -92,189 +108,200 @@
         last-response="_handleSaveResponse">
     </iron-ajax>
 
+    <div class="component-actions">
+      <paper-button on-tap="_handleAddSectionTap">
+        <iron-icon icon="add"></iron-icon>
+        [[localize('buttonAddSection')]]
+      </paper-button>
+    </div>
+
     <template
         name="section"
         is="dom-repeat"
         items="[[quiz.components]]"
         as="component">
-      <div
-          class="quiz-component section-component"
-          active$="[[_isEditingComponent(component, editingComponent)]]"
-          on-tap="_handleComponentTap">
-        <div class="header">
-          <div class="title">
-            [[localize('labelSection', 'offset', component.order,
-              'length', quiz.components.length)]]
-          </div>
-
-          <paper-menu-button
-              restore-focus-on-close="[[restoreFocusOnClose]]"
-              horizontal-align="right"
-              vertical-align="top">
-            <paper-icon-button
-                slot="dropdown-trigger"
-                icon="more-vert">
-            </paper-icon-button>
-
-            <div slot="dropdown-content">
-              <paper-listbox slot="dropdown-content">
-                <paper-item value="move">
-                  [[localize('labelSectionMove')]]
-                </paper-item>
-                <paper-item value="clone">
-                  [[localize('labelSectionDuplicate')]]
-                </paper-item>
-                <paper-item value="delete">
-                  [[localize('labelSectionDelete')]]
-                </paper-item>
-                <paper-item value="merge">
-                  [[localize('labelSectionMerge')]]
-                </paper-item>
-              </paper-listbox>
+      <section class="section-component">
+        <div
+            class="quiz-component section"
+            active$="[[_isEditingComponent(component, editingComponent)]]"
+            on-tap="_handleComponentTap">
+          <div class="header">
+            <div class="title">
+              [[localize('labelSection', 'offset', component.order,
+                'length', quiz.components.length)]]
             </div>
-          </paper-menu-button>
-        </div>
 
-        <div class="content">
-          <div class="component">
-            <template
-                is="dom-if"
-                if="[[!_isEditingComponent(component, editingComponent)]]">
-              <quiz-view-section
-                  section="{{component}}"
-                  language="[[language]]"
-                  resources="[[resources]]">
-              </quiz-view-section>
-            </template>
-
-            <template
-                is="dom-if"
-                if="[[_isEditingComponent(component, editingComponent)]]">
-              <quiz-edit-section
-                  section="{{component}}"
-                  language="[[language]]"
-                  resources="[[resources]]">
-              </quiz-edit-section>
-            </template>
-          </div>
-        </div>
-      </div>
-
-      <iron-sorter
-          handle="component-handle"
-          draggable="draggable-component"
-          on-order-changed="_handleOrderChange">
-        <template
-            name="component"
-            is="dom-repeat"
-            items="[[component.components]]"
-            as="component">
-          <div
-              class="quiz-component draggable-component"
-              active$="[[_isEditingComponent(component, editingComponent)]]"
-              on-tap="_handleComponentTap">
-            <template
-                is="dom-if"
-                if="[[_isEditingComponent(component, editingComponent)]]">
-              <div class="header">
-                <paper-icon-button
-                    icon="content-copy"
-                    on-tap="_handleCloneTap">
-                </paper-icon-button>
-
-                <paper-icon-button
-                    icon="delete"
-                    on-tap="_handleDeleteTap">
-                </paper-icon-button>
-              </div>
-            </template>
-
-            <div class="content">
+            <paper-menu-button
+                restore-focus-on-close="[[restoreFocusOnClose]]"
+                horizontal-align="right"
+                vertical-align="top">
               <paper-icon-button
-                  icon="editor:drag-handle"
-                  class="component-handle">
+                  slot="dropdown-trigger"
+                  icon="more-vert">
               </paper-icon-button>
 
-              <div class="component">
-                <template
-                    is="dom-if"
-                    if="[[!_isEditingComponent(component, editingComponent)]]">
-                  <template
-                      is="dom-if"
-                      if="[[_isMultipleChoice(component)]]">
-                    <question-view-multiple-choice
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-view-multiple-choice>
-                  </template>
-
-                  <template
-                      is="dom-if"
-                      if="[[_isMultipleResponse(component)]]">
-                    <question-view-multiple-response
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-view-multiple-response>
-                  </template>
-                </template>
-
-                <template
-                    is="dom-if"
-                    if="[[_isEditingComponent(component, editingComponent)]]">
-                  <template
-                      is="dom-if"
-                      if="[[_isMultipleChoice(component)]]">
-                    <question-edit-multiple-choice
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-edit-multiple-choice>
-                  </template>
-
-                  <template
-                      is="dom-if"
-                      if="[[_isMultipleResponse(component, editingComponent)]]">
-                    <question-edit-multiple-response
-                        question="{{component.question}}"
-                        language="[[language]]"
-                        resources="[[resources]]">
-                    </question-edit-multiple-response>
-                  </template>
-                </template>
+              <div slot="dropdown-content">
+                <paper-listbox slot="dropdown-content">
+                  <paper-item value="move">
+                    [[localize('labelSectionMove')]]
+                  </paper-item>
+                  <paper-item value="clone">
+                    [[localize('labelSectionDuplicate')]]
+                  </paper-item>
+                  <paper-item value="delete">
+                    [[localize('labelSectionDelete')]]
+                  </paper-item>
+                  <paper-item value="merge">
+                    [[localize('labelSectionMerge')]]
+                  </paper-item>
+                </paper-listbox>
               </div>
+            </paper-menu-button>
+          </div>
+
+          <div class="content">
+            <div class="component">
+              <template
+                  is="dom-if"
+                  if="[[!_isEditingComponent(component, editingComponent)]]">
+                <quiz-view-section
+                    section="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </quiz-view-section>
+              </template>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <quiz-edit-section
+                    section="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </quiz-edit-section>
+              </template>
             </div>
           </div>
-        </template>
-      </iron-sorter>
+        </div>
+
+        <iron-sorter
+            handle="component-handle"
+            draggable="draggable-component"
+            on-order-changed="_handleOrderChange">
+          <template
+              name="component"
+              is="dom-repeat"
+              items="[[component.components]]"
+              as="component">
+            <div
+                class="quiz-component draggable-component"
+                active$="[[_isEditingComponent(component, editingComponent)]]"
+                on-tap="_handleComponentTap">
+              <div class="content">
+                <paper-icon-button
+                    icon="editor:drag-handle"
+                    class="component-handle">
+                </paper-icon-button>
+
+                <div class="component">
+                  <template
+                      is="dom-if"
+                      if="[[!_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-view-multiple-choice
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component)]]">
+                      <question-view-multiple-response
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-view-multiple-response>
+                    </template>
+                  </template>
+
+                  <template
+                      is="dom-if"
+                      if="[[_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleChoice(component)]]">
+                      <question-edit-multiple-choice
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-edit-multiple-choice>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isMultipleResponse(component, editingComponent)]]">
+                      <question-edit-multiple-response
+                          question="{{component.question}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </question-edit-multiple-response>
+                    </template>
+                  </template>
+                </div>
+              </div>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <div class="footer">
+                  <paper-icon-button
+                      icon="content-copy"
+                      on-tap="_handleCloneTap">
+                  </paper-icon-button>
+
+                  <paper-icon-button
+                      icon="delete"
+                      on-tap="_handleDeleteTap">
+                  </paper-icon-button>
+                </div>
+              </template>
+            </div>
+          </template>
+        </iron-sorter>
+
+        <div class="component-actions">
+          <paper-menu-button>
+            <paper-button slot="dropdown-trigger">
+              <iron-icon icon="add"></iron-icon>
+              [[localize('buttonAddQuestion')]]
+            </paper-button>
+
+            <paper-listbox
+                slot="dropdown-content"
+                attr-for-selected="value"
+                on-selected-item-changed="_handleMenuSelect">
+              <template
+                  is="dom-repeat"
+                  items="[[types]]"
+                  as="type">
+                <paper-item value="[[type.value]]">
+                  [[type.name]]
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+      </section>
 
       <div class="component-actions">
         <paper-button on-tap="_handleAddSectionTap">
           <iron-icon icon="add"></iron-icon>
           [[localize('buttonAddSection')]]
         </paper-button>
-
-        <paper-menu-button>
-          <paper-button slot="dropdown-trigger">
-            <iron-icon icon="add"></iron-icon>
-            [[localize('buttonAddQuestion')]]
-          </paper-button>
-
-          <paper-listbox
-              slot="dropdown-content"
-              attr-for-selected="value"
-              on-selected-item-changed="_handleMenuSelect">
-            <template
-                is="dom-repeat"
-                items="[[types]]"
-                as="type">
-              <paper-item value="[[type.value]]">
-                [[type.name]]
-              </paper-item>
-            </template>
-          </paper-listbox>
-        </paper-menu-button>
       </div>
     </template>
   </template>

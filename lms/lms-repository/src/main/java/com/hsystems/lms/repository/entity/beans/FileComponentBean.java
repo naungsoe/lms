@@ -1,25 +1,24 @@
-package com.hsystems.lms.repository.beans;
+package com.hsystems.lms.repository.entity.beans;
 
 import com.hsystems.lms.common.annotation.IndexField;
-import com.hsystems.lms.repository.entity.quiz.SectionComponent;
+import com.hsystems.lms.repository.entity.file.FileComponent;
+import com.hsystems.lms.repository.entity.file.FileObject;
 
 import java.io.Serializable;
 
-public class SectionComponentBean implements ComponentBean, Serializable {
+public class FileComponentBean
+    implements ComponentBean, Serializable {
 
-  private static final long serialVersionUID = -2481521481131584333L;
-
-  @IndexField
-  protected String id;
+  private static final long serialVersionUID = 7119959232897560868L;
 
   @IndexField
-  protected String title;
+  private String id;
 
   @IndexField
-  protected String instructions;
+  private FileObject fileObject;
 
   @IndexField
-  protected int order;
+  private int order;
 
   @IndexField
   private String resourceId;
@@ -27,18 +26,17 @@ public class SectionComponentBean implements ComponentBean, Serializable {
   @IndexField
   private String parentId;
 
-  SectionComponentBean() {
+  FileComponentBean() {
 
   }
 
-  public SectionComponentBean(
-      SectionComponent component,
+  public FileComponentBean(
+      FileComponent component,
       String resourceId,
       String parentId) {
 
     this.id = component.getId();
-    this.title = component.getTitle();
-    this.instructions = component.getInstructions();
+    this.fileObject = component.getFileObject();
     this.order = component.getOrder();
     this.resourceId = resourceId;
     this.parentId = parentId;
@@ -49,12 +47,8 @@ public class SectionComponentBean implements ComponentBean, Serializable {
     return id;
   }
 
-  public String getTitle() {
-    return title;
-  }
-
-  public String getInstructions() {
-    return instructions;
+  public FileObject getFileObject() {
+    return fileObject;
   }
 
   @Override

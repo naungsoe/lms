@@ -1,12 +1,13 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="quiz-view-section">
   <template>
-    <style>
+    <style include="app-component-styles">
       .section .section-title,
       .section .section-instructions {
-        padding: 8px;
+        padding: 8px 16px;
       }
 
       .section .section-title[empty],

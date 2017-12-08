@@ -3,6 +3,7 @@ package com.hsystems.lms.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
@@ -11,6 +12,9 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
+import com.hsystems.lms.repository.entity.beans.ComponentBean;
+import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.lesson.LessonResourceModel;
@@ -111,6 +115,10 @@ public class LessonService extends AbstractService {
 
     if (resourceOptional.isPresent()) {
       LessonResource lessonResource = resourceOptional.get();
+      Lesson lesson = lessonResource.getLesson();
+      List<Component> components = getComponents(id);
+      lesson.addComponent(components.toArray(new Component[0]));
+
       Configuration configuration = Configuration.create(principal);
       LessonResourceModel resourceModel
           = getLessonResourceModel(lessonResource, configuration);
@@ -118,5 +126,22 @@ public class LessonService extends AbstractService {
     }
 
     return Optional.empty();
+  }
+
+  private List<Component> getComponents(String id)
+      throws IOException {
+
+    Query query = Query.create();
+    query.addCriterion(Criterion.createEqual("resourceId", id));
+    QueryResult<ComponentBean> queryResult
+        = indexRepository.findAllBy(query, ComponentBean.class);
+    List<ComponentBean> componentBeans = queryResult.getItems();
+
+    if (CollectionUtils.isEmpty(componentBeans)) {
+      return Collections.emptyList();
+    }
+
+    List<Component> components = getComponents(componentBeans);
+    return components;
   }
 }

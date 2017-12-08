@@ -2,9 +2,12 @@ package com.hsystems.lms.service.mapper;
 
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
+import com.hsystems.lms.repository.entity.Entity;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -12,38 +15,33 @@ import java.util.Optional;
  */
 public class EntityMapper extends Mapper {
 
-  private final Configuration configuration;
+  private static EntityMapper instance;
 
-  public EntityMapper(Configuration configuration) {
-    this.configuration = configuration;
+  private final Map<String, Class<?>> typeMap;
+
+  EntityMapper(Map<String, Class<?>> typeMap) {
+    this.typeMap = typeMap;
   }
 
   @Override
   protected <T, S> Class<?> getSubType(T source, Class<S> type) {
-    String packageName = type.getPackage().getName();
     String typeName = source.getClass().getSimpleName();
-    typeName = String.format("%s.%s", packageName,
-        typeName.replace("Model", ""));
-
-    try {
-      return Class.forName(typeName);
-
-    } catch (ClassNotFoundException e) {
-      throw new IllegalArgumentException(
-          "error retrieving sub-type", e);
-    }
+    typeName = typeName.replace("Model", "");
+    return typeMap.get(typeName);
   }
 
   @Override
-  protected Object getDateTimeValue(Object dateTime) {
+  protected Object getDateTimeValue(
+      Object dateTime, Configuration configuration) {
+
     return DateTimeUtils.toLocalDateTime(dateTime.toString(),
         configuration.getDateTimeFormat());
   }
 
   @Override
   protected <T, S> S getCompositeFieldValue(
-      T source, List<Field> sourceFields,
-      String fieldName, Class<S> type) {
+      T source, List<Field> sourceFields, String fieldName,
+      Class<S> type, Configuration configuration) {
 
     S instance = (S) ReflectionUtils.getInstance(type);
     List<Field> fields = ReflectionUtils.getFields(type);
@@ -58,12 +56,34 @@ public class EntityMapper extends Mapper {
       if (compositeFieldOptional.isPresent()) {
         Field compositeField = compositeFieldOptional.get();
         ReflectionUtils.setValue(instance, fieldName,
-            getFieldValue(source, compositeField, compositeFieldType));
+            getFieldValue(source, compositeField,
+                compositeFieldType, configuration));
 
       } else {
         ReflectionUtils.setValue(instance, field.getName(),
             getCompositeFieldValue(source, sourceFields,
-                compositeFieldName, compositeFieldType));
+                compositeFieldName, compositeFieldType, configuration));
+      }
+    }
+
+    return instance;
+  }
+
+  public static EntityMapper getInstance() {
+    if (instance == null) {
+      synchronized (EntityMapper.class) {
+        if (instance == null) {
+          try {
+            String packageName = Entity.class.getPackage().getName();
+            Map<String, Class<?>> typeMap
+                = ReflectionUtils.getClasses(packageName);
+            instance = new EntityMapper(typeMap);
+
+          } catch (ClassNotFoundException | IOException e) {
+            throw new IllegalArgumentException(
+                "error retrieving classes", e);
+          }
+        }
       }
     }
 

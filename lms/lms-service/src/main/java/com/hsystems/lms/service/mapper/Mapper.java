@@ -23,7 +23,9 @@ public abstract class Mapper {
 
   private static final String PATTERN_NAME_TOKEN = "([A-Za-z][a-z]+)";
 
-  public <T, S, U extends S> S map(T source, Class<S> type) {
+  public <T, S, U extends S> S map(
+      T source, Class<S> type, Configuration configuration) {
+
     S instance = ReflectionUtils.isInstantiable(type)
         ? (S) ReflectionUtils.getInstance(type)
         : (U) ReflectionUtils.getInstance(getSubType(source, type));
@@ -41,12 +43,12 @@ public abstract class Mapper {
       if (sourceFieldOptional.isPresent()) {
         Field sourceField = sourceFieldOptional.get();
         ReflectionUtils.setValue(instance, fieldName,
-            getFieldValue(source, sourceField, fieldType));
+            getFieldValue(source, sourceField, fieldType, configuration));
 
       } else {
         ReflectionUtils.setValue(instance, fieldName,
             getCompositeFieldValue(source, sourceFields,
-                fieldName, fieldType));
+                fieldName, fieldType, configuration));
       }
     }
 
@@ -64,7 +66,7 @@ public abstract class Mapper {
   }
 
   protected <T, S> Object getFieldValue(
-      T source, Field field, Class<S> type) {
+      T source, Field field, Class<S> type, Configuration configuration) {
 
     Class<?> fieldType = field.getType();
     Object fieldValue = ReflectionUtils.getValue(
@@ -83,17 +85,19 @@ public abstract class Mapper {
       return fieldValue.toString();
 
     } else if (fieldType == LocalDateTime.class) {
-      return getDateTimeValue(fieldValue);
+      return getDateTimeValue(fieldValue, configuration);
 
     } else if (fieldType == List.class) {
-      return getListValue((List) fieldValue, type);
+      return getListValue((List) fieldValue, type, configuration);
 
     } else {
-      return map(fieldValue, type);
+      return map(fieldValue, type, configuration);
     }
   }
 
-  protected <T> List<T> getListValue(List list, Class<T> type) {
+  protected <T> List<T> getListValue(
+      List list, Class<T> type, Configuration configuration) {
+
     if (list == null) {
       return Collections.emptyList();
     }
@@ -109,7 +113,7 @@ public abstract class Mapper {
         values.add((T) item);
 
       } else {
-        T valueItem = map(item, type);
+        T valueItem = map(item, type, configuration);
         values.add(valueItem);
       }
     }
@@ -138,9 +142,10 @@ public abstract class Mapper {
 
   protected abstract <T, S> Class<?> getSubType(T source, Class<S> type);
 
-  protected abstract Object getDateTimeValue(Object dateTime);
+  protected abstract Object getDateTimeValue(
+      Object dateTime, Configuration configuration);
 
   protected abstract <T, S> S getCompositeFieldValue(
-      T source, List<Field> sourceFields,
-      String fieldName, Class<S> type);
+      T source, List<Field> sourceFields, String fieldName,
+      Class<S> type, Configuration configuration);
 }

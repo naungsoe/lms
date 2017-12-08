@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity.question;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Auditable;
@@ -8,6 +8,7 @@ import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.Resource;
+import com.hsystems.lms.repository.entity.ResourceStatus;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
@@ -23,11 +24,11 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(namespace = "lms", name = "questions")
+@IndexDocument(namespace = "lms", collection = "questions")
 public class QuestionResource<T extends Question>
     implements Entity, Resource, Auditable, Serializable {
 
-  private static final long serialVersionUID = -2118187116263634094L;
+  private static final long serialVersionUID = -1649719473724766045L;
 
   @IndexField
   private String id;
@@ -49,6 +50,8 @@ public class QuestionResource<T extends Question>
 
   @IndexField
   private List<PermissionSet> permissionSets;
+
+  private ResourceStatus status;
 
   @IndexField
   private User createdBy;
@@ -74,6 +77,7 @@ public class QuestionResource<T extends Question>
       List<Subject> subjects,
       List<String> keywords,
       List<PermissionSet> permissionSets,
+      ResourceStatus status,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -86,6 +90,7 @@ public class QuestionResource<T extends Question>
     this.subjects = subjects;
     this.keywords = keywords;
     this.permissionSets = permissionSets;
+    this.status = status;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -102,6 +107,7 @@ public class QuestionResource<T extends Question>
     private List<Subject> subjects;
     private List<String> keywords;
     private List<PermissionSet> permissionSets;
+    private ResourceStatus status;
     private User createdBy;
     private LocalDateTime createdDateTime;
     private User modifiedBy;
@@ -137,6 +143,11 @@ public class QuestionResource<T extends Question>
       return this;
     }
 
+    public Builder status(ResourceStatus status) {
+      this.status = status;
+      return this;
+    }
+
     public Builder createdBy(User createdBy) {
       this.createdBy = createdBy;
       return this;
@@ -166,6 +177,7 @@ public class QuestionResource<T extends Question>
           this.subjects,
           this.keywords,
           this.permissionSets,
+          this.status,
           this.createdBy,
           this.createdDateTime,
           this.modifiedBy,
@@ -250,6 +262,11 @@ public class QuestionResource<T extends Question>
     }
 
     Arrays.stream(permissionSets).forEach(this.permissionSets::add);
+  }
+
+  @Override
+  public ResourceStatus getStatus() {
+    return status;
   }
 
   @Override

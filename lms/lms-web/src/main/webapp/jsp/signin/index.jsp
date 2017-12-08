@@ -24,7 +24,7 @@
 <body>
   <dom-module id="main-element">
     <template>
-      <style include="paper-button-styles">
+      <style include="app-component-styles">
         :host {
           @apply --paper-font-body1;
           @apply --layout-vertical;

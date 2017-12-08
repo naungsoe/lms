@@ -5,7 +5,6 @@ import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.CompositionStrategy;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
-import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 
 import java.util.Enumeration;
 
@@ -25,11 +24,11 @@ public final class ActivityCompositionStrategy
   }
 
   private void checkChildComponent(Component component) {
-    boolean isQuizComponent = component instanceof QuizComponent;
     boolean isQuestionComponent = component instanceof QuestionComponent;
     boolean isFileComponent = component instanceof FileComponent;
-    CommonUtils.checkArgument(isQuizComponent
-            || isQuestionComponent || isFileComponent,
-        "component is not quiz or question or file");
+    boolean isContentComponent = component instanceof ContentComponent;
+    CommonUtils.checkArgument(isQuestionComponent
+            || isFileComponent || isContentComponent,
+        "component is not question or file or content");
   }
 }

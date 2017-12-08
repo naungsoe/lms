@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.hbase.provider;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
@@ -80,10 +80,10 @@ public class HBaseClient {
   }
 
   private <T> TableName getTableName(Class<T> type) {
-    IndexCollection annotation = type.getAnnotation(IndexCollection.class);
+    IndexDocument annotation = type.getAnnotation(IndexDocument.class);
     String namespace = annotation.namespace();
-    String collection = StringUtils.isEmpty(annotation.name())
-        ? type.getSimpleName() : annotation.name();
+    String collection = StringUtils.isEmpty(annotation.collection())
+        ? type.getSimpleName() : annotation.collection();
     String tableName = StringUtils.isEmpty(namespace)
         ? collection : String.format("%s:%s", namespace, collection);
     return TableName.valueOf(tableName);

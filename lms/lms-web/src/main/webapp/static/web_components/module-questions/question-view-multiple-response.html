@@ -3,16 +3,25 @@
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
 <link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="question-view-multiple-response">
   <template>
-    <style>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
       .question-body {
-        padding: 10px 0;
+        padding: 10px 16px 10px 0;
+      }
+
+      .question-body[empty] {
+        color: var(--secondary-text-color);
       }
 
       .question-options {
-        margin-top: 8px;
+        padding: 0 16px 0 0;
       }
 
       .question-options .question-option {

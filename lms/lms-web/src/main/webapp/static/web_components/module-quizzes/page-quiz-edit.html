@@ -17,7 +17,7 @@
 
 <dom-module id="page-quiz-edit">
   <template>
-    <style include="paper-text-field-styles">
+    <style include="app-component-styles">
       .page-content {
         padding: 8px 0;
       }
@@ -27,25 +27,24 @@
         padding: 16px 0;
       }
 
-      .page-content .quiz .quiz-components {
-        margin-top: 8px;
-      }
-
       .page-content .quiz .quiz-attributes {
-        margin-top: 32px;
+        margin-top: 16px;
       }
 
-      .page-content .quiz .quiz-content .title,
-      .page-content .quiz .quiz-components .title,
-      .page-content .quiz .quiz-attributes .title {
+      .page-content .quiz .quiz-content .title {
         @apply --paper-font-subhead;
-        margin-bottom: 4px;
+        margin-bottom: 8px;
         padding: 0 16px;
       }
 
       .page-content .quiz .quiz-content .quiz-title,
       .page-content .quiz .quiz-content .quiz-instructions {
+        margin-bottom: 4px;
         padding: 0 16px;
+      }
+
+      .page-content .quiz .quiz-content .quiz-instructions {
+        margin-bottom: 12px;
       }
     </style>
 
@@ -102,20 +101,7 @@
             </div>
           </section>
 
-          <section class="quiz-components">
-            <quiz-edit-components
-                types="[[filterOptions.types]]"
-                quiz="{{quiz.quiz}}"
-                language="[[language]]"
-                resources="[[resources]]">
-            </quiz-edit-components>
-          </section>
-
           <section class="quiz-attributes">
-            <div class="title">
-              [[localize('labelAttributes')]]
-            </div>
-
             <quiz-edit-attributes
                 filter-options="[[filterOptions]]"
                 quiz="{{quiz}}"
@@ -123,6 +109,15 @@
                 resources="[[resources]]">
             </quiz-edit-attributes>
           </section>
+        </div>
+
+        <div class="components">
+          <quiz-edit-components
+              types="[[filterOptions.types]]"
+              quiz="{{quiz.quiz}}"
+              language="[[language]]"
+              resources="[[resources]]">
+          </quiz-edit-components>
         </div>
       </div>
     </page-header-panel>

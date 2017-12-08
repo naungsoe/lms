@@ -5,21 +5,13 @@
 <link rel="import" href="../../web_components/page-header-panel.html">
 <link rel="import" href="../../web_components/module-assignments/page-assignments-toolbar.html">
 <link rel="import" href="../../web_components/module-assignments/assignment-list.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="page-assignments">
   <template>
-    <style>
+    <style include="app-component-styles">
       assignment-list {
         margin: 16px 0;
-      }
-
-      paper-fab {
-        --paper-fab-background: var(--primary-color);
-        --paper-fab-keyboard-focus-background: var(--primary-color);
-        --paper-fab-disabled-background: var(--primary-color);
-        bottom: 24px;
-        position: fixed;
-        right: 24px;
       }
     </style>
 

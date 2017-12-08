@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-@IndexCollection(namespace = "lms", name = "schools")
+@IndexDocument(namespace = "lms", collection = "schools")
 public final class School implements Entity, Auditable, Serializable {
 
   private static final long serialVersionUID = 7609115857251030515L;

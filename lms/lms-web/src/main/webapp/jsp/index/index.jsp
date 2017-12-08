@@ -10,6 +10,7 @@
   <link rel="import" href="<c:url value="/static/bower_components/polymer/polymer.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/iron-ajax/iron-ajax.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-button/paper-button.html"/>">
+  <link rel="import" href="<c:url value="/static/web_components/app-component-styles.html"/>">
 </head>
 <body>
   <dom-module id="main-element">
@@ -40,6 +41,11 @@
           disabled$="[[loading]]"
           on-tap="_handleEnrollmentsTap">
         Index Enrollments
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
+          on-tap="_handleLessonsTap">
+        Index Lessons
       </paper-button>
       <paper-button raised
           disabled$="[[loading]]"
@@ -79,7 +85,7 @@
           }
 
           _handleLevelsTap(event) {
-            let url = '/webapi/index/levels';
+            let url = '<c:url value="/webapi/index/levels"/>';
             this._generateRequest(url);
           }
 
@@ -91,27 +97,32 @@
           }
 
           _handleSubjectsTap(event) {
-            let url = '/webapi/index/subjects';
+            let url = '<c:url value="/webapi/index/subjects"/>';
             this._generateRequest(url);
           }
 
           _handleUsersTap(event) {
-            let url = '/webapi/index/users';
+            let url = '<c:url value="/webapi/index/users"/>';
             this._generateRequest(url);
           }
 
           _handleEnrollmentsTap(event) {
-            let url = '/webapi/index/enrollments';
+            let url = '<c:url value="/webapi/index/enrollments"/>';
+            this._generateRequest(url);
+          }
+
+          _handleLessonsTap(event) {
+            let url = '<c:url value="/webapi/index/lessons"/>';
             this._generateRequest(url);
           }
 
           _handleQuizzesTap(event) {
-            let url = '/webapi/index/quizzes';
+            let url = '<c:url value="/webapi/index/quizzes"/>';
             this._generateRequest(url);
           }
 
           _handleQuestionsTap(event) {
-            let url = '/webapi/index/questions';
+            let url = '<c:url value="/webapi/index/questions"/>';
             this._generateRequest(url);
           }
         }

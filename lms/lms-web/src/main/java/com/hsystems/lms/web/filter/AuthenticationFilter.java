@@ -130,7 +130,7 @@ public class AuthenticationFilter extends AbstractFilter
 
   private boolean isPublicUrl(String[] publicUrls, String url) {
     return Arrays.asList(publicUrls).stream()
-        .anyMatch(publicUrl -> publicUrl.equalsIgnoreCase(url));
+        .anyMatch(publicUrl -> url.endsWith(publicUrl));
   }
 
   private void updateUserSession(

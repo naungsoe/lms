@@ -18,6 +18,7 @@
   <link rel="import" href="<c:url value="/static/bower_components/paper-styles/default-theme.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-styles/typography.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-button/paper-button.html"/>">
+  <link rel="import" href="<c:url value="/static/web_components/app-component-styles.html"/>">
   <link rel="import" href="<c:url value="/static/web_components/app-signup.html"/>">
   <title>
     <c:out value="${titlePage}"/>
@@ -26,7 +27,7 @@
 <body>
   <dom-module id="main-element">
     <template>
-      <style>
+      <style include="app-component-styles">
         :host {
           @apply --paper-font-body1;
           @apply --layout-vertical;

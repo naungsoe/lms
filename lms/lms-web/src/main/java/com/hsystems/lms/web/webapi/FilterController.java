@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.LevelModel;
@@ -37,39 +38,57 @@ public class FilterController extends AbstractController {
 
   private final UserService userService;
 
+  private final ComponentService componentService;
+
   private final QuestionService questionService;
 
   @Inject
   FilterController(
       Provider<Principal> principalProvider,
       UserService userService,
+      ComponentService componentService,
       QuestionService questionService) {
 
     this.principalProvider = principalProvider;
     this.userService = userService;
+    this.componentService = componentService;
     this.questionService = questionService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Path("/questions")
-  public Response findQuestionFilters(
+  @Path("/courses")
+  public Response findCoursesFilters(
       @Context HttpServletRequest request)
       throws IOException {
 
     JsonNode localeNode = findLocaleNode(request);
-    JsonNode moduleNode = findQuestionFilters(localeNode);
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
     String json = moduleNode.toString();
     return Response.ok(json).build();
   }
 
-  private JsonNode findQuestionFilters(JsonNode localeNode)
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/lessons")
+  public Response findLessonsFilters(
+      @Context HttpServletRequest request)
+      throws IOException {
+
+    JsonNode localeNode = findLocaleNode(request);
+    JsonNode moduleNode = findLessonFilters(localeNode);
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
+  }
+
+  private JsonNode findLessonFilters(JsonNode localeNode)
       throws IOException {
 
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
     populateEnrollments(moduleNode, localeNode);
-    populateQuestionTypes(moduleNode, localeNode);
+    populateComponentTypes(moduleNode, localeNode);
     return moduleNode;
   }
 
@@ -126,17 +145,17 @@ public class FilterController extends AbstractController {
     });
   }
 
-  private void populateQuestionTypes(
+  private void populateComponentTypes(
       ObjectNode moduleNode, JsonNode localeNode) {
 
     ArrayNode typesNode = moduleNode.putArray("types");
     ObjectMapper mapper = new ObjectMapper();
-    List<String> questionTypes = questionService.findAllTypes();
-    questionTypes.forEach(questionType -> {
-      JsonNode fieldNode = localeNode.get("label" + questionType);
+    List<String> componentTypes = componentService.findAllTypes();
+    componentTypes.forEach(componentType -> {
+      JsonNode fieldNode = localeNode.get("label" + componentType);
       ObjectNode typeNode = mapper.createObjectNode();
       typeNode.put("name", fieldNode.textValue());
-      typeNode.put("value", questionType);
+      typeNode.put("value", componentType);
       typesNode.add(typeNode);
     });
   }
@@ -155,6 +174,44 @@ public class FilterController extends AbstractController {
   }
 
   private JsonNode findQuizFilters(JsonNode localeNode)
+      throws IOException {
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
+    populateEnrollments(moduleNode, localeNode);
+    populateQuestionTypes(moduleNode, localeNode);
+    return moduleNode;
+  }
+
+  private void populateQuestionTypes(
+      ObjectNode moduleNode, JsonNode localeNode) {
+
+    ArrayNode typesNode = moduleNode.putArray("types");
+    ObjectMapper mapper = new ObjectMapper();
+    List<String> questionTypes = questionService.findAllTypes();
+    questionTypes.forEach(questionType -> {
+      JsonNode fieldNode = localeNode.get("label" + questionType);
+      ObjectNode typeNode = mapper.createObjectNode();
+      typeNode.put("name", fieldNode.textValue());
+      typeNode.put("value", questionType);
+      typesNode.add(typeNode);
+    });
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/questions")
+  public Response findQuestionFilters(
+      @Context HttpServletRequest request)
+      throws IOException {
+
+    JsonNode localeNode = findLocaleNode(request);
+    JsonNode moduleNode = findQuestionFilters(localeNode);
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
+  }
+
+  private JsonNode findQuestionFilters(JsonNode localeNode)
       throws IOException {
 
     ObjectMapper mapper = new ObjectMapper();

@@ -11,7 +11,7 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.QuizRepository;
-import com.hsystems.lms.repository.beans.ComponentBean;
+import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;

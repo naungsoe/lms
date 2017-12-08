@@ -3,12 +3,13 @@
 <link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
 <link rel="import" href="../../bower_components/app-route/app-location.html">
 <link rel="import" href="../../bower_components/app-route/app-route.html">
-<link rel="import" href="../../web_components/module-questions/page-lessons.html">
-<link rel="import" href="../../web_components/module-questions/page-lesson-edit.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-courses/page-courses.html">
+<link rel="import" href="../../web_components/module-courses/page-course-edit.html">
 
-<dom-module id="module-lessons">
+<dom-module id="module-courses">
   <template>
-    <style>
+    <style include="app-component-styles">
 
     </style>
 
@@ -24,8 +25,8 @@
     <iron-pages
         selected="[[page]]"
         attr-for-selected="name">
-      <page-lessons
-          name="lessons"
+      <page-courses
+          name="courses"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
           user="[[users]]"
@@ -33,9 +34,9 @@
           query="[[query]]"
           language="[[language]]"
           resources="[[resources]]">
-      </page-lessons>
+      </page-courses>
 
-      <page-lesson-edit
+      <page-course-edit
           name="question"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
@@ -44,17 +45,17 @@
           question-id="[[routeData.id]]"
           language="[[language]]"
           resources="[[resources]]">
-      </page-lesson-edit>
+      </page-course-edit>
     </iron-pages>
   </template>
 
   <script>
-    const ModuleLessonsBase = Polymer.mixinBehaviors(
+    const ModuleCoursesBase = Polymer.mixinBehaviors(
       [Polymer.AppLocalizeBehavior], Polymer.Element);
 
-    class ModuleLessons extends ModuleLessonsBase {
+    class ModuleCourses extends ModuleCoursesBase {
       static get is() {
-        return 'module-lessons';
+        return 'module-courses';
       }
 
       static get properties() {
@@ -116,20 +117,20 @@
 
       _updateRoute(route) {
         if (route.path === this.rootUrl) {
-          this.page = 'lessons';
+          this.page = 'courses';
         }
       }
 
       _updatePage(routeData) {
         if (routeData.id === undefined) {
-          this.page = 'lessons';
+          this.page = 'courses';
 
         } else {
-          this.page = 'lesson';
+          this.page = 'course';
         }
       }
     }
-    customElements.define(ModuleLessons.is, ModuleLessons);
+    customElements.define(ModuleCourses.is, ModuleCourses);
   </script>
 
 </dom-module>

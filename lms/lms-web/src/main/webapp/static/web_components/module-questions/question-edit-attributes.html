@@ -7,19 +7,21 @@
 
 <dom-module id="question-edit-attributes">
   <template>
-    <style include="paper-button-styles">
+    <style include="app-component-styles">
       :host {
         display: block;
         padding: 0 16px;
       }
 
       .question-attribute:not(.first) {
-        margin-top: 8px;
+        margin-top: 12px;
       }
 
       .question-attribute label {
+        @apply --paper-font-caption;
+        color: var(--secondary-text-color);
         display: block;
-        padding: 8px 0;
+        padding: 4px 0;
       }
 
       .question-attribute paper-checkbox {

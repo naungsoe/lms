@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 2/11/16.
  */
-@IndexCollection(namespace = "lms", name = "sharelogs")
+@IndexDocument(namespace = "lms", collection = "sharelogs")
 public final class ShareLog implements Entity, Serializable {
 
   private static final long serialVersionUID = 7872836504845254592L;

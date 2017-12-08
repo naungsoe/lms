@@ -1,0 +1,143 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="lesson-edit-attributes">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+        padding: 0 16px;
+      }
+
+      .lesson-attribute:not(.first) {
+        margin-top: 12px;
+      }
+
+      .lesson-attribute label {
+        @apply --paper-font-caption;
+        color: var(--secondary-text-color);
+        display: block;
+        margin: 4px 0;
+      }
+
+      .lesson-attribute paper-checkbox {
+        min-width: 160px;
+        padding: 8px;
+      }
+    </style>
+
+    <div class="lesson-attribute first">
+      <label>
+        [[localize('labelLevel')]]
+      </label>
+
+      <iron-selector multi
+          attr-for-selected="value"
+          selected-attribute="checked"
+          selected-values="{{selectedLevels}}">
+        <template
+            is="dom-repeat"
+            items="[[filterOptions.levels]]"
+            as="level">
+          <paper-checkbox value="[[level.value]]">
+            [[level.name]]
+          </paper-checkbox>
+        </template>
+      </iron-selector>
+    </div>
+
+    <div class="lesson-attribute">
+      <label>
+        [[localize('labelSubject')]]
+      </label>
+
+      <iron-selector multi
+          attr-for-selected="value"
+          selected-attribute="checked"
+          selected-values="{{selectedSubjects}}">
+        <template
+            is="dom-repeat"
+            items="[[filterOptions.subjects]]"
+            as="subject">
+          <paper-checkbox value="[[subject.value]]">
+            [[subject.name]]
+          </paper-checkbox>
+        </template>
+      </iron-selector>
+    </div>
+
+    <div class="lesson-attribute">
+      <label>
+        [[localize('labelKeywords')]]
+      </label>
+
+      <paper-chips-input
+          label="[[localize('labelKeywords')]]"
+          values="[[lesson.keywords]]">
+      </paper-chips-input>
+    </div>
+  </template>
+
+  <script>
+  	const LessonEditAttributesBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonEditAttributes extends LessonEditAttributesBase {
+      static get is() {
+        return 'lesson-edit-attributes';
+      }
+
+      static get properties() {
+        return {
+        	filterOptions: {
+        		type: Object,
+            readOnly: false,
+            notify: true
+        	},
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          selectedLevels: {
+          	type: Array,
+          	readOnly: false,
+          	notify: true
+          },
+          selectedSubjects: {
+          	type: Array,
+          	readOnly: false,
+          	notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateSelection(lesson)'
+        ];
+      }
+
+      _updateSelection(lesson) {
+        let selectedLevels = [];
+        lesson.levels.forEach(function(level) {
+          selectedLevels.push(level.id);
+        });
+
+        let selectedSubjects = [];
+        lesson.subjects.forEach(function(subject) {
+          selectedSubjects.push(subject.id);
+        });
+
+        this.selectedLevels = selectedLevels;
+        this.selectedSubjects = selectedSubjects;
+        this.keywords = lesson.keywords;
+      }
+    }
+    customElements.define(LessonEditAttributes.is, LessonEditAttributes);
+  </script>
+</dom-module>

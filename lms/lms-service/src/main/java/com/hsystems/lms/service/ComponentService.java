@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -15,14 +16,18 @@ import com.hsystems.lms.service.model.ComponentModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public class ComponentService extends AbstractService {
+
+  private final Provider<Properties> propertiesProvider;
 
   private final ComponentRepository componentRepository;
 
@@ -30,9 +35,11 @@ public class ComponentService extends AbstractService {
 
   @Inject
   ComponentService(
+      Provider<Properties> propertiesProvider,
       ComponentRepository componentRepository,
       IndexRepository indexRepository) {
 
+    this.propertiesProvider = propertiesProvider;
     this.componentRepository = componentRepository;
     this.indexRepository = indexRepository;
   }
@@ -94,5 +101,12 @@ public class ComponentService extends AbstractService {
     }
 
     return Optional.empty();
+  }
+
+  @Log
+  public List<String> findAllTypes() {
+    Properties properties = propertiesProvider.get();
+    String questionTypes = properties.getProperty("component.types");
+    return Arrays.asList(questionTypes.split(","));
   }
 }

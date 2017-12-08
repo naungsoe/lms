@@ -11,7 +11,6 @@ import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseLessonMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -100,14 +99,18 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
 
     Mutation startMutation = mutations.get(0);
     Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String startRowKey = startMutation.getId();
     String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
     Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
+    scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, Lesson.class);
-    return lessonMapper.getEntities(results, mutations);
+    List<Result> results = client.scan(scan, LessonResource.class);
+    List<LessonResource> lessonResources
+        = lessonMapper.getEntities(results, mutations);
+
+    return lessonResources;
   }
 
   @Override
@@ -116,29 +119,31 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
 
     long timestamp = DateTimeUtils.getCurrentMilliseconds();
     List<Put> puts = lessonMapper.getPuts(entity, timestamp);
-    client.put(puts, Lesson.class);
+    client.put(puts, LessonResource.class);
 
     Optional<Mutation> mutationOptional
         = mutationRepository.findBy(entity.getId(), EntityType.QUESTION);
 
     if (mutationOptional.isPresent()) {
-      Mutation mutation = getMutation(entity, ActionType.MODIFIED, timestamp);
-      mutationRepository.save(mutation);
-
       AuditLog auditLog = getAuditLog(entity, entity.getModifiedBy(),
           ActionType.MODIFIED, timestamp);
       auditLogRepository.save(auditLog);
+
+      Mutation modifiedMutation = getMutation(entity,
+          ActionType.MODIFIED, timestamp);
+      mutationRepository.save(modifiedMutation);
 
       List<String> rowKeys = getPutRowKeys(puts);
       deleteUnusedRows(entity, rowKeys);
 
     } else {
-      Mutation mutation = getMutation(entity, ActionType.CREATED, timestamp);
-      mutationRepository.save(mutation);
-
       AuditLog auditLog = getAuditLog(entity, entity.getCreatedBy(),
           ActionType.CREATED, timestamp);
       auditLogRepository.save(auditLog);
+
+      Mutation mutation = getMutation(entity,
+          ActionType.CREATED, timestamp);
+      mutationRepository.save(mutation);
     }
   }
 
@@ -149,7 +154,7 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
     Scan scan = getRowKeyOnlyFilterScan(startRowKey);
     scan.setStartRow(Bytes.toBytes(startRowKey));
 
-    List<Result> results = client.scan(scan, Lesson.class);
+    List<Result> results = client.scan(scan, LessonResource.class);
     List<String> origRowKeys = getResultRowKeys(results);
     List<String> unusedRowKeys = new ArrayList<>();
     origRowKeys.forEach(origRowKey -> {
@@ -162,7 +167,7 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
     });
 
     List<Delete> deletes = lessonMapper.getDeletes(unusedRowKeys);
-    client.delete(deletes, Lesson.class);
+    client.delete(deletes, LessonResource.class);
   }
 
   @Override

@@ -56,7 +56,7 @@ public class SignOutServlet extends AbstractServlet {
     ServletContext servletContext = request.getServletContext();
     String signInUrl = servletContext.getInitParameter("signInUrl");
     clearUserSession(request, response);
-    redirectRequest(response, signInUrl);
+    redirectRequest(request, response, signInUrl);
   }
 
   private void clearUserSession(

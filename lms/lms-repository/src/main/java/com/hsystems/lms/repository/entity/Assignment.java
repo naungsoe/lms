@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-import com.hsystems.lms.common.annotation.IndexCollection;
+import com.hsystems.lms.common.annotation.IndexDocument;
 
 import java.time.LocalDateTime;
 import java.util.Enumeration;
@@ -8,7 +8,7 @@ import java.util.Enumeration;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexCollection(namespace = "lms", name = "assignments")
+@IndexDocument(namespace = "lms", collection = "assignments")
 public interface Assignment extends Entity, SchoolScoped {
 
   Enumeration<Group> getGroups();

@@ -3,15 +3,16 @@
 <link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
 
 <dom-module id="quiz-list">
   <template>
-    <style>
+    <style include="app-component-styles">
       .list-item .quiz {
         @apply --layout-vertical;
         background-color: var(--primary-background-color);
         border: 1px solid var(--border-color);
-        margin: 8px 0 4px 0;
+        margin: 8px 0;
         padding: 16px;
       }
     </style>
@@ -34,7 +35,7 @@
       <template>
         <div class="list-item">
           <div class="quiz">
-            <div class="quiz.title">
+            <div class="quiz-title">
               [[quiz.quiz.title]]
             </div>
           </div>

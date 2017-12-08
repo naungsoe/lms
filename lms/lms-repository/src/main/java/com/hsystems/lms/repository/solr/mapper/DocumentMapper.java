@@ -22,7 +22,9 @@ import java.util.List;
  */
 public class DocumentMapper {
 
-  public DocumentMapper() {
+  private static DocumentMapper instance;
+
+  DocumentMapper() {
 
   }
 
@@ -228,5 +230,17 @@ public class DocumentMapper {
         updateChildrenId(childDocument, rootId);
       }
     }
+  }
+
+  public static DocumentMapper getInstance() {
+    if (instance == null) {
+      synchronized (DocumentMapper.class) {
+        if (instance == null) {
+          instance = new DocumentMapper();
+        }
+      }
+    }
+
+    return instance;
   }
 }
