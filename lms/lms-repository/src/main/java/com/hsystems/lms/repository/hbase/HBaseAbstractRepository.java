@@ -16,9 +16,11 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.filter.BinaryComparator;
 import org.apache.hadoop.hbase.filter.CompareFilter;
 import org.apache.hadoop.hbase.filter.FamilyFilter;
+import org.apache.hadoop.hbase.filter.Filter;
 import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.FirstKeyOnlyFilter;
 import org.apache.hadoop.hbase.filter.KeyOnlyFilter;
+import org.apache.hadoop.hbase.filter.MultiRowRangeFilter;
 import org.apache.hadoop.hbase.filter.QualifierFilter;
 import org.apache.hadoop.hbase.filter.RegexStringComparator;
 import org.apache.hadoop.hbase.filter.RowFilter;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by naungsoe on 13/10/16.
@@ -117,6 +120,23 @@ public abstract class HBaseAbstractRepository {
 
     Scan scan = new Scan();
     scan.setFilter(filterList);
+    return scan;
+  }
+
+  protected Scan getRowKeysFilterScan(Set<String> rowKeys)
+      throws IOException {
+
+    List<MultiRowRangeFilter.RowRange> ranges = new ArrayList<>();
+
+    for (String rowKey : rowKeys) {
+      String stopRowKey = getInclusiveStopRowKey(rowKey);
+      ranges.add(new MultiRowRangeFilter.RowRange(
+          rowKey, true, stopRowKey, true));
+    }
+
+    Filter filter = new MultiRowRangeFilter(ranges);
+    Scan scan = new Scan();
+    scan.setFilter(filter);
     return scan;
   }
 

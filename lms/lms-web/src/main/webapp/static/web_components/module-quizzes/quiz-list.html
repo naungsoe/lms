@@ -15,6 +15,14 @@
         margin: 8px 0;
         padding: 16px;
       }
+
+      .list-item .quiz .quiz-title {
+        margin-bottom: 4px;
+      }
+
+      .list-item .quiz .quiz-description {
+        color: var(--secondary-text-color);
+      }
     </style>
 
     <iron-ajax
@@ -37,6 +45,10 @@
           <div class="quiz">
             <div class="quiz-title">
               [[quiz.quiz.title]]
+            </div>
+
+            <div class="quiz-description">
+              [[quiz.quiz.description]]
             </div>
           </div>
         </div>
@@ -76,11 +88,6 @@
           },
           restParams: {
             type: Object,
-            readOnly: false,
-            notify: true
-          },
-          types: {
-            type: Array,
             readOnly: false,
             notify: true
           },

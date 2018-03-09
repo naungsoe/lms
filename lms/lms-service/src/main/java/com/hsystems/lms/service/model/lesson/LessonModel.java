@@ -17,11 +17,11 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class LessonModel implements Serializable {
 
-  private static final long serialVersionUID = -7528756821622130945L;
+  private static final long serialVersionUID = 7314049161165173266L;
 
   private String title;
 
-  private String instructions;
+  private String description;
 
   private List<ComponentModel> components;
 
@@ -37,12 +37,12 @@ public final class LessonModel implements Serializable {
     this.title = title;
   }
 
-  public String getInstructions() {
-    return instructions;
+  public String getDescription() {
+    return description;
   }
 
-  public void setInstructions(String instructions) {
-    this.instructions = instructions;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public List<ComponentModel> getComponents() {

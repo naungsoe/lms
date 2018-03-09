@@ -55,9 +55,21 @@
         right: 16px;
       }
 
+      paper-dropdown-menu {
+        --paper-input-container-input: {
+          padding: 4px 0;
+        };
+        --paper-input-container-label: {
+          top: 4px;
+        }
+        --paper-input-container-label-floating: {
+          top: 0;
+        }
+      }
+
       paper-dropdown-menu[no-label-float] {
-        --paper-input-container: {
-          padding: 16px 0 8px 0;
+        --paper-input-container-input: {
+          padding: 8px 0 4px 0;
         };
       }
     </style>

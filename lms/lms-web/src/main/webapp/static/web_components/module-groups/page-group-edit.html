@@ -1,0 +1,180 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-header-panel.html">
+<link rel="import" href="../../web_components/module-groups/page-group-edit-toolbar.html">
+<link rel="import" href="../../web_components/module-groups/group-edit.html">
+
+<dom-module id="page-group-edit">
+  <template>
+    <style include="app-component-styles">
+      .page-content {
+        padding: 8px 0;
+      }
+
+      .page-content .group {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .group .group-content .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+        padding: 0 16px;
+      }
+    </style>
+
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[accountId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{account}}">
+    </iron-ajax>
+
+    <iron-ajax
+        name="post"
+        body="[[account]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <page-header-panel>
+      <div slot="page-header">
+        <page-group-edit-toolbar
+            group="[[group]]"
+            user="[[user]]">
+          <div slot="status">
+            [[status]]
+          </div>
+        </page-group-edit-toolbar>
+      </div>
+
+      <div class="page-content">
+        <div class="group">
+          <section class="group-content">
+            <div class="title">
+              [[localize('labelGroup')]]
+            </div>
+
+            <group-edit
+                user="[[user]]"
+                group="[[group]]"
+                language="[[language]]"
+                resources="[[resources]]">
+            </group-edit>
+          </section>
+        </div>
+      </div>
+    </page-header-panel>
+  </template>
+
+  <script>
+    const PageGroupEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageGroupEdit extends PageGroupEditBase {
+      static get is() {
+        return 'page-group-edit';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          accountId: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          group: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          response: {
+            type: Object,
+            readOnly: false
+          },
+          status: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          delay: {
+            type: Number,
+            readOnly: false,
+            notify: true,
+            value: 3000
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, accountId)',
+          '_updateGroup(group.*)'
+        ];
+      }
+
+      _generateRequest(restUrl, accountId) {
+        if ((restUrl === undefined)
+            || (accountId === undefined)) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=get]');
+        request.generateRequest();
+      }
+
+      _updateGroup(changeRecord) {
+        if (changeRecord.path === 'account') {
+          return;
+        }
+
+        if (this.timeout !== 0) {
+          clearTimeout(this.timeout);
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=post]');
+        this.debounce('click', function() {
+          request.url = this.restUrl;
+          request.generateRequest();
+          this.status = 'Saving';
+        }, this.delay);
+      }
+
+      _handleSaveResponse(event) {
+        let response = event.detail.response;
+        this.status = 'Saved';
+      }
+    }
+    customElements.define(PageGroupEdit.is, PageGroupEdit);
+  </script>
+</dom-module>

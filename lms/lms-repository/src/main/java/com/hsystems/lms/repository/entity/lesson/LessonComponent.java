@@ -10,7 +10,7 @@ import java.io.Serializable;
  */
 public final class LessonComponent implements Component, Serializable {
 
-  private static final long serialVersionUID = 5706276164342383780L;
+  private static final long serialVersionUID = -3388828775620300853L;
 
   @IndexField
   private String id;
@@ -21,6 +21,9 @@ public final class LessonComponent implements Component, Serializable {
   @IndexField
   private int order;
 
+  @IndexField
+  private String lessonId;
+
   LessonComponent() {
 
   }
@@ -28,11 +31,13 @@ public final class LessonComponent implements Component, Serializable {
   public LessonComponent(
       String id,
       Lesson lesson,
-      int order) {
+      int order,
+      String lessonId) {
 
     this.id = id;
     this.lesson = lesson;
     this.order = order;
+    this.lessonId = lessonId;
   }
 
   @Override
@@ -49,25 +54,7 @@ public final class LessonComponent implements Component, Serializable {
     return order;
   }
 
-  @Override
-  public int hashCode() {
-    return id.hashCode();
-  }
-
-  @Override
-  public boolean equals(Object obj) {
-    if ((obj == null) || (getClass() != obj.getClass())) {
-      return false;
-    }
-
-    LessonComponent component = (LessonComponent) obj;
-    return id.equals(component.getId());
-  }
-
-  @Override
-  public String toString() {
-    return String.format(
-        "LessonComponent{id=%s, lesson=%s, order=%s}",
-        id, lesson, order);
+  public String getLessonId() {
+    return lessonId;
   }
 }

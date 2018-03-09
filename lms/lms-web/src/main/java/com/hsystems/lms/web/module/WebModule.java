@@ -13,7 +13,9 @@ import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.security.RequiresInterceptor;
 import com.hsystems.lms.web.AccountServlet;
 import com.hsystems.lms.web.CourseServlet;
+import com.hsystems.lms.web.DriveServlet;
 import com.hsystems.lms.web.ErrorServlet;
+import com.hsystems.lms.web.GroupServlet;
 import com.hsystems.lms.web.HomeServlet;
 import com.hsystems.lms.web.IndexServlet;
 import com.hsystems.lms.web.LessonServlet;
@@ -22,7 +24,6 @@ import com.hsystems.lms.web.QuizServlet;
 import com.hsystems.lms.web.SignInServlet;
 import com.hsystems.lms.web.SignOutServlet;
 import com.hsystems.lms.web.SignUpServlet;
-import com.hsystems.lms.web.StorageServlet;
 import com.hsystems.lms.web.UserServlet;
 import com.hsystems.lms.web.UtilServlet;
 import com.hsystems.lms.web.filter.AuthenticationFilter;
@@ -58,12 +59,13 @@ public class WebModule extends ServletModule {
     bind(SignOutServlet.class).in(Singleton.class);
     bind(AccountServlet.class).in(Singleton.class);
     bind(HomeServlet.class).in(Singleton.class);
+    bind(GroupServlet.class).in(Singleton.class);
     bind(UserServlet.class).in(Singleton.class);
     bind(CourseServlet.class).in(Singleton.class);
     bind(LessonServlet.class).in(Singleton.class);
     bind(QuizServlet.class).in(Singleton.class);
     bind(QuestionServlet.class).in(Singleton.class);
-    bind(StorageServlet.class).in(Singleton.class);
+    bind(DriveServlet.class).in(Singleton.class);
     bind(IndexServlet.class).in(Singleton.class);
 
     filterRegex("/(web|webapi2)(\\/\\w+)*").through(AuthenticationFilter.class);
@@ -75,12 +77,13 @@ public class WebModule extends ServletModule {
     serveRegex("/web/signout(\\/\\w+)*").with(SignOutServlet.class);
     serveRegex("/web/account(\\/\\w+)*").with(AccountServlet.class);
     serveRegex("/web/home(\\/\\w+)*").with(HomeServlet.class);
+    serveRegex("/web/groups(\\/\\w+)*").with(GroupServlet.class);
     serveRegex("/web/users(\\/\\w+)*").with(UserServlet.class);
     serveRegex("/web/courses(\\/\\w+)*").with(CourseServlet.class);
     serveRegex("/web/lessons(\\/\\w+)*").with(LessonServlet.class);
     serveRegex("/web/quizzes(\\/\\w+)*").with(QuizServlet.class);
     serveRegex("/web/questions(\\/\\w+)*").with(QuestionServlet.class);
-    serveRegex("/web/storage(\\/\\w+)*").with(StorageServlet.class);
+    serveRegex("/web/drive(\\/\\w+)*").with(DriveServlet.class);
     serveRegex("/web/index(\\/\\w+)*").with(IndexServlet.class);
     serve("/webapi/*").with(GuiceContainer.class);
   }

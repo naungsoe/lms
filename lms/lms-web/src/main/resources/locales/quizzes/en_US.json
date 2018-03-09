@@ -13,6 +13,7 @@
     "labelQuizFound": "{numFound} quiz",
     "labelQuizzesFound": "{numFound} quizzes",
     "labelTitle": "Title",
+    "labelDescription": "Description",
     "labelInstructions": "Instructions",
     "labelSection": "Section {offset} of {length}",
     "labelSectionMove": "Move section",

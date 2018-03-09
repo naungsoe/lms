@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Criterion;
@@ -12,8 +13,8 @@ import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
-import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -21,14 +22,18 @@ import com.hsystems.lms.service.model.lesson.LessonResourceModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public class LessonService extends AbstractService {
+
+  private final Provider<Properties> propertiesProvider;
 
   private final LessonRepository resourceRepository;
 
@@ -38,10 +43,12 @@ public class LessonService extends AbstractService {
 
   @Inject
   LessonService(
+      Provider<Properties> propertiesProvider,
       LessonRepository resourceRepository,
       ComponentRepository componentRepository,
       IndexRepository indexRepository) {
 
+    this.propertiesProvider = propertiesProvider;
     this.resourceRepository = resourceRepository;
     this.componentRepository = componentRepository;
     this.indexRepository = indexRepository;
@@ -62,7 +69,7 @@ public class LessonService extends AbstractService {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
-          query.getLimit(),
+          NUMBER_FOUND_ZERO,
           Collections.emptyList()
       );
     }
@@ -143,5 +150,12 @@ public class LessonService extends AbstractService {
 
     List<Component> components = getComponents(componentBeans);
     return components;
+  }
+
+  @Log
+  public List<String> findAllComponentTypes() {
+    Properties properties = propertiesProvider.get();
+    String questionTypes = properties.getProperty("lesson.component.types");
+    return Arrays.asList(questionTypes.split(","));
   }
 }

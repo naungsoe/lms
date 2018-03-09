@@ -1,0 +1,65 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-user-edit-toolbar">
+  <template>
+    <style include="app-component-styles">
+
+    </style>
+
+    <page-toolbar>
+      <paper-icon-button
+          icon="arrow-back"
+          on-tap="_handleBackTap">
+      </paper-icon-button>
+
+      <div class="title">
+      </div>
+
+      <slot name="status">
+      </slot>
+
+      <paper-icon-button
+          icon="delete"
+          hidden$="[[!deletable]]"
+          on-tap="_handleDeleteTap">
+      </paper-icon-button>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageUserEditToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageUserEditToolbar extends PageUserEditToolbarBase {
+      static get is() {
+        return 'page-user-edit-toolbar';
+      }
+
+      static get properties() {
+        return {
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          account: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+
+      _handleBackTap(event) {
+        window.history.back();
+      }
+    }
+    customElements.define(PageUserEditToolbar.is, PageUserEditToolbar);
+  </script>
+</dom-module>

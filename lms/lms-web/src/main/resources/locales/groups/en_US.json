@@ -1,0 +1,10 @@
+{
+  "en_US": {
+    "titlePage": "Groups",
+    "labelGroup": "Group",
+    "labelMembers": "Members",
+    "labelGroupFound": "{numFound} group",
+    "labelGroupsFound": "{numFound} groups",
+    "inputLabelName": "Name"
+  }
+}

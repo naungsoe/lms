@@ -34,6 +34,9 @@
       }
 
       paper-input {
+        --paper-input-container: {
+          padding: 4px 0;
+        }
         --paper-input-container-input: {
           padding: 4px 0;
         };
@@ -114,9 +117,11 @@
             let chip = root.querySelector(selector);
             chip.setAttribute('existing', '');
 
-            this.debounce('hide', function() {
-              chip.removeAttribute('existing');
-            }, 600);
+            Polymer.Debouncer.debounce('hide',
+              Polymer.Async.timeOut.after(600),
+              function() {
+                chip.removeAttribute('existing');
+              });
           }
 
           this.value = '';

@@ -34,13 +34,18 @@
       </paper-button>
       <paper-button raised
           disabled$="[[loading]]"
+          on-tap="_handleGroupsTap">
+        Index Groups
+      </paper-button>
+      <paper-button raised
+          disabled$="[[loading]]"
           on-tap="_handleUsersTap">
         Index Users
       </paper-button>
       <paper-button raised
           disabled$="[[loading]]"
-          on-tap="_handleEnrollmentsTap">
-        Index Enrollments
+          on-tap="_handleCoursesTap">
+        Index Courses
       </paper-button>
       <paper-button raised
           disabled$="[[loading]]"
@@ -101,13 +106,18 @@
             this._generateRequest(url);
           }
 
+          _handleGroupsTap(event) {
+            let url = '<c:url value="/webapi/index/groups"/>';
+            this._generateRequest(url);
+          }
+
           _handleUsersTap(event) {
             let url = '<c:url value="/webapi/index/users"/>';
             this._generateRequest(url);
           }
 
-          _handleEnrollmentsTap(event) {
-            let url = '<c:url value="/webapi/index/enrollments"/>';
+          _handleCoursesTap(event) {
+            let url = '<c:url value="/webapi/index/courses"/>';
             this._generateRequest(url);
           }
 

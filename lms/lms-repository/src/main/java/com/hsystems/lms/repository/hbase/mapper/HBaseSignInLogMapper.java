@@ -67,8 +67,8 @@ public class HBaseSignInLogMapper extends HBaseAbstractMapper<SignInLog> {
   @Override
   public List<Put> getPuts(SignInLog entity, long timestamp) {
     List<Put> puts = new ArrayList<>();
-    byte[] row = Bytes.toBytes(entity.getId());
-    Put put = new Put(row, timestamp);
+    byte[] rowKey = Bytes.toBytes(entity.getId());
+    Put put = new Put(rowKey, timestamp);
     addSessionIdColumn(put, entity.getSessionId());
     addIpAddressColumn(put, entity.getIpAddress());
     addDateTimeColumn(put, entity.getDateTime());
@@ -80,9 +80,8 @@ public class HBaseSignInLogMapper extends HBaseAbstractMapper<SignInLog> {
   @Override
   public List<Delete> getDeletes(SignInLog entity, long timestamp) {
     List<Delete> deletes = new ArrayList<>();
-
-    byte[] row = Bytes.toBytes(entity.getId());
-    Delete delete = new Delete(row, timestamp);
+    byte[] rowKey = Bytes.toBytes(entity.getId());
+    Delete delete = new Delete(rowKey, timestamp);
     deletes.add(delete);
     return deletes;
   }

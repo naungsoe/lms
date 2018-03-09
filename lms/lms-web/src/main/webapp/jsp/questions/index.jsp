@@ -109,7 +109,7 @@
 
             <template
                 is="dom-if"
-                if="[[showSearch]]">
+                if="[[searchEnabled]]">
               <app-search
                   query-fields="[[queryFields]]"
                   query="{{query}}"
@@ -250,7 +250,7 @@
                 readOnly: false,
                 notify: true
               },
-              showSearch: {
+              searchEnabled: {
                 type: Boolean,
                 readOnly: false,
                 notify: true
@@ -265,7 +265,7 @@
           }
 
           _updatePage(page) {
-            this.showSearch = (page === 'questions');
+            this.searchEnabled = (page === 'questions');
           }
 
           _handleMenuTap(event) {

@@ -2,9 +2,9 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.entity.AuditLog;
+import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.hbase.mapper.HBaseAuditLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
@@ -43,18 +43,16 @@ public class HBaseAuditLogRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<AuditLog> findAllBy(String entityId)
+  public List<AuditLog> findAllBy(String id, EntityType type)
       throws IOException {
 
-    Scan scan = getRowKeyFilterScan(entityId);
-    scan.setStartRow(Bytes.toBytes(entityId));
+    String startRowKey = logMapper.getId(type, id);
+    startRowKey = getExclusiveStartRowKey(startRowKey);
+
+    Scan scan = getRowKeyFilterScan(startRowKey);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
 
     List<Result> results = client.scan(scan, AuditLog.class);
-
-    if (CollectionUtils.isEmpty(results)) {
-      return Collections.emptyList();
-    }
-
     List<Mutation> mutations = Collections.emptyList();
     return logMapper.getEntities(results, mutations);
   }

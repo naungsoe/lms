@@ -4,7 +4,10 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
@@ -13,15 +16,15 @@ import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.entity.UserEnrollment;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.SignUpModel;
-import com.hsystems.lms.service.model.UserEnrollmentModel;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -41,6 +44,49 @@ public class UserService extends AbstractService {
 
     this.propertiesProvider = propertiesProvider;
     this.indexRepository = indexRepository;
+  }
+
+  @Log
+  public QueryResult<UserModel> findAllBy(
+      Query query, Principal principal)
+      throws IOException {
+
+    addSchoolFilter(query, principal);
+
+    QueryResult<User> queryResult
+        = indexRepository.findAllBy(query, User.class);
+    List<User> users = queryResult.getItems();
+
+    if (CollectionUtils.isEmpty(users)) {
+      return new QueryResult<>(
+          queryResult.getElapsedTime(),
+          query.getOffset(),
+          NUMBER_FOUND_ZERO,
+          Collections.emptyList()
+      );
+    }
+
+    Configuration configuration = Configuration.create(principal);
+    List<UserModel> userModels = getUserModels(users, configuration);
+    return new QueryResult<>(
+        queryResult.getElapsedTime(),
+        queryResult.getStart(),
+        queryResult.getNumFound(),
+        userModels
+    );
+  }
+
+  private List<UserModel> getUserModels(
+      List<User> users, Configuration configuration) {
+
+    List<UserModel> userModels = new ArrayList<>();
+
+    for (User user : users) {
+      UserModel userModel = getModel(user, UserModel.class, configuration);
+      userModels.add(userModel);
+    }
+
+    return userModels;
   }
 
   @Log
@@ -127,24 +173,5 @@ public class UserService extends AbstractService {
         .permissions(Collections.list(group.getPermissions()))
         .school(school)
         .build();
-  }
-
-  @Log
-  public Optional<UserEnrollmentModel> findEnrollmentBy(
-      String id, Principal principal)
-      throws IOException {
-
-    Optional<UserEnrollment> enrollmentOptional
-        = indexRepository.findBy(id, UserEnrollment.class);
-
-    if (enrollmentOptional.isPresent()) {
-      UserEnrollment enrollment = enrollmentOptional.get();
-      Configuration configuration = Configuration.create(principal);
-      UserEnrollmentModel enrollmentModel = getModel(enrollment,
-          UserEnrollmentModel.class, configuration);
-      return Optional.of(enrollmentModel);
-    }
-
-    return Optional.empty();
   }
 }

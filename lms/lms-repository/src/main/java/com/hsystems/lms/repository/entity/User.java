@@ -7,6 +7,8 @@ import com.hsystems.lms.common.util.StringUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 public final class User
     implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = -4602729636176647790L;
+  private static final long serialVersionUID = 7115174222259162095L;
 
   @IndexField
   private String id;
@@ -69,6 +71,9 @@ public final class User
   private School school;
 
   @IndexField
+  private List<Group> groups;
+
+  @IndexField
   private User createdBy;
 
   @IndexField
@@ -101,6 +106,7 @@ public final class User
       String dateTimeFormat,
       List<String> permissions,
       School school,
+      List<Group> groups,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -122,6 +128,7 @@ public final class User
     this.dateTimeFormat = dateTimeFormat;
     this.permissions = permissions;
     this.school = school;
+    this.groups = groups;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
     this.modifiedBy = modifiedBy;
@@ -147,6 +154,7 @@ public final class User
     private String dateTimeFormat;
     private List<String> permissions;
     private School school;
+    private List<Group> groups;
     private User createdBy;
     private LocalDateTime createdDateTime;
     private User modifiedBy;
@@ -223,6 +231,11 @@ public final class User
       return this;
     }
 
+    public Builder groups(List<Group> groups) {
+      this.groups = groups;
+      return this;
+    }
+
     public Builder createdBy(User createdBy) {
       this.createdBy = createdBy;
       return this;
@@ -261,6 +274,7 @@ public final class User
           this.dateTimeFormat,
           this.permissions,
           this.school,
+          this.groups,
           this.createdBy,
           this.createdDateTime,
           this.modifiedBy,
@@ -337,6 +351,24 @@ public final class User
     return school;
   }
 
+  public Enumeration<Group> getGroups() {
+    return CollectionUtils.isEmpty(groups)
+        ? Collections.emptyEnumeration()
+        : Collections.enumeration(groups);
+  }
+
+  public void addGroup(Group... groups) {
+    if (CollectionUtils.isEmpty(this.groups)) {
+      this.groups = new ArrayList<>();
+    }
+
+    this.groups.addAll(Arrays.asList(groups));
+  }
+
+  public void removeGroup(Group group) {
+    this.groups.remove(group);
+  }
+
   @Override
   public User getCreatedBy() {
     return createdBy;
@@ -363,11 +395,12 @@ public final class User
         "User{id=%s, firstName=%s, lastName=%s, account=%s, password=%s, "
             + "salt=%s, dateOfBirth=%s, gender=%s, mobile=%s, email=%s, "
             + "locale=%s, dateFormat=%s, timeFormat=%s, dateTimeFormat=%s, "
-            + "permissions=%s, school=%s, createdBy=%s, createdDateTime=%s, "
-            + "modifiedBy=%s, modifiedDateTime=%s}",
+            + "permissions=%s, groups=%s, school=%s, createdBy=%s, "
+            + "createdDateTime=%s, modifiedBy=%s, modifiedDateTime=%s}",
         id, firstName, lastName, account, password, salt, dateOfBirth,
-        gender, mobile, email, locale, timeFormat, dateFormat, dateTimeFormat,
-        StringUtils.join(permissions, ","), school, createdBy, createdDateTime,
+        gender, mobile, email, locale, timeFormat, dateFormat,
+        dateTimeFormat, StringUtils.join(permissions, ","), school,
+        StringUtils.join(groups, ","), createdBy, createdDateTime,
         modifiedBy, modifiedDateTime);
   }
 }

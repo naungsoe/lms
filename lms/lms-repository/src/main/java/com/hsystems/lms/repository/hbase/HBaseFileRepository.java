@@ -18,8 +18,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by naungsoe on 12/10/16.
@@ -91,6 +93,35 @@ public class HBaseFileRepository extends HBaseAbstractRepository
     scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = client.scan(scan, Level.class);
+    return fileMapper.getEntities(results, mutations);
+  }
+
+  @Override
+  public List<FileResource> findAllBy(String schoolId, String parentId)
+      throws IOException {
+
+    Scan scan = getRowKeyFilterScan(schoolId, parentId);
+    scan.setStartRow(Bytes.toBytes(schoolId));
+
+    List<Result> results = client.scan(scan, FileResource.class);
+    Set<String> rowKeys = new HashSet<>(results.size());
+    results.forEach(result -> {
+      String rowKey = fileMapper.getChildId(result);
+      rowKeys.add(rowKey);
+    });
+
+    List<Mutation> mutations = mutationRepository.findAllBy(
+        schoolId, rowKeys, EntityType.FILE);
+
+    if (CollectionUtils.isEmpty(mutations)) {
+      return Collections.emptyList();
+    }
+
+    scan = getRowKeysFilterScan(rowKeys);
+    scan.setStartRow(Bytes.toBytes(schoolId));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    results = client.scan(scan, FileResource.class);
     return fileMapper.getEntities(results, mutations);
   }
 

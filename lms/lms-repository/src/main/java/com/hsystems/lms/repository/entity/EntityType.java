@@ -11,6 +11,7 @@ public enum EntityType {
   SUBJECT,
   GROUP,
   USER,
+  SUBSCRIPTION,
   COURSE,
   LESSON,
   QUIZ,

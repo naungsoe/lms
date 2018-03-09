@@ -11,7 +11,7 @@ import java.io.Serializable;
 public final class QuizComponent
     implements GradableComponent<QuizGradingStrategy>, Serializable {
 
-  private static final long serialVersionUID = 1129182302928930252L;
+  private static final long serialVersionUID = 8011199044130249100L;
 
   @IndexField
   private String id;
@@ -22,6 +22,9 @@ public final class QuizComponent
   @IndexField
   private int order;
 
+  @IndexField
+  private String quizId;
+
   QuizComponent() {
 
   }
@@ -29,11 +32,13 @@ public final class QuizComponent
   public QuizComponent(
       String id,
       Quiz quiz,
-      int order) {
+      int order,
+      String quizId) {
 
     this.id = id;
     this.quiz = quiz;
     this.order = order;
+    this.quizId = quizId;
   }
 
   @Override
@@ -53,5 +58,9 @@ public final class QuizComponent
   @Override
   public QuizGradingStrategy getGradingStrategy() {
     return new QuizGradingStrategy(this);
+  }
+
+  public String getQuizId() {
+    return quizId;
   }
 }

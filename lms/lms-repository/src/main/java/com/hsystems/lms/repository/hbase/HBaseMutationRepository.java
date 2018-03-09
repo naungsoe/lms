@@ -17,8 +17,10 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 /**
  * Created by naungsoe on 14/10/16.
@@ -76,6 +78,25 @@ public class HBaseMutationRepository extends HBaseAbstractRepository
 
     List<Result> results = client.scan(scan, Mutation.class);
     return mutationMapper.getEntities(results, Collections.emptyList());
+  }
+
+  @Override
+  public List<Mutation> findAllBy(
+      String schoolId, Set<String> ids, EntityType type)
+      throws IOException {
+
+    Set<String> rowKeys = new HashSet<>(ids.size());
+    ids.forEach(id -> {
+      String rowKey = mutationMapper.getId(type, id);
+      rowKeys.add(rowKey);
+    });
+
+    Scan scan = getRowKeysFilterScan(rowKeys);
+    scan.setStartRow(Bytes.toBytes(schoolId));
+
+    List<Result> results = client.scan(scan, Mutation.class);
+    List<Mutation> mutations = Collections.emptyList();
+    return mutationMapper.getEntities(results, mutations);
   }
 
   @Override

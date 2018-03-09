@@ -16,8 +16,8 @@ drop 'lms:groups'
 disable 'lms:users'
 drop 'lms:users'
 
-disable 'lms:enrollments'
-drop 'lms:enrollments'
+disable 'lms:subscriptions'
+drop 'lms:subscriptions'
 
 disable 'lms:courses'
 drop 'lms:courses'
@@ -33,6 +33,9 @@ drop 'lms:components'
 
 disable 'lms:questions'
 drop 'lms:questions'
+
+disable 'lms:files'
+drop 'lms:files'
 
 disable 'lms:mutations'
 drop 'lms:mutations'
@@ -215,6 +218,8 @@ put 'lms:groups', 'c784ae9', 'd:name', 'Default School Groups', 1480299712295
 
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
@@ -222,6 +227,10 @@ put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af3
 
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_QUESTIONS,EDIT_QUESTION', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae995d158c2969411e781c70800279a327c', 'd:fname', 'Naung', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae995d158c2969411e781c70800279a327c', 'd:lname', 'Soe', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
@@ -254,6 +263,8 @@ put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dformat', 'yyyy-M
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_COURSES,EDIT_COURSE,VIEW_LESSONS,EDIT_LESSON,VIEW_QUIZZES,EDIT_QUIZ,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_FILES,EDIT_FILE,VIEW_GROUPS,EDIT_GROUP,VIEW_USERS,EDIT_USER', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sch_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
@@ -273,39 +284,22 @@ put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dformat', 'yyyy-M
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:permissions', 'VIEW_HOME,VIEW_COURSES,EDIT_COURSE,VIEW_LESSONS,EDIT_LESSON,VIEW_QUIZZES,EDIT_QUIZ,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_FILES,EDIT_FILE', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_sch_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 
-create 'lms:enrollments', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'lms:enrollments', 'c784ae9', 'd:name', 'Default School Enrollments'
+create 'lms:subscriptions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:subscriptions', 'c784ae9', 'd:name', 'Default School Subscriptions'
 
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_lvl_c784ae9775fde2dacde498993cca4f78e11ac1e', 'd:name', 'Grade 2'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae9c1f395f921164de49607c029133b3a5b', 'd:name', 'Myanmar'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae91bd03ddf93464013bd7a16cfcd2213c1', 'd:name', 'English'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sub_c784ae90e1c601ca5a04babb0f902e54e829c6a', 'd:name', 'Mathematics'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System'
-put 'lms:enrollments', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893'
-
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c', 'd:fname', 'Naung'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c', 'd:lname', 'Soe'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 2'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_sub_c784ae9c1f395f921164de49607c029133b3a5b', 'd:name', 'Myanmar'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_sub_c784ae9c1f395f921164de49607c029133b3a5b', 'd:name', 'English'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_sub_c784ae9c1f395f921164de49607c029133b3a5b', 'd:name', 'Mathematics'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Teachers'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System'
-put 'lms:enrollments', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893'
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:id', 'c784ae9eeffa8fc892743509e28840711961b2a', 1480299712295
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:title', 'Addition within 10', 1480299712295
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391_sub_c784ae995d158c2969411e781c70800279a327c', 'd:fname', 'LMS', 1480299712295
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391_sub_c784ae995d158c2969411e781c70800279a327c', 'd:lname', 'System', 1480299712295
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391_sub_c784ae995d158c2969411e781c70800279a327c', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 
@@ -313,7 +307,7 @@ create 'lms:courses', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BL
 put 'lms:courses', 'c784ae9', 'd:name', 'Default School Courses', 1480299712295
 
 put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:title', 'Addition within 10', 1480299712295
-put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
 put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:keywords', 'additions', 1480299712295
 put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1', 1480299712295
@@ -332,7 +326,7 @@ create 'lms:lessons', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BL
 put 'lms:lessons', 'c784ae9', 'd:name', 'Default School Lessons', 1480299712295
 
 put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:title', 'Addition within 10', 1480299712295
-put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
 put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:keywords', 'additions', 1480299712295
 put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1', 1480299712295
@@ -351,7 +345,7 @@ create 'lms:quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BL
 put 'lms:quizzes', 'c784ae9', 'd:name', 'Default School Questions', 1480299712295
 
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions within 10', 1480299712295
-put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:instructions', 'Answer all questions.', 1480299712295
+put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:keywords', 'additions', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1', 1480299712295
@@ -371,16 +365,22 @@ put 'lms:components', 'c784ae9', 'd:name', 'Default School Components', 14802997
 
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:type', 'TopicComponent', 1480299712295
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:title', 'Topic 1', 1480299712295
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:instructions', 'Study lessons and take quizzes.', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:instructions', 'Study lesson and take quiz.', 1480299712295
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:order', '1', 1480299712295
 
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:type', 'LessonComponent', 1480299712295
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:lesson', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:resid', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:title', 'Addition within 10', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:order', '1', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:parent', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 1480299712295
 
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715420', 'd:type', 'QuizComponent', 1480299712295
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715420', 'd:quiz', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 1480299712295
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715420', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:type', 'QuizComponent', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:resid', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:title', 'Addition within 10', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:order', '2', 1480299712295
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:parent', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 1480299712295
 
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:type', 'ActivityComponent', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:title', 'Activity 1', 1480299712295
@@ -393,8 +393,8 @@ put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712610', 'd:content', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.', 1480299712295
 
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:type', 'QuestionComponent', 1480299712295
-put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:qnid', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 1480299712295
-put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:qntype', 'MultipleChoice', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:queid', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 1480299712295
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:quetype', 'MultipleChoice', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:order', '1', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 1480299712295
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712750', 'd:body', '1 + 2 = ?', 1480299712295
@@ -433,8 +433,8 @@ put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:order', '1', 1480299712295
 
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:type', 'QuestionComponent', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:qnid', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:qntype', 'MultipleChoice', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:queid', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:quetype', 'MultipleChoice', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:order', '1', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:parent', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350', 'd:body', '1 + 2 = ?', 1480299712295
@@ -458,8 +458,8 @@ put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712350_opt_1480299712394', 'd:order', '4', 1480299712295
 
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:type', 'QuestionComponent', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:qnid', 'c784ae940b0afdf9bf3497290bdda68ad2ffc35', 1480299712295
-put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:qntype', 'MultipleResponse', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:queid', 'c784ae940b0afdf9bf3497290bdda68ad2ffc35', 1480299712295
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:quetype', 'MultipleResponse', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:order', '2', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:parent', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 1480299712295
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410', 'd:body', '2 + 3 = ?', 1480299712295
@@ -557,7 +557,7 @@ put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:hint', '', 14
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:explanation', '', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:keywords', 'addition,10', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:type', 'QuestionComponent', 1480299712295
-put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:qntype', 'MultipleChoice', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:quetype', 'MultipleChoice', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:order', '1', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:body', '2 + 3 = ?', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150', 'd:hint', 'Addition within 10.', 1480299712295
@@ -580,7 +580,7 @@ put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150_
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712150_opt_1480299712294', 'd:order', '4', 1480299712295
 
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:type', 'QuestionComponent', 1480299712295
-put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:qntype', 'MultipleChoice', 1480299712295
+put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:quetype', 'MultipleChoice', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:order', '2', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:body', '4 + 5 = ?', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_com_1480299712290', 'd:hint', 'Addition within 10.', 1480299712295
@@ -611,6 +611,44 @@ put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_cre_c784ae925e575b
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
 put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+
+
+create 'lms:files', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+put 'lms:files', 'c784ae9', 'd:name', 'Default School Lessons', 1480299712295
+
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9', 'd:name', 'Addition', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9', 'd:size', '0', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9', 'd:directory', 'true', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9_par_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9_sch_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2', 'd:name', 'Addition within 10.jpg', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2', 'd:size', '0', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2', 'd:directory', 'false', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2', 'd:keywords', 'addition,10', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_par_c784ae90c14e4bd65634886a53d3d6ed2763fb9', 'd:name', 'Addition', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_sch_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_lvl_c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_sub_c784ae90e1c601ca5a04babb0f902e54e829c6a', 'd:name', 'Mathematics', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:files', 'c784ae99eb3263b943640e0aee5f0be95424fd2_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
+
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f', 'd:name', 'Addition within 100.jpg', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f', 'd:size', '0', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f', 'd:directory', 'false', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f', 'd:keywords', 'addition,10', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_par_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_sch_c784ae9', 'd:name', 'Default School', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_lvl_c784ae9775fde2dacde498993cca4f78e11ac1e', 'd:name', 'Grade 2', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_sub_c784ae90e1c601ca5a04babb0f902e54e829c6a', 'd:name', 'Mathematics', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
+put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_cre_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 
 
@@ -679,6 +717,17 @@ put 'lms:mutations', 'SUBJECT_c784ae950a3f5f400e5475e9470b1ba28881334', 'd:times
 put 'lms:mutations', 'SUBJECT_c784ae9aac30a9c93eb403fb8696140760618bc', 'd:action', 'CREATED'
 put 'lms:mutations', 'SUBJECT_c784ae9aac30a9c93eb403fb8696140760618bc', 'd:timestamp', '1480299712295'
 
+put 'lms:mutations', 'GROUP_c784ae9', 'd:name', 'Default School Users'
+
+put 'lms:mutations', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:action', 'CREATED'
+put 'lms:mutations', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:action', 'CREATED'
+put 'lms:mutations', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
+put 'lms:mutations', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
+
 put 'lms:mutations', 'USER_c784ae9', 'd:name', 'Default School Users'
 
 put 'lms:mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:action', 'CREATED'
@@ -686,6 +735,11 @@ put 'lms:mutations', 'USER_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:timestam
 
 put 'lms:mutations', 'USER_c784ae995d158c2969411e781c70800279a327c', 'd:action', 'CREATED'
 put 'lms:mutations', 'USER_c784ae995d158c2969411e781c70800279a327c', 'd:timestamp', '1480299712295'
+
+put 'lms:mutations', 'SUBSCRIPTION_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:name', 'User Subscriptions'
+
+put 'lms:mutations', 'SUBSCRIPTION_c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:action', 'CREATED'
+put 'lms:mutations', 'SUBSCRIPTION_c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:timestamp', '1480299712295'
 
 put 'lms:mutations', 'COURSE_c784ae9', 'd:name', 'Default School Courses'
 
@@ -712,8 +766,8 @@ put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a148029971
 put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:action', 'MODIFIED'
 put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:timestamp', '1480299712295'
 
-put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299715420', 'd:action', 'MODIFIED'
-put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299715420', 'd:timestamp', '1480299712295'
+put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:action', 'MODIFIED'
+put 'lms:mutations', 'COMPONENT_c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:timestamp', '1480299712295'
 
 put 'lms:mutations', 'COMPONENT_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Resource Components'
 
@@ -780,66 +834,76 @@ put 'lms:sharelogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_ent_c784ae925e575b
 
 
 create 'lms:auditlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
-put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:lname', 'User'
-put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'SCHOOL_c784ae9', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'QUESTION_c784ae9', 'd:name', 'Default School'
+
+put 'lms:auditlogs', 'SCHOOL_c784ae9_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'SCHOOL_c784ae9_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'SCHOOL_c784ae9_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'SCHOOL_c784ae9_1480299712295', 'd:action', 'CREATED'
 
 put 'lms:auditlogs', 'GROUP_c784ae9', 'd:name', 'Default School Groups'
 
-put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:lname', 'User'
-put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:timestamp', '1480299712295'
-put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:lname', 'User'
-put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:timestamp', '1480299712295'
-put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:lname', 'User'
-put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Default School Group'
+
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_1480299712295', 'd:action', 'CREATED'
+
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Default School Group'
+
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae9d95422d3337b0ebf5b00e01fe252939b_1480299712295', 'd:action', 'CREATED'
+
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Default School Group'
+
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'GROUP_c784ae957bf72fe391ef22bd852d0f45db4766a_1480299712295', 'd:action', 'CREATED'
 
 put 'lms:auditlogs', 'QUESTION_c784ae9', 'd:name', 'Default School Questions'
 
-put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:lname', 'User'
-put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:name', 'Default School Question'
+
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUESTION_c784ae91efe773c7c5f41de68effd1ce03e6d7e_1480299712295', 'd:action', 'CREATED'
 
 put 'lms:auditlogs', 'QUIZ_c784ae9', 'd:name', 'Default School Quizzes'
 
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:lname', 'User'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:name', 'Default School Quiz'
+
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:action', 'CREATED'
 put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
 put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:fname', 'Admin'
 put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:lname', 'User'
 put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712310', 'd:action', 'SHARED'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:lname', 'User'
-put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712295', 'd:action', 'MODIFIED'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712950', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712950', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712950', 'd:lname', 'User'
+put 'lms:auditlogs', 'QUIZ_c784ae9ecfe05faf70bebe91a0b42bd424eae78_1480299712950', 'd:action', 'MODIFIED'
 
 put 'lms:auditlogs', 'LESSON_c784ae9', 'd:name', 'Default School Lessons'
 
-put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:lname', 'User'
-put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Default School Lesson'
+
+put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'LESSON_c784ae9bcfe05faf70bebe91a0b42bd424eae18_1480299712295', 'd:action', 'CREATED'
 
 put 'lms:auditlogs', 'COURSE_c784ae9', 'd:name', 'Default School Courses'
 
-put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
-put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:fname', 'Admin'
-put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:lname', 'User'
-put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:action', 'CREATED'
-put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:timestamp', '1480299712295'
+put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a', 'd:name', 'Default School Course'
+
+put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a_1480299712295', 'd:id', 'c784ae925e575b83b9bf8d50768d4e486c32bed'
+put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a_1480299712295', 'd:fname', 'Admin'
+put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a_1480299712295', 'd:lname', 'User'
+put 'lms:auditlogs', 'COURSE_c784ae9eeffa8fc892743509e28840711961b2a_1480299712295', 'd:action', 'CREATED'

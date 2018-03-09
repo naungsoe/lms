@@ -7,18 +7,24 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.ComponentService;
+import com.hsystems.lms.service.CourseService;
+import com.hsystems.lms.service.GroupService;
+import com.hsystems.lms.service.LessonService;
+import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
+import com.hsystems.lms.service.QuizService;
+import com.hsystems.lms.service.SubjectService;
 import com.hsystems.lms.service.UserService;
+import com.hsystems.lms.service.model.GroupModel;
 import com.hsystems.lms.service.model.LevelModel;
 import com.hsystems.lms.service.model.SubjectModel;
-import com.hsystems.lms.service.model.UserEnrollmentModel;
 
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -36,23 +42,83 @@ public class FilterController extends AbstractController {
 
   private final Provider<Principal> principalProvider;
 
+  private final LevelService levelService;
+
+  private final SubjectService subjectService;
+
+  private final GroupService groupService;
+
   private final UserService userService;
 
-  private final ComponentService componentService;
+  private final CourseService courseService;
+
+  private final LessonService lessonService;
+
+  private final QuizService quizService;
 
   private final QuestionService questionService;
 
   @Inject
   FilterController(
       Provider<Principal> principalProvider,
+      LevelService levelService,
+      SubjectService subjectService,
+      GroupService groupService,
       UserService userService,
-      ComponentService componentService,
+      CourseService courseService,
+      LessonService lessonService,
+      QuizService quizService,
       QuestionService questionService) {
 
     this.principalProvider = principalProvider;
+    this.levelService = levelService;
+    this.subjectService = subjectService;
+    this.groupService = groupService;
     this.userService = userService;
-    this.componentService = componentService;
+    this.courseService = courseService;
+    this.lessonService = lessonService;
+    this.quizService = quizService;
     this.questionService = questionService;
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/groups")
+  public Response findGroupFilters(
+      @Context HttpServletRequest request)
+      throws IOException {
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
+
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
+  }
+
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Path("/users")
+  public Response findUserFilters(
+      @Context HttpServletRequest request)
+      throws IOException {
+
+    Principal principal = principalProvider.get();
+    QueryResult<GroupModel> queryResult
+        = groupService.findAllBy(Query.create(), principal);
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
+
+    ArrayNode groupNodes = moduleNode.putArray("groups");
+    queryResult.getItems().forEach(groupModel -> {
+      ObjectNode groupNode = mapper.createObjectNode();
+      groupNode.put("name", groupModel.getName());
+      groupNode.put("value", groupModel.getId());
+      groupNodes.add(groupNode);
+    });
+
+    String json = moduleNode.toString();
+    return Response.ok(json).build();
   }
 
   @GET
@@ -63,10 +129,24 @@ public class FilterController extends AbstractController {
       throws IOException {
 
     JsonNode localeNode = findLocaleNode(request);
-    ObjectMapper mapper = new ObjectMapper();
-    ObjectNode moduleNode = mapper.createObjectNode();
+    JsonNode moduleNode = findCourseFilters(localeNode);
     String json = moduleNode.toString();
     return Response.ok(json).build();
+  }
+
+  private JsonNode findCourseFilters(JsonNode localeNode)
+      throws IOException {
+
+    ObjectMapper mapper = new ObjectMapper();
+    ObjectNode moduleNode = mapper.createObjectNode();
+
+    Principal principal = principalProvider.get();
+    populateLevels(moduleNode, principal);
+    populateSubjects(moduleNode, principal);
+
+    List<String> componentTypes = courseService.findAllComponentTypes();
+    populateComponentTypes(moduleNode, componentTypes, localeNode);
+    return moduleNode;
   }
 
   @GET
@@ -87,24 +167,21 @@ public class FilterController extends AbstractController {
 
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
-    populateEnrollments(moduleNode, localeNode);
-    populateComponentTypes(moduleNode, localeNode);
+
+    Principal principal = principalProvider.get();
+    populateLevels(moduleNode, principal);
+    populateSubjects(moduleNode, principal);
+
+    List<String> componentTypes = lessonService.findAllComponentTypes();
+    populateComponentTypes(moduleNode, componentTypes, localeNode);
     return moduleNode;
   }
 
-  private void populateEnrollments(
-      ObjectNode moduleNode, JsonNode localeNode)
+  private void populateLevels(ObjectNode moduleNode, Principal principal)
       throws IOException {
 
-    Principal principal = principalProvider.get();
-    Optional<UserEnrollmentModel> enrollmentModelOptional
-        = userService.findEnrollmentBy(principal.getId(), principal);
-
-    if (enrollmentModelOptional.isPresent()) {
-      UserEnrollmentModel enrollmentModel = enrollmentModelOptional.get();
-      populateLevels(moduleNode, enrollmentModel.getLevels());
-      populateSubjects(moduleNode, enrollmentModel.getSubjects());
-    }
+    List<LevelModel> levelModels = levelService.findAllBy(principal);
+    populateLevels(moduleNode, levelModels);
   }
 
   private void populateLevels(
@@ -129,6 +206,13 @@ public class FilterController extends AbstractController {
     });
   }
 
+  private void populateSubjects(ObjectNode moduleNode, Principal principal)
+      throws IOException {
+
+    List<SubjectModel> subjectModels = subjectService.findAllBy(principal);
+    populateSubjects(moduleNode, subjectModels);
+  }
+
   private void populateSubjects(
       ObjectNode moduleNode, List<SubjectModel> subjectModels)
       throws IOException {
@@ -142,21 +226,6 @@ public class FilterController extends AbstractController {
       subjectNode.put("name", subjectModel.getName());
       subjectNode.put("value", subjectModel.getId());
       subjectsNode.add(subjectNode);
-    });
-  }
-
-  private void populateComponentTypes(
-      ObjectNode moduleNode, JsonNode localeNode) {
-
-    ArrayNode typesNode = moduleNode.putArray("types");
-    ObjectMapper mapper = new ObjectMapper();
-    List<String> componentTypes = componentService.findAllTypes();
-    componentTypes.forEach(componentType -> {
-      JsonNode fieldNode = localeNode.get("label" + componentType);
-      ObjectNode typeNode = mapper.createObjectNode();
-      typeNode.put("name", fieldNode.textValue());
-      typeNode.put("value", componentType);
-      typesNode.add(typeNode);
     });
   }
 
@@ -178,22 +247,27 @@ public class FilterController extends AbstractController {
 
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
-    populateEnrollments(moduleNode, localeNode);
-    populateQuestionTypes(moduleNode, localeNode);
+
+    Principal principal = principalProvider.get();
+    populateLevels(moduleNode, principal);
+    populateSubjects(moduleNode, principal);
+
+    List<String> componentTypes = quizService.findAllComponentTypes();
+    populateComponentTypes(moduleNode, componentTypes, localeNode);
     return moduleNode;
   }
 
-  private void populateQuestionTypes(
-      ObjectNode moduleNode, JsonNode localeNode) {
+  private void populateComponentTypes(
+      ObjectNode moduleNode, List<String> componentTypes,
+      JsonNode localeNode) {
 
     ArrayNode typesNode = moduleNode.putArray("types");
     ObjectMapper mapper = new ObjectMapper();
-    List<String> questionTypes = questionService.findAllTypes();
-    questionTypes.forEach(questionType -> {
-      JsonNode fieldNode = localeNode.get("label" + questionType);
+    componentTypes.forEach(componentType -> {
+      JsonNode fieldNode = localeNode.get("label" + componentType);
       ObjectNode typeNode = mapper.createObjectNode();
       typeNode.put("name", fieldNode.textValue());
-      typeNode.put("value", questionType);
+      typeNode.put("value", componentType);
       typesNode.add(typeNode);
     });
   }
@@ -216,8 +290,13 @@ public class FilterController extends AbstractController {
 
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
-    populateEnrollments(moduleNode, localeNode);
-    populateQuestionTypes(moduleNode, localeNode);
+
+    Principal principal = principalProvider.get();
+    populateLevels(moduleNode, principal);
+    populateSubjects(moduleNode, principal);
+
+    List<String> questionTypes = questionService.findAllQuestionTypes();
+    populateComponentTypes(moduleNode, questionTypes, localeNode);
     return moduleNode;
   }
 }

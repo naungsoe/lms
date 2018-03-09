@@ -54,6 +54,7 @@ public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
 
     String id = Bytes.toString(mainResult.getRow());
     String name = getName(mainResult, timestamp);
+    List<User> members = getMembers(results, id, timestamp);
     List<String> permissions = getPermissions(mainResult, timestamp);
 
     Result schoolResult = results.stream()
@@ -73,6 +74,7 @@ public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
     Group group = new Group.Builder(id, name)
+        .members(members)
         .permissions(permissions)
         .school(school)
         .createdBy(createdBy)

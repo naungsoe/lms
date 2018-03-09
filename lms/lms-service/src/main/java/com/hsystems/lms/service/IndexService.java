@@ -5,29 +5,39 @@ import com.google.inject.Inject;
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.ComponentRepository;
+import com.hsystems.lms.repository.CourseRepository;
+import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.LevelRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SubjectRepository;
-import com.hsystems.lms.repository.UserEnrollmentRepository;
+import com.hsystems.lms.repository.SubscriptionRepository;
 import com.hsystems.lms.repository.UserRepository;
+import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.Group;
+import com.hsystems.lms.repository.entity.Level;
+import com.hsystems.lms.repository.entity.Subject;
+import com.hsystems.lms.repository.entity.Subscription;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
 import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.beans.ContentComponentBean;
+import com.hsystems.lms.repository.entity.beans.LessonComponentBean;
 import com.hsystems.lms.repository.entity.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.entity.beans.QuizComponentBean;
 import com.hsystems.lms.repository.entity.beans.SectionComponentBean;
-import com.hsystems.lms.repository.entity.Component;
-import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Subject;
-import com.hsystems.lms.repository.entity.User;
-import com.hsystems.lms.repository.entity.UserEnrollment;
+import com.hsystems.lms.repository.entity.beans.TopicComponentBean;
+import com.hsystems.lms.repository.entity.course.CourseResource;
+import com.hsystems.lms.repository.entity.course.TopicComponent;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
 import com.hsystems.lms.repository.entity.lesson.ContentComponent;
+import com.hsystems.lms.repository.entity.lesson.LessonComponent;
 import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.QuestionResource;
+import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 
@@ -44,8 +54,9 @@ public class IndexService extends AbstractService {
 
   private static final String COLLECTION_LEVEL = "levels";
   private static final String COLLECTION_SUBJECT = "subjects";
+  private static final String COLLECTION_GROUP = "groups";
   private static final String COLLECTION_USER = "users";
-  private static final String COLLECTION_ENROLLMENT = "enrollments";
+  private static final String COLLECTION_COURSE = "courses";
   private static final String COLLECTION_LESSON = "lessons";
   private static final String COLLECTION_QUIZ = "quizzes";
   private static final String COLLECTION_QUESTION = "questions";
@@ -58,9 +69,13 @@ public class IndexService extends AbstractService {
 
   private final SubjectRepository subjectRepository;
 
+  private final GroupRepository groupRepository;
+
   private final UserRepository userRepository;
 
-  private final UserEnrollmentRepository enrollmentRepository;
+  private final SubscriptionRepository subscriptionRepository;
+
+  private final CourseRepository courseRepository;
 
   private final LessonRepository lessonRepository;
 
@@ -75,8 +90,10 @@ public class IndexService extends AbstractService {
       IndexRepository indexRepository,
       LevelRepository levelRepository,
       SubjectRepository subjectRepository,
+      GroupRepository groupRepository,
       UserRepository userRepository,
-      UserEnrollmentRepository enrollmentRepository,
+      SubscriptionRepository subscriptionRepository,
+      CourseRepository courseRepository,
       LessonRepository lessonRepository,
       QuizRepository quizRepository,
       ComponentRepository componentRepository,
@@ -85,8 +102,10 @@ public class IndexService extends AbstractService {
     this.indexRepository = indexRepository;
     this.levelRepository = levelRepository;
     this.subjectRepository = subjectRepository;
+    this.groupRepository = groupRepository;
     this.userRepository = userRepository;
-    this.enrollmentRepository = enrollmentRepository;
+    this.subscriptionRepository = subscriptionRepository;
+    this.courseRepository = courseRepository;
     this.lessonRepository = lessonRepository;
     this.quizRepository = quizRepository;
     this.componentRepository = componentRepository;
@@ -104,11 +123,14 @@ public class IndexService extends AbstractService {
       case COLLECTION_SUBJECT:
         indexAllSubjects(schoolId);
         break;
+      case COLLECTION_GROUP:
+        indexAllGroups(schoolId);
+        break;
       case COLLECTION_USER:
         indexAllUsers(schoolId);
         break;
-      case COLLECTION_ENROLLMENT:
-        indexAllEnrollments(schoolId);
+      case COLLECTION_COURSE:
+        indexAllCourses(schoolId);
         break;
       case COLLECTION_LESSON:
         indexAllLessons(schoolId);
@@ -138,6 +160,27 @@ public class IndexService extends AbstractService {
     indexRepository.save(subjects);
   }
 
+  private void indexAllGroups(String schoolId)
+      throws IOException {
+
+    String lastId = schoolId;
+    int numFound;
+
+    do {
+      List<Group> groups = groupRepository.findAllBy(
+          schoolId, lastId, INDEX_LIMIT);
+      indexRepository.save(groups);
+
+      numFound = groups.size();
+      lastId = groups.get(numFound - 1).getId();
+
+    } while (!isLastPage(numFound));
+  }
+
+  private boolean isLastPage(int numFound) {
+    return (numFound == 0) || (numFound < INDEX_LIMIT);
+  }
+
   private void indexAllUsers(String schoolId)
       throws IOException {
 
@@ -147,6 +190,13 @@ public class IndexService extends AbstractService {
     do {
       List<User> users = userRepository.findAllBy(
           schoolId, lastId, INDEX_LIMIT);
+
+      for (User user : users) {
+        List<Subscription> subscriptions
+            = subscriptionRepository.findAllBy(user.getId());
+        indexRepository.save(subscriptions);
+      }
+
       indexRepository.save(users);
 
       numFound = users.size();
@@ -155,24 +205,27 @@ public class IndexService extends AbstractService {
     } while (!isLastPage(numFound));
   }
 
-  private boolean isLastPage(int numFound) {
-    return (numFound == 0) || (numFound < INDEX_LIMIT);
-  }
-
-  private void indexAllEnrollments(String schoolId)
+  private void indexAllCourses(String schoolId)
       throws IOException {
 
     String lastId = schoolId;
     int numFound;
 
     do {
-      List<UserEnrollment> enrollments
-          = enrollmentRepository.findAllBy(
-              schoolId, lastId, INDEX_LIMIT);
-      indexRepository.save(enrollments);
+      List<CourseResource> courseResources = courseRepository.findAllBy(
+          schoolId, lastId, INDEX_LIMIT);
 
-      numFound = enrollments.size();
-      lastId = enrollments.get(numFound - 1).getId();
+      for (CourseResource courseResource : courseResources) {
+        String resourceId = courseResource.getId();
+        List<Component> components
+            = componentRepository.findAllBy(resourceId);
+        indexComponents(components, resourceId, resourceId);
+      }
+
+      indexRepository.save(courseResources);
+
+      numFound = courseResources.size();
+      lastId = courseResources.get(numFound - 1).getId();
 
     } while (!isLastPage(numFound));
   }
@@ -209,12 +262,35 @@ public class IndexService extends AbstractService {
     List<ComponentBean> componentBeans = new ArrayList<>();
 
     for (Component component : components) {
-      if (component instanceof ActivityComponent) {
+      if (component instanceof TopicComponent) {
+        TopicComponent topicComponent = (TopicComponent) component;
+        String topicId = topicComponent.getId();
+        TopicComponentBean topicComponentBean
+            = new TopicComponentBean(topicComponent, resourceId, parentId);
+        componentBeans.add(topicComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(topicComponent.getComponents());
+        indexComponents(childComponents, resourceId, topicId);
+
+      } else if (component instanceof LessonComponent) {
+        LessonComponent lessonComponent = (LessonComponent) component;
+        LessonComponentBean lessonComponentBean
+            = new LessonComponentBean(lessonComponent, resourceId, parentId);
+        componentBeans.add(lessonComponentBean);
+
+      } else if (component instanceof QuizComponent) {
+        QuizComponent quizComponent = (QuizComponent) component;
+        QuizComponentBean quizComponentBean
+            = new QuizComponentBean(quizComponent, resourceId, parentId);
+        componentBeans.add(quizComponentBean);
+
+      } else if (component instanceof ActivityComponent) {
         ActivityComponent activityComponent = (ActivityComponent) component;
         String activityId = activityComponent.getId();
         ActivityComponentBean activityComponentBean
             = new ActivityComponentBean(
-            activityComponent, resourceId, parentId);
+                activityComponent, resourceId, parentId);
         componentBeans.add(activityComponentBean);
 
         List<Component> childComponents
@@ -246,7 +322,7 @@ public class IndexService extends AbstractService {
             = (ContentComponent) component;
         ContentComponentBean contentComponentBean
             = new ContentComponentBean(
-            contentComponent, resourceId, parentId);
+                contentComponent, resourceId, parentId);
         componentBeans.add(contentComponentBean);
       }
     }
@@ -310,8 +386,14 @@ public class IndexService extends AbstractService {
       case COLLECTION_SUBJECT:
         indexSubject(id);
         break;
+      case COLLECTION_GROUP:
+        indexGroup(id);
+        break;
       case COLLECTION_USER:
         indexUser(id);
+        break;
+      case COLLECTION_COURSE:
+        indexCourse(id);
         break;
       case COLLECTION_LESSON:
         indexLesson(id);
@@ -349,6 +431,17 @@ public class IndexService extends AbstractService {
     }
   }
 
+  private void indexGroup(String id)
+      throws IOException {
+
+    Optional<Group> groupOptional = groupRepository.findBy(id);
+
+    if (groupOptional.isPresent()) {
+      Group group = groupOptional.get();
+      indexRepository.save(group);
+    }
+  }
+
   private void indexUser(String id)
       throws IOException {
 
@@ -356,7 +449,26 @@ public class IndexService extends AbstractService {
 
     if (userOptional.isPresent()) {
       User user = userOptional.get();
+      List<Subscription> subscriptions
+          = subscriptionRepository.findAllBy(user.getId());
+      indexRepository.save(subscriptions);
       indexRepository.save(user);
+    }
+  }
+
+  private void indexCourse(String id)
+      throws IOException {
+
+    Optional<CourseResource> resourceOptional
+        = courseRepository.findBy(id);
+
+    if (resourceOptional.isPresent()) {
+      CourseResource courseResource = resourceOptional.get();
+      String resourceId = courseResource.getId();
+      List<Component> components
+          = componentRepository.findAllBy(resourceId);
+      indexComponents(components, resourceId, resourceId);
+      indexRepository.save(courseResource);
     }
   }
 

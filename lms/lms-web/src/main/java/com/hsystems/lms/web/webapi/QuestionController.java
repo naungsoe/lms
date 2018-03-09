@@ -85,10 +85,9 @@ public class QuestionController extends AbstractController {
   }
 
   @PUT
-  @Path("/multiplechoice")
   @Consumes(MediaType.APPLICATION_JSON)
   @Requires(Permission.EDIT_QUESTION)
-  public Response createMultipleChoice(
+  public Response create(
       MultipleChoiceResourceModel resourceModel)
       throws IOException {
 
@@ -98,10 +97,10 @@ public class QuestionController extends AbstractController {
   }
 
   @POST
-  @Path("/multiplechoice")
+  @Path("/{id}")
   @Consumes(MediaType.APPLICATION_JSON)
   @Requires(Permission.EDIT_QUESTION)
-  public Response saveMultipleChoice(
+  public Response update(
       MultipleChoiceResourceModel resourceModel)
       throws IOException {
 

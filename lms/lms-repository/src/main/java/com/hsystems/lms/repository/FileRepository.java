@@ -13,4 +13,7 @@ public interface FileRepository
 
   List<FileResource> findAllBy(String schoolId, String lastId, int limit)
       throws IOException;
+
+  List<FileResource> findAllBy(String schoolId, String parentId)
+      throws IOException;
 }

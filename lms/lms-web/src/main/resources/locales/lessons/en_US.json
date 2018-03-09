@@ -13,6 +13,7 @@
     "labelLessonFound": "{numFound} lesson",
     "labelLessonsFound": "{numFound} lessons",
     "labelTitle": "Title",
+    "labelDescription": "Description",
     "labelInstructions": "Instructions",
     "labelActivity": "Activity {offset} of {length}",
     "labelActivityMove": "Move activity",

@@ -16,7 +16,7 @@ public interface IndexRepository {
   <T extends Entity> Optional<T> findBy(String id, Class<T> type)
       throws IOException;
 
-  <T extends Entity> QueryResult findAllBy(Query query, Class<T> type)
+  <T extends Entity> QueryResult<T> findAllBy(Query query, Class<T> type)
       throws IOException;
 
   <T extends Entity> void save(T entity)

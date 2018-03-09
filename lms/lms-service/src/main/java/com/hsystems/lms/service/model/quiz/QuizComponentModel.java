@@ -14,9 +14,11 @@ import java.io.Serializable;
 public final class QuizComponentModel extends ComponentModel
     implements Serializable {
 
-  private static final long serialVersionUID = 4329963959762465930L;
+  private static final long serialVersionUID = -1784578352002895328L;
 
   private QuizModel quiz;
+
+  private String quizId;
 
   public QuizComponentModel() {
 
@@ -28,5 +30,13 @@ public final class QuizComponentModel extends ComponentModel
 
   public void setQuiz(QuizModel quiz) {
     this.quiz = quiz;
+  }
+
+  public String getQuizId() {
+    return quizId;
+  }
+
+  public void setQuizId(String quizId) {
+    this.quizId = quizId;
   }
 }

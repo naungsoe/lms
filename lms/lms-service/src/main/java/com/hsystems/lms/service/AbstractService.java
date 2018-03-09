@@ -5,17 +5,22 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.Constants;
+import com.hsystems.lms.repository.entity.Auditable;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
 import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.beans.ContentComponentBean;
 import com.hsystems.lms.repository.entity.beans.FileComponentBean;
+import com.hsystems.lms.repository.entity.beans.LessonComponentBean;
 import com.hsystems.lms.repository.entity.beans.QuestionComponentBean;
+import com.hsystems.lms.repository.entity.beans.QuizComponentBean;
 import com.hsystems.lms.repository.entity.beans.SectionComponentBean;
-import com.hsystems.lms.repository.entity.Auditable;
-import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.beans.TopicComponentBean;
+import com.hsystems.lms.repository.entity.course.TopicComponent;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
 import com.hsystems.lms.repository.entity.lesson.ContentComponent;
+import com.hsystems.lms.repository.entity.lesson.LessonComponent;
 import com.hsystems.lms.repository.entity.question.CompositeQuestion;
 import com.hsystems.lms.repository.entity.question.CompositeQuestionComponent;
 import com.hsystems.lms.repository.entity.question.MultipleChoice;
@@ -25,6 +30,7 @@ import com.hsystems.lms.repository.entity.question.MultipleResponseComponent;
 import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.special.UnknownQuestionComponent;
+import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.mapper.EntityMapper;
@@ -99,7 +105,12 @@ public abstract class AbstractService {
     List<Component> components = new ArrayList<>();
 
     componentBeans.forEach(componentBean -> {
-      if (componentBean instanceof ActivityComponentBean) {
+      if (componentBean instanceof TopicComponentBean) {
+        TopicComponent topicComponent
+            = getTopicComponent(componentBean, componentBeans);
+        components.add(topicComponent);
+
+      } else if (componentBean instanceof ActivityComponentBean) {
         ActivityComponent activityComponent
             = getActivityComponent(componentBean, componentBeans);
         components.add(activityComponent);
@@ -112,6 +123,25 @@ public abstract class AbstractService {
     });
 
     return components;
+  }
+
+  protected TopicComponent getTopicComponent(
+      ComponentBean componentBean, List<ComponentBean> componentBeans) {
+
+    TopicComponentBean topicComponentBean
+        = (TopicComponentBean) componentBean;
+    String topicId = topicComponentBean.getId();
+    List<Component> resourceComponents
+        = getComponents(componentBeans, topicId);
+
+    TopicComponent topicComponent = new TopicComponent(
+        topicComponentBean.getId(),
+        topicComponentBean.getTitle(),
+        topicComponentBean.getInstructions(),
+        topicComponentBean.getOrder(),
+        resourceComponents
+    );
+    return topicComponent;
   }
 
   protected ActivityComponent getActivityComponent(
@@ -155,31 +185,64 @@ public abstract class AbstractService {
   protected List<Component> getComponents(
       List<ComponentBean> componentBeans, String parentId) {
 
-    List<Component> questionComponents = new ArrayList<>();
+    List<Component> childComponents = new ArrayList<>();
 
     componentBeans.forEach(componentBean -> {
       String parentBeanId = componentBean.getParentId();
 
       if (parentBeanId.equals(parentId)) {
-        if (componentBean instanceof QuestionComponentBean) {
+        if (componentBean instanceof LessonComponentBean) {
+          LessonComponent lessonComponent
+              = getLessonComponent(componentBean);
+          childComponents.add(lessonComponent);
+
+        } else if (componentBean instanceof QuizComponentBean) {
+          QuizComponent quizComponent
+              = getQuizComponent(componentBean);
+          childComponents.add(quizComponent);
+
+        } else if (componentBean instanceof QuestionComponentBean) {
           QuestionComponent questionComponent
               = getQuestionComponent(componentBean);
-          questionComponents.add(questionComponent);
+          childComponents.add(questionComponent);
 
         } else if (componentBean instanceof FileComponentBean) {
           FileComponent fileComponent
               = getFileComponent(componentBean);
-          questionComponents.add(fileComponent);
+          childComponents.add(fileComponent);
 
         } else if (componentBean instanceof ContentComponentBean) {
           ContentComponent contentComponent
               = getContentComponent(componentBean);
-          questionComponents.add(contentComponent);
+          childComponents.add(contentComponent);
         }
       }
     });
 
-    return questionComponents;
+    return childComponents;
+  }
+
+  protected LessonComponent getLessonComponent(ComponentBean componentBean) {
+    LessonComponentBean lessonComponentBean
+        = (LessonComponentBean) componentBean;
+    LessonComponent lessonComponent = new LessonComponent(
+        lessonComponentBean.getId(),
+        lessonComponentBean.getLesson(),
+        lessonComponentBean.getOrder(),
+        lessonComponentBean.getResourceId()
+    );
+    return lessonComponent;
+  }
+
+  protected QuizComponent getQuizComponent(ComponentBean componentBean) {
+    QuizComponentBean quizComponentBean = (QuizComponentBean) componentBean;
+    QuizComponent quizComponent = new QuizComponent(
+        quizComponentBean.getId(),
+        quizComponentBean.getQuiz(),
+        quizComponentBean.getOrder(),
+        quizComponentBean.getResourceId()
+    );
+    return quizComponent;
   }
 
   protected QuestionComponent getQuestionComponent(

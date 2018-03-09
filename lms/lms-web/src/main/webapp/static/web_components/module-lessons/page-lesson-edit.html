@@ -38,12 +38,12 @@
       }
 
       .page-content .lesson .lesson-content .lesson-title,
-      .page-content .lesson .lesson-content .lesson-instructions {
+      .page-content .lesson .lesson-content .lesson-description {
         margin-bottom: 4px;
         padding: 0 16px;
       }
 
-      .page-content .lesson .lesson-content .lesson-instructions {
+      .page-content .lesson .lesson-content .lesson-description {
         margin-bottom: 12px;
       }
     </style>
@@ -93,10 +93,10 @@
               </paper-input>
             </div>
 
-            <div class="lesson-instructions">
+            <div class="lesson-description">
               <paper-text-editor
-                  label="[[localize('labelInstructions')]]"
-                  content="[[lesson.lesson.instructions]]">
+                  label="[[localize('labelDescription')]]"
+                  content="[[lesson.lesson.description]]">
               </paper-text-editor>
             </div>
           </section>

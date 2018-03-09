@@ -130,9 +130,9 @@ public class QuestionService extends AbstractService {
   }
 
   @Log
-  public List<String> findAllTypes() {
+  public List<String> findAllQuestionTypes() {
     Properties properties = propertiesProvider.get();
-    String questionTypes = properties.getProperty("question.types");
+    String questionTypes = properties.getProperty("question.question.types");
     return Arrays.asList(questionTypes.split(","));
   }
 

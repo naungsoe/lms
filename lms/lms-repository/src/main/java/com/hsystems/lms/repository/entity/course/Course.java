@@ -16,13 +16,13 @@ import java.util.List;
  */
 public final class Course implements Serializable {
 
-  private static final long serialVersionUID = 4572593347753878858L;
+  private static final long serialVersionUID = -1790250092029097898L;
 
   @IndexField
   private String title;
 
   @IndexField
-  private String instructions;
+  private String description;
 
   @IndexField
   protected List<Component> components;
@@ -33,11 +33,11 @@ public final class Course implements Serializable {
 
   public Course(
       String title,
-      String instructions,
+      String description,
       List<Component> components) {
 
     this.title = title;
-    this.instructions = instructions;
+    this.description = description;
     this.components = components;
   }
 
@@ -45,8 +45,8 @@ public final class Course implements Serializable {
     return title;
   }
 
-  public String getInstructions() {
-    return instructions;
+  public String getDescription() {
+    return description;
   }
 
   public Enumeration<Component> getComponents() {

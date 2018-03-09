@@ -15,6 +15,7 @@ import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
+import com.hsystems.lms.repository.entity.file.FileObject;
 import com.hsystems.lms.repository.entity.question.ChoiceOption;
 import com.hsystems.lms.repository.entity.question.CompositeQuestion;
 import com.hsystems.lms.repository.entity.question.CompositeQuestionComponent;
@@ -72,6 +73,18 @@ public abstract class HBaseAbstractMapper<T> {
     } else {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.QUALIFIER_ID);
+      return getString(cells, timestamp);
+    }
+  }
+
+  protected String getResourceId(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_RESOURCE_ID);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_RESOURCE_ID);
       return getString(cells, timestamp);
     }
   }
@@ -318,6 +331,18 @@ public abstract class HBaseAbstractMapper<T> {
     }
   }
 
+  protected String getDescription(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getString(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_DESCRIPTION);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_DESCRIPTION);
+      return getString(cells, timestamp);
+    }
+  }
+
   protected String getInstructions(Result result, long timestamp) {
     if (timestamp == 0) {
       return getString(result, Constants.FAMILY_DATA,
@@ -447,6 +472,30 @@ public abstract class HBaseAbstractMapper<T> {
       List<Cell> cells = result.getColumnCells(
           Constants.FAMILY_DATA, Constants.QUALIFIER_ORDER);
       return getInteger(cells, timestamp);
+    }
+  }
+
+  protected long getSize(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getLong(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_SIZE);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_SIZE);
+      return getLong(cells, timestamp);
+    }
+  }
+
+  protected boolean getDirectory(Result result, long timestamp) {
+    if (timestamp == 0) {
+      return getBoolean(result, Constants.FAMILY_DATA,
+          Constants.QUALIFIER_DIRECTORY);
+
+    } else {
+      List<Cell> cells = result.getColumnCells(
+          Constants.FAMILY_DATA, Constants.QUALIFIER_DIRECTORY);
+      return getBoolean(cells, timestamp);
     }
   }
 
@@ -603,6 +652,10 @@ public abstract class HBaseAbstractMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_SCHOOL);
   }
 
+  protected Predicate<Result> isSubscribedByResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_SUBSCRIBED_BY);
+  }
+
   protected Predicate<Result> isCreatedByResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_CREATED_BY);
   }
@@ -627,8 +680,8 @@ public abstract class HBaseAbstractMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_GROUP);
   }
 
-  protected Predicate<Result> isEnrollmentResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_ENROLLMENT);
+  protected Predicate<Result> isMemberResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_MEMBER);
   }
 
   protected Predicate<Result> isLessonResult(String prefix) {
@@ -647,15 +700,19 @@ public abstract class HBaseAbstractMapper<T> {
     return isChildResult(prefix + Constants.SEPARATOR_OPTION);
   }
 
+  protected Predicate<Result> isParentResult(String prefix) {
+    return isChildResult(prefix + Constants.SEPARATOR_PARENT);
+  }
+
   protected Predicate<Result> isEntryResult(String prefix) {
     return isChildResult(prefix + Constants.SEPARATOR_ENTRY);
   }
 
   protected String getId(Result result, String separator) {
-    String row = Bytes.toString(result.getRow());
+    String rowKey = Bytes.toString(result.getRow());
     String regex = String.format(PATTERN_SEPARATED_ID, separator);
     Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(row);
+    Matcher matcher = pattern.matcher(rowKey);
     return matcher.find() ? matcher.group(1) : "";
   }
 
@@ -670,6 +727,10 @@ public abstract class HBaseAbstractMapper<T> {
     String firstName = getFirstName(result, timestamp);
     String lastName = getLastName(result, timestamp);
     return new User.Builder(id, firstName, lastName).build();
+  }
+
+  protected User getSubscribedBy(Result result, long timestamp) {
+    return getUser(result, Constants.SEPARATOR_SUBSCRIBED_BY, timestamp);
   }
 
   protected User getCreatedBy(Result result, long timestamp) {
@@ -770,6 +831,19 @@ public abstract class HBaseAbstractMapper<T> {
     String id = getId(result, Constants.SEPARATOR_GROUP);
     String name = getName(result, timestamp);
     return new Group.Builder(id, name).build();
+  }
+
+  protected List<User> getMembers(
+      List<Result> results, String prefix, long timestamp) {
+
+    List<User> users = new ArrayList<>();
+    results.stream().filter(isMemberResult(prefix))
+        .forEach(result -> {
+          User user = getUser(result, Constants.SEPARATOR_MEMBER, timestamp);
+          users.add(user);
+        });
+
+    return users;
   }
 
   protected List<String> getKeywords(Result result, long timestamp) {
@@ -911,9 +985,14 @@ public abstract class HBaseAbstractMapper<T> {
     return new ChoiceOption(id, body, feedback, correct, order);
   }
 
-  protected PermissionSet getPermissionSet(
-      Result result, long timestamp) {
+  protected FileObject getFileObject(Result result, long timestamp) {
+    String name = getName(result, timestamp);
+    long size = getSize(result, timestamp);
+    boolean directory = getDirectory(result, timestamp);
+    return new FileObject(name, size, directory);
+  }
 
+  protected PermissionSet getPermissionSet(Result result, long timestamp) {
     String id = getId(result, Constants.SEPARATOR_ENTRY);
     String firstName = getFirstName(result, timestamp);
     String lastName = getLastName(result, timestamp);
@@ -1084,8 +1163,8 @@ public abstract class HBaseAbstractMapper<T> {
   protected void addQuestionPut(
       List<Put> puts, Question question, String prefix, long timestamp) {
 
-    byte[] row = Bytes.toBytes(prefix);
-    Put put = new Put(row, timestamp);
+    byte[] rowKey = Bytes.toBytes(prefix);
+    Put put = new Put(rowKey, timestamp);
     addTypeColumn(put, question.getClass().getSimpleName());
     addBodyColumn(put, question.getBody());
     addHintColumn(put, question.getHint());

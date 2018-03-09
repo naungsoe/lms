@@ -25,12 +25,6 @@
       <div slot="page-header">
         <page-groups-toolbar
             user="[[user]]"
-            levels="[[filterOptions.levels]]"
-            subjects="[[filterOptions.subjects]]"
-            selected-level="{{selectedLevel}}"
-            selected-subject="{{selectedSubject}}"
-            selected-owner="{{selectedOwner}}"
-            filters="{{filters}}"
             language="[[language]]"
             resources="[[resources]]">
           <div slot="title">
@@ -45,7 +39,7 @@
           num-found="{{numFound}}"
           language="[[language]]"
           resources="[[resources]]"
-          on-quiz-selected="_handleGroupSelected">
+          on-group-selected="_handleGroupSelected">
       </group-list>
 
       <paper-fab
@@ -86,11 +80,6 @@
             readOnly: false,
             notify: true
           },
-          filterOptions: {
-            type: Object,
-            readOnly: false,
-            notify: true
-          },
           toolbarTitle: {
             type: String,
             readOnly: false,
@@ -98,21 +87,6 @@
           },
           numFound: {
             type: Number,
-            readOnly: false,
-            notify: true
-          },
-          selectedLevel: {
-            type: String,
-            readOnly: false,
-            notify: true
-          },
-          selectedSubject: {
-            type: String,
-            readOnly: false,
-            notify: true
-          },
-          selectedOwner: {
-            type: String,
             readOnly: false,
             notify: true
           }
@@ -127,11 +101,8 @@
 
       connectedCallback() {
         super.connectedCallback();
-        this.selectedLevel = 'ALL';
-        this.selectedSubject = 'ALL';
-        this.selectedOwner = 'ANYONE';
 
-        this.fields = 'id,group,'
+        this.fields = 'id,name,members,'
           + 'createdBy,createdDateTime,'
           + 'modifiedBy,modifiedDateTime';
         this.query = this.query || '';

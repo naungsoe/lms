@@ -107,12 +107,16 @@
               [[localize('titlePage')]]
             </div>
 
-            <app-search
-                query-fields="[[queryFields]]"
-                query="{{query}}"
-                language="[[language]]"
-                resources="[[resources]]">
-            </app-search>
+            <template
+                is="dom-if"
+                if="[[searchEnabled]]">
+              <app-search
+                  query-fields="[[queryFields]]"
+                  query="{{query}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </app-search>
+            </template>
           </app-toolbar>
         </app-header>
 
@@ -125,6 +129,7 @@
               user="[[user]]"
               filter-options="[[filterOptions]]"
               query="[[query]]"
+              page="{{page}}"
               error="[[error]]"
               language="[[language]]"
               resources="[[resources]]">
@@ -231,12 +236,32 @@
                 readOnly: false,
                 notify: true
               },
+              page: {
+                type: String,
+                readOnly: false,
+                notify: true
+              },
               loading: {
                 type: String,
                 readOnly: false,
                 notify: true
+              },
+              searchEnabled: {
+                type: Boolean,
+                readOnly: false,
+                notify: true
               }
             }
+          }
+
+          static get observers() {
+            return [
+              '_updatePage(page)'
+            ];
+          }
+
+          _updatePage(page) {
+            this.searchEnabled = (page === 'lessons');
           }
 
           _handleMenuTap(event) {

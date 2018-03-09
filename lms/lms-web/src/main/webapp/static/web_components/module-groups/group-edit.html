@@ -1,0 +1,65 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="group-edit">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
+      .group {
+        padding: 0 16px;
+      }
+
+      .group .section-content {
+        @apply --layout-vertical;
+      }
+    </style>
+
+    <section class="group">
+      <div class="section-content">
+        <paper-input autofocus
+            name="name"
+            label="[[localize('inputLabelName')]]"
+            value="[[group.name]]">
+        </paper-input>
+
+        <paper-chips-input
+            label="[[localize('labelMembers')]]"
+            values="[[group.members]]">
+        </paper-chips-input>
+      </div>
+    </section>
+  </template>
+
+  <script>
+  	const GroupEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class GroupEdit extends GroupEditBase {
+      static get is() {
+        return 'group-edit';
+      }
+
+      static get properties() {
+        return {
+        	user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          group: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(GroupEdit.is, GroupEdit);
+  </script>
+</dom-module>

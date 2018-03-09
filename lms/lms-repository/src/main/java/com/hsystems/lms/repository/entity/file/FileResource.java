@@ -28,13 +28,16 @@ import java.util.List;
 public final class FileResource
     implements Entity, Resource, Auditable, Serializable {
 
-  private static final long serialVersionUID = -2979378317950742096L;
+  private static final long serialVersionUID = -2743433775916354180L;
 
   @IndexField
   private String id;
 
   @IndexField
-  private FileObject fileObject;
+  private FileObject file;
+
+  @IndexField
+  private FileResource parentFile;
 
   @IndexField
   private School school;
@@ -72,7 +75,8 @@ public final class FileResource
 
   FileResource(
       String id,
-      FileObject fileObject,
+      FileObject file,
+      FileResource parentFile,
       School school,
       List<Level> levels,
       List<Subject> subjects,
@@ -85,7 +89,8 @@ public final class FileResource
       LocalDateTime modifiedDateTime) {
 
     this.id = id;
-    this.fileObject = fileObject;
+    this.file = file;
+    this.parentFile = parentFile;
     this.school = school;
     this.levels = levels;
     this.subjects = subjects;
@@ -101,7 +106,8 @@ public final class FileResource
   public static class Builder {
 
     private String id;
-    private FileObject fileObject;
+    private FileObject file;
+    private FileResource parentFile;
 
     private School school;
     private List<Level> levels;
@@ -114,9 +120,12 @@ public final class FileResource
     private User modifiedBy;
     private LocalDateTime modifiedDateTime;
 
-    public Builder(String id, FileObject fileObject) {
+    public Builder(
+        String id, FileObject file, FileResource parentFile) {
+
       this.id = id;
-      this.fileObject = fileObject;
+      this.file = file;
+      this.parentFile = parentFile;
     }
 
     public Builder school(School school) {
@@ -154,7 +163,7 @@ public final class FileResource
       return this;
     }
 
-    public Builder keywords(LocalDateTime createdDateTime) {
+    public Builder createdDateTime(LocalDateTime createdDateTime) {
       this.createdDateTime = createdDateTime;
       return this;
     }
@@ -172,7 +181,8 @@ public final class FileResource
     public FileResource build() {
       return new FileResource(
           this.id,
-          this.fileObject,
+          this.file,
+          this.parentFile,
           this.school,
           this.levels,
           this.subjects,
@@ -192,8 +202,12 @@ public final class FileResource
     return id;
   }
 
-  public FileObject getFileObject() {
-    return fileObject;
+  public FileObject getFile() {
+    return file;
+  }
+
+  public FileResource getParentFile() {
+    return parentFile;
   }
 
   @Override

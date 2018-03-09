@@ -17,6 +17,7 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,6 +73,30 @@ public class HBaseGroupRepository extends HBaseAbstractRepository
     }
 
     return groupMapper.getEntity(results);
+  }
+
+  @Override
+  public List<Group> findAllBy(
+      String schoolId, String lastId, int limit)
+      throws IOException {
+
+    List<Mutation> mutations = mutationRepository.findAllBy(
+        schoolId, lastId, limit, EntityType.GROUP);
+
+    if (CollectionUtils.isEmpty(mutations)) {
+      return Collections.emptyList();
+    }
+
+    Mutation startMutation = mutations.get(0);
+    Mutation stopMutation = mutations.get(mutations.size() - 1);
+    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
+    scan.setStopRow(Bytes.toBytes(stopRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    List<Result> results = client.scan(scan, Group.class);
+    return groupMapper.getEntities(results, mutations);
   }
 
   @Override

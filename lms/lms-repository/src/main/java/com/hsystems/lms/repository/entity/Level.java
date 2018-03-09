@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 public final class Level
     implements Entity, SchoolScoped, Auditable, Serializable {
 
-  private static final long serialVersionUID = 7143973403104990683L;
+  private static final long serialVersionUID = 8018655081026112715L;
 
   @IndexField
   private String id;

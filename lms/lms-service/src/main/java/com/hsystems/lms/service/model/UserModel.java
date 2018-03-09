@@ -71,6 +71,7 @@ public final class UserModel extends AuditableModel
     this.account = account;
   }
 
+  @Override
   public String getFirstName() {
     return firstName;
   }
@@ -79,6 +80,7 @@ public final class UserModel extends AuditableModel
     this.firstName = firstName;
   }
 
+  @Override
   public String getLastName() {
     return lastName;
   }
@@ -177,17 +179,6 @@ public final class UserModel extends AuditableModel
   public void setGroups(List<GroupModel> groups) {
     this.groups = new ArrayList<>();
     this.groups.addAll(groups);
-  }
-
-  @Override
-  public String getName() {
-    if ((firstName != null) && (lastName != null)) {
-      return String.format("%s %s", firstName, lastName);
-    }
-
-    return (firstName != null)
-        ? firstName : (lastName != null)
-        ? lastName : "";
   }
 
   @Override

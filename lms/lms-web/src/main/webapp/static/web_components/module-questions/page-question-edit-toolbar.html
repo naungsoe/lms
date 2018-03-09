@@ -12,6 +12,9 @@
 
     </style>
 
+    <app-location route="{{route}}">
+    </app-location>
+
     <page-toolbar>
       <paper-icon-button
           icon="arrow-back"
@@ -55,6 +58,16 @@
 
       static get properties() {
         return {
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          route: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
           user: {
             type: Object,
             readOnly: false,
@@ -69,7 +82,7 @@
       }
 
       _handleBackTap(event) {
-        window.history.back();
+        this.set('route.path', this.rootUrl);
       }
     }
     customElements.define(PageQuestionEditToolbar.is, PageQuestionEditToolbar);

@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="course-view-lesson">
+  <template>
+    <style include="app-component-styles">
+      .lesson .lesson-title {
+        padding: 10px 16px 10px 0;
+      }
+      .lesson .lesson-description {
+        padding: 8px 16px 8px 0;
+      }
+    </style>
+
+    <div class="lesson">
+      <div class="lesson-title">
+        [[lesson.title]]
+      </div>
+
+      <div class="lesson-description">
+        [[lesson.description]]
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const CourseViewLessonBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class CourseViewLesson extends CourseViewLessonBase {
+      static get is() {
+        return 'course-view-lesson';
+      }
+
+      static get properties() {
+        return {
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(CourseViewLesson.is, CourseViewLesson);
+  </script>
+</dom-module>

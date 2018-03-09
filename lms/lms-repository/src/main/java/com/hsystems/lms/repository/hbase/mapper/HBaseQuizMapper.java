@@ -58,7 +58,7 @@ public class HBaseQuizMapper extends HBaseAbstractMapper<QuizResource> {
 
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
+    String description = getDescription(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
@@ -80,7 +80,7 @@ public class HBaseQuizMapper extends HBaseAbstractMapper<QuizResource> {
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
     List<Component> components = Collections.emptyList();
-    Quiz quiz = new Quiz(title, instructions, components);
+    Quiz quiz = new Quiz(title, description, components);
 
     QuizResource quizResource = new QuizResource.Builder(id, quiz)
         .school(school)

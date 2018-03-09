@@ -32,14 +32,15 @@ public final class Constants {
       = Bytes.toBytes("dtformat");
   public static final byte[] QUALIFIER_PERMISSIONS
       = Bytes.toBytes("permissions");
+  public static final byte[] QUALIFIER_RESOURCE_ID = Bytes.toBytes("resid");
   public static final byte[] QUALIFIER_TYPE = Bytes.toBytes("type");
-  public static final byte[] QUALIFIER_QUESTION_TYPE = Bytes.toBytes("qntype");
-  public static final byte[] QUALIFIER_LESSON_ID = Bytes.toBytes("lesson");
-  public static final byte[] QUALIFIER_QUIZ_ID = Bytes.toBytes("quiz");
+  public static final byte[] QUALIFIER_QUESTION_TYPE = Bytes.toBytes("quetype");
   public static final byte[] QUALIFIER_SESSION_ID = Bytes.toBytes("session");
   public static final byte[] QUALIFIER_IP_ADDRESS = Bytes.toBytes("ip");
   public static final byte[] QUALIFIER_FAILS = Bytes.toBytes("fails");
   public static final byte[] QUALIFIER_TITLE = Bytes.toBytes("title");
+  public static final byte[] QUALIFIER_DESCRIPTION
+      = Bytes.toBytes("description");
   public static final byte[] QUALIFIER_INSTRUCTIONS
       = Bytes.toBytes("instructions");
   public static final byte[] QUALIFIER_KEYWORDS = Bytes.toBytes("keywords");
@@ -52,6 +53,8 @@ public final class Constants {
   public static final byte[] QUALIFIER_CORRECT = Bytes.toBytes("correct");
   public static final byte[] QUALIFIER_ORDER = Bytes.toBytes("order");
   public static final byte[] QUALIFIER_SCORE = Bytes.toBytes("score");
+  public static final byte[] QUALIFIER_SIZE = Bytes.toBytes("size");
+  public static final byte[] QUALIFIER_DIRECTORY = Bytes.toBytes("directory");
   public static final byte[] QUALIFIER_STATUS = Bytes.toBytes("status");
   public static final byte[] QUALIFIER_TIMESTAMP = Bytes.toBytes("timestamp");
   public static final byte[] QUALIFIER_ACTION = Bytes.toBytes("action");
@@ -61,14 +64,16 @@ public final class Constants {
   public static final byte[] VALUE_FALSE = Bytes.toBytes("false");
 
   public static final String SEPARATOR = "_";
+  public static final String SEPARATOR_PARENT = "_par_";
   public static final String SEPARATOR_SCHOOL = "_sch_";
+  public static final String SEPARATOR_SUBSCRIBED_BY = "_sub_";
   public static final String SEPARATOR_CREATED_BY = "_cre_";
   public static final String SEPARATOR_MODIFIED_BY = "_mod_";
   public static final String SEPARATOR_SHARED_BY = "_sha_";
   public static final String SEPARATOR_LEVEL = "_lvl_";
   public static final String SEPARATOR_SUBJECT = "_sub_";
   public static final String SEPARATOR_GROUP = "_grp_";
-  public static final String SEPARATOR_ENROLLMENT = "_enr_";
+  public static final String SEPARATOR_MEMBER = "_mem_";
   public static final String SEPARATOR_LESSON = "_lsn_";
   public static final String SEPARATOR_QUIZ = "_quz_";
   public static final String SEPARATOR_COMPONENT = "_com_";

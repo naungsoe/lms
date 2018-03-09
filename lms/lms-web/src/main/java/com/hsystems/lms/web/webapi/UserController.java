@@ -3,11 +3,16 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.web.Permission;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Optional;
 
 import javax.ws.rs.GET;
@@ -15,8 +20,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
 
 /**
  * Created by naungsoe on 10/9/16.
@@ -38,8 +45,24 @@ public class UserController extends AbstractController {
   }
 
   @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Requires(Permission.VIEW_USERS)
+  public Response findAllBy(
+      @Context UriInfo uriInfo)
+      throws IOException {
+
+    Principal principal = principalProvider.get();
+    URI requestUri = uriInfo.getRequestUri();
+    Query query = Query.create(requestUri.getQuery());
+    QueryResult<UserModel> queryResult
+        = userService.findAllBy(query, principal);
+    return Response.ok(queryResult).build();
+  }
+
+  @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
+  @Requires(Permission.VIEW_QUESTIONS)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {

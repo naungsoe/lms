@@ -58,7 +58,7 @@ public class HBaseLessonMapper extends HBaseAbstractMapper<LessonResource> {
 
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
+    String description = getDescription(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
@@ -80,7 +80,7 @@ public class HBaseLessonMapper extends HBaseAbstractMapper<LessonResource> {
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
     List<Component> components = Collections.emptyList();
-    Lesson lesson = new Lesson(title, instructions, components);
+    Lesson lesson = new Lesson(title, description, components);
 
     LessonResource lessonResource = new LessonResource.Builder(id, lesson)
         .school(school)

@@ -58,7 +58,7 @@ public class HBaseCourseMapper extends HBaseAbstractMapper<CourseResource> {
 
     String id = Bytes.toString(mainResult.getRow());
     String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
+    String description = getDescription(mainResult, timestamp);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
@@ -80,7 +80,7 @@ public class HBaseCourseMapper extends HBaseAbstractMapper<CourseResource> {
         ? getDateTime(resultOptional.get(), timestamp) : null;
 
     List<Component> components = Collections.emptyList();
-    Course course = new Course(title, instructions, components);
+    Course course = new Course(title, description, components);
 
     CourseResource courseResource = new CourseResource.Builder(id, course)
         .school(school)

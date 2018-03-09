@@ -7,7 +7,9 @@ public interface Principal {
 
   String getId();
 
-  String getName();
+  String getFirstName();
+
+  String getLastName();
 
   String getLocale();
 

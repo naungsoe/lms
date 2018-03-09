@@ -1,8 +1,10 @@
 package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
-import com.hsystems.lms.service.UserService;
+import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
 
@@ -15,21 +17,24 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class UserServlet extends AbstractServlet {
 
-  private static final long serialVersionUID = -8924763326103812045L;
+  private static final long serialVersionUID = 1132492360811566840L;
 
   private static final String JSP_PATH = "/jsp/users/index.jsp";
 
-  private final UserService userService;
+  private final Provider<Principal> principalProvider;
 
   @Inject
-  UserServlet(UserService userService) {
-    this.userService = userService;
+  UserServlet(Provider<Principal> principalProvider) {
+    this.principalProvider = principalProvider;
   }
 
   @Override
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
+
+    UserModel userModel = (UserModel) principalProvider.get();
+    request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "users");
     forwardRequest(request, response, JSP_PATH);

@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository;
 
 import com.hsystems.lms.repository.entity.AuditLog;
+import com.hsystems.lms.repository.entity.EntityType;
 
 import java.io.IOException;
 import java.util.List;
@@ -11,6 +12,6 @@ import java.util.List;
 public interface AuditLogRepository
     extends Repository<AuditLog> {
 
-  List<AuditLog> findAllBy(String id)
+  List<AuditLog> findAllBy(String id, EntityType type)
       throws IOException;
 }

@@ -25,6 +25,11 @@
       </slot>
 
       <paper-icon-button
+          icon="visibility"
+          on-tap="_handlePreviewTap">
+      </paper-icon-button>
+
+      <paper-icon-button
           icon="social:person-add"
           hidden$="[[!shareable]]"
           on-tap="_handleShareTap">
@@ -70,6 +75,10 @@
 
       _handleBackTap(event) {
         window.history.back();
+      }
+
+      _handlePreviewTap(event) {
+
       }
     }
     customElements.define(PageLessonEditToolbar.is, PageLessonEditToolbar);

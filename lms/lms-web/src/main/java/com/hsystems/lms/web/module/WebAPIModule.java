@@ -4,7 +4,11 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
 import com.hsystems.lms.web.webapi.AccountController;
+import com.hsystems.lms.web.webapi.CourseController;
+import com.hsystems.lms.web.webapi.DriveController;
 import com.hsystems.lms.web.webapi.FilterController;
+import com.hsystems.lms.web.webapi.GraphQLController;
+import com.hsystems.lms.web.webapi.GroupController;
 import com.hsystems.lms.web.webapi.IndexController;
 import com.hsystems.lms.web.webapi.LessonController;
 import com.hsystems.lms.web.webapi.LocaleController;
@@ -26,10 +30,14 @@ public class WebAPIModule extends AbstractModule {
     bind(UploadController.class).in(Singleton.class);
     bind(AccountController.class).in(Singleton.class);
     bind(SchoolController.class).in(Singleton.class);
+    bind(GroupController.class).in(Singleton.class);
     bind(UserController.class).in(Singleton.class);
+    bind(CourseController.class).in(Singleton.class);
     bind(LessonController.class).in(Singleton.class);
     bind(QuizController.class).in(Singleton.class);
     bind(QuestionController.class).in(Singleton.class);
+    bind(DriveController.class).in(Singleton.class);
     bind(IndexController.class).in(Singleton.class);
+    bind(GraphQLController.class).in(Singleton.class);
   }
 }

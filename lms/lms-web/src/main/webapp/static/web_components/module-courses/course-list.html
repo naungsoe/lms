@@ -15,6 +15,14 @@
         margin: 8px 0 4px 0;
         padding: 16px;
       }
+
+      .list-item .course .course-title {
+        margin-bottom: 4px;
+      }
+
+      .list-item .course .course-description {
+        color: var(--secondary-text-color);
+      }
     </style>
 
     <iron-ajax
@@ -37,6 +45,10 @@
           <div class="course">
             <div class="course-title">
               [[course.course.title]]
+            </div>
+
+            <div class="course-description">
+              [[course.course.description]]
             </div>
           </div>
         </div>

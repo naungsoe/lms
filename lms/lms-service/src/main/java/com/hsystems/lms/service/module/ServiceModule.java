@@ -18,7 +18,7 @@ import com.hsystems.lms.repository.SchoolRepository;
 import com.hsystems.lms.repository.ShareLogRepository;
 import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.SubjectRepository;
-import com.hsystems.lms.repository.UserEnrollmentRepository;
+import com.hsystems.lms.repository.SubscriptionRepository;
 import com.hsystems.lms.repository.UserRepository;
 import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseComponentRepository;
@@ -34,13 +34,14 @@ import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
 import com.hsystems.lms.repository.hbase.HBaseShareLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSignInLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseSubjectRepository;
-import com.hsystems.lms.repository.hbase.HBaseUserEnrollmentRepository;
+import com.hsystems.lms.repository.hbase.HBaseSubscriptionRepository;
 import com.hsystems.lms.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 import com.hsystems.lms.repository.hbase.provider.HBaseClientProvider;
 import com.hsystems.lms.repository.solr.SolrIndexRepository;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
+import com.hsystems.lms.service.AttemptService;
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.CourseService;
@@ -50,6 +51,7 @@ import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.SchoolService;
 import com.hsystems.lms.service.SubjectService;
+import com.hsystems.lms.service.SubscriptionService;
 import com.hsystems.lms.service.UserService;
 
 /**
@@ -77,8 +79,7 @@ public class ServiceModule extends AbstractModule {
         .in(Singleton.class);
     bind(UserRepository.class).to(HBaseUserRepository.class)
         .in(Singleton.class);
-    bind(UserEnrollmentRepository.class)
-        .to(HBaseUserEnrollmentRepository.class)
+    bind(SubscriptionRepository.class).to(HBaseSubscriptionRepository.class)
         .in(Singleton.class);
     bind(CourseRepository.class).to(HBaseCourseRepository.class)
         .in(Singleton.class);
@@ -104,10 +105,12 @@ public class ServiceModule extends AbstractModule {
     bind(LevelService.class).in(Singleton.class);
     bind(SubjectService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);
+    bind(SubscriptionService.class).in(Singleton.class);
     bind(CourseService.class).in(Singleton.class);
     bind(LessonService.class).in(Singleton.class);
     bind(QuizService.class).in(Singleton.class);
     bind(ComponentService.class).in(Singleton.class);
     bind(QuestionService.class).in(Singleton.class);
+    //bind(AttemptService.class).in(Singleton.class);
   }
 }

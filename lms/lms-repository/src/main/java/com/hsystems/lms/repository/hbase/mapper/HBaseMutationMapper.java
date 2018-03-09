@@ -22,12 +22,12 @@ import java.util.regex.Pattern;
  */
 public class HBaseMutationMapper extends HBaseAbstractMapper<Mutation> {
 
-  private static final String PATTERN_KEY = "^([A-Za-z0-9]*)_([A-Za-z0-9]*)$";
+  private static final String PATTERN_KEY = "^([A-Z]*)_([a-z0-9]*)$";
 
   private static final String FORMAT_KEY = "%s_%s";
 
   public String getId(EntityType type, String id) {
-    return String.format(HBaseMutationMapper.FORMAT_KEY, type, id);
+    return String.format(FORMAT_KEY, type, id);
   }
 
   @Override
@@ -50,12 +50,12 @@ public class HBaseMutationMapper extends HBaseAbstractMapper<Mutation> {
   }
 
   public Optional<Mutation> getEntity(Result result) {
-    String row = Bytes.toString(result.getRow());
+    String rowKey = Bytes.toString(result.getRow());
     Pattern pattern = Pattern.compile(PATTERN_KEY);
-    Matcher matcher = pattern.matcher(row);
+    Matcher matcher = pattern.matcher(rowKey);
 
     if (!matcher.matches()) {
-      return null;
+      return Optional.empty();
     }
 
     String id = matcher.group(2);
@@ -83,8 +83,8 @@ public class HBaseMutationMapper extends HBaseAbstractMapper<Mutation> {
     List<Put> puts = new ArrayList<>();
     String id = String.format(FORMAT_KEY,
         entity.getEntityType(), entity.getId());
-    byte[] row = Bytes.toBytes(id);
-    Put logPut = new Put(row, timestamp);
+    byte[] rowKey = Bytes.toBytes(id);
+    Put logPut = new Put(rowKey, timestamp);
     addEntityTypeColumn(logPut, entity.getEntityType());
     addActionTypeColumn(logPut, entity.getActionType());
     addTimestampColumn(logPut, timestamp);
@@ -97,8 +97,8 @@ public class HBaseMutationMapper extends HBaseAbstractMapper<Mutation> {
     List<Delete> deletes = new ArrayList<>();
     String id = String.format(FORMAT_KEY,
         entity.getEntityType(), entity.getId());
-    byte[] row = Bytes.toBytes(id);
-    Delete delete = new Delete(row, timestamp);
+    byte[] rowKey = Bytes.toBytes(id);
+    Delete delete = new Delete(rowKey, timestamp);
     deletes.add(delete);
     return deletes;
   }

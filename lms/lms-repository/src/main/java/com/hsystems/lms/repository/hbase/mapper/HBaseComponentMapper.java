@@ -4,6 +4,7 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.repository.entity.course.TopicComponent;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
 import com.hsystems.lms.repository.entity.lesson.ContentComponent;
@@ -83,11 +84,14 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     Component component;
 
     switch (componentType) {
+      case "TopicComponent":
+        component = getTopicComponent(mainResult, timestamp);
+        break;
       case "LessonComponent":
-        component = getLessonComponent(mainResult, results, timestamp);
+        component = getLessonComponent(mainResult, timestamp);
         break;
       case "QuizComponent":
-        component = getQuizComponent(mainResult, results, timestamp);
+        component = getQuizComponent(mainResult, timestamp);
         break;
       case "ActivityComponent":
         component = getActivityComponent(mainResult, timestamp);
@@ -112,60 +116,74 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     return Optional.of(component);
   }
 
-  protected LessonComponent getLessonComponent(
-      Result mainResult, List<Result> results, long timestamp) {
+  protected TopicComponent getTopicComponent(
+      Result mainResult, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
-    Lesson lesson = getLesson(results, id, timestamp);
+    String title = getTitle(mainResult, timestamp);
+    String instructions = getInstructions(mainResult, timestamp);
     int order = getOrder(mainResult, timestamp);
+    List<Component> components = Collections.emptyList();
+
+    return new TopicComponent(
+        id,
+        title,
+        instructions,
+        order,
+        components
+    );
+  }
+
+  protected LessonComponent getLessonComponent(
+      Result mainResult, long timestamp) {
+
+    String id = Bytes.toString(mainResult.getRow());
+    Lesson lesson = getLesson(mainResult, timestamp);
+    int order = getOrder(mainResult, timestamp);
+    String resourceId = getResourceId(mainResult, timestamp);
 
     return new LessonComponent(
         id,
         lesson,
-        order
+        order,
+        resourceId
     );
   }
 
-  protected Lesson getLesson(
-      List<Result> results, String prefix, long timestamp) {
-
-    Result result = results.stream()
-        .filter(isLessonResult(prefix)).findFirst().get();
-    String title = getTitle(result, timestamp);
-    String instructions = getInstructions(result, timestamp);
+  protected Lesson getLesson(Result mainResult, long timestamp) {
+    String title = getTitle(mainResult, timestamp);
+    String description = getDescription(mainResult, timestamp);
 
     return new Lesson(
         title,
-        instructions,
+        description,
         Collections.emptyList()
     );
   }
 
   protected QuizComponent getQuizComponent(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, long timestamp) {
 
     String id = Bytes.toString(mainResult.getRow());
-    Quiz quiz = getQuiz(results, id, timestamp);
+    Quiz quiz = getQuiz(mainResult, timestamp);
     int order = getOrder(mainResult, timestamp);
+    String resourceId = getResourceId(mainResult, timestamp);
 
     return new QuizComponent(
         id,
         quiz,
-        order
+        order,
+        resourceId
     );
   }
 
-  protected Quiz getQuiz(
-      List<Result> results, String prefix, long timestamp) {
-
-    Result result = results.stream()
-        .filter(isQuizResult(prefix)).findFirst().get();
-    String title = getTitle(result, timestamp);
-    String instructions = getInstructions(result, timestamp);
+  protected Quiz getQuiz(Result mainResult, long timestamp) {
+    String title = getTitle(mainResult, timestamp);
+    String description = getDescription(mainResult, timestamp);
 
     return new Quiz(
         title,
-        instructions,
+        description,
         Collections.emptyList()
     );
   }
@@ -246,17 +264,10 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
           if (parentId.equals(rootComponent.getId())) {
             List<Component> components = childComponents.get(parentId);
 
-            if (rootComponent instanceof LessonComponent) {
-              LessonComponent lessonComponent
-                  = (LessonComponent) rootComponent;
-              lessonComponent.getLesson().addComponent(
-                  components.toArray(new Component[0]));
-              addChildToParent(components, childComponents);
-
-            } else if (rootComponent instanceof QuizComponent) {
-              QuizComponent quizComponent
-                  = (QuizComponent) rootComponent;
-              quizComponent.getQuiz().addComponent(
+            if (rootComponent instanceof TopicComponent) {
+              TopicComponent topicComponent
+                  = (TopicComponent) rootComponent;
+              topicComponent.addComponent(
                   components.toArray(new Component[0]));
               addChildToParent(components, childComponents);
 

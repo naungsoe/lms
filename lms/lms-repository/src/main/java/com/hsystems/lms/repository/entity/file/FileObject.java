@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.entity.file;
 
-import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 
 import java.io.Serializable;
@@ -8,19 +7,18 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 5/11/16.
  */
-@IndexDocument(namespace = "lms", collection = "files")
 public final class FileObject implements Serializable {
 
-  private static final long serialVersionUID = -2798310873506817051L;
+  private static final long serialVersionUID = -1249643626651905996L;
 
   @IndexField
   protected String name;
 
   @IndexField
-  protected String type;
+  protected long size;
 
   @IndexField
-  protected long size;
+  protected boolean directory;
 
   FileObject() {
 
@@ -28,23 +26,23 @@ public final class FileObject implements Serializable {
 
   public FileObject(
       String name,
-      String type,
-      long size) {
+      long size,
+      boolean directory) {
 
     this.name = name;
-    this.type = type;
     this.size = size;
+    this.directory = directory;
   }
 
   public String getName() {
     return name;
   }
 
-  public String getType() {
-    return type;
-  }
-
   public long getSize() {
     return size;
+  }
+
+  public boolean isDirectory() {
+    return directory;
   }
 }

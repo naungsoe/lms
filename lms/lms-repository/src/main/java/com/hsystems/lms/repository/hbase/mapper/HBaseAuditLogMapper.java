@@ -1,7 +1,6 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.AuditLog;
 import com.hsystems.lms.repository.entity.EntityType;
@@ -18,11 +17,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by naungsoe on 14/12/16.
  */
 public class HBaseAuditLogMapper extends HBaseAbstractMapper<AuditLog> {
+
+  private static final String PATTERN_KEY = "^([A-Z]*)_([a-z0-9]*)_([0-9]*)$";
+
+  private static final String FORMAT_KEY = "%s_%s";
+
+  public String getId(EntityType type, String id) {
+    return String.format(FORMAT_KEY, type, id);
+  }
 
   @Override
   public List<AuditLog> getEntities(
@@ -46,10 +55,16 @@ public class HBaseAuditLogMapper extends HBaseAbstractMapper<AuditLog> {
 
   private final Optional<AuditLog> getEntity(Result result, long timestamp) {
     String rowKey = Bytes.toString(result.getRow());
-    int endIndex = rowKey.indexOf(Constants.SEPARATOR);
+    Pattern pattern = Pattern.compile(PATTERN_KEY);
+    Matcher matcher = pattern.matcher(rowKey);
 
-    String id = (endIndex == -1) ? rowKey : rowKey.substring(0, endIndex);
-    EntityType entityType = getEntityType(result, timestamp);
+    if (!matcher.matches()) {
+      return Optional.empty();
+    }
+
+    String id = matcher.group(2);
+    EntityType entityType = Enum.valueOf(
+        EntityType.class, matcher.group(1));
     User actionBy = new User.Builder(
         getId(result, timestamp),
         getFirstName(result, timestamp),
@@ -57,9 +72,7 @@ public class HBaseAuditLogMapper extends HBaseAbstractMapper<AuditLog> {
     ).build();
 
     ActionType actionType = getActionType(result, timestamp);
-    long actionTimestamp = (endIndex == -1)
-        ? getTimestamp(result, timestamp)
-        : Long.parseLong(rowKey.substring(endIndex));
+    long actionTimestamp = Long.parseLong(matcher.group(3));
 
     AuditLog auditLog = new AuditLog(
         id,

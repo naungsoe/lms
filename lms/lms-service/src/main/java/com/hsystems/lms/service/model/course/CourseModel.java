@@ -19,11 +19,11 @@ import java.util.List;
 public final class CourseModel extends AuditableModel
     implements Serializable {
 
-  private static final long serialVersionUID = 7036844905465667043L;
+  private static final long serialVersionUID = -3612393841181886172L;
 
   private String title;
 
-  private String instructions;
+  private String description;
 
   protected List<Component> components;
 
@@ -39,12 +39,12 @@ public final class CourseModel extends AuditableModel
     this.title = title;
   }
 
-  public String getInstructions() {
-    return instructions;
+  public String getDescription() {
+    return description;
   }
 
-  public void setInstructions(String instructions) {
-    this.instructions = instructions;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
   public List<Component> getComponents() {

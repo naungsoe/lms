@@ -1,0 +1,401 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-courses/course-view-topic.html">
+<link rel="import" href="../../web_components/module-courses/course-edit-topic.html">
+<link rel="import" href="../../web_components/module-courses/course-view-lesson.html">
+<link rel="import" href="../../web_components/module-courses/course-edit-lesson.html">
+<link rel="import" href="../../web_components/module-courses/course-view-quiz.html">
+<link rel="import" href="../../web_components/module-courses/course-edit-quiz.html">
+
+<dom-module id="course-edit-components">
+  <template>
+    <style include="app-component-styles">
+      .topic-component {
+        border: 1px solid var(--border-color);
+      }
+
+      .topic-component .course-component {
+        @apply --layout-vertical;
+      }
+
+      .topic-component .course-component[active]:not(.topic) {
+        @apply --shadow-elevation-4dp;
+      }
+
+      .topic-component .course-component[active]:not(.topic) .content {
+        padding: 16px 0;
+      }
+
+      .topic-component .course-component[active]:not(.topic) .footer {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        border-top: 1px solid var(--border-color);
+        padding: 8px;
+      }
+
+      .topic-component .course-component.topic {
+        padding: 8px 0;
+      }
+
+      .topic-component .course-component .content {
+        @apply --layout-horizontal;
+      }
+
+      .topic-component .course-component .content .component {
+        @apply --layout-flex;
+      }
+
+      .topic-component .course-component .header {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+      }
+
+      .topic-component .course-component .header .title {
+        @apply --paper-font-subhead;
+        @apply --layout-flex;
+        color: var(--secondary-text-color);
+        padding: 8px 16px;
+      }
+
+      .topic-component .course-component.drop-placeholder {
+        border: 1px dashed var(--border-color);
+      }
+
+      .topic-component .course-component.drop-placeholder * {
+        @apply --layout-invisible;
+      }
+
+      .topic-component .course-component.drag-item {
+        @apply --shadow-elevation-2dp;
+        background-color: var(--secondary-background-color);
+      }
+
+      .topic-component .component-actions {
+        margin: 8px 0;
+        padding: 0 16px;
+      }
+
+      .component-actions {
+        margin: 8px 0 24px 0;
+      }
+    </style>
+
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[courseId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{course}}">
+    </iron-ajax>
+
+    <iron-ajax
+        name="post"
+        body="[[course]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <div class="component-actions">
+      <paper-button on-tap="_handleAddTopicTap">
+        <iron-icon icon="add"></iron-icon>
+        [[localize('buttonAddTopic')]]
+      </paper-button>
+    </div>
+
+    <template
+        name="topic"
+        is="dom-repeat"
+        items="[[course.components]]"
+        as="component">
+      <section class="topic-component">
+        <div
+            class="course-component topic"
+            active$="[[_isEditingComponent(component, editingComponent)]]"
+            on-tap="_handleComponentTap">
+          <div class="header">
+            <div class="title">
+              [[localize('labelTopic', 'offset', component.order,
+                'length', course.components.length)]]
+            </div>
+
+            <paper-menu-button
+                restore-focus-on-close="[[restoreFocusOnClose]]"
+                horizontal-align="right"
+                vertical-align="top">
+              <paper-icon-button
+                  slot="dropdown-trigger"
+                  icon="more-vert">
+              </paper-icon-button>
+
+              <div slot="dropdown-content">
+                <paper-listbox slot="dropdown-content">
+                  <paper-item value="move">
+                    [[localize('labelTopicMove')]]
+                  </paper-item>
+                  <paper-item value="clone">
+                    [[localize('labelTopicDuplicate')]]
+                  </paper-item>
+                  <paper-item value="delete">
+                    [[localize('labelTopicDelete')]]
+                  </paper-item>
+                  <paper-item value="merge">
+                    [[localize('labelTopicMerge')]]
+                  </paper-item>
+                </paper-listbox>
+              </div>
+            </paper-menu-button>
+          </div>
+
+          <div class="content">
+            <div class="component">
+              <template
+                  is="dom-if"
+                  if="[[!_isEditingComponent(component, editingComponent)]]">
+                <course-view-topic
+                    topic="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </course-view-topic>
+              </template>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <course-edit-topic
+                    topic="{{component}}"
+                    language="[[language]]"
+                    resources="[[resources]]">
+                </course-edit-topic>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <iron-sorter
+            handle="component-handle"
+            draggable="draggable-component"
+            on-order-changed="_handleOrderChange">
+          <template
+              name="component"
+              is="dom-repeat"
+              items="[[component.components]]"
+              as="component">
+            <div
+                class="course-component draggable-component"
+                active$="[[_isEditingComponent(component, editingComponent)]]"
+                on-tap="_handleComponentTap">
+              <div class="content">
+                <paper-icon-button
+                    icon="editor:drag-handle"
+                    class="component-handle">
+                </paper-icon-button>
+
+                <div class="component">
+                  <template
+                      is="dom-if"
+                      if="[[!_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isLessonComponent(component)]]">
+                      <course-view-lesson
+                          lesson="{{component.lesson}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </course-view-lesson>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isQuizComponent(component)]]">
+                      <course-view-quiz
+                          quiz="{{component.quiz}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </course-view-quiz>
+                    </template>
+                  </template>
+
+                  <template
+                      is="dom-if"
+                      if="[[_isEditingComponent(component, editingComponent)]]">
+                    <template
+                        is="dom-if"
+                        if="[[_isLessonComponent(component)]]">
+                      <course-edit-lesson
+                          lesson="{{component.lesson}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </course-edit-lesson>
+                    </template>
+
+                    <template
+                        is="dom-if"
+                        if="[[_isQuizComponent(component)]]">
+                      <course-edit-quiz
+                          quiz="{{component.quiz}}"
+                          language="[[language]]"
+                          resources="[[resources]]">
+                      </course-edit-quiz>
+                    </template>
+                  </template>
+                </div>
+              </div>
+
+              <template
+                  is="dom-if"
+                  if="[[_isEditingComponent(component, editingComponent)]]">
+                <div class="footer">
+                  <paper-icon-button
+                      icon="content-copy"
+                      on-tap="_handleCloneTap">
+                  </paper-icon-button>
+
+                  <paper-icon-button
+                      icon="delete"
+                      on-tap="_handleDeleteTap">
+                  </paper-icon-button>
+                </div>
+              </template>
+            </div>
+          </template>
+        </iron-sorter>
+
+        <div class="component-actions">
+          <paper-menu-button>
+            <paper-button slot="dropdown-trigger">
+              <iron-icon icon="add"></iron-icon>
+              [[localize('buttonAddComponent')]]
+            </paper-button>
+
+            <paper-listbox
+                slot="dropdown-content"
+                attr-for-selected="value"
+                on-selected-item-changed="_handleMenuSelect">
+              <template
+                  is="dom-repeat"
+                  items="[[types]]"
+                  as="type">
+                <paper-item value="[[type.value]]">
+                  [[type.name]]
+                </paper-item>
+              </template>
+            </paper-listbox>
+          </paper-menu-button>
+        </div>
+      </section>
+
+      <div class="component-actions">
+        <paper-button on-tap="_handleAddTopicTap">
+          <iron-icon icon="add"></iron-icon>
+          [[localize('buttonAddTopic')]]
+        </paper-button>
+      </div>
+    </template>
+  </template>
+
+  <script>
+    const CourseEditComponentsBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class CourseEditComponents extends CourseEditComponentsBase {
+      static get is() {
+        return 'course-edit-components';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          course: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          editingComponent: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _isEditingComponent(component, editingComponent) {
+        return component === editingComponent;
+      }
+
+      _isLessonComponent(component) {
+        return (component.lesson !== undefined)
+          && (component.lessonId !== undefined);
+      }
+
+      _isQuizComponent(component) {
+        return (component.quiz !== undefined)
+          && (component.quizId !== undefined);
+      }
+
+      _handleComponentTap(event) {
+        let path = Polymer.dom(event).path;
+        let menuInPath = false;
+
+        for (var i = 0; i < path.length; i++) {
+          if (path[i].tagName === 'PAPER-MENU-BUTTON') {
+            menuInPath = true;
+            break;
+          }
+        }
+
+        if (!menuInPath) {
+          this.editingComponent = event.model.component;
+        }
+      }
+
+      _handleAddTopicTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat[name=topic]');
+        let topic = template.itemForElement(event.target);
+        var index = this.course.components.indexOf(topic);
+        this.course.components.forEach(function(component, compIndex) {
+          if (compIndex > index) {
+            component.order = component.order + 1;
+          }
+        });
+
+        let order = topic.order + 1;
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.course.components.splice((index + 1), 0, component);
+        this.notifySplices('course.components');
+      }
+    }
+    customElements.define(CourseEditComponents.is, CourseEditComponents);
+  </script>
+</dom-module>

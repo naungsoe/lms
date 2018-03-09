@@ -6,6 +6,7 @@
 <link rel="import" href="../../web_components/app-component-styles.html">
 <link rel="import" href="../../web_components/module-lessons/page-lessons.html">
 <link rel="import" href="../../web_components/module-lessons/page-lesson-edit.html">
+<link rel="import" href="../../web_components/module-lessons/page-lesson-preview.html">
 
 <dom-module id="module-lessons">
   <template>
@@ -19,7 +20,14 @@
     <app-route
         route="{{route}}"
         pattern="[[rootUrl]]/:id"
-        data="{{routeData}}">
+        data="{{routeData}}"
+        tail="{{subRoute}}">
+    </app-route>
+
+    <app-route
+        route="{{subRoute}}"
+        pattern="/:mode"
+        data="{{subRouteData}}">
     </app-route>
 
     <iron-pages
@@ -29,7 +37,7 @@
           name="lessons"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
-          user="[[users]]"
+          user="[[user]]"
           filter-options="[[filterOptions]]"
           query="[[query]]"
           language="[[language]]"
@@ -37,15 +45,25 @@
       </page-lessons>
 
       <page-lesson-edit
-          name="lesson"
+          name="edit"
           rest-url="[[restUrl]]"
           root-url="[[rootUrl]]"
-          user="[[users]]"
+          user="[[user]]"
           filter-options="[[filterOptions]]"
           lesson-id="[[routeData.id]]"
           language="[[language]]"
           resources="[[resources]]">
       </page-lesson-edit>
+
+      <page-lesson-preview
+          name="preview"
+          rest-url="[[restUrl]]"
+          root-url="[[rootUrl]]"
+          user="[[user]]"
+          lesson-id="[[routeData.id]]"
+          language="[[language]]"
+          resources="[[resources]]">
+      </page-lesson-preview>
     </iron-pages>
   </template>
 
@@ -76,6 +94,16 @@
             notify: true
           },
           routeData: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          subRoute: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          subRouteData: {
             type: Object,
             readOnly: false,
             notify: true
@@ -111,7 +139,7 @@
       static get observers() {
         return [
           '_updateRoute(route)',
-          '_updatePage(routeData)'
+          '_updatePage(routeData, subRouteData)'
         ];
       }
 
@@ -121,12 +149,15 @@
         }
       }
 
-      _updatePage(routeData) {
+      _updatePage(routeData, subRouteData) {
         if (routeData.id === undefined) {
           this.page = 'lessons';
 
+        } else if (subRouteData.mode === 'preview') {
+          this.page = 'preview';
+
         } else {
-          this.page = 'lesson';
+          this.page = 'edit';
         }
       }
     }

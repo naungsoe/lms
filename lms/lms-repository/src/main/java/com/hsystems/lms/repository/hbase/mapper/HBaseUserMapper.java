@@ -1,6 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
@@ -70,6 +71,7 @@ public class HBaseUserMapper extends HBaseAbstractMapper<User> {
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
     School school = getSchool(schoolResult, timestamp);
+    List<Group> groups = getGroups(results, id, timestamp);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
@@ -97,6 +99,7 @@ public class HBaseUserMapper extends HBaseAbstractMapper<User> {
         .dateTimeFormat(dateTimeFormat)
         .permissions(permissions)
         .school(school)
+        .groups(groups)
         .createdBy(createdBy)
         .createdDateTime(createdDateTime)
         .modifiedBy(modifiedBy)

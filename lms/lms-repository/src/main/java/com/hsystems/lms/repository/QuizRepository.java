@@ -11,7 +11,6 @@ import java.util.List;
 public interface QuizRepository
     extends Repository<QuizResource> {
 
-  List<QuizResource> findAllBy(
-      String schoolId, String lastId, int limit)
+  List<QuizResource> findAllBy(String schoolId, String lastId, int limit)
       throws IOException;
 }

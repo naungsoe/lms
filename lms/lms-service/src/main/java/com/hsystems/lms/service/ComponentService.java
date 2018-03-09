@@ -16,7 +16,6 @@ import com.hsystems.lms.service.model.ComponentModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -101,12 +100,5 @@ public class ComponentService extends AbstractService {
     }
 
     return Optional.empty();
-  }
-
-  @Log
-  public List<String> findAllTypes() {
-    Properties properties = propertiesProvider.get();
-    String questionTypes = properties.getProperty("component.types");
-    return Arrays.asList(questionTypes.split(","));
   }
 }

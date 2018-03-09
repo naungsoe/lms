@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="course-edit-topic">
+  <template>
+    <style include="app-component-styles">
+      .topic .topic-title,
+      .topic .topic-instructions {
+        padding: 0 16px;
+      }
+
+      .topic .topic-title {
+        margin-bottom: 4px;
+      }
+    </style>
+
+    <div class="topic">
+      <div class="topic-title">
+        <paper-input no-label-float
+            placeholder="[[localize('labelTitle')]]"
+            value="[[topic.title]]">
+        </paper-input>
+      </div>
+
+      <div class="topic-instructions">
+        <paper-text-editor no-label-float
+            placeholder="[[localize('labelInstructions')]]"
+            content="[[topic.instructions]]">
+        </paper-text-editor>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const CourseEditTopicBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class CourseEditTopic extends CourseEditTopicBase {
+      static get is() {
+        return 'course-edit-topic';
+      }
+
+      static get properties() {
+        return {
+          topic: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(CourseEditTopic.is, CourseEditTopic);
+  </script>
+</dom-module>

@@ -1,6 +1,7 @@
 package com.hsystems.lms.service;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
 import com.hsystems.lms.common.query.Criterion;
@@ -16,20 +17,23 @@ import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.beans.ComponentBean;
 import com.hsystems.lms.repository.entity.course.Course;
 import com.hsystems.lms.repository.entity.course.CourseResource;
-import com.hsystems.lms.repository.entity.lesson.LessonResource;
 import com.hsystems.lms.service.mapper.Configuration;
 import com.hsystems.lms.service.model.course.CourseResourceModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public class CourseService extends AbstractService {
+
+  private final Provider<Properties> propertiesProvider;
 
   private final CourseRepository resourceRepository;
 
@@ -39,10 +43,12 @@ public class CourseService extends AbstractService {
 
   @Inject
   CourseService(
+      Provider<Properties> propertiesProvider,
       CourseRepository resourceRepository,
       ComponentRepository componentRepository,
       IndexRepository indexRepository) {
 
+    this.propertiesProvider = propertiesProvider;
     this.resourceRepository = resourceRepository;
     this.componentRepository = componentRepository;
     this.indexRepository = indexRepository;
@@ -56,21 +62,21 @@ public class CourseService extends AbstractService {
     addSchoolFilter(query, principal);
 
     QueryResult<CourseResource> queryResult
-        = indexRepository.findAllBy(query, LessonResource.class);
-    List<CourseResource> lessonResources = queryResult.getItems();
+        = indexRepository.findAllBy(query, CourseResource.class);
+    List<CourseResource> courseResources = queryResult.getItems();
 
-    if (CollectionUtils.isEmpty(lessonResources)) {
+    if (CollectionUtils.isEmpty(courseResources)) {
       return new QueryResult<>(
           queryResult.getElapsedTime(),
           query.getOffset(),
-          query.getLimit(),
+          NUMBER_FOUND_ZERO,
           Collections.emptyList()
       );
     }
 
     Configuration configuration = Configuration.create(principal);
     List<CourseResourceModel> resourceModels
-        = getCourseResourceModels(lessonResources, configuration);
+        = getCourseResourceModels(courseResources, configuration);
     return new QueryResult<>(
         queryResult.getElapsedTime(),
         queryResult.getStart(),
@@ -144,5 +150,12 @@ public class CourseService extends AbstractService {
 
     List<Component> components = getComponents(componentBeans);
     return components;
+  }
+
+  @Log
+  public List<String> findAllComponentTypes() {
+    Properties properties = propertiesProvider.get();
+    String questionTypes = properties.getProperty("course.component.types");
+    return Arrays.asList(questionTypes.split(","));
   }
 }

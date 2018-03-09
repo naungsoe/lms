@@ -38,12 +38,12 @@
       }
 
       .page-content .quiz .quiz-content .quiz-title,
-      .page-content .quiz .quiz-content .quiz-instructions {
+      .page-content .quiz .quiz-content .quiz-description {
         margin-bottom: 4px;
         padding: 0 16px;
       }
 
-      .page-content .quiz .quiz-content .quiz-instructions {
+      .page-content .quiz .quiz-content .quiz-description {
         margin-bottom: 12px;
       }
     </style>
@@ -93,10 +93,10 @@
               </paper-input>
             </div>
 
-            <div class="quiz-instructions">
+            <div class="quiz-description">
               <paper-text-editor
-                  label="[[localize('labelInstructions')]]"
-                  content="[[quiz.quiz.instructions]]">
+                  label="[[localize('labelDescription')]]"
+                  content="[[quiz.quiz.description]]">
               </paper-text-editor>
             </div>
           </section>
