@@ -5,7 +5,6 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Entity;
 
 import org.apache.solr.common.SolrDocument;

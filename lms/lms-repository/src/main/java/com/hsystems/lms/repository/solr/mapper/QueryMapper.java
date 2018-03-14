@@ -6,7 +6,6 @@ import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.Constants;
 
 import org.apache.solr.client.solrj.SolrQuery;
 

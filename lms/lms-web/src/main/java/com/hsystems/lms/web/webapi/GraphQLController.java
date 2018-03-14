@@ -80,10 +80,6 @@ public class GraphQLController extends AbstractController {
   }
 
   private RuntimeWiring buildWiring() {
-    return RuntimeWiring.newRuntimeWiring()
-        .type("Query", typeWiring -> typeWiring
-            .dataFetcher("user", new StaticDataFetcher(StarWarsData.getArtoo()))
-        )
-        .build();
+    return RuntimeWiring.newRuntimeWiring().build();
   }
 }

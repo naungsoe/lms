@@ -82,6 +82,7 @@ var sortable = new Sortable(el, {
 	group: "name",  // or { name: "...", pull: [true, false, clone], put: [true, false, array] }
 	sort: true,  // sorting inside list
 	delay: 0, // time in milliseconds to define when the sorting should start
+	touchStartThreshold: 0, // px, how many pixels the point should move before cancelling a delayed drag event
 	disabled: false, // Disables the sortable if set to true.
 	store: null,  // @see Store
 	animation: 150,  // ms, animation speed moving items when sorting, `0` — without animation
@@ -98,10 +99,10 @@ var sortable = new Sortable(el, {
 
 	fallbackClass: "sortable-fallback",  // Class name for the cloned DOM Element when using forceFallback
 	fallbackOnBody: false,  // Appends the cloned DOM Element into the Document's Body
-	fallbackTolerance: 0, // Specify in pixels how far the mouse should move before it's considered as a drag.        
-	
+	fallbackTolerance: 0, // Specify in pixels how far the mouse should move before it's considered as a drag.
+
 	scroll: true, // or HTMLElement
-	scrollFn: function(offsetX, offsetY, originalEvent) { ... }, // if you have custom scrollbar scrollFn may be used for autoscrolling
+	scrollFn: function(offsetX, offsetY, originalEvent, touchEvt, hoverTargetEl) { ... }, // if you have custom scrollbar scrollFn may be used for autoscrolling
 	scrollSensitivity: 30, // px, how near the mouse must be to an edge to start scrolling.
 	scrollSpeed: 10, // px
 
@@ -163,7 +164,7 @@ var sortable = new Sortable(el, {
 		originalEvent.clientY; // mouse position
 		// return false; — for cancel
 	},
-	
+
 	// Called when creating a clone of element
 	onClone: function (/**Event*/evt) {
 		var origEl = evt.item;
@@ -208,6 +209,20 @@ Demo: http://jsbin.com/videzob/edit?html,js,output
 Time in milliseconds to define when the sorting should start.
 
 Demo: http://jsbin.com/xizeh/edit?html,js,output
+
+
+---
+
+
+#### `touchStartThreshold` option
+This option is similar to `fallbackTolerance` option.
+
+When the `delay` option is set, some phones with very sensitive touch displays like the Samsung Galaxy S8 will fire
+unwanted touchmove events even when your finger is not moving, resulting in the sort not triggering.
+
+This option sets the minimum pointer movement that must occur before the delayed sorting is cancelled.
+
+Values between 3 to 5 are good.
 
 
 ---
@@ -347,7 +362,7 @@ Demo: http://jsbin.com/yacuqib/edit?html,css,js,output
 Emulates the native drag threshold. Specify in pixels how far the mouse should move before it's considered as a drag.
 Useful if the items are also clickable like in a list of links.
 
-When the user clicks inside a sortable element, it's not uncommon for your hand to move a little between the time you press and the time you release.  
+When the user clicks inside a sortable element, it's not uncommon for your hand to move a little between the time you press and the time you release.
 Dragging only starts if you move the pointer past a certain tolerance, so that you don't accidentally start dragging every time you click.
 
 3 to 5 are probably good values.
@@ -561,12 +576,12 @@ Link to the active instance.
 ### CDN
 
 ```html
-<!-- jsDelivr :: Sortable (http://www.jsdelivr.com/package/npm/sortablejs) -->
-<script src="//cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
+<!-- jsDelivr :: Sortable (https://www.jsdelivr.com/package/npm/sortablejs) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.6.1/Sortable.min.js"></script>
 
 
-<!-- jsDelivr :: Sortable :: Latest (http://www.jsdelivr.com/package/npm/sortablejs) -->
-<script src="//cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+<!-- jsDelivr :: Sortable :: Latest (https://www.jsdelivr.com/package/npm/sortablejs) -->
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 ```
 
 
@@ -633,4 +648,3 @@ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
 LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-

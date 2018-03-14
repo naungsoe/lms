@@ -4,7 +4,6 @@ import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.DateTimeUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
@@ -47,13 +46,14 @@ import java.util.List;
  */
 public abstract class AbstractService {
 
+  private static final String FIELD_SCHOOL_ID = "schoolId";
+
   protected final int NUMBER_FOUND_ZERO = 0;
 
   protected void addSchoolFilter(Query query, Principal principal) {
     UserModel userModel = (UserModel) principal;
     String schoolId = userModel.getSchool().getId();
-    query.addCriterion(Criterion.createEqual(
-        Constants.FIELD_SCHOOL_ID, schoolId));
+    query.addCriterion(Criterion.createEqual(FIELD_SCHOOL_ID, schoolId));
   }
 
   protected void populateCreatedByAndDate(

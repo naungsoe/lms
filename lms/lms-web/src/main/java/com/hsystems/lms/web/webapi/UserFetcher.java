@@ -11,7 +11,7 @@ public class UserFetcher implements DataFetcher<UserModel> {
   private final UserService userService;
 
   public UserFetcher(UserService userService) {
-
+    this.userService = userService;
   }
 
   @Override

@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.ActionType;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
@@ -51,12 +50,79 @@ import java.util.regex.Pattern;
  */
 public abstract class HBaseAbstractMapper<T> {
 
+  private static final byte[] FAMILY_DATA = Bytes.toBytes("d");
+
+  private static final byte[] QUALIFIER_DATE_TIME = Bytes.toBytes("datetime");
+  private static final byte[] QUALIFIER_ID = Bytes.toBytes("id");
+  private static final byte[] QUALIFIER_ACCOUNT = Bytes.toBytes("account");
+  private static final byte[] QUALIFIER_PASSWORD = Bytes.toBytes("password");
+  private static final byte[] QUALIFIER_SALT = Bytes.toBytes("salt");
+  private static final byte[] QUALIFIER_NAME = Bytes.toBytes("name");
+  private static final byte[] QUALIFIER_FIRST_NAME = Bytes.toBytes("fname");
+  private static final byte[] QUALIFIER_LAST_NAME = Bytes.toBytes("lname");
+  private static final byte[] QUALIFIER_DATE_OF_BIRTH = Bytes.toBytes("dob");
+  private static final byte[] QUALIFIER_GENDER = Bytes.toBytes("gender");
+  private static final byte[] QUALIFIER_MOBILE = Bytes.toBytes("mobile");
+  private static final byte[] QUALIFIER_EMAIL = Bytes.toBytes("email");
+  private static final byte[] QUALIFIER_LOCALE = Bytes.toBytes("locale");
+  private static final byte[] QUALIFIER_TIME_FORMAT = Bytes.toBytes("tformat");
+  private static final byte[] QUALIFIER_DATE_FORMAT = Bytes.toBytes("dformat");
+  private static final byte[] QUALIFIER_DATE_TIME_FORMAT
+      = Bytes.toBytes("dtformat");
+  private static final byte[] QUALIFIER_PERMISSIONS
+      = Bytes.toBytes("permissions");
+  private static final byte[] QUALIFIER_RESOURCE_ID = Bytes.toBytes("resid");
+  private static final byte[] QUALIFIER_TYPE = Bytes.toBytes("type");
+  private static final byte[] QUALIFIER_QUESTION_TYPE = Bytes.toBytes("quetype");
+  private static final byte[] QUALIFIER_SESSION_ID = Bytes.toBytes("session");
+  private static final byte[] QUALIFIER_IP_ADDRESS = Bytes.toBytes("ip");
+  private static final byte[] QUALIFIER_FAILS = Bytes.toBytes("fails");
+  private static final byte[] QUALIFIER_TITLE = Bytes.toBytes("title");
+  private static final byte[] QUALIFIER_DESCRIPTION
+      = Bytes.toBytes("description");
+  private static final byte[] QUALIFIER_INSTRUCTIONS
+      = Bytes.toBytes("instructions");
+  private static final byte[] QUALIFIER_KEYWORDS = Bytes.toBytes("keywords");
+  private static final byte[] QUALIFIER_BODY = Bytes.toBytes("body");
+  private static final byte[] QUALIFIER_HINT = Bytes.toBytes("hint");
+  private static final byte[] QUALIFIER_EXPLANATION
+      = Bytes.toBytes("explanation");
+  private static final byte[] QUALIFIER_FEEDBACK = Bytes.toBytes("feedback");
+  private static final byte[] QUALIFIER_CONTENT = Bytes.toBytes("content");
+  private static final byte[] QUALIFIER_CORRECT = Bytes.toBytes("correct");
+  private static final byte[] QUALIFIER_ORDER = Bytes.toBytes("order");
+  private static final byte[] QUALIFIER_SCORE = Bytes.toBytes("score");
+  private static final byte[] QUALIFIER_SIZE = Bytes.toBytes("size");
+  private static final byte[] QUALIFIER_DIRECTORY = Bytes.toBytes("directory");
+  private static final byte[] QUALIFIER_STATUS = Bytes.toBytes("status");
+  private static final byte[] QUALIFIER_TIMESTAMP = Bytes.toBytes("timestamp");
+  private static final byte[] QUALIFIER_ACTION = Bytes.toBytes("action");
+  private static final byte[] QUALIFIER_PARENT = Bytes.toBytes("parent");
+
   public static final String PATTERN_SEPARATED_ID = "%s([A-Za-z0-9]*)";
+  public static final String PATTERN_SUFFIXED_ID = "([A-Za-z0-9]*)%s$";
   public static final String PATTERN_PREFIXED_ID = "%s([A-Za-z0-9]*)$";
 
   public static final String FORMAT_ROW_KEY = "%s%s%s";
+  public static final String FORMAT_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
+  public static final String SEPARATOR = "_";
   public static final String SEPARATOR_VALUE = ",";
+  public static final String SEPARATOR_PARENT = "_par_";
+  public static final String SEPARATOR_SCHOOL = "_sch_";
+  public static final String SEPARATOR_SUBSCRIBED_BY = "_sub_";
+  public static final String SEPARATOR_CREATED_BY = "_cre_";
+  public static final String SEPARATOR_MODIFIED_BY = "_mod_";
+  public static final String SEPARATOR_SHARED_BY = "_sha_";
+  public static final String SEPARATOR_LEVEL = "_lvl_";
+  public static final String SEPARATOR_SUBJECT = "_sub_";
+  public static final String SEPARATOR_GROUP = "_grp_";
+  public static final String SEPARATOR_MEMBER = "_mem_";
+  public static final String SEPARATOR_LESSON = "_lsn_";
+  public static final String SEPARATOR_QUIZ = "_quz_";
+  public static final String SEPARATOR_COMPONENT = "_com_";
+  public static final String SEPARATOR_OPTION = "_opt_";
+  public static final String SEPARATOR_ENTRY = "_ent_";
 
   protected Optional<Mutation> getMutationById(
       List<Mutation> mutations, String id) {
@@ -67,192 +133,167 @@ public abstract class HBaseAbstractMapper<T> {
 
   protected String getId(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ID);
+      return getString(result, FAMILY_DATA, QUALIFIER_ID);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ID);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_ID);
       return getString(cells, timestamp);
     }
   }
 
   protected String getResourceId(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_RESOURCE_ID);
+      return getString(result, FAMILY_DATA, QUALIFIER_RESOURCE_ID);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_RESOURCE_ID);
+          FAMILY_DATA, QUALIFIER_RESOURCE_ID);
       return getString(cells, timestamp);
     }
   }
 
   protected String getAccount(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ACCOUNT);
+      return getString(result, FAMILY_DATA, QUALIFIER_ACCOUNT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ACCOUNT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_ACCOUNT);
       return getString(cells, timestamp);
     }
   }
 
   protected String getPassword(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_PASSWORD);
+      return getString(result, FAMILY_DATA, QUALIFIER_PASSWORD);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_PASSWORD);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_PASSWORD);
       return getString(cells, timestamp);
     }
   }
 
   protected String getSalt(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_SALT);
+      return getString(result, FAMILY_DATA, QUALIFIER_SALT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_SALT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_SALT);
       return getString(cells, timestamp);
     }
   }
 
   protected String getName(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_NAME);
+      return getString(result, FAMILY_DATA, QUALIFIER_NAME);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_NAME);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_NAME);
       return getString(cells, timestamp);
     }
   }
 
   protected String getFirstName(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_FIRST_NAME);
+      return getString(result, FAMILY_DATA, QUALIFIER_FIRST_NAME);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_FIRST_NAME);
+          FAMILY_DATA, QUALIFIER_FIRST_NAME);
       return getString(cells, timestamp);
     }
   }
 
   protected String getLastName(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_LAST_NAME);
+      return getString(result, FAMILY_DATA, QUALIFIER_LAST_NAME);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_LAST_NAME);
+          FAMILY_DATA, QUALIFIER_LAST_NAME);
       return getString(cells, timestamp);
     }
   }
 
   protected LocalDateTime getDateOfBirth(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getLocalDateTime(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DATE_OF_BIRTH);
+      return getLocalDateTime(result, FAMILY_DATA, QUALIFIER_DATE_OF_BIRTH);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DATE_OF_BIRTH);
+          FAMILY_DATA, QUALIFIER_DATE_OF_BIRTH);
       return getLocalDateTime(cells, timestamp);
     }
   }
 
   protected String getGender(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_GENDER);
+      return getString(result, FAMILY_DATA, QUALIFIER_GENDER);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_GENDER);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_GENDER);
       return getString(cells, timestamp);
     }
   }
 
   protected String getMobile(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_MOBILE);
+      return getString(result, FAMILY_DATA, QUALIFIER_MOBILE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_MOBILE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_MOBILE);
       return getString(cells, timestamp);
     }
   }
 
   protected String getEmail(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_EMAIL);
+      return getString(result, FAMILY_DATA, QUALIFIER_EMAIL);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_EMAIL);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_EMAIL);
       return getString(cells, timestamp);
     }
   }
 
   protected String getLocale(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_LOCALE);
+      return getString(result, FAMILY_DATA, QUALIFIER_LOCALE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_LOCALE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_LOCALE);
       return getString(cells, timestamp);
     }
   }
 
   protected String getTimeFormat(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_TIME_FORMAT);
+      return getString(result, FAMILY_DATA, QUALIFIER_TIME_FORMAT);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_TIME_FORMAT);
+          FAMILY_DATA, QUALIFIER_TIME_FORMAT);
       return getString(cells, timestamp);
     }
   }
 
   protected String getDateFormat(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DATE_FORMAT);
+      return getString(result, FAMILY_DATA, QUALIFIER_DATE_FORMAT);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DATE_FORMAT);
+          FAMILY_DATA, QUALIFIER_DATE_FORMAT);
       return getString(cells, timestamp);
     }
   }
 
   protected String getDateTimeFormat(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DATE_TIME_FORMAT);
+      return getString(result, FAMILY_DATA, QUALIFIER_DATE_TIME_FORMAT);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DATE_TIME_FORMAT);
+          FAMILY_DATA, QUALIFIER_DATE_TIME_FORMAT);
       return getString(cells, timestamp);
     }
   }
@@ -260,12 +301,10 @@ public abstract class HBaseAbstractMapper<T> {
   protected String getType(Result result, long timestamp) {
 
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_TYPE);
+      return getString(result, FAMILY_DATA, QUALIFIER_TYPE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_TYPE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_TYPE);
       return getString(cells, timestamp);
     }
   }
@@ -273,252 +312,219 @@ public abstract class HBaseAbstractMapper<T> {
   protected String getQuestionType(Result result, long timestamp) {
 
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_QUESTION_TYPE);
+      return getString(result, FAMILY_DATA, QUALIFIER_QUESTION_TYPE);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_QUESTION_TYPE);
+          FAMILY_DATA, QUALIFIER_QUESTION_TYPE);
       return getString(cells, timestamp);
     }
   }
 
   protected String getIpAddress(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_IP_ADDRESS);
+      return getString(result, FAMILY_DATA, QUALIFIER_IP_ADDRESS);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_IP_ADDRESS);
+          FAMILY_DATA, QUALIFIER_IP_ADDRESS);
       return getString(cells, timestamp);
     }
   }
 
   protected String getSessionId(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_SESSION_ID);
+      return getString(result, FAMILY_DATA, QUALIFIER_SESSION_ID);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_SESSION_ID);
+          FAMILY_DATA, QUALIFIER_SESSION_ID);
       return getString(cells, timestamp);
     }
   }
 
   protected int getFails(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getInteger(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_FAILS);
+      return getInteger(result, FAMILY_DATA, QUALIFIER_FAILS);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_FAILS);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_FAILS);
       return getInteger(cells, timestamp);
     }
   }
 
   protected String getTitle(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_TITLE);
+      return getString(result, FAMILY_DATA, QUALIFIER_TITLE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_TITLE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_TITLE);
       return getString(cells, timestamp);
     }
   }
 
   protected String getDescription(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DESCRIPTION);
+      return getString(result, FAMILY_DATA, QUALIFIER_DESCRIPTION);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DESCRIPTION);
+          FAMILY_DATA, QUALIFIER_DESCRIPTION);
       return getString(cells, timestamp);
     }
   }
 
   protected String getInstructions(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_INSTRUCTIONS);
+      return getString(result, FAMILY_DATA, QUALIFIER_INSTRUCTIONS);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_INSTRUCTIONS);
+          FAMILY_DATA, QUALIFIER_INSTRUCTIONS);
       return getString(cells, timestamp);
     }
   }
 
   protected String getBody(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_BODY);
+      return getString(result, FAMILY_DATA, QUALIFIER_BODY);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_BODY);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_BODY);
       return getString(cells, timestamp);
     }
   }
 
   protected String getHint(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_HINT);
+      return getString(result, FAMILY_DATA, QUALIFIER_HINT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_HINT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_HINT);
       return getString(cells, timestamp);
     }
   }
 
   protected String getExplanation(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_EXPLANATION);
+      return getString(result, FAMILY_DATA, QUALIFIER_EXPLANATION);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_EXPLANATION);
+          FAMILY_DATA, QUALIFIER_EXPLANATION);
       return getString(cells, timestamp);
     }
   }
 
   protected String getFeedback(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_FEEDBACK);
+      return getString(result, FAMILY_DATA, QUALIFIER_FEEDBACK);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_FEEDBACK);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_FEEDBACK);
       return getString(cells, timestamp);
     }
   }
 
   protected String getContent(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_CONTENT);
+      return getString(result, FAMILY_DATA, QUALIFIER_CONTENT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_CONTENT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_CONTENT);
       return getString(cells, timestamp);
     }
   }
 
   protected LocalDateTime getDateTime(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getLocalDateTime(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DATE_TIME);
+      return getLocalDateTime(result, FAMILY_DATA, QUALIFIER_DATE_TIME);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DATE_TIME);
+          FAMILY_DATA, QUALIFIER_DATE_TIME);
       return getLocalDateTime(cells, timestamp);
     }
   }
 
   protected long getTimestamp(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getLong(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_TIMESTAMP);
+      return getLong(result, FAMILY_DATA, QUALIFIER_TIMESTAMP);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_TIMESTAMP);
+          FAMILY_DATA, QUALIFIER_TIMESTAMP);
       return getLong(cells, timestamp);
     }
   }
 
   protected boolean getCorrect(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getBoolean(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_CORRECT);
+      return getBoolean(result, FAMILY_DATA, QUALIFIER_CORRECT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_CORRECT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_CORRECT);
       return getBoolean(cells, timestamp);
     }
   }
 
   protected long getScore(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getLong(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_SCORE);
+      return getLong(result, FAMILY_DATA, QUALIFIER_SCORE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_SCORE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_SCORE);
       return getLong(cells, timestamp);
     }
   }
 
   protected int getOrder(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getInteger(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ORDER);
+      return getInteger(result, FAMILY_DATA, QUALIFIER_ORDER);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ORDER);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_ORDER);
       return getInteger(cells, timestamp);
     }
   }
 
   protected long getSize(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getLong(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_SIZE);
+      return getLong(result, FAMILY_DATA, QUALIFIER_SIZE);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_SIZE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_SIZE);
       return getLong(cells, timestamp);
     }
   }
 
   protected boolean getDirectory(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getBoolean(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_DIRECTORY);
+      return getBoolean(result, FAMILY_DATA, QUALIFIER_DIRECTORY);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_DIRECTORY);
+          FAMILY_DATA, QUALIFIER_DIRECTORY);
       return getBoolean(cells, timestamp);
     }
   }
 
   protected EntityType getEntityType(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_TYPE, EntityType.class);
+      return getEnum(result, FAMILY_DATA, QUALIFIER_TYPE, EntityType.class);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_TYPE);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_TYPE);
       return getEnum(cells, timestamp, EntityType.class);
     }
   }
 
   protected ActionType getActionType(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ACTION, ActionType.class);
+      return getEnum(result, FAMILY_DATA, QUALIFIER_ACTION, ActionType.class);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ACTION);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_ACTION);
       return getEnum(cells, timestamp, ActionType.class);
     }
   }
@@ -527,24 +533,20 @@ public abstract class HBaseAbstractMapper<T> {
       Result result, long timestamp, Class<T> type) {
 
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_STATUS, type);
+      return getEnum(result, FAMILY_DATA, QUALIFIER_STATUS, type);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_STATUS);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_STATUS);
       return getEnum(cells, timestamp, type);
     }
   }
 
   protected String getParent(Result result, long timestamp) {
     if (timestamp == 0) {
-      return getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_PARENT);
+      return getString(result, FAMILY_DATA, QUALIFIER_PARENT);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_PARENT);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_PARENT);
       return getString(cells, timestamp);
     }
   }
@@ -589,7 +591,7 @@ public abstract class HBaseAbstractMapper<T> {
 
     String datetime = getString(result, family, qualifier);
     return (StringUtils.isEmpty(datetime)) ? LocalDateTime.MIN
-        : DateTimeUtils.toLocalDateTime(datetime, Constants.FORMAT_DATE_TIME);
+        : DateTimeUtils.toLocalDateTime(datetime, FORMAT_DATE_TIME);
   }
 
   protected Optional<Cell> getCellByTimestamp(
@@ -635,11 +637,11 @@ public abstract class HBaseAbstractMapper<T> {
   protected LocalDateTime getLocalDateTime(List<Cell> cells, long timestamp) {
     String datetime = getString(cells, timestamp);
     return (StringUtils.isEmpty(datetime)) ? LocalDateTime.MIN
-        : DateTimeUtils.toLocalDateTime(datetime, Constants.FORMAT_DATE_TIME);
+        : DateTimeUtils.toLocalDateTime(datetime, FORMAT_DATE_TIME);
   }
 
   protected Predicate<Result> isMainResult() {
-    return p -> !Bytes.toString(p.getRow()).contains(Constants.SEPARATOR);
+    return p -> !Bytes.toString(p.getRow()).contains(SEPARATOR);
   }
 
   protected Predicate<Result> isChildResult(String prefix) {
@@ -649,63 +651,75 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected Predicate<Result> isSchoolResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SCHOOL);
+    return isChildResult(prefix + SEPARATOR_SCHOOL);
   }
 
   protected Predicate<Result> isSubscribedByResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SUBSCRIBED_BY);
+    return isChildResult(prefix + SEPARATOR_SUBSCRIBED_BY);
   }
 
   protected Predicate<Result> isCreatedByResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_CREATED_BY);
+    return isChildResult(prefix + SEPARATOR_CREATED_BY);
   }
 
   protected Predicate<Result> isModifiedByResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_MODIFIED_BY);
+    return isChildResult(prefix + SEPARATOR_MODIFIED_BY);
   }
 
   protected Predicate<Result> isSharedByResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SHARED_BY);
+    return isChildResult(prefix + SEPARATOR_SHARED_BY);
   }
 
   protected Predicate<Result> isLevelResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_LEVEL);
+    return isChildResult(prefix + SEPARATOR_LEVEL);
   }
 
   protected Predicate<Result> isSubjectResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_SUBJECT);
+    return isChildResult(prefix + SEPARATOR_SUBJECT);
   }
 
   protected Predicate<Result> isGroupResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_GROUP);
+    return isChildResult(prefix + SEPARATOR_GROUP);
   }
 
   protected Predicate<Result> isMemberResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_MEMBER);
+    return isChildResult(prefix + SEPARATOR_MEMBER);
   }
 
   protected Predicate<Result> isLessonResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_LESSON);
+    return isChildResult(prefix + SEPARATOR_LESSON);
   }
 
   protected Predicate<Result> isQuizResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_QUIZ);
+    return isChildResult(prefix + SEPARATOR_QUIZ);
   }
 
   protected Predicate<Result> isComponentResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_COMPONENT);
+    return isChildResult(prefix + SEPARATOR_COMPONENT);
   }
 
   protected Predicate<Result> isOptionResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_OPTION);
+    return isChildResult(prefix + SEPARATOR_OPTION);
   }
 
   protected Predicate<Result> isParentResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_PARENT);
+    return isChildResult(prefix + SEPARATOR_PARENT);
   }
 
   protected Predicate<Result> isEntryResult(String prefix) {
-    return isChildResult(prefix + Constants.SEPARATOR_ENTRY);
+    return isChildResult(prefix + SEPARATOR_ENTRY);
+  }
+
+  public String getParentId(Result result) {
+    return getId(result, SEPARATOR_PARENT);
+  }
+
+  public String getChildId(Result result) {
+    String rowKey = Bytes.toString(result.getRow());
+    String regex = String.format(PATTERN_SUFFIXED_ID, SEPARATOR_PARENT);
+    Pattern pattern = Pattern.compile(regex);
+    Matcher matcher = pattern.matcher(rowKey);
+    return matcher.find() ? matcher.group(1) : "";
   }
 
   protected String getId(Result result, String separator) {
@@ -717,7 +731,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected School getSchool(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_SCHOOL);
+    String id = getId(result, SEPARATOR_SCHOOL);
     String name = getName(result, timestamp);
     return new School.Builder(id, name).build();
   }
@@ -730,27 +744,26 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected User getSubscribedBy(Result result, long timestamp) {
-    return getUser(result, Constants.SEPARATOR_SUBSCRIBED_BY, timestamp);
+    return getUser(result, SEPARATOR_SUBSCRIBED_BY, timestamp);
   }
 
   protected User getCreatedBy(Result result, long timestamp) {
-    return getUser(result, Constants.SEPARATOR_CREATED_BY, timestamp);
+    return getUser(result, SEPARATOR_CREATED_BY, timestamp);
   }
 
   protected User getModifiedBy(Result result, long timestamp) {
-    return getUser(result, Constants.SEPARATOR_MODIFIED_BY, timestamp);
+    return getUser(result, SEPARATOR_MODIFIED_BY, timestamp);
   }
 
   protected List<String> getPermissions(Result result, long timestamp) {
     String value;
 
     if (timestamp == 0) {
-      value = getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_PERMISSIONS);
+      value = getString(result, FAMILY_DATA, QUALIFIER_PERMISSIONS);
 
     } else {
       List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_PERMISSIONS);
+          FAMILY_DATA, QUALIFIER_PERMISSIONS);
       value = getString(cells, timestamp);
     }
 
@@ -766,12 +779,10 @@ public abstract class HBaseAbstractMapper<T> {
       Result result, long timestamp) {
 
     if (timestamp == 0) {
-      return getEnum(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_ACTION, Permission.class);
+      return getEnum(result, FAMILY_DATA, QUALIFIER_ACTION, Permission.class);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_ACTION);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_ACTION);
       return getEnum(cells, timestamp, Permission.class);
     }
   }
@@ -790,7 +801,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected Level getLevel(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_LEVEL);
+    String id = getId(result, SEPARATOR_LEVEL);
     String name = getName(result, timestamp);
     return new Level.Builder(id, name).build();
   }
@@ -809,7 +820,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected Subject getSubject(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_SUBJECT);
+    String id = getId(result, SEPARATOR_SUBJECT);
     String name = getName(result, timestamp);
     return new Subject.Builder(id, name).build();
   }
@@ -828,7 +839,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected Group getGroup(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_GROUP);
+    String id = getId(result, SEPARATOR_GROUP);
     String name = getName(result, timestamp);
     return new Group.Builder(id, name).build();
   }
@@ -839,7 +850,7 @@ public abstract class HBaseAbstractMapper<T> {
     List<User> users = new ArrayList<>();
     results.stream().filter(isMemberResult(prefix))
         .forEach(result -> {
-          User user = getUser(result, Constants.SEPARATOR_MEMBER, timestamp);
+          User user = getUser(result, SEPARATOR_MEMBER, timestamp);
           users.add(user);
         });
 
@@ -850,12 +861,10 @@ public abstract class HBaseAbstractMapper<T> {
     String value;
 
     if (timestamp == 0) {
-      value = getString(result, Constants.FAMILY_DATA,
-          Constants.QUALIFIER_KEYWORDS);
+      value = getString(result, FAMILY_DATA, QUALIFIER_KEYWORDS);
 
     } else {
-      List<Cell> cells = result.getColumnCells(
-          Constants.FAMILY_DATA, Constants.QUALIFIER_KEYWORDS);
+      List<Cell> cells = result.getColumnCells(FAMILY_DATA, QUALIFIER_KEYWORDS);
       value = getString(cells, timestamp);
     }
 
@@ -872,8 +881,8 @@ public abstract class HBaseAbstractMapper<T> {
 
     String questionType = getQuestionType(mainResult, timestamp);
     String rowKey = Bytes.toString(mainResult.getRow());
-    String id = rowKey.contains(Constants.SEPARATOR_COMPONENT)
-        ? getId(mainResult, Constants.SEPARATOR_COMPONENT) : rowKey;
+    String id = rowKey.contains(SEPARATOR_COMPONENT)
+        ? getId(mainResult, SEPARATOR_COMPONENT) : rowKey;
     Question question = getQuestion(mainResult, results, timestamp);
     long score = getScore(mainResult, timestamp);
     int order = getOrder(mainResult, timestamp);
@@ -977,7 +986,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected ChoiceOption getQuestionOption(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_OPTION);
+    String id = getId(result, SEPARATOR_OPTION);
     String body = getBody(result, timestamp);
     String feedback = getFeedback(result, timestamp);
     boolean correct = getCorrect(result, timestamp);
@@ -993,7 +1002,7 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected PermissionSet getPermissionSet(Result result, long timestamp) {
-    String id = getId(result, Constants.SEPARATOR_ENTRY);
+    String id = getId(result, SEPARATOR_ENTRY);
     String firstName = getFirstName(result, timestamp);
     String lastName = getLastName(result, timestamp);
 
@@ -1003,93 +1012,79 @@ public abstract class HBaseAbstractMapper<T> {
   }
 
   protected void addFirstNameColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_FIRST_NAME,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_FIRST_NAME, Bytes.toBytes(value));
   }
 
   protected void addLastNameColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_LAST_NAME,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_LAST_NAME, Bytes.toBytes(value));
   }
 
   protected void addDateTimeColumn(Put put, LocalDateTime value) {
-    String datetime = DateTimeUtils.toString(value, Constants.FORMAT_DATE_TIME);
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_DATE_TIME,
-        Bytes.toBytes(datetime));
+    String datetime = DateTimeUtils.toString(value, FORMAT_DATE_TIME);
+    put.addColumn(FAMILY_DATA, QUALIFIER_DATE_TIME, Bytes.toBytes(datetime));
   }
 
   protected void addEntityTypeColumn(Put put, EntityType value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_TYPE,
-        Bytes.toBytes(value.toString()));
+    put.addColumn(FAMILY_DATA, QUALIFIER_TYPE, Bytes.toBytes(value.toString()));
   }
 
   protected void addSessionIdColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_SESSION_ID,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_SESSION_ID, Bytes.toBytes(value));
   }
 
   protected void addIpAddressColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_IP_ADDRESS,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_IP_ADDRESS, Bytes.toBytes(value));
   }
 
   protected void addFailsColumn(Put put, int value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_FAILS,
-        Bytes.toBytes(Integer.toString(value)));
+    String integer = Integer.toString(value);
+    put.addColumn(FAMILY_DATA, QUALIFIER_FAILS, Bytes.toBytes(integer));
   }
 
   protected void addTypeColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_BODY,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_BODY, Bytes.toBytes(value));
   }
 
   protected void addBodyColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_BODY,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_BODY, Bytes.toBytes(value));
   }
 
   protected void addHintColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_HINT,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_HINT, Bytes.toBytes(value));
   }
 
   protected void addExplanationColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_EXPLANATION,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_EXPLANATION, Bytes.toBytes(value));
   }
 
   protected void addFeedbackColumn(Put put, String value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_FEEDBACK,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_FEEDBACK, Bytes.toBytes(value));
   }
 
   protected void addCorrectColumn(Put put, boolean value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_CORRECT,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_CORRECT, Bytes.toBytes(value));
   }
 
   protected void addOrderColumn(Put put, int value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_ORDER,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_ORDER, Bytes.toBytes(value));
   }
 
   protected void addScoreColumn(Put put, long value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_SCORE,
+    put.addColumn(FAMILY_DATA, QUALIFIER_SCORE,
         Bytes.toBytes(value));
   }
 
   protected void addTimestampColumn(Put put, long value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_TIMESTAMP,
-        Bytes.toBytes(value));
+    put.addColumn(FAMILY_DATA, QUALIFIER_TIMESTAMP, Bytes.toBytes(value));
   }
 
   protected void addActionTypeColumn(Put put, ActionType value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_ACTION,
+    put.addColumn(FAMILY_DATA, QUALIFIER_ACTION,
         Bytes.toBytes(value.toString()));
   }
 
   protected <T extends Enum<T>> void addStatusColumn(Put put, T value) {
-    put.addColumn(Constants.FAMILY_DATA, Constants.QUALIFIER_STATUS,
+    put.addColumn(FAMILY_DATA, QUALIFIER_STATUS,
         Bytes.toBytes(value.toString()));
   }
 
@@ -1098,7 +1093,7 @@ public abstract class HBaseAbstractMapper<T> {
 
     Auditable auditable = (Auditable) entity;
     String rowKey = String.format(FORMAT_ROW_KEY, entity.getId(),
-        Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
+        SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Put put = getUserPut(auditable.getCreatedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getCreatedDateTime());
     puts.add(put);
@@ -1118,7 +1113,7 @@ public abstract class HBaseAbstractMapper<T> {
 
     Auditable auditable = (Auditable) entity;
     String rowKey = String.format(FORMAT_ROW_KEY, entity.getId(),
-        Constants.SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
+        SEPARATOR_MODIFIED_BY, auditable.getModifiedBy().getId());
     Put put = getUserPut(auditable.getModifiedBy(), rowKey, timestamp);
     addDateTimeColumn(put, auditable.getModifiedDateTime());
     puts.add(put);
@@ -1141,7 +1136,7 @@ public abstract class HBaseAbstractMapper<T> {
       String prefix, long timestamp) {
 
     String rowKey = String.format(FORMAT_ROW_KEY, prefix,
-        Constants.SEPARATOR_COMPONENT, component.getId());
+        SEPARATOR_COMPONENT, component.getId());
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addTypeColumn(put, component.getClass().getSimpleName());
     addOrderColumn(put, component.getOrder());
@@ -1200,7 +1195,7 @@ public abstract class HBaseAbstractMapper<T> {
       String prefix, long timestamp) {
 
     String rowKey = String.format(FORMAT_ROW_KEY, prefix,
-        Constants.SEPARATOR_OPTION, option.getId());
+        SEPARATOR_OPTION, option.getId());
     Put put = new Put(Bytes.toBytes(rowKey), timestamp);
     addBodyColumn(put, option.getBody());
     addFeedbackColumn(put, option.getFeedback());
@@ -1213,7 +1208,7 @@ public abstract class HBaseAbstractMapper<T> {
       ChoiceOption option, String prefix, long timestamp) {
 
     String rowKey = String.format(FORMAT_ROW_KEY, prefix,
-        Constants.SEPARATOR_OPTION, option.getId());
+        SEPARATOR_OPTION, option.getId());
     return new Delete(Bytes.toBytes(rowKey), timestamp);
   }
 
@@ -1222,7 +1217,7 @@ public abstract class HBaseAbstractMapper<T> {
 
     Auditable auditable = (Auditable) entity;
     String rowKey = String.format(FORMAT_ROW_KEY, entity.getId(),
-        Constants.SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
+        SEPARATOR_CREATED_BY, auditable.getCreatedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }
@@ -1232,7 +1227,7 @@ public abstract class HBaseAbstractMapper<T> {
 
     Auditable auditable = (Auditable) entity;
     String rowKey = String.format(FORMAT_ROW_KEY, entity.getId(),
-        Constants.SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
+        SEPARATOR_CREATED_BY, auditable.getModifiedBy().getId());
     Delete delete = new Delete(Bytes.toBytes(rowKey), timestamp);
     deletes.add(delete);
   }

@@ -1,6 +1,5 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.Level;
 import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
@@ -25,12 +24,6 @@ import java.util.Optional;
  * Created by naungsoe on 14/12/16.
  */
 public class HBaseFileMapper extends HBaseAbstractMapper<FileResource> {
-
-  public String getChildId(Result result) {
-    String rowKey = Bytes.toString(result.getRow());
-    int endIndex = rowKey.indexOf(Constants.SEPARATOR);
-    return rowKey.substring(0, endIndex);
-  }
 
   public List<FileResource> getEntities(
       List<Result> results, List<Mutation> mutations) {
@@ -65,10 +58,10 @@ public class HBaseFileMapper extends HBaseAbstractMapper<FileResource> {
     String id = Bytes.toString(mainResult.getRow());
     FileObject file = getFileObject(mainResult, timestamp);
 
-    Result parentFileResult = results.stream()
+    Result fileResult = results.stream()
         .filter(isParentResult(id)).findFirst().get();
-    String parentId = getId(parentFileResult, Constants.SEPARATOR_PARENT);
-    FileObject parentFileObject = getFileObject(parentFileResult, timestamp);
+    String parentId = getParentId(fileResult);
+    FileObject parentFileObject = getFileObject(fileResult, timestamp);
     FileResource parentFile = new FileResource.Builder(
           parentId, parentFileObject, null).build();
 

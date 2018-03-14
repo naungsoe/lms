@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-solr-6.2.1/bin/solr delete -c lms_schools
-solr-6.2.1/bin/solr create -c lms_schools
+solr-6.2.1/bin/solr delete -c lms.schools
+solr-6.2.1/bin/solr create -c lms.schools
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"locale","type":"string","indexed":false,"stored":true},
@@ -14,11 +14,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":false,"stored":true}
-}' http://localhost:8983/solr/lms_schools/schema
+}' http://localhost:8983/solr/lms.schools/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_levels
-solr-6.2.1/bin/solr create -c lms_levels
+solr-6.2.1/bin/solr delete -c lms.levels
+solr-6.2.1/bin/solr create -c lms.levels
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -31,11 +31,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_levels/schema
+}' http://localhost:8983/solr/lms.levels/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_subjects
-solr-6.2.1/bin/solr create -c lms_subjects
+solr-6.2.1/bin/solr delete -c lms.subjects
+solr-6.2.1/bin/solr create -c lms.subjects
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"firstName","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -48,11 +48,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_subjects/schema
+}' http://localhost:8983/solr/lms.subjects/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_groups
-solr-6.2.1/bin/solr create -c lms_groups
+solr-6.2.1/bin/solr delete -c lms.groups
+solr-6.2.1/bin/solr create -c lms.groups
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"permissions","type":"strings","indexed":false,"stored":true},
@@ -66,11 +66,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_groups/schema
+}' http://localhost:8983/solr/lms.groups/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_users
-solr-6.2.1/bin/solr create -c lms_users
+solr-6.2.1/bin/solr delete -c lms.users
+solr-6.2.1/bin/solr create -c lms.users
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"account","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"password","type":"string","indexed":false,"stored":true},
@@ -95,11 +95,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_users/schema
+}' http://localhost:8983/solr/lms.users/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_subscriptions
-solr-6.2.1/bin/solr create -c lms_subscriptions
+solr-6.2.1/bin/solr delete -c lms.subscriptions
+solr-6.2.1/bin/solr create -c lms.subscriptions
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"description","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -111,11 +111,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_subscriptions/schema
+}' http://localhost:8983/solr/lms.subscriptions/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_courses
-solr-6.2.1/bin/solr create -c lms_courses
+solr-6.2.1/bin/solr delete -c lms.courses
+solr-6.2.1/bin/solr create -c lms.courses
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"description","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -132,11 +132,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_courses/schema
+}' http://localhost:8983/solr/lms.courses/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_lessons
-solr-6.2.1/bin/solr create -c lms_lessons
+solr-6.2.1/bin/solr delete -c lms.lessons
+solr-6.2.1/bin/solr create -c lms.lessons
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"description","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -153,11 +153,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_lessons/schema
+}' http://localhost:8983/solr/lms.lessons/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_quizzes
-solr-6.2.1/bin/solr create -c lms_quizzes
+solr-6.2.1/bin/solr delete -c lms.quizzes
+solr-6.2.1/bin/solr create -c lms.quizzes
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"description","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -174,11 +174,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_quizzes/schema
+}' http://localhost:8983/solr/lms.quizzes/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_components
-solr-6.2.1/bin/solr create -c lms_components
+solr-6.2.1/bin/solr delete -c lms.components
+solr-6.2.1/bin/solr create -c lms.components
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"containerId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"title","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -201,11 +201,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"resourceId","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_components/schema
+}' http://localhost:8983/solr/lms.components/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_questions
-solr-6.2.1/bin/solr create -c lms_questions
+solr-6.2.1/bin/solr delete -c lms.questions
+solr-6.2.1/bin/solr create -c lms.questions
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"type","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"body","type":"text_general","indexed":true,"stored":true,"multiValued":false},
@@ -228,11 +228,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_questions/schema
+}' http://localhost:8983/solr/lms.questions/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_files
-solr-6.2.1/bin/solr create -c lms_files
+solr-6.2.1/bin/solr delete -c lms.files
+solr-6.2.1/bin/solr create -c lms.files
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"name","type":"text_general","indexed":true,"stored":true,"multiValued":false},
   "add-field":{"name":"size","type":"int","indexed":false,"stored":true},
@@ -247,11 +247,11 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"fieldTypeName","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"entityId","type":"string","indexed":false,"stored":true},
   "add-field":{"name":"parentId","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_files/schema
+}' http://localhost:8983/solr/lms.files/schema
 
 
-solr-6.2.1/bin/solr delete -c lms_signinlogs
-solr-6.2.1/bin/solr create -c lms_signinlogs
+solr-6.2.1/bin/solr delete -c lms.signinlogs
+solr-6.2.1/bin/solr create -c lms.signinlogs
 curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"account","type":"string","indexed":true,"stored":true},
   "add-field":{"name":"sessionId","type":"string","indexed":true,"stored":true},
@@ -259,4 +259,4 @@ curl -X POST -H 'Content-type:application/json' --data-binary '{
   "add-field":{"name":"dateTime","type":"date","indexed":true,"stored":true},
   "add-field":{"name":"fails","type":"int","indexed":true,"stored":true},
   "add-field":{"name":"typeName","type":"string","indexed":true,"stored":true}
-}' http://localhost:8983/solr/lms_signinlogs/schema
+}' http://localhost:8983/solr/lms.signinlogs/schema

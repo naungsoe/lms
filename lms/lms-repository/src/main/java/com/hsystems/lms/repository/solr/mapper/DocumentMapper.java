@@ -6,7 +6,6 @@ import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.common.util.ReflectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.SchoolScoped;
 
 import org.apache.solr.common.SolrInputDocument;
@@ -21,6 +20,9 @@ import java.util.List;
  * Created by naungsoe on 4/11/16.
  */
 public class DocumentMapper {
+
+  private static final String FORMAT_FIELD_ID = "%s_%s";
+  private static final String FORMAT_FIELD_NAME = "%s.%s";
 
   private static DocumentMapper instance;
 
@@ -158,7 +160,7 @@ public class DocumentMapper {
     String fieldName = (fieldValue == null) ? "" : fieldValue.toString();
 
     if (StringUtils.isNotEmpty(parentFieldName)) {
-      fieldName = String.format(Constants.FORMAT_FIELD_NAME,
+      fieldName = String.format(FORMAT_FIELD_NAME,
           parentFieldName, fieldName);
       document.setField(Constants.MEMBER_FIELD_NAME, fieldName);
     }
@@ -217,7 +219,7 @@ public class DocumentMapper {
       String entityId = document.getFieldValue(Constants.FIELD_ID).toString();
       document.setField(Constants.FIELD_ENTITY_ID, entityId);
 
-      String id = String.format(Constants.FORMAT_FIELD_ID, parentId, entityId);
+      String id = String.format(FORMAT_FIELD_ID, parentId, entityId);
       document.setField(Constants.FIELD_ID, id);
     }
 

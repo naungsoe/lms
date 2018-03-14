@@ -1,13 +1,16 @@
 package com.hsystems.lms.service.mapper;
 
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.repository.Constants;
 import com.hsystems.lms.repository.entity.User;
 
 /**
  * Created by naungsoe on 4/11/16.
  */
 public class Configuration {
+
+  public static final String FORMAT_TIME = "HH:mm:ss.SSS";
+  public static final String FORMAT_DATE = "yyyy-MM-dd";
+  public static final String FORMAT_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   private final String timeFormat;
 
@@ -27,9 +30,9 @@ public class Configuration {
 
   public static Configuration create() {
     return new Configuration(
-        Constants.FORMAT_TIME,
-        Constants.FORMAT_DATE,
-        Constants.FORMAT_DATE_TIME
+        FORMAT_TIME,
+        FORMAT_DATE,
+        FORMAT_DATE_TIME
     );
   }
 

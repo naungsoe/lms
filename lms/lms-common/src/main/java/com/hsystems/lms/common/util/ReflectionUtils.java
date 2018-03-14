@@ -89,7 +89,7 @@ public final class ReflectionUtils {
   public static Optional<Constructor> getParamLessConstructor(Class type) {
     Constructor[] constructors = type.getDeclaredConstructors();
     return Arrays.asList(constructors).stream()
-        .filter(isParameterlessConstructor()).findAny();
+        .filter(isParameterlessConstructor()).findFirst();
   }
 
   private static Predicate<Constructor> isParameterlessConstructor() {
