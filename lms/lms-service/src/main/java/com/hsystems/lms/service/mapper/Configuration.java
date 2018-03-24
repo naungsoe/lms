@@ -8,9 +8,9 @@ import com.hsystems.lms.repository.entity.User;
  */
 public class Configuration {
 
-  public static final String FORMAT_TIME = "HH:mm:ss.SSS";
-  public static final String FORMAT_DATE = "yyyy-MM-dd";
-  public static final String FORMAT_DATE_TIME = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+  public static final String TIME_FORMAT = "HH:mm:ss.SSS";
+  public static final String DATE_FORMAT = "yyyy-MM-dd";
+  public static final String DATE_TIME_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS";
 
   private final String timeFormat;
 
@@ -30,9 +30,9 @@ public class Configuration {
 
   public static Configuration create() {
     return new Configuration(
-        FORMAT_TIME,
-        FORMAT_DATE,
-        FORMAT_DATE_TIME
+        TIME_FORMAT,
+        DATE_FORMAT,
+        DATE_TIME_FORMAT
     );
   }
 

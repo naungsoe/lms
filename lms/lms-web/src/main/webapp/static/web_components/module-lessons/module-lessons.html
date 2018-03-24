@@ -6,7 +6,6 @@
 <link rel="import" href="../../web_components/app-component-styles.html">
 <link rel="import" href="../../web_components/module-lessons/page-lessons.html">
 <link rel="import" href="../../web_components/module-lessons/page-lesson-edit.html">
-<link rel="import" href="../../web_components/module-lessons/page-lesson-preview.html">
 
 <dom-module id="module-lessons">
   <template>
@@ -54,16 +53,6 @@
           language="[[language]]"
           resources="[[resources]]">
       </page-lesson-edit>
-
-      <page-lesson-preview
-          name="preview"
-          rest-url="[[restUrl]]"
-          root-url="[[rootUrl]]"
-          user="[[user]]"
-          lesson-id="[[routeData.id]]"
-          language="[[language]]"
-          resources="[[resources]]">
-      </page-lesson-preview>
     </iron-pages>
   </template>
 
@@ -127,11 +116,6 @@
             type: String,
             readOnly: false,
             notify: true
-          },
-          error: {
-            type: String,
-            readOnly: false,
-            notify: true
           }
         };
       }
@@ -152,9 +136,6 @@
       _updatePage(routeData, subRouteData) {
         if (routeData.id === undefined) {
           this.page = 'lessons';
-
-        } else if (subRouteData.mode === 'preview') {
-          this.page = 'preview';
 
         } else {
           this.page = 'edit';

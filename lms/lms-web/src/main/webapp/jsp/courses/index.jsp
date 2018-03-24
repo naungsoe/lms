@@ -125,7 +125,6 @@
               user="[[user]]"
               filter-options="[[filterOptions]]"
               query="[[query]]"
-              error="[[error]]"
               language="[[language]]"
               resources="[[resources]]">
           </module-courses>

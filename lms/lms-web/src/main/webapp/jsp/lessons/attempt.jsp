@@ -9,13 +9,19 @@
   <script src="<c:url value="/static/bower_components/webcomponentsjs/webcomponents-lite.js"/>"></script>
   <link rel="stylesheet" href="<c:url value="/static/web_components/normalize.css"/>">
   <link rel="import" href="<c:url value="/static/bower_components/polymer/polymer.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/app-layout/app-header/app-header.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/app-layout/app-toolbar/app-toolbar.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/app-layout/app-drawer/app-drawer.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/app-layout/app-scroll-effects/app-scroll-effects.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/app-localize-behavior/app-localize-behavior.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/iron-ajax/iron-ajax.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/iron-icons/iron-icons.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/iron-flex-layout/iron-flex-layout.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-styles/default-theme.html"/>">
   <link rel="import" href="<c:url value="/static/bower_components/paper-styles/typography.html"/>">
+  <link rel="import" href="<c:url value="/static/bower_components/paper-icon-button/paper-icon-button.html"/>">
   <link rel="import" href="<c:url value="/static/web_components/app-component-styles.html"/>">
-  <link rel="import" href="<c:url value="/static/web_components/module-lessons/module-lessons.html"/>">
+  <link rel="import" href="<c:url value="/static/web_components/module-lessons/page-lesson-attempt.html"/>">
   <title>
     <c:out value="${titlePage}"/>
   </title>
@@ -27,10 +33,6 @@
         :host {
           @apply --paper-font-body1;
           @apply --layout-vertical;
-          @apply --layout-center;
-          @apply --layout-center-justified;
-          background-color: var(--secondary-background-color);
-          min-height: 100vh;
         }
       </style>
 
@@ -43,33 +45,36 @@
           last-response="{{resources}}">
       </iron-ajax>
 
-      <template is="dom-if" if="[[resources]]">
-        <app-signin
-            captcha-url="[[captchaUrl]]"
-            captcha-required$="[[captchaRequired]]"
-            account-help-url="[[accountHelpUrl]]"
-            action-url="[[actionUrl]]"
-            account="[[account]]"
-            error="[[error]]"
-            language="[[language]]"
-            resources="[[resources]]">
-        </app-signin>
-      </template>
+      <iron-ajax auto
+          url="[[userUrl]]"
+          method="GET"
+          handle-as="json"
+          content-type="application/json"
+          loading="{{loading}}"
+          last-response="{{user}}">
+      </iron-ajax>
 
-      <br/>
+      <iron-ajax
+          name="get"
+          url="[[lessonUrl]]"
+          method="GET"
+          handle-as="json"
+          content-type="application/json"
+          loading="{{loading}}"
+          last-response="{{lesson}}">
+      </iron-ajax>
 
-      <paper-button on-tap="_handleSignUp">
-        [[localize('buttonSignUp')]]
-      </paper-button>
-    </template>
-
+      <page-lesson-attempt
+        user="[[user]]"
+        lesson="[[lesson]]"
+        language="[[language]]"
+        resources="[[resources]]">
+      </page-lesson-attempt>
     <script>
       HTMLImports.whenReady(function() {
-        const localesUrl = '<c:url value="/webapi/locales/attempt"/>';
+        const localesUrl = '<c:url value="/webapi/locales/lessons"/>';
         const userUrl = '<c:url value="/webapi/users/${userId}"/>';
-        const restUrl = '<c:url value="/webapi/attempt"/>';
-        const rootUrl = '<c:url value="/web/attempt"/>';
-        const contextRoot = '<c:url value="/web"/>';
+        const lessonUrl = '<c:url value="/webapi/lessons/${lessonId}"/>';
         const language = '<c:out value="${locale}"/>';
         const error = '<c:out value="${error}"/>';
         const MainElementBase = Polymer.mixinBehaviors(
@@ -94,23 +99,11 @@
                 notify: true,
                 value: userUrl
               },
-              restUrl: {
+              lessonUrl: {
                 type: String,
                 readOnly: true,
                 notify: true,
                 value: restUrl
-              },
-              rootUrl: {
-                type: String,
-                readOnly: true,
-                notify: true,
-                value: rootUrl
-              },
-              contextRoot: {
-                type: String,
-                readOnly: true,
-                notify: true,
-                value: contextRoot
               },
               language: {
                 type: String,
@@ -123,6 +116,21 @@
                 readOnly: true,
                 notify: true,
                 value: error
+              },
+              user: {
+                type: Object,
+                readOnly: false,
+                notify: true
+              },
+              lesson: {
+                type: Object,
+                readOnly: false,
+                notify: true
+              },
+              loading: {
+                type: String,
+                readOnly: false,
+                notify: true
               }
             }
           }

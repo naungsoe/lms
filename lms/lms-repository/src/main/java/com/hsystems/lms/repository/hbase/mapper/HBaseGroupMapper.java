@@ -2,12 +2,9 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -23,55 +20,44 @@ import java.util.Optional;
 public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
 
   @Override
-  public List<Group> getEntities (
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<Group> getEntities (List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
     List<Group> groups = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<Group> groupOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<Group> groupOptional
-            = getEntity(result, results, timestamp);
-
-        if (groupOptional.isPresent()) {
-          groups.add(groupOptional.get());
-        }
+      if (groupOptional.isPresent()) {
+        groups.add(groupOptional.get());
       }
     });
+
     return groups;
   }
 
-  public Optional<Group> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
-
+  public Optional<Group> getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
-    String name = getName(mainResult, timestamp);
-    List<User> members = getMembers(results, id, timestamp);
-    List<String> permissions = getPermissions(mainResult, timestamp);
+    String name = getName(mainResult);
+    List<User> members = getMembers(results, id);
+    List<String> permissions = getPermissions(mainResult);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
+    School school = getSchool(schoolResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
     Group group = new Group.Builder(id, name)
         .members(members)
@@ -89,16 +75,6 @@ public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
   public Optional<Group> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(Group entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(Group entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

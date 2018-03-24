@@ -82,7 +82,6 @@
 
         <app-signup
             date-pattern="[[datePattern]]"
-            error="[[error]]"
             language="[[language]]"
             resources="[[resources]]">
         </app-signup>

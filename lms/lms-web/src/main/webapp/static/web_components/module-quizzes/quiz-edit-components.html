@@ -111,7 +111,7 @@
     </iron-ajax>
 
     <div class="component-actions">
-      <paper-button on-tap="_handleAddSectionTap">
+      <paper-button on-tap="_handleAddSectionTapTop">
         <iron-icon icon="add"></iron-icon>
         [[localize('buttonAddSection')]]
       </paper-button>
@@ -370,6 +370,26 @@
         }
       }
 
+      _handleAddSectionTapTop(event) {
+        this.quiz.components.forEach(function(component, compIndex) {
+          component.order = component.order + 1;
+        });
+        this._addEmptySection(0, 1);
+      }
+
+      _addEmptySection(index, order) {
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.quiz.components.splice(index, 0, component);
+        this.notifySplices('quiz.components');
+      }
+
       _handleAddSectionTap(event) {
         let root = this.shadowRoot;
         let template = root.querySelector('dom-repeat[name=section]');
@@ -382,16 +402,7 @@
         });
 
         let order = section.order + 1;
-        let component = {
-          id: '',
-          title: '',
-          instructions: '',
-          order: order,
-          components: []
-        };
-        this.editingComponent = component;
-        this.quiz.components.splice((index + 1), 0, component);
-        this.notifySplices('quiz.components');
+        this._addEmptySection((index + 1), order);
       }
 
       _handleMenuSelect(event) {

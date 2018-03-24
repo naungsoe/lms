@@ -4,20 +4,16 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.FileRepository;
-import com.hsystems.lms.repository.MutationRepository;
-import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.file.FileResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseFileMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -33,36 +29,25 @@ public class HBaseFileRepository extends HBaseAbstractRepository
 
   private final HBaseFileMapper fileMapper;
 
-  private final MutationRepository mutationRepository;
-
   @Inject
   HBaseFileRepository(
       HBaseClient client,
-      HBaseFileMapper fileMapper,
-      MutationRepository mutationRepository) {
+      HBaseFileMapper fileMapper) {
 
     this.client = client;
     this.fileMapper = fileMapper;
-    this.mutationRepository = mutationRepository;
   }
 
   @Override
   public Optional<FileResource> findBy(String id)
       throws IOException {
 
-    Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.FILE);
-
-    if (!mutationOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Mutation mutation = mutationOptional.get();
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(mutation.getTimestamp());
+    scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, FileResource.class);
+    TableName tableName = getTableName(FileResource.class);
+    List<Result> results = client.scan(scan, tableName);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
@@ -76,24 +61,16 @@ public class HBaseFileRepository extends HBaseAbstractRepository
       String schoolId, String lastId, int limit)
     throws IOException {
 
-    List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, lastId, limit, EntityType.FILE);
-
-    if (CollectionUtils.isEmpty(mutations)) {
-      return Collections.emptyList();
-    }
-
-    Mutation startMutation = mutations.get(0);
-    Mutation stopMutation = mutations.get(mutations.size() - 1);
-    String startRowKey = startMutation.getId();
-    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    String startRowKey = getExclusiveStartRowKey(lastId);
     Scan scan = getRowKeyFilterScan(schoolId);
     scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setStopRow(Bytes.toBytes(stopRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
 
-    List<Result> results = client.scan(scan, Level.class);
-    return fileMapper.getEntities(results, mutations);
+    TableName tableName = getTableName(FileResource.class);
+    List<Result> results = client.scan(scan, tableName);
+
+    return fileMapper.getEntities(results);
   }
 
   @Override
@@ -103,26 +80,20 @@ public class HBaseFileRepository extends HBaseAbstractRepository
     Scan scan = getRowKeyFilterScan(schoolId, parentId);
     scan.setStartRow(Bytes.toBytes(schoolId));
 
-    List<Result> results = client.scan(scan, FileResource.class);
+    TableName tableName = getTableName(FileResource.class);
+    List<Result> results = client.scan(scan, tableName);
     Set<String> rowKeys = new HashSet<>(results.size());
     results.forEach(result -> {
       String rowKey = fileMapper.getChildId(result);
       rowKeys.add(rowKey);
     });
 
-    List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, rowKeys, EntityType.FILE);
-
-    if (CollectionUtils.isEmpty(mutations)) {
-      return Collections.emptyList();
-    }
-
     scan = getRowKeysFilterScan(rowKeys);
     scan.setStartRow(Bytes.toBytes(schoolId));
     scan.setMaxVersions(MAX_VERSIONS);
 
-    results = client.scan(scan, FileResource.class);
-    return fileMapper.getEntities(results, mutations);
+    results = client.scan(scan, tableName);
+    return fileMapper.getEntities(results);
   }
 
   @Override

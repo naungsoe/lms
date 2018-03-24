@@ -4,20 +4,16 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.GroupRepository;
-import com.hsystems.lms.repository.MutationRepository;
-import com.hsystems.lms.repository.entity.EntityType;
 import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.repository.entity.Mutation;
-import com.hsystems.lms.repository.entity.question.QuestionResource;
 import com.hsystems.lms.repository.hbase.mapper.HBaseGroupMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,42 +27,25 @@ public class HBaseGroupRepository extends HBaseAbstractRepository
 
   private final HBaseGroupMapper groupMapper;
 
-  private final MutationRepository mutationRepository;
-
   @Inject
   HBaseGroupRepository(
       HBaseClient client,
-      HBaseGroupMapper groupMapper,
-      MutationRepository mutationRepository) {
+      HBaseGroupMapper groupMapper) {
 
     this.client = client;
     this.groupMapper = groupMapper;
-    this.mutationRepository = mutationRepository;
   }
 
   @Override
   public Optional<Group> findBy(String id)
       throws IOException {
 
-    Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.GROUP);
-
-    if (!mutationOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Mutation mutation = mutationOptional.get();
-    return findBy(id, mutation.getTimestamp());
-  }
-
-  private Optional<Group> findBy(String id, long timestamp)
-      throws IOException {
-
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(timestamp);
+    scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, QuestionResource.class);
+    TableName tableName = getTableName(Group.class);
+    List<Result> results = client.scan(scan, tableName);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
@@ -80,23 +59,15 @@ public class HBaseGroupRepository extends HBaseAbstractRepository
       String schoolId, String lastId, int limit)
       throws IOException {
 
-    List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, lastId, limit, EntityType.GROUP);
-
-    if (CollectionUtils.isEmpty(mutations)) {
-      return Collections.emptyList();
-    }
-
-    Mutation startMutation = mutations.get(0);
-    Mutation stopMutation = mutations.get(mutations.size() - 1);
-    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    String startRowKey = getExclusiveStartRowKey(lastId);
     Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
-    scan.setStopRow(Bytes.toBytes(stopRowKey));
+    scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
 
-    List<Result> results = client.scan(scan, Group.class);
-    return groupMapper.getEntities(results, mutations);
+    TableName tableName = getTableName(Group.class);
+    List<Result> results = client.scan(scan, tableName);
+    return groupMapper.getEntities(results);
   }
 
   @Override

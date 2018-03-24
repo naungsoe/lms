@@ -8,6 +8,7 @@ import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseShareLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -41,7 +42,9 @@ public class HBaseShareLogRepository extends HBaseAbstractRepository
 
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    List<Result> results = client.scan(scan, ShareLog.class);
+
+    TableName tableName = getTableName(ShareLog.class);
+    List<Result> results = client.scan(scan, tableName);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();

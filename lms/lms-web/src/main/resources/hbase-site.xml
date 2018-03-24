@@ -27,7 +27,7 @@
   </property>
   <property>
     <name>hbase.rootdir</name>
-    <value>hdfs://hsystems.com:9000/hbase</value>
+    <value>hdfs://hsystems.com:8020/hbase</value>
   </property>
   <property>
     <name>hbase.zookeeper.quorum</name>

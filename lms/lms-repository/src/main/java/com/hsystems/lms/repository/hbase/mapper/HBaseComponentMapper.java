@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.Component;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.course.TopicComponent;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
@@ -15,8 +14,6 @@ import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.repository.entity.special.UnknownComponent;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -34,9 +31,7 @@ import java.util.Optional;
 public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
 
   @Override
-  public List<Component> getEntities (
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<Component> getEntities (List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
@@ -44,31 +39,23 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     List<Component> rootComponents = new ArrayList<>();
     Map<String, List<Component>> childComponents = new HashMap<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<Component> componentOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<Component> componentOptional
-            = getEntity(result, results, timestamp);
+      if (componentOptional.isPresent()) {
+        Component component = componentOptional.get();
+        String parentId = getParent(result);
 
-        if (componentOptional.isPresent()) {
-          Component component = componentOptional.get();
-          String parentId = getParent(result, timestamp);
+        if (StringUtils.isNotEmpty(parentId)) {
+          if (childComponents.containsKey(parentId)) {
+            childComponents.get(parentId).add(component);
 
-          if (StringUtils.isNotEmpty(parentId)) {
-            if (childComponents.containsKey(parentId)) {
-              childComponents.get(parentId).add(component);
-
-            } else {
-              List<Component> components = new ArrayList<>(
-                  Arrays.asList(component));
-              childComponents.put(parentId, components);
-            }
           } else {
-            rootComponents.add(component);
+            List<Component> components = new ArrayList<>(
+                Arrays.asList(component));
+            childComponents.put(parentId, components);
           }
+        } else {
+          rootComponents.add(component);
         }
       }
     });
@@ -78,35 +65,35 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
   }
 
   protected Optional<Component> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
-    String componentType = getType(mainResult, timestamp);
+    String componentType = getType(mainResult);
     Component component;
 
     switch (componentType) {
       case "TopicComponent":
-        component = getTopicComponent(mainResult, timestamp);
+        component = getTopicComponent(mainResult);
         break;
       case "LessonComponent":
-        component = getLessonComponent(mainResult, timestamp);
+        component = getLessonComponent(mainResult);
         break;
       case "QuizComponent":
-        component = getQuizComponent(mainResult, timestamp);
+        component = getQuizComponent(mainResult);
         break;
       case "ActivityComponent":
-        component = getActivityComponent(mainResult, timestamp);
+        component = getActivityComponent(mainResult);
         break;
       case "SectionComponent":
-        component = getSectionComponent(mainResult, timestamp);
+        component = getSectionComponent(mainResult);
         break;
       case "QuestionComponent":
-        component = getQuestionComponent(mainResult, results, timestamp);
+        component = getQuestionComponent(mainResult, results);
         break;
       case "FileComponent":
-        component = getFileComponent(mainResult, results, timestamp);
+        component = getFileComponent(mainResult, results);
         break;
       case "ContentComponent":
-        component = getContentComponent(mainResult, results, timestamp);
+        component = getContentComponent(mainResult, results);
         break;
       default:
         component = new UnknownComponent();
@@ -116,13 +103,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     return Optional.of(component);
   }
 
-  protected TopicComponent getTopicComponent(
-      Result mainResult, long timestamp) {
-
+  protected TopicComponent getTopicComponent(Result mainResult) {
     String id = Bytes.toString(mainResult.getRow());
-    String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
+    String title = getTitle(mainResult);
+    String instructions = getInstructions(mainResult);
+    int order = getOrder(mainResult);
     List<Component> components = Collections.emptyList();
 
     return new TopicComponent(
@@ -134,13 +119,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected LessonComponent getLessonComponent(
-      Result mainResult, long timestamp) {
-
+  protected LessonComponent getLessonComponent(Result mainResult) {
     String id = Bytes.toString(mainResult.getRow());
-    Lesson lesson = getLesson(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
-    String resourceId = getResourceId(mainResult, timestamp);
+    Lesson lesson = getLesson(mainResult);
+    int order = getOrder(mainResult);
+    String resourceId = getResourceId(mainResult);
 
     return new LessonComponent(
         id,
@@ -150,9 +133,9 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected Lesson getLesson(Result mainResult, long timestamp) {
-    String title = getTitle(mainResult, timestamp);
-    String description = getDescription(mainResult, timestamp);
+  protected Lesson getLesson(Result mainResult) {
+    String title = getTitle(mainResult);
+    String description = getDescription(mainResult);
 
     return new Lesson(
         title,
@@ -161,13 +144,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected QuizComponent getQuizComponent(
-      Result mainResult, long timestamp) {
-
+  protected QuizComponent getQuizComponent(Result mainResult) {
     String id = Bytes.toString(mainResult.getRow());
-    Quiz quiz = getQuiz(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
-    String resourceId = getResourceId(mainResult, timestamp);
+    Quiz quiz = getQuiz(mainResult);
+    int order = getOrder(mainResult);
+    String resourceId = getResourceId(mainResult);
 
     return new QuizComponent(
         id,
@@ -177,9 +158,9 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected Quiz getQuiz(Result mainResult, long timestamp) {
-    String title = getTitle(mainResult, timestamp);
-    String description = getDescription(mainResult, timestamp);
+  protected Quiz getQuiz(Result mainResult) {
+    String title = getTitle(mainResult);
+    String description = getDescription(mainResult);
 
     return new Quiz(
         title,
@@ -188,13 +169,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected ActivityComponent getActivityComponent(
-      Result mainResult, long timestamp) {
-
+  protected ActivityComponent getActivityComponent(Result mainResult) {
     String id = Bytes.toString(mainResult.getRow());
-    String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
+    String title = getTitle(mainResult);
+    String instructions = getInstructions(mainResult);
+    int order = getOrder(mainResult);
     List<Component> components = Collections.emptyList();
 
     return new ActivityComponent(
@@ -206,13 +185,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
     );
   }
 
-  protected SectionComponent getSectionComponent(
-      Result mainResult, long timestamp) {
-
+  protected SectionComponent getSectionComponent(Result mainResult) {
     String id = Bytes.toString(mainResult.getRow());
-    String title = getTitle(mainResult, timestamp);
-    String instructions = getInstructions(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
+    String title = getTitle(mainResult);
+    String instructions = getInstructions(mainResult);
+    int order = getOrder(mainResult);
     List<Component> components = Collections.emptyList();
 
     return new SectionComponent(
@@ -225,10 +202,10 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
   }
 
   protected FileComponent getFileComponent(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    int order = getOrder(mainResult, timestamp);
+    int order = getOrder(mainResult);
 
     return new FileComponent(
         id,
@@ -238,11 +215,11 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
   }
 
   protected ContentComponent getContentComponent(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    String content = getContent(mainResult, timestamp);
-    int order = getOrder(mainResult, timestamp);
+    String content = getContent(mainResult);
+    int order = getOrder(mainResult);
 
     return new ContentComponent(
         id,
@@ -293,16 +270,6 @@ public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
   public Optional<Component> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(Component entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(Component entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

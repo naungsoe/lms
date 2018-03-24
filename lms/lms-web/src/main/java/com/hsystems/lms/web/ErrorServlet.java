@@ -16,10 +16,9 @@ public class ErrorServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -1943733219860896344L;
 
-  private static final String JSP_PATH = "/jsp/error/index.jsp";
+  private static final String INDEX_PATH = "/jsp/error/index.jsp";
 
   private static final String REQUEST_URI = "javax.servlet.error.request_uri";
-
   private static final String EXCEPTION = "javax.servlet.error.exception";
 
   private final static Logger logger = LogManager.getRootLogger();
@@ -32,7 +31,7 @@ public class ErrorServlet extends AbstractServlet {
       throws ServletException, IOException {
 
     logException(request);
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   private void logException(HttpServletRequest request) {
@@ -47,6 +46,6 @@ public class ErrorServlet extends AbstractServlet {
       throws ServletException, IOException {
 
     logException(request);
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 }

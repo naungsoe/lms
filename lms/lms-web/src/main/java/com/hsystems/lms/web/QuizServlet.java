@@ -20,7 +20,7 @@ public class QuizServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -2688969562391339613L;
 
-  private static final String JSP_PATH = "/jsp/quizzes/index.jsp";
+  private static final String INDEX_PATH = "/jsp/quizzes/index.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -39,7 +39,7 @@ public class QuizServlet extends AbstractServlet {
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "quizzes");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

@@ -48,7 +48,7 @@ create_namespace 'lms'
 
 
 
-create 'lms:permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:permissions', 'VIEW_HOME', 'd:name', 'View Home'
 put 'lms:permissions', 'VIEW_COURSES', 'd:name', 'View Courses'
 put 'lms:permissions', 'EDIT_COURSE', 'd:name', 'Edit Course'
@@ -67,7 +67,7 @@ put 'lms:permissions', 'EDIT_SCHOOL', 'd:name', 'Edit School'
 
 
 
-create 'lms:schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:schools', 'c784ae9', 'd:name', 'Default School'
 put 'lms:schools', 'c784ae9', 'd:locale', 'en_US'
 put 'lms:schools', 'c784ae9', 'd:permissions', 'VIEW_HOME|VIEW_COURSES|EDIT_COURSE|VIEW_QUESTIONS|EDIT_QUESTION|VIEW_USERS|EDIT_USER|VIEW_GROUPS|EDIT_GROUP'
@@ -77,7 +77,7 @@ put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime',
 
 
 
-create 'lms:levels', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:levels', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:levels', 'c784ae9', 'd:name', 'Default School Levels'
 
 put 'lms:levels', 'c784ae9d9d0d1dc1bea4a36b8e8e160b0fb812e', 'd:name', 'Grade 1'
@@ -148,7 +148,7 @@ put 'lms:levels', 'c784ae9bd792c08def042699fb526c1dbf5daf5_cre_4ed235b781c696af3
 
 
 
-create 'lms:subjects', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:subjects', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:subjects', 'c784ae9', 'd:name', 'Default School Subjects'
 
 put 'lms:subjects', 'c784ae9c1f395f921164de49607c029133b3a5b', 'd:name', 'Myanmar'
@@ -207,7 +207,7 @@ put 'lms:subjects', 'c784ae9aac30a9c93eb403fb8696140760618bc_cre_4ed235b781c696a
 
 
 
-create 'lms:groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:groups', 'c784ae9', 'd:name', 'Default School Groups'
 
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators'
@@ -239,7 +239,7 @@ put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af3
 
 
 
-create 'lms:users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:users', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:users', 'c784ae9', 'd:name', 'Default School Users'
 
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin'
@@ -285,8 +285,10 @@ put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36
 
 
 
-create 'lms:subscriptions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:subscriptions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:subscriptions', 'c784ae9', 'd:name', 'Default School Subscriptions'
+
+put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:name', 'User Subscriptions'
 
 put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:id', 'c784ae9eeffa8fc892743509e28840711961b2a'
 put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391', 'd:title', 'Addition within 10'
@@ -297,7 +299,7 @@ put 'lms:subscriptions', 'c784ae925e575b83b9bf8d50768d4e486c32bed1480299712391_s
 
 
 
-create 'lms:courses', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:courses', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:courses', 'c784ae9', 'd:name', 'Default School Courses'
 
 put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:title', 'Addition within 10'
@@ -316,7 +318,7 @@ put 'lms:courses', 'c784ae9eeffa8fc892743509e28840711961b2a_mod_c784ae925e575b83
 
 
 
-create 'lms:lessons', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:lessons', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:lessons', 'c784ae9', 'd:name', 'Default School Lessons'
 
 put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:title', 'Addition within 10'
@@ -335,7 +337,7 @@ put 'lms:lessons', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18_mod_c784ae925e575b83
 
 
 
-create 'lms:quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:quizzes', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:quizzes', 'c784ae9', 'd:name', 'Default School Questions'
 
 put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:title', 'Additions within 10'
@@ -354,8 +356,10 @@ put 'lms:quizzes', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78_mod_c784ae925e575b83
 
 
 
-create 'lms:components', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:components', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:components', 'c784ae9', 'd:name', 'Default School Components'
+
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a', 'd:name', 'Resource Components'
 
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:type', 'TopicComponent'
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110', 'd:title', 'Topic 1'
@@ -370,11 +374,13 @@ put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715260', 'd:parent', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110'
 
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:type', 'QuizComponent'
-put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:resid', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18'
+put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:resid', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78'
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:title', 'Addition within 10'
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:description', 'One of the four basic operations of arithmetic, with the others being subtraction, multiplication and division.'
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:order', '2'
 put 'lms:components', 'c784ae9eeffa8fc892743509e28840711961b2a1480299716420', 'd:parent', 'c784ae9eeffa8fc892743509e28840711961b2a1480299715110'
+
+put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae18', 'd:name', 'Resource Components'
 
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:type', 'ActivityComponent'
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712550', 'd:title', 'Activity 1'
@@ -420,6 +426,8 @@ put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712950', 'd
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712950', 'd:order', '1'
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712950', 'd:parent', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712810'
 put 'lms:components', 'c784ae9bcfe05faf70bebe91a0b42bd424eae181480299712950', 'd:content', 'Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor. Aenean massa. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.'
+
+put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:name', 'Resource Components'
 
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:type', 'SectionComponent'
 put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712110', 'd:title', 'Section A'
@@ -478,7 +486,7 @@ put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_
 
 
 
-create 'lms:questions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:questions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:questions', 'c784ae9', 'd:name', 'Default School Questions'
 
 put 'lms:questions', 'c784ae91efe773c7c5f41de68effd1ce03e6d7e', 'd:type', 'MultipleChoice'
@@ -608,7 +616,7 @@ put 'lms:questions', 'c784ae9603233f623f202ee3a136ee2478ed46a_mod_c784ae925e575b
 
 
 
-create 'lms:files', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:files', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:files', 'c784ae9', 'd:name', 'Default School Lessons'
 
 put 'lms:files', 'c784ae90c14e4bd65634886a53d3d6ed2763fb9', 'd:name', 'Addition'
@@ -646,7 +654,7 @@ put 'lms:files', 'c784ae93d08b4d06a084238a1a357ac9a34078f_cre_c784ae925e575b83b9
 
 
 
-create 'lms:signinlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:signinlogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:signinlogs', 'c784ae9', 'd:name', 'Default School Users'
 
 put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:session', 'c1bf10cdc70ed3529f8'
@@ -656,7 +664,7 @@ put 'lms:signinlogs', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fails', '3'
 
 
 
-create 'lms:sharelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
+create 'lms:sharelogs', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION => 'LZ4', KEEP_DELETED_CELLS => true}
 put 'lms:sharelogs', 'c784ae9', 'd:name', 'Default School Shares'
 
 put 'lms:sharelogs', 'c784ae9ecfe05faf70bebe91a0b42bd424eae78', 'd:id', '4ed235b781c696af36fee50e805569a8'

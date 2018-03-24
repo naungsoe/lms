@@ -3,20 +3,17 @@ package com.hsystems.lms.repository.hbase;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.hbase.mapper.HBaseUserMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,42 +27,25 @@ public class HBaseUserRepository extends HBaseAbstractRepository
 
   private final HBaseUserMapper userMapper;
 
-  private final MutationRepository mutationRepository;
-
   @Inject
   HBaseUserRepository(
       HBaseClient client,
-      HBaseUserMapper userMapper,
-      MutationRepository mutationRepository) {
+      HBaseUserMapper userMapper) {
 
     this.client = client;
     this.userMapper = userMapper;
-    this.mutationRepository = mutationRepository;
   }
 
   @Override
   public Optional<User> findBy(String id)
       throws IOException {
 
-    Optional<Mutation> mutationOptional
-        = mutationRepository.findBy(id, EntityType.USER);
-
-    if (!mutationOptional.isPresent()) {
-      return Optional.empty();
-    }
-
-    Mutation mutation = mutationOptional.get();
-    return findBy(id, mutation.getTimestamp());
-  }
-
-  private Optional<User> findBy(String id, long timestamp)
-      throws IOException {
-
     Scan scan = getRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setTimeStamp(timestamp);
+    scan.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = client.scan(scan, User.class);
+    TableName tableName = getTableName(User.class);
+    List<Result> results = client.scan(scan, tableName);
 
     if (CollectionUtils.isEmpty(results)) {
       return Optional.empty();
@@ -79,23 +59,15 @@ public class HBaseUserRepository extends HBaseAbstractRepository
       String schoolId, String lastId, int limit)
       throws IOException {
 
-    List<Mutation> mutations = mutationRepository.findAllBy(
-        schoolId, lastId, limit, EntityType.USER);
-
-    if (CollectionUtils.isEmpty(mutations)) {
-      return Collections.emptyList();
-    }
-
-    Mutation startMutation = mutations.get(0);
-    Mutation stopMutation = mutations.get(mutations.size() - 1);
-    String stopRowKey = getInclusiveStopRowKey(stopMutation.getId());
+    String startRowKey = getExclusiveStartRowKey(lastId);
     Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startMutation.getId()));
-    scan.setStopRow(Bytes.toBytes(stopRowKey));
+    scan.setStartRow(Bytes.toBytes(startRowKey));
     scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
 
-    List<Result> results = client.scan(scan, User.class);
-    return userMapper.getEntities(results, mutations);
+    TableName tableName = getTableName(User.class);
+    List<Result> results = client.scan(scan, tableName);
+    return userMapper.getEntities(results);
   }
 
   @Override

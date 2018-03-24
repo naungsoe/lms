@@ -111,7 +111,7 @@
     </iron-ajax>
 
     <div class="component-actions">
-      <paper-button on-tap="_handleAddTopicTap">
+      <paper-button on-tap="_handleAddTopicTapTop">
         <iron-icon icon="add"></iron-icon>
         [[localize('buttonAddTopic')]]
       </paper-button>
@@ -372,6 +372,26 @@
         }
       }
 
+      _handleAddTopicTapTop(event) {
+        this.course.components.forEach(function(component, compIndex) {
+          component.order = component.order + 1;
+        });
+        this._addEmptyTopic(0, 1);
+      }
+
+      _addEmptyTopic(index, order) {
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.course.components.splice(index, 0, component);
+        this.notifySplices('course.components');
+      }
+
       _handleAddTopicTap(event) {
         let root = this.shadowRoot;
         let template = root.querySelector('dom-repeat[name=topic]');
@@ -384,16 +404,7 @@
         });
 
         let order = topic.order + 1;
-        let component = {
-          id: '',
-          title: '',
-          instructions: '',
-          order: order,
-          components: []
-        };
-        this.editingComponent = component;
-        this.course.components.splice((index + 1), 0, component);
-        this.notifySplices('course.components');
+        this._addEmptyTopic((index + 1), order);
       }
     }
     customElements.define(CourseEditComponents.is, CourseEditComponents);

@@ -2,14 +2,13 @@ package com.hsystems.lms.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.entity.SignInLog;
 import com.hsystems.lms.repository.hbase.mapper.HBaseSignInLogMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Get;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -41,27 +40,26 @@ public class HBaseSignInLogRepository extends HBaseAbstractRepository
   public Optional<SignInLog> findBy(String id)
       throws IOException {
 
+    TableName tableName = getTableName(SignInLog.class);
     Get get = new Get(Bytes.toBytes(id));
-    Result result = client.get(get, SignInLog.class);
+    Result result = client.get(get, tableName);
 
     if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    return logMapper.getEntity(Arrays.asList(result));
+    List<Result> results = Arrays.asList(result);
+    return logMapper.getEntity(results);
   }
 
   @Override
-  public void save(SignInLog signInLog)
+  public void save(SignInLog entity)
       throws IOException {
 
-    long timestamp = DateTimeUtils.getCurrentMilliseconds();
-    List<Put> puts = logMapper.getPuts(signInLog, timestamp);
-    client.put(puts, SignInLog.class);
   }
 
   @Override
-  public void delete(SignInLog signInLog)
+  public void delete(SignInLog entity)
       throws IOException {
 
   }

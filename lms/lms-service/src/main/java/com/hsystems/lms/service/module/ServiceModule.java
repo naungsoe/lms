@@ -3,7 +3,6 @@ package com.hsystems.lms.service.module;
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
 
-import com.hsystems.lms.repository.AuditLogRepository;
 import com.hsystems.lms.repository.ComponentRepository;
 import com.hsystems.lms.repository.CourseRepository;
 import com.hsystems.lms.repository.FileRepository;
@@ -11,7 +10,6 @@ import com.hsystems.lms.repository.GroupRepository;
 import com.hsystems.lms.repository.IndexRepository;
 import com.hsystems.lms.repository.LessonRepository;
 import com.hsystems.lms.repository.LevelRepository;
-import com.hsystems.lms.repository.MutationRepository;
 import com.hsystems.lms.repository.QuestionRepository;
 import com.hsystems.lms.repository.QuizRepository;
 import com.hsystems.lms.repository.SchoolRepository;
@@ -20,14 +18,12 @@ import com.hsystems.lms.repository.SignInLogRepository;
 import com.hsystems.lms.repository.SubjectRepository;
 import com.hsystems.lms.repository.SubscriptionRepository;
 import com.hsystems.lms.repository.UserRepository;
-import com.hsystems.lms.repository.hbase.HBaseAuditLogRepository;
 import com.hsystems.lms.repository.hbase.HBaseComponentRepository;
 import com.hsystems.lms.repository.hbase.HBaseCourseRepository;
 import com.hsystems.lms.repository.hbase.HBaseFileRepository;
 import com.hsystems.lms.repository.hbase.HBaseGroupRepository;
 import com.hsystems.lms.repository.hbase.HBaseLessonRepository;
 import com.hsystems.lms.repository.hbase.HBaseLevelRepository;
-import com.hsystems.lms.repository.hbase.HBaseMutationRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuestionRepository;
 import com.hsystems.lms.repository.hbase.HBaseQuizRepository;
 import com.hsystems.lms.repository.hbase.HBaseSchoolRepository;
@@ -41,7 +37,6 @@ import com.hsystems.lms.repository.hbase.provider.HBaseClientProvider;
 import com.hsystems.lms.repository.solr.SolrIndexRepository;
 import com.hsystems.lms.repository.solr.provider.SolrClient;
 import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
-import com.hsystems.lms.service.AttemptService;
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.CourseService;
@@ -62,10 +57,6 @@ public class ServiceModule extends AbstractModule {
   @Override
   protected void configure() {
     bind(HBaseClient.class).toProvider(HBaseClientProvider.class)
-        .in(Singleton.class);
-    bind(MutationRepository.class).to(HBaseMutationRepository.class)
-        .in(Singleton.class);
-    bind(AuditLogRepository.class).to(HBaseAuditLogRepository.class)
         .in(Singleton.class);
     bind(ShareLogRepository.class).to(HBaseShareLogRepository.class)
         .in(Singleton.class);

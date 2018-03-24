@@ -19,7 +19,7 @@ public class GroupServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 6798862299671410033L;
 
-  private static final String JSP_PATH = "/jsp/groups/index.jsp";
+  private static final String INDEX_PATH = "/jsp/groups/index.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -37,7 +37,7 @@ public class GroupServlet extends AbstractServlet {
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "groups");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

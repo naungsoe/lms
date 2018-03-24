@@ -113,7 +113,7 @@
     </iron-ajax>
 
     <div class="component-actions">
-      <paper-button on-tap="_handleAddActivityTap">
+      <paper-button on-tap="_handleAddActivityTapTop">
         <iron-icon icon="add"></iron-icon>
         [[localize('buttonAddActivity')]]
       </paper-button>
@@ -398,6 +398,26 @@
         }
       }
 
+      _handleAddActivityTapTop(event) {
+        this.lesson.components.forEach(function(component, compIndex) {
+          component.order = component.order + 1;
+        });
+        this._addEmptyActivity(0, 1);
+      }
+
+      _addEmptyActivity(index, order) {
+        let component = {
+          id: '',
+          title: '',
+          instructions: '',
+          order: order,
+          components: []
+        };
+        this.editingComponent = component;
+        this.lesson.components.splice(index, 0, component);
+        this.notifySplices('lesson.components');
+      }
+
       _handleAddActivityTap(event) {
         let root = this.shadowRoot;
         let template = root.querySelector('dom-repeat[name=activity]');
@@ -410,16 +430,7 @@
         });
 
         let order = activity.order + 1;
-        let component = {
-          id: '',
-          title: '',
-          instructions: '',
-          order: order,
-          components: []
-        };
-        this.editingComponent = component;
-        this.lesson.components.splice((index + 1), 0, component);
-        this.notifySplices('lesson.components');
+        this._addEmptyActivity((index + 1), order);
       }
 
       _handleMenuSelect(event) {

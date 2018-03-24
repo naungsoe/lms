@@ -1,8 +1,5 @@
 package com.hsystems.lms.repository.hbase.provider;
 
-import com.hsystems.lms.common.annotation.IndexDocument;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.HBaseConfiguration;
 import org.apache.hadoop.hbase.TableName;
@@ -36,19 +33,19 @@ public class HBaseClient {
     configuration = HBaseConfiguration.create();
   }
 
-  public <T> List<Result> get(List<Get> gets, Class<T> type)
+  public List<Result> get(List<Get> gets, TableName tableName)
       throws IOException {
 
-    Table table = getTable(getTableName(type));
+    Table table = getTable(tableName);
     Result[] results = table.get(gets);
     table.close();
     return Arrays.asList(results);
   }
 
-  public <T> Result get(Get get, Class<T> type)
+  public Result get(Get get, TableName tableName)
       throws IOException {
 
-    Table table = getTable(getTableName(type));
+    Table table = getTable(tableName);
     Result result = table.get(get);
     table.close();
     return result;
@@ -79,20 +76,10 @@ public class HBaseClient {
     return getConnection().getTable(tableName);
   }
 
-  private <T> TableName getTableName(Class<T> type) {
-    IndexDocument annotation = type.getAnnotation(IndexDocument.class);
-    String namespace = annotation.namespace();
-    String collection = StringUtils.isEmpty(annotation.collection())
-        ? type.getSimpleName() : annotation.collection();
-    String tableName = StringUtils.isEmpty(namespace)
-        ? collection : String.format("%s:%s", namespace, collection);
-    return TableName.valueOf(tableName);
-  }
-
-  public <T> List<Result> scan(Scan scan, Class<T> type)
+  public List<Result> scan(Scan scan, TableName tableName)
       throws IOException {
 
-    Table table = getTable(getTableName(type));
+    Table table = getTable(tableName);
     ResultScanner scanner = table.getScanner(scan);
     Iterator<Result> iterator = scanner.iterator();
 
@@ -111,30 +98,30 @@ public class HBaseClient {
     return results;
   }
 
-  public <T> void put(Put put, Class<T> type)
+  public void put(Put put, TableName tableNam)
       throws IOException {
 
-    put(Arrays.asList(put), type);
+    put(Arrays.asList(put), tableNam);
   }
 
-  public <T> void put(List<Put> puts, Class<T> type)
+  public void put(List<Put> puts, TableName tableName)
       throws IOException {
 
-    Table table = getTable(getTableName(type));
+    Table table = getTable(tableName);
     table.put(puts);
     table.close();
   }
 
-  public <T> void delete(Delete delete, Class<T> type)
+  public void delete(Delete delete, TableName tableName)
       throws IOException {
 
-    delete(Arrays.asList(delete), type);
+    delete(Arrays.asList(delete), tableName);
   }
 
-  public <T> void delete(List<Delete> deletes, Class<T> type)
+  public void delete(List<Delete> deletes, TableName tableName)
       throws IOException {
 
-    Table table = getTable(getTableName(type));
+    Table table = getTable(tableName);
     table.delete(deletes);
     table.close();
   }

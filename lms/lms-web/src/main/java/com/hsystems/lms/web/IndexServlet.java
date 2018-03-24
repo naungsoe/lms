@@ -15,7 +15,7 @@ public class IndexServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 3995669475828674385L;
 
-  private static final String JSP_PATH = "/jsp/index/index.jsp";
+  private static final String INDEX_PATH = "/jsp/index/index.jsp";
 
   @Override
   @Requires(Permission.VIEW_HOME)
@@ -24,7 +24,7 @@ public class IndexServlet extends AbstractServlet {
       throws ServletException, IOException {
 
     //loadLocale(request, "index");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

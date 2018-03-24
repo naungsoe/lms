@@ -1,15 +1,12 @@
 package com.hsystems.lms.repository.hbase;
 
-import com.hsystems.lms.repository.entity.ActionType;
-import com.hsystems.lms.repository.entity.AuditLog;
-import com.hsystems.lms.repository.entity.Entity;
-import com.hsystems.lms.repository.entity.EntityType;
-import com.hsystems.lms.repository.entity.Mutation;
+import com.hsystems.lms.common.annotation.IndexDocument;
+import com.hsystems.lms.common.util.StringUtils;
 import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.Resource;
 import com.hsystems.lms.repository.entity.ShareLog;
-import com.hsystems.lms.repository.entity.User;
 
+import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -38,11 +35,21 @@ import java.util.Set;
  */
 public abstract class HBaseAbstractRepository {
 
-  private static final String FORMAT_SCAN_KEY = "^%s[A-Za-z0-9_]*%s$";
-  private static final String FORMAT_EXCLUSIVE_START_KEY = "%s0";
-  private static final String FORMAT_INCLUSIVE_STOP_KEY = "%s~";
+  private static final String SCAN_KEY_FORMAT = "^%s[A-Za-z0-9_]*%s$";
+  private static final String EXCLUSIVE_START_KEY_FORMAT = "%s0";
+  private static final String INCLUSIVE_STOP_KEY_FORMAT = "%s~";
 
-  protected static final int MAX_VERSIONS = 3;
+  protected static final int MAX_VERSIONS = 1;
+
+  protected  <T> TableName getTableName(Class<T> type) {
+    IndexDocument annotation = type.getAnnotation(IndexDocument.class);
+    String namespace = annotation.namespace();
+    String collection = StringUtils.isEmpty(annotation.collection())
+        ? type.getSimpleName() : annotation.collection();
+    String tableName = StringUtils.isEmpty(namespace)
+        ? collection : String.format("%s:%s", namespace, collection);
+    return TableName.valueOf(tableName);
+  }
 
   protected Scan getRowKeyFilterScan(String prefix)
       throws IOException {
@@ -53,7 +60,7 @@ public abstract class HBaseAbstractRepository {
   protected Scan getRowKeyFilterScan(String prefix, String suffix)
       throws IOException {
 
-    String keyRegex = String.format(FORMAT_SCAN_KEY, prefix, suffix);
+    String keyRegex = String.format(SCAN_KEY_FORMAT, prefix, suffix);
     RegexStringComparator comparator = new RegexStringComparator(keyRegex);
     RowFilter rowFilter = new RowFilter(
         CompareFilter.CompareOp.EQUAL, comparator);
@@ -73,7 +80,7 @@ public abstract class HBaseAbstractRepository {
       throws IOException {
 
     FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
-    String keyRegex = String.format(FORMAT_SCAN_KEY, prefix, suffix);
+    String keyRegex = String.format(SCAN_KEY_FORMAT, prefix, suffix);
     RegexStringComparator comparator = new RegexStringComparator(keyRegex);
     RowFilter rowFilter = new RowFilter(
         CompareFilter.CompareOp.EQUAL, comparator);
@@ -91,11 +98,11 @@ public abstract class HBaseAbstractRepository {
   }
 
   protected String getExclusiveStartRowKey(String startRowKey) {
-    return String.format(FORMAT_EXCLUSIVE_START_KEY, startRowKey);
+    return String.format(EXCLUSIVE_START_KEY_FORMAT, startRowKey);
   }
 
   protected String getInclusiveStopRowKey(String stopRowKey) {
-    return String.format(FORMAT_INCLUSIVE_STOP_KEY, stopRowKey);
+    return String.format(INCLUSIVE_STOP_KEY_FORMAT, stopRowKey);
   }
 
   protected Scan getColumnValueFilterScan(
@@ -140,22 +147,6 @@ public abstract class HBaseAbstractRepository {
     return scan;
   }
 
-  protected <T extends Entity> Mutation getMutation(
-      T entity, ActionType actionType, long timestamp) {
-
-    return new Mutation(
-        entity.getId(),
-        getEntityType(entity),
-        actionType,
-        timestamp
-    );
-  }
-
-  private <T extends Entity> EntityType getEntityType(T entity) {
-    String name = entity.getClass().getSimpleName();
-    return Enum.valueOf(EntityType.class, name);
-  }
-
   protected List<String> getResultRowKeys(List<Result> results) {
     List<String> rowKeys = new ArrayList<>();
     results.forEach(result -> {
@@ -172,18 +163,6 @@ public abstract class HBaseAbstractRepository {
       rowKeys.add(rowKey);
     });
     return rowKeys;
-  }
-
-  protected <T extends Entity> AuditLog getAuditLog(
-      T entity, User actionBy, ActionType actionType, long timestamp) {
-
-    return new AuditLog(
-        entity.getId(),
-        getEntityType(entity),
-        actionBy,
-        actionType,
-        timestamp
-    );
   }
 
   protected void populatePermissionSets(Resource resource, ShareLog shareLog) {

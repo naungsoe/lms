@@ -21,7 +21,7 @@ public abstract class Mapper {
 
   private static final String FIELD_TYPE = "type";
 
-  private static final String PATTERN_NAME_TOKEN = "([A-Za-z][a-z]+)";
+  private static final String NAME_TOKEN_PATTERN = "([A-Za-z][a-z]+)";
 
   public <T, S, U extends S> S map(
       T source, Class<S> type, Configuration configuration) {
@@ -122,7 +122,7 @@ public abstract class Mapper {
   }
 
   protected Queue<String> getNameTokens(String name) {
-    Pattern pattern = Pattern.compile(PATTERN_NAME_TOKEN);
+    Pattern pattern = Pattern.compile(NAME_TOKEN_PATTERN);
     Matcher matcher = pattern.matcher(name);
     Queue<String> tokens = new LinkedList<>();
 

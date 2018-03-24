@@ -3,15 +3,12 @@ package com.hsystems.lms.repository.hbase.mapper;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.quiz.Quiz;
 import com.hsystems.lms.repository.entity.quiz.QuizResource;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -27,62 +24,53 @@ import java.util.Optional;
 public class HBaseQuizMapper extends HBaseAbstractMapper<QuizResource> {
 
   @Override
-  public List<QuizResource> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<QuizResource> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       Collections.emptyList();
     }
 
-    List<QuizResource> quizResources = new ArrayList<>();
+    List<QuizResource> resources = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<QuizResource> resourceOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<QuizResource> quizResourceOptional
-            = getEntity(result, results, timestamp);
-
-        if (quizResourceOptional.isPresent()) {
-          quizResources.add(quizResourceOptional.get());
-        }
+      if (resourceOptional.isPresent()) {
+        resources.add(resourceOptional.get());
       }
     });
-    return quizResources;
+
+    return resources;
   }
 
   private Optional<QuizResource> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    String title = getTitle(mainResult, timestamp);
-    String description = getDescription(mainResult, timestamp);
+    String title = getTitle(mainResult);
+    String description = getDescription(mainResult);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
-    List<Level> levels = getLevels(results, id, timestamp);
-    List<Subject> subjects = getSubjects(results, id, timestamp);
-    List<String> keywords = getKeywords(mainResult, timestamp);
+    School school = getSchool(schoolResult);
+    List<Level> levels = getLevels(results, id);
+    List<Subject> subjects = getSubjects(results, id);
+    List<String> keywords = getKeywords(mainResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
     List<Component> components = Collections.emptyList();
     Quiz quiz = new Quiz(title, description, components);
 
-    QuizResource quizResource = new QuizResource.Builder(id, quiz)
+    QuizResource resource = new QuizResource.Builder(id, quiz)
         .school(school)
         .levels(levels)
         .subjects(subjects)
@@ -92,23 +80,13 @@ public class HBaseQuizMapper extends HBaseAbstractMapper<QuizResource> {
         .modifiedBy(modifiedBy)
         .modifiedDateTime(modifiedDateTime)
         .build();
-    return Optional.of(quizResource);
+    return Optional.of(resource);
   }
 
   @Override
   public Optional<QuizResource> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(QuizResource entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(QuizResource entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

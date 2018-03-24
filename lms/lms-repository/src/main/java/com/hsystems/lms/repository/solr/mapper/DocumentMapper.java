@@ -21,8 +21,8 @@ import java.util.List;
  */
 public class DocumentMapper {
 
-  private static final String FORMAT_FIELD_ID = "%s_%s";
-  private static final String FORMAT_FIELD_NAME = "%s.%s";
+  private static final String FIELD_ID_FORMAT = "%s_%s";
+  private static final String FIELD_NAME_FORMAT = "%s.%s";
 
   private static DocumentMapper instance;
 
@@ -160,7 +160,7 @@ public class DocumentMapper {
     String fieldName = (fieldValue == null) ? "" : fieldValue.toString();
 
     if (StringUtils.isNotEmpty(parentFieldName)) {
-      fieldName = String.format(FORMAT_FIELD_NAME,
+      fieldName = String.format(FIELD_NAME_FORMAT,
           parentFieldName, fieldName);
       document.setField(Constants.MEMBER_FIELD_NAME, fieldName);
     }
@@ -219,7 +219,7 @@ public class DocumentMapper {
       String entityId = document.getFieldValue(Constants.FIELD_ID).toString();
       document.setField(Constants.FIELD_ENTITY_ID, entityId);
 
-      String id = String.format(FORMAT_FIELD_ID, parentId, entityId);
+      String id = String.format(FIELD_ID_FORMAT, parentId, entityId);
       document.setField(Constants.FIELD_ID, id);
     }
 

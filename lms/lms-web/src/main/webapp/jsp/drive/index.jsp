@@ -90,7 +90,6 @@
         </app-header>
 
         <module-drive
-            error="[[error]]"
             language="[[language]]"
             resources="[[resources]]">
         </module-drive>

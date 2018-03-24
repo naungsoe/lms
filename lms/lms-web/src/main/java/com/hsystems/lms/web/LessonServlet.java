@@ -8,6 +8,8 @@ import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +22,11 @@ public class LessonServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 1354013139063707351L;
 
-  private static final String JSP_PATH = "/jsp/lessons/index.jsp";
+  private static final String ATTEMPT_PATTERN
+      = "/lessons/([A-Za-z0-9]*)/attempt";
+
+  private static final String INDEX_PATH = "/jsp/lessons/index.jsp";
+  private static final String ATTEMPT_PATH = "/jsp/lessons/attempt.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -38,8 +44,23 @@ public class LessonServlet extends AbstractServlet {
     UserModel userModel = (UserModel) principalProvider.get();
     request.setAttribute("userId", userModel.getId());
 
+    String jspPath = getJspPath(request);
     loadLocale(request, "lessons");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, jspPath);
+  }
+
+  private String getJspPath(HttpServletRequest request) {
+    String requestUri = request.getRequestURI();
+    Pattern pattern = Pattern.compile(ATTEMPT_PATTERN);
+    Matcher matcher = pattern.matcher(requestUri);
+
+    if (matcher.matches()) {
+      String lessonId = matcher.group();
+      request.setAttribute("lessonId", lessonId);
+      return ATTEMPT_PATH;
+    }
+
+    return INDEX_PATH;
   }
 
   @Override

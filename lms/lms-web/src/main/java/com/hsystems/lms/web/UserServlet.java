@@ -19,7 +19,7 @@ public class UserServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 1132492360811566840L;
 
-  private static final String JSP_PATH = "/jsp/users/index.jsp";
+  private static final String INDEX_PATH = "/jsp/users/index.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -37,7 +37,7 @@ public class UserServlet extends AbstractServlet {
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "users");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

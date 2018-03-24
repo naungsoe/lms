@@ -51,7 +51,6 @@
             account-help-url="[[accountHelpUrl]]"
             action-url="[[actionUrl]]"
             account="[[account]]"
-            error="[[error]]"
             language="[[language]]"
             resources="[[resources]]">
         </app-signin>

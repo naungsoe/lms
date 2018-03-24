@@ -2,7 +2,6 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
@@ -30,59 +29,50 @@ public class HBaseQuestionMapper
     extends HBaseAbstractMapper<QuestionResource> {
 
   @Override
-  public List<QuestionResource> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<QuestionResource> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
-    List<QuestionResource> questionResources = new ArrayList<>();
+    List<QuestionResource> resources = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<QuestionResource> resourceOptional
+          = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<QuestionResource> resourceOptional
-            = getEntity(result, results, timestamp);
-
-        if (resourceOptional.isPresent()) {
-          questionResources.add(resourceOptional.get());
-        }
+      if (resourceOptional.isPresent()) {
+        resources.add(resourceOptional.get());
       }
     });
 
-    return questionResources;
+    return resources;
   }
 
   private Optional<QuestionResource> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    Question question = getQuestion(mainResult, results, timestamp);
+    Question question = getQuestion(mainResult, results);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
-    List<Level> levels = getLevels(results, id, timestamp);
-    List<Subject> subjects = getSubjects(results, id, timestamp);
-    List<String> keywords = getKeywords(mainResult, timestamp);
+    School school = getSchool(schoolResult);
+    List<Level> levels = getLevels(results, id);
+    List<Subject> subjects = getSubjects(results, id);
+    List<String> keywords = getKeywords(mainResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
-    QuestionResource questionResource
+    QuestionResource resource
         = new QuestionResource.Builder(id, question)
         .school(school)
         .levels(levels)
@@ -93,46 +83,63 @@ public class HBaseQuestionMapper
         .modifiedBy(modifiedBy)
         .modifiedDateTime(modifiedDateTime)
         .build();
-    return Optional.of(questionResource);
+    return Optional.of(resource);
   }
 
   @Override
   public Optional<QuestionResource> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
+    return getEntity(mainResult, results);
   }
 
-  @Override
-  public List<Put> getPuts(QuestionResource entity, long timestamp) {
+  public List<Put> getSavePuts(QuestionResource entity) {
     List<Put> puts = new ArrayList<>();
     String id = entity.getId();
     Question question = entity.getQuestion();
+    addQuestionPut(puts, question, id);
 
     if (question instanceof CompositeQuestion) {
-      addQuestionPut(puts, question, id, timestamp);
-      addCompositeQuestionPut(puts, question, id, timestamp);
+      addCompositeQuestionPut(puts, question, id);
 
     } if (question instanceof MultipleChoice) {
-      addQuestionPut(puts, question, id,timestamp);
-      addChoiceOptionsPut(puts, question, id, timestamp);
+      addChoiceOptionsPut(puts, question, id);
 
     } else if (question instanceof MultipleResponse) {
-      addQuestionPut(puts, question, id, timestamp);
-      addChoiceOptionsPut(puts, question, id, timestamp);
+      addChoiceOptionsPut(puts, question, id);
     }
 
-    addCreatedByPut(puts, entity, timestamp);
+    addCreatedByPut(puts, entity);
 
     if (entity.getModifiedBy() != null) {
-      addModifiedByPut(puts, entity, timestamp);
+      addModifiedByPut(puts, entity);
     }
 
     return puts;
   }
 
-  @Override
-  public List<Delete> getDeletes(QuestionResource entity, long timestamp) {
-    return Collections.emptyList();
+  public List<Delete> getDeletes(QuestionResource entity) {
+    List<Delete> deletes = new ArrayList<>();
+    String id = entity.getId();
+    Question question = entity.getQuestion();
+    addQuestionDelete(deletes, question, id);
+
+    if (question instanceof CompositeQuestion) {
+      addCompositeQuestionDelete(deletes, question, id);
+
+    } if (question instanceof MultipleChoice) {
+      addChoiceOptionsDelete(deletes, question, id);
+
+    } else if (question instanceof MultipleResponse) {
+      addChoiceOptionsDelete(deletes, question, id);
+    }
+
+    addCreatedByDelete(deletes, entity);
+
+    if (entity.getModifiedBy() != null) {
+      addModifiedByDelete(deletes, entity);
+    }
+
+    return deletes;
   }
 }

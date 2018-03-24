@@ -33,7 +33,7 @@ import java.util.Properties;
  */
 public class SolrClient {
 
-  private static final String FORMAT_COLLECTION = "%s.%s";
+  private static final String COLLECTION_FORMAT = "%s.%s";
 
   private Provider<Properties> propertiesProvider;
 
@@ -84,8 +84,9 @@ public class SolrClient {
 
         if (instance == null) {
           Properties properties = propertiesProvider.get();
-          String zkHost = properties.getProperty("app.zookeeper.quorum")
-              + ':' + properties.getProperty("app.zookeeper.client.port");
+          String zkQuorum =properties.getProperty("app.zookeeper.quorum");
+          String zkPort = properties.getProperty("app.zookeeper.client.port");
+          String zkHost = String.format("%s:%s", zkQuorum, zkPort);
           cloudClient = new CloudSolrClient.Builder()
               .withZkHost(zkHost).build();
           instance = cloudClient;
@@ -104,7 +105,7 @@ public class SolrClient {
     String collection = annotation.collection();
     collection = StringUtils.isEmpty(collection)
         ? type.getSimpleName() : collection;
-    return String.format(FORMAT_COLLECTION, namespace, collection);
+    return String.format(COLLECTION_FORMAT, namespace, collection);
   }
 
   private <T extends Entity> IndexDocument getAnnotation(Class<T> type) {

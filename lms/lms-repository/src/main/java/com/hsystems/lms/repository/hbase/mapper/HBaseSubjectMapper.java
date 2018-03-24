@@ -1,13 +1,10 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -22,49 +19,44 @@ import java.util.Optional;
  */
 public class HBaseSubjectMapper extends HBaseAbstractMapper<Subject> {
 
-  public List<Subject> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<Subject> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
     List<Subject> subjects = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<Subject> subjectOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        long timestamp = mutationOptional.get().getTimestamp();
-        Optional<Subject> subjectOptional
-            = getEntity(result, results, timestamp);
+      if (subjectOptional.isPresent()) {
         subjects.add(subjectOptional.get());
       }
     });
+
     return subjects;
   }
 
   private Optional<Subject> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    String name = getName(mainResult, timestamp);
+    String name = getName(mainResult);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
+    School school = getSchool(schoolResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
     Subject subject = new Subject.Builder(id, name)
         .school(school)
@@ -80,16 +72,6 @@ public class HBaseSubjectMapper extends HBaseAbstractMapper<Subject> {
   public Optional<Subject> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(Subject entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(Subject entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

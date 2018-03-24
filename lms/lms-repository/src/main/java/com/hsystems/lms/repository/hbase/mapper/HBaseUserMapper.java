@@ -2,12 +2,9 @@ package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Group;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -23,67 +20,56 @@ import java.util.Optional;
 public class HBaseUserMapper extends HBaseAbstractMapper<User> {
 
   @Override
-  public List<User> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<User> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
     List<User> users = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<User> userOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<User> userOptional
-            = getEntity(result, results, timestamp);
-
-        if (userOptional.isPresent()) {
-          users.add(userOptional.get());
-        }
+      if (userOptional.isPresent()) {
+        users.add(userOptional.get());
       }
     });
+
     return users;
   }
 
-  private Optional<User> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
-
+  private Optional<User> getEntity(Result mainResult, List<Result> results) {
     String id = Bytes.toString(mainResult.getRow());
-    String firstName = getFirstName(mainResult, timestamp);
-    String lastName = getLastName(mainResult, timestamp);
-    String account = getAccount(mainResult, timestamp);
-    String password = getPassword(mainResult, timestamp);
-    String salt = getSalt(mainResult, timestamp);
-    LocalDateTime dateOfBirth = getDateOfBirth(mainResult, timestamp);
-    String gender = getGender(mainResult, timestamp);
-    String mobile = getMobile(mainResult, timestamp);
-    String email = getEmail(mainResult, timestamp);
-    String locale = getLocale(mainResult, timestamp);
-    String timeFormat = getTimeFormat(mainResult, timestamp);
-    String dateFormat = getDateFormat(mainResult, timestamp);
-    String dateTimeFormat = getDateTimeFormat(mainResult, timestamp);
-    List<String> permissions = getPermissions(mainResult, timestamp);
+    String firstName = getFirstName(mainResult);
+    String lastName = getLastName(mainResult);
+    String account = getAccount(mainResult);
+    String password = getPassword(mainResult);
+    String salt = getSalt(mainResult);
+    LocalDateTime dateOfBirth = getDateOfBirth(mainResult);
+    String gender = getGender(mainResult);
+    String mobile = getMobile(mainResult);
+    String email = getEmail(mainResult);
+    String locale = getLocale(mainResult);
+    String timeFormat = getTimeFormat(mainResult);
+    String dateFormat = getDateFormat(mainResult);
+    String dateTimeFormat = getDateTimeFormat(mainResult);
+    List<String> permissions = getPermissions(mainResult);
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
-    List<Group> groups = getGroups(results, id, timestamp);
+    School school = getSchool(schoolResult);
+    List<Group> groups = getGroups(results, id);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
     User user = new User.Builder(id, firstName, lastName)
         .account(account)
@@ -112,16 +98,6 @@ public class HBaseUserMapper extends HBaseAbstractMapper<User> {
   public Optional<User> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(User entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(User entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

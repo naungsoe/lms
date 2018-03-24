@@ -82,7 +82,6 @@
 
         <app-accounthelp
             date-pattern="[[datePattern]]"
-            error="[[error]]"
             language="[[language]]"
             resources="[[resources]]">
         </app-accounthelp>

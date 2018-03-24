@@ -20,7 +20,7 @@ public class QuestionServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 4601083196372398436L;
 
-  private static final String JSP_PATH = "/jsp/questions/index.jsp";
+  private static final String INDEX_PATH = "/jsp/questions/index.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -39,7 +39,7 @@ public class QuestionServlet extends AbstractServlet {
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "questions");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

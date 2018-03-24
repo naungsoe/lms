@@ -130,7 +130,6 @@
               filter-options="[[filterOptions]]"
               query="[[query]]"
               page="{{page}}"
-              error="[[error]]"
               language="[[language]]"
               resources="[[resources]]">
           </module-lessons>

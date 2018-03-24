@@ -26,7 +26,7 @@ public class SignInServlet extends AbstractServlet {
 
   private static final long serialVersionUID = -8924763326103812045L;
 
-  private static final String JSP_PATH = "/jsp/signin/index.jsp";
+  private static final String INDEX_PATH = "/jsp/signin/index.jsp";
 
   private final AuthenticationService authService;
 
@@ -65,7 +65,7 @@ public class SignInServlet extends AbstractServlet {
       throws ServletException, IOException {
 
     loadLocale(request, "signin");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

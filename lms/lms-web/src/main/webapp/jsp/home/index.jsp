@@ -90,7 +90,6 @@
         </app-header>
 
         <module-home
-            error="[[error]]"
             language="[[language]]"
             resources="[[resources]]">
         </module-home>

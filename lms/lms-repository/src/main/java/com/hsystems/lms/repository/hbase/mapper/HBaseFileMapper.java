@@ -1,15 +1,12 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.file.FileObject;
 import com.hsystems.lms.repository.entity.file.FileResource;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.apache.hadoop.hbase.util.CollectionUtils;
@@ -25,66 +22,56 @@ import java.util.Optional;
  */
 public class HBaseFileMapper extends HBaseAbstractMapper<FileResource> {
 
-  public List<FileResource> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<FileResource> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
 
-    List<FileResource> fileResources = new ArrayList<>();
+    List<FileResource> resources = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
-      String id = Bytes.toString(result.getRow());
-      Optional<Mutation> mutationOptional = getMutationById(mutations, id);
+      Optional<FileResource> resourceOptional = getEntity(result, results);
 
-      if (mutationOptional.isPresent()) {
-        Mutation mutation = mutationOptional.get();
-        long timestamp = mutation.getTimestamp();
-        Optional<FileResource> resourceOptional
-            = getEntity(result, results, timestamp);
-
-        if (resourceOptional.isPresent()) {
-          fileResources.add(resourceOptional.get());
-        }
+      if (resourceOptional.isPresent()) {
+        resources.add(resourceOptional.get());
       }
     });
 
-    return fileResources;
+    return resources;
   }
 
   private Optional<FileResource> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
-    FileObject file = getFileObject(mainResult, timestamp);
+    FileObject file = getFileObject(mainResult);
 
     Result fileResult = results.stream()
         .filter(isParentResult(id)).findFirst().get();
     String parentId = getParentId(fileResult);
-    FileObject parentFileObject = getFileObject(fileResult, timestamp);
+    FileObject parentFileObject = getFileObject(fileResult);
     FileResource parentFile = new FileResource.Builder(
           parentId, parentFileObject, null).build();
 
     Result schoolResult = results.stream()
         .filter(isSchoolResult(id)).findFirst().get();
-    School school = getSchool(schoolResult, timestamp);
-    List<Level> levels = getLevels(results, id, timestamp);
-    List<Subject> subjects = getSubjects(results, id, timestamp);
-    List<String> keywords = getKeywords(mainResult, timestamp);
+    School school = getSchool(schoolResult);
+    List<Level> levels = getLevels(results, id);
+    List<Subject> subjects = getSubjects(results, id);
+    List<String> keywords = getKeywords(mainResult);
 
     Result createdByResult = results.stream()
         .filter(isCreatedByResult(id)).findFirst().get();
-    User createdBy = getCreatedBy(createdByResult, timestamp);
-    LocalDateTime createdDateTime = getDateTime(createdByResult, timestamp);
+    User createdBy = getCreatedBy(createdByResult);
+    LocalDateTime createdDateTime = getDateTime(createdByResult);
 
     Optional<Result> resultOptional = results.stream()
         .filter(isModifiedByResult(id)).findFirst();
     User modifiedBy = resultOptional.isPresent()
-        ? getModifiedBy(resultOptional.get(), timestamp) : null;
+        ? getModifiedBy(resultOptional.get()) : null;
     LocalDateTime modifiedDateTime = resultOptional.isPresent()
-        ? getDateTime(resultOptional.get(), timestamp) : null;
+        ? getDateTime(resultOptional.get()) : null;
 
-    FileResource fileResource
+    FileResource resource
         = new FileResource.Builder(id, file, parentFile)
         .school(school)
         .levels(levels)
@@ -95,23 +82,13 @@ public class HBaseFileMapper extends HBaseAbstractMapper<FileResource> {
         .modifiedBy(modifiedBy)
         .modifiedDateTime(modifiedDateTime)
         .build();
-    return Optional.of(fileResource);
+    return Optional.of(resource);
   }
 
   @Override
   public Optional<FileResource> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(FileResource entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(FileResource entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

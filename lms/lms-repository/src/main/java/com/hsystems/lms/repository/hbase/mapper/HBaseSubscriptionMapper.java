@@ -1,14 +1,11 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Mutation;
 import com.hsystems.lms.repository.entity.Subscription;
 import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.course.Course;
 import com.hsystems.lms.repository.entity.course.CourseResource;
 
-import org.apache.hadoop.hbase.client.Delete;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
 
@@ -25,9 +22,7 @@ public class HBaseSubscriptionMapper
     extends HBaseAbstractMapper<Subscription> {
 
   @Override
-  public List<Subscription> getEntities(
-      List<Result> results, List<Mutation> mutations) {
-
+  public List<Subscription> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {
       return Collections.emptyList();
     }
@@ -35,34 +30,34 @@ public class HBaseSubscriptionMapper
     List<Subscription> subscriptions = new ArrayList<>();
     results.stream().filter(isMainResult()).forEach(result -> {
       Optional<Subscription> subscriptionOptional
-          = getEntity(result, results, 0);
+          = getEntity(result, results);
 
       if (subscriptionOptional.isPresent()) {
         subscriptions.add(subscriptionOptional.get());
       }
     });
+
     return subscriptions;
   }
 
   private Optional<Subscription> getEntity(
-      Result mainResult, List<Result> results, long timestamp) {
+      Result mainResult, List<Result> results) {
 
     String id = Bytes.toString(mainResult.getRow());
     Course course = new Course(
-        getTitle(mainResult, timestamp),
-        getDescription(mainResult, timestamp),
+        getTitle(mainResult),
+        getDescription(mainResult),
         Collections.emptyList()
     );
     CourseResource resource = new CourseResource.Builder(
-        getId(mainResult, timestamp),
+        getId(mainResult),
         course
     ).build();
 
     Result subscribedByResult = results.stream()
         .filter(isSubscribedByResult(id)).findFirst().get();
-    User subscribedBy = getSubscribedBy(subscribedByResult, timestamp);
-    LocalDateTime subscribedDateTime
-        = getDateTime(subscribedByResult, timestamp);
+    User subscribedBy = getSubscribedBy(subscribedByResult);
+    LocalDateTime subscribedDateTime = getDateTime(subscribedByResult);
 
     Subscription subscription = new Subscription(
         id, resource, subscribedBy, subscribedDateTime);
@@ -73,16 +68,6 @@ public class HBaseSubscriptionMapper
   public Optional<Subscription> getEntity(List<Result> results) {
     Result mainResult = results.stream()
         .filter(isMainResult()).findFirst().get();
-    return getEntity(mainResult, results, 0);
-  }
-
-  @Override
-  public List<Put> getPuts(Subscription entity, long timestamp) {
-    return Collections.emptyList();
-  }
-
-  @Override
-  public List<Delete> getDeletes(Subscription entity, long timestamp) {
-    return Collections.emptyList();
+    return getEntity(mainResult, results);
   }
 }

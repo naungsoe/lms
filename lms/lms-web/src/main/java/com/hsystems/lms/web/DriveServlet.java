@@ -20,7 +20,7 @@ public class DriveServlet extends AbstractServlet {
 
   private static final long serialVersionUID = 8329730300111049530L;
 
-  private static final String JSP_PATH = "/jsp/drive/index.jsp";
+  private static final String INDEX_PATH = "/jsp/drive/index.jsp";
 
   private final Provider<Principal> principalProvider;
 
@@ -39,7 +39,7 @@ public class DriveServlet extends AbstractServlet {
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "drive");
-    forwardRequest(request, response, JSP_PATH);
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

@@ -26,19 +26,19 @@ public class QueryMapper {
 
   private static final String FIELD_ALL = "*";
 
-  private static final String FORMAT_QUERY = "%s *%s*";
-  private static final String FORMAT_BLOCK_JOIN = "{!parent which='%s:(%s)'}";
-  private static final String FORMAT_BLOCK_JOIN_QUERY
+  private static final String QUERY_FORMAT = "%s *%s*";
+  private static final String BLOCK_JOIN_FORMAT = "{!parent which='%s:(%s)'}";
+  private static final String BLOCK_JOIN_QUERY_FORMAT
       = "(fieldName:%s AND %s:%s)";
-  private static final String FORMAT_BLOCK_JOIN_FILTER = "%s(%s AND %s)";
-  private static final String FORMAT_TRANSFORM
+  private static final String BLOCK_JOIN_FILTER_FORMAT = "%s(%s AND %s)";
+  private static final String TRANSFORM_FORMAT
       = "[child parentFilter='%s:(%s)' childFilter='%s' limit=%s]";
-  private static final String FORMAT_MAGIC_FIELD = "%s _query_:\"%s\"";
-  private static final String FORMAT_FIELD = "%s^%s";
-  private static final String FORMAT_FILTER = "%s:(%s)";
+  private static final String MAGIC_FIELD_FORMAT = "%s _query_:\"%s\"";
+  private static final String FIELD_FORMAT = "%s^%s";
+  private static final String FILTER_FORMAT = "%s:(%s)";
 
-  private static final String SEPARATOR_OR = " OR ";
-  private static final String SEPARATOR_NOT = "NOT ";
+  private static final String OR_SEPARATOR = " OR ";
+  private static final String NOT_SEPARATOR = "NOT ";
 
   public QueryMapper() {
 
@@ -101,7 +101,7 @@ public class QueryMapper {
     StringBuilder queryBuilder = new StringBuilder();
     fieldValues.forEach(fieldValue -> {
       String fieldQuery = String.format(
-          FORMAT_QUERY, fieldValue, fieldValue);
+          QUERY_FORMAT, fieldValue, fieldValue);
       queryBuilder.append(fieldQuery);
     });
     solrQuery.setQuery(queryBuilder.toString());
@@ -131,18 +131,18 @@ public class QueryMapper {
       String typeFieldName = criterion.getField().substring(0, lastIndex);
       String fieldName = criterion.getField().substring(lastIndex + 1);
       String fieldValue = criterion.getValues().get(0).toString();
-      String fieldQuery = String.format(FORMAT_QUERY, fieldValue, fieldValue);
-      fieldQueries.add(String.format(FORMAT_BLOCK_JOIN_QUERY,
+      String fieldQuery = String.format(QUERY_FORMAT, fieldValue, fieldValue);
+      fieldQueries.add(String.format(BLOCK_JOIN_QUERY_FORMAT,
           typeFieldName, fieldName, fieldQuery));
     }
 
     StringBuilder queryBuilder = new StringBuilder();
     String typeName = type.getSimpleName();
     typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
-    queryBuilder.append(String.format(FORMAT_BLOCK_JOIN,
+    queryBuilder.append(String.format(BLOCK_JOIN_FORMAT,
         Constants.FIELD_TYPE_NAME, typeName));
-    queryBuilder.append(StringUtils.join(fieldQueries, SEPARATOR_OR));
-    solrQuery.setQuery(String.format(FORMAT_MAGIC_FIELD,
+    queryBuilder.append(StringUtils.join(fieldQueries, OR_SEPARATOR));
+    solrQuery.setQuery(String.format(MAGIC_FIELD_FORMAT,
         solrQuery.getQuery(), queryBuilder.toString()));
   }
 
@@ -156,7 +156,7 @@ public class QueryMapper {
 
     String typeName = type.getSimpleName();
     typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
-    String typeNameFilter = String.format(FORMAT_FILTER,
+    String typeNameFilter = String.format(FILTER_FORMAT,
         Constants.FIELD_TYPE_NAME, typeName);
     solrQuery.addFilterQuery(typeNameFilter);
 
@@ -170,13 +170,13 @@ public class QueryMapper {
 
       switch (criterion.getOperator()) {
         case EQUAL:
-          String equalFilter = String.format(FORMAT_FILTER, fieldName,
-              StringUtils.join(criterion.getValues(), SEPARATOR_OR));
+          String equalFilter = String.format(FILTER_FORMAT, fieldName,
+              StringUtils.join(criterion.getValues(), OR_SEPARATOR));
           solrQuery.addFilterQuery(equalFilter);
           break;
         case NOT_EQUAL:
-          String notEqualFilter = String.format(FORMAT_FILTER, fieldName,
-              StringUtils.prepend(criterion.getValues(), SEPARATOR_NOT));
+          String notEqualFilter = String.format(FILTER_FORMAT, fieldName,
+              StringUtils.prepend(criterion.getValues(), NOT_SEPARATOR));
           solrQuery.addFilterQuery(notEqualFilter);
           break;
         default:
@@ -190,7 +190,7 @@ public class QueryMapper {
 
     String typeName = type.getSimpleName();
     typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
-    String typeNameFilter = String.format(FORMAT_BLOCK_JOIN,
+    String typeNameFilter = String.format(BLOCK_JOIN_FORMAT,
         Constants.FIELD_TYPE_NAME, typeName);
 
     List<Criterion> queryCriteria = new ArrayList<>();
@@ -205,19 +205,19 @@ public class QueryMapper {
           ? Constants.FIELD_ENTITY_ID : fieldName;
       String memberFieldName = criterion.getField().substring(0, lastIndex);
       String memberFieldFilter = String.format(
-          FORMAT_FILTER, Constants.MEMBER_FIELD_NAME, memberFieldName);
+          FILTER_FORMAT, Constants.MEMBER_FIELD_NAME, memberFieldName);
 
       switch (criterion.getOperator()) {
         case EQUAL:
-          String equalFilter = String.format(FORMAT_FILTER, fieldName,
-              StringUtils.join(criterion.getValues(), SEPARATOR_OR));
-          solrQuery.addFilterQuery(String.format(FORMAT_BLOCK_JOIN_FILTER,
+          String equalFilter = String.format(FILTER_FORMAT, fieldName,
+              StringUtils.join(criterion.getValues(), OR_SEPARATOR));
+          solrQuery.addFilterQuery(String.format(BLOCK_JOIN_FILTER_FORMAT,
               typeNameFilter, memberFieldFilter, equalFilter));
           break;
         case NOT_EQUAL:
-          String notEqualFilter = String.format(FORMAT_FILTER, fieldName,
-              StringUtils.prepend(criterion.getValues(), SEPARATOR_NOT));
-          solrQuery.addFilterQuery(String.format(FORMAT_BLOCK_JOIN_FILTER,
+          String notEqualFilter = String.format(FILTER_FORMAT, fieldName,
+              StringUtils.prepend(criterion.getValues(), NOT_SEPARATOR));
+          solrQuery.addFilterQuery(String.format(BLOCK_JOIN_FILTER_FORMAT,
               typeNameFilter, memberFieldFilter, notEqualFilter));
           break;
         default:
@@ -259,11 +259,11 @@ public class QueryMapper {
     }
 
     String childFieldFilter = CollectionUtils.isEmpty(childFieldNames)
-        ? "" : String.format(FORMAT_FILTER, Constants.MEMBER_FIELD_NAME,
-        StringUtils.join(childFieldNames, SEPARATOR_OR));
+        ? "" : String.format(FILTER_FORMAT, Constants.MEMBER_FIELD_NAME,
+        StringUtils.join(childFieldNames, OR_SEPARATOR));
     String typeName = type.getSimpleName();
     typeName = type.isInterface() ? String.format("*%s", typeName) : typeName;
-    String typeNameField = String.format(FORMAT_TRANSFORM,
+    String typeNameField = String.format(TRANSFORM_FORMAT,
         Constants.FIELD_TYPE_NAME, typeName,
         childFieldFilter, Integer.MAX_VALUE);
     solrQuery.addField(typeNameField);
