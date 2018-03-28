@@ -1,7 +1,7 @@
 package com.hsystems.lms.repository.hbase.mapper;
 
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.PermissionSet;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.ShareLog;
 import com.hsystems.lms.repository.entity.User;
 
@@ -48,17 +48,17 @@ public class HBaseShareLogMapper extends HBaseAbstractMapper<ShareLog> {
     ).build();
     LocalDateTime sharedDateTime = getDateTime(mainResult);
 
-    List<PermissionSet> shareEntries = new ArrayList<>();
-    results.stream().filter(isEntryResult(id))
+    List<ResourcePermission> permissions = new ArrayList<>();
+    results.stream().filter(isPermissionResult(id))
         .forEach(entryResult -> {
-          PermissionSet permissionSet
-              = getPermissionSet(entryResult);
-          shareEntries.add(permissionSet);
+          ResourcePermission permission
+              = getResourcePermission(entryResult);
+          permissions.add(permission);
         });
 
     ShareLog log = new ShareLog(
         id,
-        shareEntries,
+        permissions,
         sharedBy,
         sharedDateTime
     );

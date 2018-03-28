@@ -20,7 +20,7 @@ public final class ShareLog implements Entity, Serializable {
 
   private String id;
 
-  private List<PermissionSet> permissionSets;
+  private List<ResourcePermission> permissions;
 
   private User sharedBy;
 
@@ -32,12 +32,12 @@ public final class ShareLog implements Entity, Serializable {
 
   public ShareLog(
       String id,
-      List<PermissionSet> permissionSets,
+      List<ResourcePermission> permissions,
       User sharedBy,
       LocalDateTime sharedDateTime) {
 
     this.id = id;
-    this.permissionSets = permissionSets;
+    this.permissions = permissions;
     this.sharedBy = sharedBy;
     this.sharedDateTime = sharedDateTime;
   }
@@ -55,16 +55,16 @@ public final class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public Enumeration<PermissionSet> getPermissionSets() {
-    return CollectionUtils.isEmpty(permissionSets)
+  public Enumeration<ResourcePermission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(permissionSets);
+        : Collections.enumeration(permissions);
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, permissionSets=%s}",
-        id, sharedBy, sharedDateTime, StringUtils.join(permissionSets, ","));
+        "ShareLog{id=%s, sharedBy=%s, sharedDateTime=%s, permissions=%s}",
+        id, sharedBy, sharedDateTime, StringUtils.join(permissions, ","));
   }
 }

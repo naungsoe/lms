@@ -3,18 +3,26 @@ package com.hsystems.lms.service;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Component;
+import com.hsystems.lms.repository.entity.Resource;
+import com.hsystems.lms.repository.entity.ResourcePermission;
+import com.hsystems.lms.repository.entity.User;
 import com.hsystems.lms.repository.entity.beans.ActivityComponentBean;
 import com.hsystems.lms.repository.entity.beans.ComponentBean;
+import com.hsystems.lms.repository.entity.beans.CompositeQuestionComponentBean;
 import com.hsystems.lms.repository.entity.beans.ContentComponentBean;
 import com.hsystems.lms.repository.entity.beans.FileComponentBean;
 import com.hsystems.lms.repository.entity.beans.LessonComponentBean;
+import com.hsystems.lms.repository.entity.beans.MultipleChoiceComponentBean;
+import com.hsystems.lms.repository.entity.beans.MultipleResponseComponentBean;
 import com.hsystems.lms.repository.entity.beans.QuestionComponentBean;
 import com.hsystems.lms.repository.entity.beans.QuizComponentBean;
 import com.hsystems.lms.repository.entity.beans.SectionComponentBean;
 import com.hsystems.lms.repository.entity.beans.TopicComponentBean;
+import com.hsystems.lms.repository.entity.beans.UnknownQuestionComponentBean;
 import com.hsystems.lms.repository.entity.course.TopicComponent;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
@@ -28,7 +36,6 @@ import com.hsystems.lms.repository.entity.question.MultipleResponse;
 import com.hsystems.lms.repository.entity.question.MultipleResponseComponent;
 import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
-import com.hsystems.lms.repository.entity.question.special.UnknownQuestionComponent;
 import com.hsystems.lms.repository.entity.quiz.QuizComponent;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 import com.hsystems.lms.service.mapper.Configuration;
@@ -37,8 +44,11 @@ import com.hsystems.lms.service.mapper.ModelMapper;
 import com.hsystems.lms.service.model.AuditableModel;
 import com.hsystems.lms.service.model.UserModel;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -49,6 +59,42 @@ public abstract class AbstractService {
   private static final String FIELD_SCHOOL_ID = "schoolId";
 
   protected final int NUMBER_FOUND_ZERO = 0;
+
+  protected void checkViewPermission(
+      Resource resource, User user, String errorMessage) {
+
+    Enumeration<ResourcePermission> permissions = resource.getPermissions();
+    boolean hasViewPrivilege = false;
+
+    while (permissions.hasMoreElements()) {
+      ResourcePermission permission = permissions.nextElement();
+
+      if (permission.getUser().getId().equals(user.getId())) {
+        hasViewPrivilege = permission.isViewable();
+        break;
+      }
+    }
+
+    CommonUtils.checkAccessControl(hasViewPrivilege, errorMessage);
+  }
+
+  protected void checkEditPermission(
+      Resource resource, User user, String errorMessage) {
+
+    Enumeration<ResourcePermission> permissions = resource.getPermissions();
+    boolean hasEditPrivilege = false;
+
+    while (permissions.hasMoreElements()) {
+      ResourcePermission permission = permissions.nextElement();
+
+      if (permission.getUser().getId().equals(user.getId())) {
+        hasEditPrivilege = permission.isEditable();
+        break;
+      }
+    }
+
+    CommonUtils.checkAccessControl(hasEditPrivilege, errorMessage);
+  }
 
   protected void addSchoolFilter(Query query, Principal principal) {
     UserModel userModel = (UserModel) principal;
@@ -73,7 +119,7 @@ public abstract class AbstractService {
         LocalDateTime.now(), principal.getDateTimeFormat()));
   }
 
-  protected void populatedCreatedDateTime(
+  protected void populateCreatedDateTime(
       AuditableModel auditableModel, Auditable auditable,
       Configuration configuration) {
 
@@ -86,7 +132,7 @@ public abstract class AbstractService {
     auditableModel.setCreatedDate(createdDate);
   }
 
-  protected void populatedModifiedDateTime(
+  protected void populateModifiedDateTime(
       AuditableModel auditableModel, Auditable auditable,
       Configuration configuration) {
 
@@ -99,9 +145,7 @@ public abstract class AbstractService {
     auditableModel.setCreatedDate(modifiedDate);
   }
 
-  protected List<Component> getComponents(
-      List<ComponentBean> componentBeans) {
-
+  protected List<Component> getComponents(List<ComponentBean> componentBeans) {
     List<Component> components = new ArrayList<>();
 
     componentBeans.forEach(componentBean -> {
@@ -250,35 +294,7 @@ public abstract class AbstractService {
 
     QuestionComponentBean questionComponentBean
         = (QuestionComponentBean) componentBean;
-    Question question = questionComponentBean.getQuestion();
-    QuestionComponent questionComponent;
-
-    if (question instanceof CompositeQuestion) {
-      questionComponent = new CompositeQuestionComponent(
-          questionComponentBean.getId(),
-          (CompositeQuestion) question,
-          questionComponentBean.getScore(),
-          questionComponentBean.getOrder()
-      );
-    } else if (question instanceof MultipleChoice) {
-      questionComponent = new MultipleChoiceComponent(
-          questionComponentBean.getId(),
-          (MultipleChoice) question,
-          questionComponentBean.getScore(),
-          questionComponentBean.getOrder()
-      );
-    } else if (question instanceof MultipleResponse) {
-      questionComponent = new MultipleResponseComponent(
-          questionComponentBean.getId(),
-          (MultipleResponse) question,
-          questionComponentBean.getScore(),
-          questionComponentBean.getOrder()
-      );
-    } else {
-      questionComponent = new UnknownQuestionComponent();
-    }
-
-    return questionComponent;
+    return questionComponentBean.getQuestionComponent();
   }
 
   protected FileComponent getFileComponent(ComponentBean componentBean) {
@@ -300,6 +316,121 @@ public abstract class AbstractService {
         contentComponentBean.getOrder()
     );
     return contentComponent;
+  }
+
+  protected List<ComponentBean> getComponentBeans(
+      List<Component> components, String resourceId, String parentId)
+      throws IOException {
+
+    List<ComponentBean> componentBeans = new ArrayList<>();
+
+    for (Component component : components) {
+      if (component instanceof TopicComponent) {
+        TopicComponent topicComponent = (TopicComponent) component;
+        String topicId = topicComponent.getId();
+        TopicComponentBean topicComponentBean
+            = new TopicComponentBean(topicComponent, resourceId, parentId);
+        componentBeans.add(topicComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(topicComponent.getComponents());
+        List<ComponentBean> childComponentBeans
+            = getComponentBeans(childComponents, resourceId, topicId);
+        componentBeans.addAll(childComponentBeans);
+
+      } else if (component instanceof LessonComponent) {
+        LessonComponent lessonComponent = (LessonComponent) component;
+        LessonComponentBean lessonComponentBean
+            = new LessonComponentBean(lessonComponent, resourceId, parentId);
+        componentBeans.add(lessonComponentBean);
+
+      } else if (component instanceof QuizComponent) {
+        QuizComponent quizComponent = (QuizComponent) component;
+        QuizComponentBean quizComponentBean
+            = new QuizComponentBean(quizComponent, resourceId, parentId);
+        componentBeans.add(quizComponentBean);
+
+      } else if (component instanceof ActivityComponent) {
+        ActivityComponent activityComponent = (ActivityComponent) component;
+        String activityId = activityComponent.getId();
+        ActivityComponentBean activityComponentBean
+            = new ActivityComponentBean(
+            activityComponent, resourceId, parentId);
+        componentBeans.add(activityComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(activityComponent.getComponents());
+        List<ComponentBean> childComponentBeans
+            = getComponentBeans(childComponents, resourceId, activityId);
+        componentBeans.addAll(childComponentBeans);
+
+      } else if (component instanceof SectionComponent) {
+        SectionComponent sectionComponent = (SectionComponent) component;
+        String sectionId = sectionComponent.getId();
+        SectionComponentBean sectionComponentBean
+            = new SectionComponentBean(
+            sectionComponent, resourceId, parentId);
+        componentBeans.add(sectionComponentBean);
+
+        List<Component> childComponents
+            = Collections.list(sectionComponent.getComponents());
+        List<ComponentBean> childComponentBeans
+            = getComponentBeans(childComponents, resourceId, sectionId);
+        componentBeans.addAll(childComponentBeans);
+
+      } else if (component instanceof QuestionComponent) {
+        QuestionComponent<?> questionComponent
+            = (QuestionComponent<?>) component;
+        QuestionComponentBean<?> questionComponentBean
+            = getQuestionComponentBean(
+            questionComponent, resourceId, parentId);
+        componentBeans.add(questionComponentBean);
+
+      } else if (component instanceof ContentComponent) {
+        ContentComponent contentComponent
+            = (ContentComponent) component;
+        ContentComponentBean contentComponentBean
+            = new ContentComponentBean(
+            contentComponent, resourceId, parentId);
+        componentBeans.add(contentComponentBean);
+      }
+    }
+
+    return componentBeans;
+  }
+
+  protected QuestionComponentBean getQuestionComponentBean(
+      QuestionComponent questionComponent, String resourceId, String parentId) {
+
+    Question question = questionComponent.getQuestion();
+
+    if (question instanceof CompositeQuestion) {
+      CompositeQuestionComponent component
+          = (CompositeQuestionComponent) questionComponent;
+      return new CompositeQuestionComponentBean(
+          component,
+          resourceId,
+          parentId
+      );
+    } else if (question instanceof MultipleChoice) {
+      MultipleChoiceComponent component
+          = (MultipleChoiceComponent) questionComponent;
+      return new MultipleChoiceComponentBean(
+          component,
+          resourceId,
+          parentId
+      );
+    } else if (question instanceof MultipleResponse) {
+      MultipleResponseComponent component
+          = (MultipleResponseComponent) questionComponent;
+      return new MultipleResponseComponentBean(
+          component,
+          resourceId,
+          parentId
+      );
+    }
+
+    return new UnknownQuestionComponentBean();
   }
 
   protected <T, S> S getModel(T entity, Class<S> type) {

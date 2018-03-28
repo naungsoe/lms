@@ -104,10 +104,10 @@ public class CourseService extends AbstractService {
 
     CourseResourceModel resourceModel = getModel(courseResource,
         CourseResourceModel.class, configuration);
-    populatedCreatedDateTime(resourceModel, courseResource, configuration);
+    populateCreatedDateTime(resourceModel, courseResource, configuration);
 
     if (DateTimeUtils.isNotEmpty(courseResource.getModifiedDateTime())) {
-      populatedModifiedDateTime(resourceModel, courseResource, configuration);
+      populateModifiedDateTime(resourceModel, courseResource, configuration);
     }
 
     return resourceModel;

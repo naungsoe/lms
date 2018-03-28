@@ -9,7 +9,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.CourseService;
 import com.hsystems.lms.service.model.course.CourseResourceModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -45,7 +45,7 @@ public class CourseController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_COURSES)
+  @Requires(Permission.VIEW_COURSE)
   public Response findAllBy(@Context UriInfo uriInfo)
       throws IOException {
 
@@ -59,7 +59,7 @@ public class CourseController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @Requires(Permission.VIEW_COURSES)
+  @Requires(Permission.VIEW_COURSE)
   public Response findBy(@PathParam("id") String id)
       throws IOException {
 

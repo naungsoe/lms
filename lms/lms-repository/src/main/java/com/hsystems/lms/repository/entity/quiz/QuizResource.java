@@ -6,7 +6,7 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.PermissionSet;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.Resource;
 import com.hsystems.lms.repository.entity.ResourceStatus;
 import com.hsystems.lms.repository.entity.School;
@@ -49,7 +49,7 @@ public final class QuizResource
   private List<String> keywords;
 
   @IndexField
-  private List<PermissionSet> permissionSets;
+  private List<ResourcePermission> permissions;
 
   @IndexField
   private ResourceStatus status;
@@ -77,7 +77,7 @@ public final class QuizResource
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<PermissionSet> permissionSets,
+      List<ResourcePermission> permissions,
       ResourceStatus status,
       User createdBy,
       LocalDateTime createdDateTime,
@@ -90,7 +90,7 @@ public final class QuizResource
     this.levels = levels;
     this.subjects = subjects;
     this.keywords = keywords;
-    this.permissionSets = permissionSets;
+    this.permissions = permissions;
     this.status = status;
     this.createdBy = createdBy;
     this.createdDateTime = createdDateTime;
@@ -107,7 +107,7 @@ public final class QuizResource
     private List<Level> levels;
     private List<Subject> subjects;
     private List<String> keywords;
-    private List<PermissionSet> permissionSets;
+    private List<ResourcePermission> permissions;
     private ResourceStatus status;
     private User createdBy;
     private LocalDateTime createdDateTime;
@@ -139,8 +139,8 @@ public final class QuizResource
       return this;
     }
 
-    public Builder permissionSets(List<PermissionSet> permissionSets) {
-      this.permissionSets = permissionSets;
+    public Builder permissions(List<ResourcePermission> permissions) {
+      this.permissions = permissions;
       return this;
     }
 
@@ -177,7 +177,7 @@ public final class QuizResource
           this.levels,
           this.subjects,
           this.keywords,
-          this.permissionSets,
+          this.permissions,
           this.status,
           this.createdBy,
           this.createdDateTime,
@@ -250,19 +250,19 @@ public final class QuizResource
   }
 
   @Override
-  public Enumeration<PermissionSet> getPermissionSets() {
-    return CollectionUtils.isEmpty(permissionSets)
+  public Enumeration<ResourcePermission> getPermissions() {
+    return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
-        : Collections.enumeration(permissionSets);
+        : Collections.enumeration(permissions);
   }
 
   @Override
-  public void addPermissionSet(PermissionSet... permissionSets) {
-    if (CollectionUtils.isEmpty(this.permissionSets)) {
-      this.permissionSets = new ArrayList<>();
+  public void addPermission(ResourcePermission... permissions) {
+    if (CollectionUtils.isEmpty(this.permissions)) {
+      this.permissions = new ArrayList<>();
     }
 
-    Arrays.stream(permissionSets).forEach(this.permissionSets::add);
+    Arrays.stream(permissions).forEach(this.permissions::add);
   }
 
   @Override

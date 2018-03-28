@@ -99,10 +99,10 @@ public class QuizService extends AbstractService {
 
     QuizResourceModel resourceModel = getModel(quizResource,
         QuizResourceModel.class, configuration);
-    populatedCreatedDateTime(resourceModel, quizResource, configuration);
+    populateCreatedDateTime(resourceModel, quizResource, configuration);
 
     if (DateTimeUtils.isNotEmpty(quizResource.getModifiedDateTime())) {
-      populatedModifiedDateTime(resourceModel, quizResource, configuration);
+      populateModifiedDateTime(resourceModel, quizResource, configuration);
     }
 
     return resourceModel;

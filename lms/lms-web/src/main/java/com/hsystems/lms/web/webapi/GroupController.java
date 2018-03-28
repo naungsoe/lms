@@ -9,7 +9,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.GroupService;
 import com.hsystems.lms.service.model.GroupModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,7 +46,7 @@ public class GroupController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_GROUPS)
+  @Requires(Permission.VIEW_GROUP)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
@@ -62,7 +62,7 @@ public class GroupController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_GROUPS)
+  @Requires(Permission.VIEW_GROUP)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {

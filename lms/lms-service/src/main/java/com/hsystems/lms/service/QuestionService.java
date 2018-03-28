@@ -102,10 +102,10 @@ public class QuestionService extends AbstractService {
 
     QuestionResourceModel resourceModel = getModel(questionResource,
         QuestionResourceModel.class, configuration);
-    populatedCreatedDateTime(resourceModel, questionResource, configuration);
+    populateCreatedDateTime(resourceModel, questionResource, configuration);
 
     if (DateTimeUtils.isNotEmpty(questionResource.getModifiedDateTime())) {
-      populatedModifiedDateTime(resourceModel, questionResource, configuration);
+      populateModifiedDateTime(resourceModel, questionResource, configuration);
     }
 
     return resourceModel;

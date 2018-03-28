@@ -56,17 +56,17 @@ create_namespace 'lms'
 
 create 'lms:permissions', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
 put 'lms:permissions', 'VIEW_HOME', 'd:name', 'View Home', 1480299712295
-put 'lms:permissions', 'VIEW_COURSES', 'd:name', 'View Courses', 1480299712295
+put 'lms:permissions', 'VIEW_COURSE', 'd:name', 'View Courses', 1480299712295
 put 'lms:permissions', 'EDIT_COURSE', 'd:name', 'Edit Course', 1480299712295
-put 'lms:permissions', 'VIEW_LESSONS', 'd:name', 'View Lessons', 1480299712295
+put 'lms:permissions', 'VIEW_LESSON', 'd:name', 'View Lessons', 1480299712295
 put 'lms:permissions', 'EDIT_LESSON', 'd:name', 'Edit Lesson', 1480299712295
-put 'lms:permissions', 'VIEW_QUIZZES', 'd:name', 'View Lessons', 1480299712295
+put 'lms:permissions', 'VIEW_QUIZ', 'd:name', 'View Lessons', 1480299712295
 put 'lms:permissions', 'EDIT_QUIZ', 'd:name', 'Edit Lesson', 1480299712295
-put 'lms:permissions', 'VIEW_QUESTIONS', 'd:name', 'View Questions', 1480299712295
+put 'lms:permissions', 'VIEW_QUESTION', 'd:name', 'View Questions', 1480299712295
 put 'lms:permissions', 'EDIT_QUESTION', 'd:name', 'Edit Question', 1480299712295
-put 'lms:permissions', 'VIEW_USERS', 'd:name', 'View Users', 1480299712295
+put 'lms:permissions', 'VIEW_USER', 'd:name', 'View Users', 1480299712295
 put 'lms:permissions', 'EDIT_USER', 'd:name', 'Edit School', 1480299712295
-put 'lms:permissions', 'VIEW_GROUPS', 'd:name', 'View Groups', 1480299712295
+put 'lms:permissions', 'VIEW_GROUP', 'd:name', 'View Groups', 1480299712295
 put 'lms:permissions', 'EDIT_GROUP', 'd:name', 'Edit Group', 1480299712295
 put 'lms:permissions', 'VIEW_SCHOOLS', 'd:name', 'View Schools', 1480299712295
 put 'lms:permissions', 'EDIT_SCHOOL', 'd:name', 'Edit School', 1480299712295
@@ -76,7 +76,7 @@ put 'lms:permissions', 'EDIT_SCHOOL', 'd:name', 'Edit School', 1480299712295
 create 'lms:schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLOCK_ENCODING => 'FAST_DIFF', COMPRESSION =>'LZ4'}
 put 'lms:schools', 'c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:schools', 'c784ae9', 'd:locale', 'en_US', 1480299712295
-put 'lms:schools', 'c784ae9', 'd:permissions', 'VIEW_HOME|VIEW_COURSES|EDIT_COURSE|VIEW_QUESTIONS|EDIT_QUESTION|VIEW_USERS|EDIT_USER|VIEW_GROUPS|EDIT_GROUP', 1480299712295
+put 'lms:schools', 'c784ae9', 'd:permissions', 'VIEW_HOME|VIEW_COURSE|EDIT_COURSE|VIEW_QUESTION|EDIT_QUESTION|VIEW_USER|EDIT_USER|VIEW_GROUP|EDIT_GROUP', 1480299712295
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
@@ -217,7 +217,7 @@ create 'lms:groups', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BLO
 put 'lms:groups', 'c784ae9', 'd:name', 'Default School Groups', 1480299712295
 
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
-put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_USERS,EDIT_USER,VIEW_GROUPS,EDIT_GROUP', 1480299712295
+put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_USER,EDIT_USER,VIEW_GROUP,EDIT_GROUP', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_sch_c784ae9', 'd:name', 'Default School', 1480299712295
@@ -226,7 +226,7 @@ put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af3
 put 'lms:groups', 'c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
-put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_QUESTIONS,EDIT_QUESTION', 1480299712295
+put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:permissions', 'VIEW_HOME,VIEW_QUESTION,EDIT_QUESTION', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:fname', 'Admin', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:lname', 'User', 1480299712295
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_mem_c784ae995d158c2969411e781c70800279a327c', 'd:fname', 'Naung', 1480299712295
@@ -237,7 +237,7 @@ put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af3
 put 'lms:groups', 'c784ae9d95422d3337b0ebf5b00e01fe252939b_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893', 1480299712295
 
 put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:name', 'Students', 1480299712295
-put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOME,VIEW_QUESTIONS', 1480299712295
+put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a', 'd:permissions', 'VIEW_HOME,VIEW_QUESTION', 1480299712295
 put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295
 put 'lms:groups', 'c784ae957bf72fe391ef22bd852d0f45db4766a_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System', 1480299712295
@@ -261,7 +261,7 @@ put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:locale', 'en_US',
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:tformat', 'HH:mm:ss.SSS', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dformat', 'yyyy-MM-dd', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
-put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_COURSES,EDIT_COURSE,VIEW_LESSONS,EDIT_LESSON,VIEW_QUIZZES,EDIT_QUIZ,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_FILES,EDIT_FILE,VIEW_GROUPS,EDIT_GROUP,VIEW_USERS,EDIT_USER', 1480299712295
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_COURSE,EDIT_COURSE,VIEW_LESSON,EDIT_LESSON,VIEW_QUIZ,EDIT_QUIZ,VIEW_QUESTION,EDIT_QUESTION,VIEW_FILE,EDIT_FILE,VIEW_GROUP,EDIT_GROUP,VIEW_USER,EDIT_USER', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators', 1480299712295
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
@@ -282,7 +282,7 @@ put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:locale', 'en_US',
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:tformat', 'HH:mm:ss.SSS', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dformat', 'yyyy-MM-dd', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS', 1480299712295
-put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:permissions', 'VIEW_HOME,VIEW_COURSES,EDIT_COURSE,VIEW_LESSONS,EDIT_LESSON,VIEW_QUIZZES,EDIT_QUIZ,VIEW_QUESTIONS,EDIT_QUESTION,VIEW_FILES,EDIT_FILE', 1480299712295
+put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:permissions', 'VIEW_HOME,VIEW_COURSE,EDIT_COURSE,VIEW_LESSON,EDIT_LESSON,VIEW_QUIZ,EDIT_QUIZ,VIEW_QUESTION,EDIT_QUESTION,VIEW_FILE,EDIT_FILE', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_sch_c784ae9', 'd:name', 'Default School', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers', 1480299712295
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS', 1480299712295

@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
@@ -55,6 +56,7 @@ public class LessonService extends AbstractService {
   }
 
   @Log
+  @Requires(Permission.VIEW_LESSON)
   public QueryResult<LessonResourceModel> findAllBy(
       Query query, Principal principal)
       throws IOException {
@@ -104,16 +106,17 @@ public class LessonService extends AbstractService {
 
     LessonResourceModel resourceModel = getModel(lessonResource,
         LessonResourceModel.class, configuration);
-    populatedCreatedDateTime(resourceModel, lessonResource, configuration);
+    populateCreatedDateTime(resourceModel, lessonResource, configuration);
 
     if (DateTimeUtils.isNotEmpty(lessonResource.getModifiedDateTime())) {
-      populatedModifiedDateTime(resourceModel, lessonResource, configuration);
+      populateModifiedDateTime(resourceModel, lessonResource, configuration);
     }
 
     return resourceModel;
   }
 
   @Log
+  @Requires({Permission.VIEW_LESSON, Permission.ATTEMPT_LESSON})
   public Optional<LessonResourceModel> findBy(String id, Principal principal)
       throws IOException {
 
@@ -153,6 +156,7 @@ public class LessonService extends AbstractService {
   }
 
   @Log
+  @Requires(Permission.VIEW_LESSON)
   public List<String> findAllComponentTypes() {
     Properties properties = propertiesProvider.get();
     String questionTypes = properties.getProperty("lesson.component.types");

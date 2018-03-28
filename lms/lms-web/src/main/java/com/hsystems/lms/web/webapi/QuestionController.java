@@ -10,7 +10,7 @@ import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.model.question.MultipleChoiceResourceModel;
 import com.hsystems.lms.service.model.question.QuestionResourceModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -51,7 +51,7 @@ public class QuestionController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUESTIONS)
+  @Requires(Permission.VIEW_QUESTION)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
@@ -67,7 +67,7 @@ public class QuestionController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUESTIONS)
+  @Requires(Permission.VIEW_QUESTION)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {

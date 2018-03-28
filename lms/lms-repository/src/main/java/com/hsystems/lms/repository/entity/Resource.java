@@ -19,9 +19,9 @@ public interface Resource extends SchoolScoped {
 
   void addKeyword(String... keywords);
 
-  Enumeration<PermissionSet> getPermissionSets();
+  Enumeration<ResourcePermission> getPermissions();
 
-  void addPermissionSet(PermissionSet... permissionSets);
+  void addPermission(ResourcePermission... permissions);
 
   ResourceStatus getStatus();
 }

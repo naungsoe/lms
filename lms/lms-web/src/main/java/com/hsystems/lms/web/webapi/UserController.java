@@ -9,7 +9,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,7 +46,7 @@ public class UserController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_USERS)
+  @Requires(Permission.VIEW_USER)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
@@ -62,7 +62,7 @@ public class UserController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUESTIONS)
+  @Requires(Permission.VIEW_QUESTION)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {

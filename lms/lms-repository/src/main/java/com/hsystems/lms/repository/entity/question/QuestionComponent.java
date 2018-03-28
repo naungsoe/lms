@@ -12,6 +12,5 @@ public interface QuestionComponent<T extends Question>
 
   long getScore();
 
-  @Override
   QuestionGradingStrategy getGradingStrategy();
 }

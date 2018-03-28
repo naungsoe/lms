@@ -33,7 +33,7 @@ public class RequiresInterceptor implements MethodInterceptor {
     String[] permissions = requires.value();
     Principal principal = principalProvider.get();
     boolean hasPermissions = Arrays.asList(permissions).stream()
-        .allMatch(permission -> principal.hasPermission(permission));
+        .anyMatch(permission -> principal.hasPermission(permission));
     CommonUtils.checkAccessControl(hasPermissions,
         String.format("access denied: %s", method.getName()));
     return invocation.proceed();

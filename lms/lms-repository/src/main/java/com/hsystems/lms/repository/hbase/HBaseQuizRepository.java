@@ -76,7 +76,7 @@ public class HBaseQuizRepository extends HBaseAbstractRepository
 
     if (logOptional.isPresent()) {
       ShareLog shareLog = logOptional.get();
-      populatePermissionSets(resource, shareLog);
+      populatePermissions(resource, shareLog);
     }
   }
 

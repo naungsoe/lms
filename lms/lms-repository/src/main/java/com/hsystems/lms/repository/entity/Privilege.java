@@ -1,6 +1,6 @@
 package com.hsystems.lms.repository.entity;
 
-public enum Permission {
+public enum Privilege {
 
   VIEW,
   EDIT

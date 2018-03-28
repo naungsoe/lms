@@ -12,7 +12,7 @@ import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.QuizService;
 import com.hsystems.lms.service.model.ComponentModel;
 import com.hsystems.lms.service.model.quiz.QuizResourceModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -54,7 +54,7 @@ public class QuizController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUIZZES)
+  @Requires(Permission.VIEW_QUIZ)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
@@ -70,7 +70,7 @@ public class QuizController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @Requires(Permission.VIEW_QUIZZES)
+  @Requires(Permission.VIEW_QUIZ)
   public Response findBy(@PathParam("id") String id)
       throws IOException {
 

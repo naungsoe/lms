@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.service.Permission;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -36,7 +37,6 @@ public class LessonServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(Permission.VIEW_LESSONS)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -44,12 +44,6 @@ public class LessonServlet extends AbstractServlet {
     UserModel userModel = (UserModel) principalProvider.get();
     request.setAttribute("userId", userModel.getId());
 
-    String jspPath = getJspPath(request);
-    loadLocale(request, "lessons");
-    forwardRequest(request, response, jspPath);
-  }
-
-  private String getJspPath(HttpServletRequest request) {
     String requestUri = request.getRequestURI();
     Pattern pattern = Pattern.compile(ATTEMPT_PATTERN);
     Matcher matcher = pattern.matcher(requestUri);
@@ -57,10 +51,29 @@ public class LessonServlet extends AbstractServlet {
     if (matcher.matches()) {
       String lessonId = matcher.group();
       request.setAttribute("lessonId", lessonId);
-      return ATTEMPT_PATH;
-    }
+      handleAttempt(request, response);
 
-    return INDEX_PATH;
+    } else {
+      handleList(request, response);
+    }
+  }
+
+  @Requires(Permission.ATTEMPT_LESSON)
+  protected void handleAttempt(
+      HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    loadLocale(request, "lessons");
+    forwardRequest(request, response, ATTEMPT_PATH);
+  }
+
+  @Requires(Permission.VIEW_LESSON)
+  protected void handleList(
+      HttpServletRequest request, HttpServletResponse response)
+      throws ServletException, IOException {
+
+    loadLocale(request, "lessons");
+    forwardRequest(request, response, INDEX_PATH);
   }
 
   @Override

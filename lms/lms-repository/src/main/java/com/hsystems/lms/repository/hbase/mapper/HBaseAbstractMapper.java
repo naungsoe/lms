@@ -6,8 +6,8 @@ import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.Permission;
-import com.hsystems.lms.repository.entity.PermissionSet;
+import com.hsystems.lms.repository.entity.Privilege;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
@@ -92,7 +92,7 @@ public abstract class HBaseAbstractMapper<T> {
   private static final byte[] SIZE_QUALIFIER = Bytes.toBytes("size");
   private static final byte[] DIRECTORY_QUALIFIER = Bytes.toBytes("directory");
   private static final byte[] STATUS_QUALIFIER = Bytes.toBytes("status");
-  private static final byte[] ACTION_QUALIFIER = Bytes.toBytes("action");
+  private static final byte[] PRIVILEGE_QUALIFIER = Bytes.toBytes("privilege");
   private static final byte[] PARENT_QUALIFIER = Bytes.toBytes("parent");
 
   private static final String SEPARATOR = "_";
@@ -111,7 +111,7 @@ public abstract class HBaseAbstractMapper<T> {
   private static final String QUIZ_SEPARATOR = "_quz_";
   private static final String COMPONENT_SEPARATOR = "_com_";
   private static final String OPTION_SEPARATOR = "_opt_";
-  private static final String ENTRY_SEPARATOR = "_ent_";
+  private static final String PERMISSION_SEPARATOR = "_per_";
 
   private static final String SEPARATED_ID_PATTERN = "%s([A-Za-z0-9]*)";
   private static final String SUFFIXED_ID_PATTERN = "([A-Za-z0-9]*)%s$";
@@ -423,8 +423,8 @@ public abstract class HBaseAbstractMapper<T> {
     return isChildResult(prefix + PARENT_SEPARATOR);
   }
 
-  protected Predicate<Result> isEntryResult(String prefix) {
-    return isChildResult(prefix + ENTRY_SEPARATOR);
+  protected Predicate<Result> isPermissionResult(String prefix) {
+    return isChildResult(prefix + PERMISSION_SEPARATOR);
   }
 
   public String getParentId(Result result) {
@@ -483,8 +483,8 @@ public abstract class HBaseAbstractMapper<T> {
     return Arrays.asList(items);
   }
 
-  protected Permission getSharePermission(Result result) {
-    return getEnum(result, FAMILY_DATA, ACTION_QUALIFIER, Permission.class);
+  protected Privilege getPrivilege(Result result) {
+    return getEnum(result, FAMILY_DATA, PRIVILEGE_QUALIFIER, Privilege.class);
   }
 
   protected List<Level> getLevels(List<Result> results, String prefix) {
@@ -683,14 +683,14 @@ public abstract class HBaseAbstractMapper<T> {
     return new FileObject(name, size, directory);
   }
 
-  protected PermissionSet getPermissionSet(Result result) {
-    String id = getId(result, ENTRY_SEPARATOR);
+  protected ResourcePermission getResourcePermission(Result result) {
+    String id = getId(result, PERMISSION_SEPARATOR);
     String firstName = getFirstName(result);
     String lastName = getLastName(result);
 
     User user = new User.Builder(id, firstName, lastName).build();
-    Permission permission = getSharePermission(result);
-    return new PermissionSet(user, permission);
+    Privilege privilege = getPrivilege(result);
+    return new ResourcePermission(user, privilege);
   }
 
   protected void addFirstNameColumn(Put put, String value) {

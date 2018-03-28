@@ -2,8 +2,8 @@ package com.hsystems.lms.repository.hbase;
 
 import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.repository.entity.PermissionSet;
 import com.hsystems.lms.repository.entity.Resource;
+import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.ShareLog;
 
 import org.apache.hadoop.hbase.TableName;
@@ -165,12 +165,12 @@ public abstract class HBaseAbstractRepository {
     return rowKeys;
   }
 
-  protected void populatePermissionSets(Resource resource, ShareLog shareLog) {
-    Enumeration<PermissionSet> enumeration = shareLog.getPermissionSets();
+  protected void populatePermissions(Resource resource, ShareLog shareLog) {
+    Enumeration<ResourcePermission> enumeration = shareLog.getPermissions();
 
     while (enumeration.hasMoreElements()) {
-      PermissionSet element = enumeration.nextElement();
-      resource.addPermissionSet(element);
+      ResourcePermission element = enumeration.nextElement();
+      resource.addPermission(element);
     }
   }
 }

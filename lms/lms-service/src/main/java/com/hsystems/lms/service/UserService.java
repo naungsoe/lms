@@ -117,18 +117,22 @@ public class UserService extends AbstractService {
   private void checkSignUpPreconditions(SignUpModel signUpModel) {
     CommonUtils.checkArgument(
         StringUtils.isNotEmpty(signUpModel.getAccount()),
-        "id cannot be empty");
+        "account cannot be empty");
+
     CommonUtils.checkArgument(
         StringUtils.isNotEmpty(signUpModel.getPassword()),
         "password cannot be empty");
+
     CommonUtils.checkArgument(
         signUpModel.getPassword().equals(signUpModel.getConfirmPassword()),
         "password and confirm password must be same");
+
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpModel.getFirstName()),
+        StringUtils.isNotEmpty(signUpModel.getFirstName()),
         "first name cannot be empty");
+
     CommonUtils.checkArgument(
-        StringUtils.isEmpty(signUpModel.getLastName()),
+        StringUtils.isNotEmpty(signUpModel.getLastName()),
         "last name cannot be empty");
   }
 
@@ -144,9 +148,9 @@ public class UserService extends AbstractService {
         = indexRepository.findBy(groupId, Group.class);
 
     CommonUtils.checkArgument(schoolOptional.isPresent(),
-        "error retrieving school");
+        "school is not found in system");
     CommonUtils.checkArgument(groupOptional.isPresent(),
-        "error retrieving group");
+        "group is not found in system");
 
     School school = schoolOptional.get();
     Group group = groupOptional.get();

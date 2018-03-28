@@ -9,7 +9,7 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.DriveService;
 import com.hsystems.lms.service.model.file.FileResourceModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +47,7 @@ public class DriveController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_FILES)
+  @Requires(Permission.VIEW_FILE)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
@@ -63,7 +63,7 @@ public class DriveController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_FILES)
+  @Requires(Permission.VIEW_FILE)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {
@@ -83,7 +83,7 @@ public class DriveController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces({MediaType.APPLICATION_OCTET_STREAM})
-  @Requires(Permission.VIEW_FILES)
+  @Requires(Permission.VIEW_FILE)
   public Response downloadBy(
       @PathParam("id") String id)
       throws IOException {

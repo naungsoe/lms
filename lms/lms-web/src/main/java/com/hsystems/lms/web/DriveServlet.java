@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.service.Permission;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class DriveServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(Permission.VIEW_FILES)
+  @Requires(Permission.VIEW_FILE)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

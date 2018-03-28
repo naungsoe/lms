@@ -7,7 +7,7 @@ import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.IndexService;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.web.Permission;
+import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 
