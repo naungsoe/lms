@@ -1,13 +1,17 @@
 package com.hsystems.lms.repository.entity.beans;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.course.TopicComponent;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
-public class TopicComponentBean implements ComponentBean, Serializable {
+public class TopicComponentBean
+    implements ComponentBean<TopicComponent>, Serializable {
 
-  private static final long serialVersionUID = -5076622207973159024L;
+  private static final long serialVersionUID = -7176783670628773493L;
 
   @IndexField
   protected String id;
@@ -70,5 +74,11 @@ public class TopicComponentBean implements ComponentBean, Serializable {
   @Override
   public String getParentId() {
     return parentId;
+  }
+
+  @Override
+  public TopicComponent getComponent() {
+    List<Component> components = Collections.emptyList();
+    return new TopicComponent(id, title, instructions, order, components);
   }
 }

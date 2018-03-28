@@ -7,9 +7,9 @@ import com.hsystems.lms.repository.entity.file.FileObject;
 import java.io.Serializable;
 
 public class FileComponentBean
-    implements ComponentBean, Serializable {
+    implements ComponentBean<FileComponent>, Serializable {
 
-  private static final long serialVersionUID = 7119959232897560868L;
+  private static final long serialVersionUID = -5605744166144233421L;
 
   @IndexField
   private String id;
@@ -18,7 +18,7 @@ public class FileComponentBean
   private FileObject fileObject;
 
   @IndexField
-  private int order;
+  protected int order;
 
   @IndexField
   private String resourceId;
@@ -64,5 +64,10 @@ public class FileComponentBean
   @Override
   public String getParentId() {
     return parentId;
+  }
+
+  @Override
+  public FileComponent getComponent() {
+    return new FileComponent(id, fileObject, order);
   }
 }

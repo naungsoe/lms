@@ -1,25 +1,29 @@
 package com.hsystems.lms.repository.entity.beans;
 
 import com.hsystems.lms.common.annotation.IndexField;
+import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 
-public class ActivityComponentBean implements ComponentBean, Serializable {
+public class ActivityComponentBean
+    implements ComponentBean<ActivityComponent>, Serializable {
 
-  private static final long serialVersionUID = -2982013864114667100L;
-
-  @IndexField
-  protected String id;
-
-  @IndexField
-  protected String title;
+  private static final long serialVersionUID = -4873013093631706469L;
 
   @IndexField
-  protected String instructions;
+  private String id;
 
   @IndexField
-  protected int order;
+  private String title;
+
+  @IndexField
+  private String instructions;
+
+  @IndexField
+  private int order;
 
   @IndexField
   private String resourceId;
@@ -70,5 +74,11 @@ public class ActivityComponentBean implements ComponentBean, Serializable {
   @Override
   public String getParentId() {
     return parentId;
+  }
+
+  @Override
+  public ActivityComponent getComponent() {
+    List<Component> components = Collections.emptyList();
+    return new ActivityComponent(id, title, instructions, order, components);
   }
 }

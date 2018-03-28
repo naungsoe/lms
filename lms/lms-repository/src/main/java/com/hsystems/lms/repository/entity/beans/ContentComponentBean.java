@@ -6,18 +6,18 @@ import com.hsystems.lms.repository.entity.lesson.ContentComponent;
 import java.io.Serializable;
 
 public class ContentComponentBean
-    implements ComponentBean, Serializable {
+    implements ComponentBean<ContentComponent>, Serializable {
 
-  private static final long serialVersionUID = 8249781720338863168L;
+  private static final long serialVersionUID = 8722347746596733895L;
 
   @IndexField
-  private String id;
+  protected String id;
 
   @IndexField
   private String content;
 
   @IndexField
-  private int order;
+  protected int order;
 
   @IndexField
   private String resourceId;
@@ -63,5 +63,10 @@ public class ContentComponentBean
   @Override
   public String getParentId() {
     return parentId;
+  }
+
+  @Override
+  public ContentComponent getComponent() {
+    return new ContentComponent(id, content, order);
   }
 }

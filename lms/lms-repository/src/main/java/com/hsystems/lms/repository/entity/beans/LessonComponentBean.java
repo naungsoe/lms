@@ -9,9 +9,10 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public final class LessonComponentBean implements ComponentBean, Serializable {
+public final class LessonComponentBean
+    implements ComponentBean<LessonComponent>, Serializable {
 
-  private static final long serialVersionUID = 13530121995867783L;
+  private static final long serialVersionUID = -4120183072754254647L;
 
   @IndexField
   private String id;
@@ -74,5 +75,10 @@ public final class LessonComponentBean implements ComponentBean, Serializable {
   @Override
   public String getParentId() {
     return parentId;
+  }
+
+  @Override
+  public LessonComponent getComponent() {
+    return new LessonComponent(id, lesson, order, lessonId);
   }
 }
