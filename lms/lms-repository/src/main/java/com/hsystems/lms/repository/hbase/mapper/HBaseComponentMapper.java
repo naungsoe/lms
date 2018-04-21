@@ -28,7 +28,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseComponentMapper extends HBaseAbstractMapper<Component> {
+public class HBaseComponentMapper extends HBaseEntityMapper<Component> {
 
   @Override
   public List<Component> getEntities (List<Result> results) {

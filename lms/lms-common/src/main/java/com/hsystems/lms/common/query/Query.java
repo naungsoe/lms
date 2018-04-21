@@ -3,30 +3,16 @@ package com.hsystems.lms.common.query;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by naungsoe on 3/11/16.
  */
-public final class Query {
-
-  private static final String PARAM_PATTERN = "%s=([^\\&]*)";
-  private static final String FILTER_PATTERN
-      = "([a-zA-Z0-9\\.\\,]*):([a-zA-Z0-9\\_\\s\\'\\\"]*)(\\s|$)";
-  private static final String SORT_PATTERN = "([a-zA-Z0-9]*)\\s([a-zA-Z]*)";
-  private static final String EQUAL_PATTERN = "MUST\\s(.*)";
-  private static final String NOT_EQUAL_PATTERN = "NOT\\s(.*)";
-  private static final String GREATER_THAN_EQUAL_PATTERN
-      = "FROM\\s([a-zA-Z0-9]*)\\sTO\\s\\*";
-  private static final String LESS_THAN_EQUAL_PATTERN
-      = "FROM\\s\\*\\sTO\\s([a-zA-Z0-9]*)";
-  private static final String LIKE_PATTERN = "LIKE\\s(.*)";
+public final class Query implements Serializable {
 
   private List<String> fields;
 
@@ -38,226 +24,26 @@ public final class Query {
 
   private long limit;
 
-  Query() {
+  public Query() {
     this.fields = new ArrayList<>();
     this.criteria = new ArrayList<>();
-    this.sortKeys =  new ArrayList<>();
-    this.offset = 0;
-    this.limit = 10;
+    this.sortKeys = new ArrayList<>();
+    this.offset = Long.MIN_VALUE;
+    this.limit = Long.MAX_VALUE;
   }
 
-  public static Query create() {
-    return new Query();
-  }
+  public Query(
+      List<String> fields,
+      List<Criterion> criteria,
+      List<SortKey> sortKeys,
+      long offset,
+      long limit) {
 
-  public static Query create(String queryString) {
-    Query query = new Query();
-
-    if (StringUtils.isEmpty(queryString)) {
-      return query;
-    }
-
-    populateFields(query, queryString);
-    populateQueryCriteria(query, queryString);
-    populateFilterCriteria(query, queryString);
-    populateSortKeys(query, queryString);
-    populateOffset(query, queryString);
-    populateLimit(query, queryString);
-    return query;
-  }
-
-  private static void populateFields(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "fields");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    while (matcher.find()) {
-      String value = matcher.group(1);
-      query.addField(value.split(","));
-    }
-  }
-
-  private static void populateQueryCriteria(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "query");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    while (matcher.find()) {
-      String value = matcher.group(1);
-      List<Criterion> queryCriteria = getQueryCriteria(value);
-      query.addCriterion(queryCriteria.toArray(new Criterion[0]));
-    }
-  }
-
-  private static List<Criterion> getQueryCriteria(String query) {
-    List<Criterion> criteria = new ArrayList<>();
-    Pattern pattern = Pattern.compile(FILTER_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.find()) {
-      String[] fields = matcher.group(1).split(",");
-      String value = matcher.group(2);
-
-      Arrays.asList(fields).forEach(
-          field -> populateLike(criteria, field, value));
-    }
-
-    return criteria;
-  }
-
-  private static void populateFilterCriteria(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "filters");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    while (matcher.find()) {
-      String value = matcher.group(1);
-      List<Criterion> filterCriteria = getFilterCriteria(value);
-      query.addCriterion(filterCriteria.toArray(new Criterion[0]));
-    }
-  }
-
-  private static List<Criterion> getFilterCriteria(String query) {
-    List<Criterion> criteria = new ArrayList<>();
-    Pattern pattern = Pattern.compile(FILTER_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    while (matcher.find()) {
-      String field = matcher.group(1);
-      String value = matcher.group(2);
-      populateEqual(criteria, field, value);
-      populateNotEqual(criteria, field, value);
-      populateGreaterThanEqual(criteria, field, value);
-      populateLessThanEqual(criteria, field, value);
-    }
-
-    return criteria;
-  }
-
-  private static void populateEqual(
-      List<Criterion> criteria, String field, String query) {
-
-    Pattern pattern = Pattern.compile(EQUAL_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.matches()) {
-      MatchResult result = matcher.toMatchResult();
-      String value = result.group(1);
-      Criterion criterion = Criterion.createEqual(field, value);
-      criteria.add(criterion);
-    }
-  }
-
-  private static void populateNotEqual(
-      List<Criterion> criteria, String field, String query) {
-
-    Pattern pattern = Pattern.compile(NOT_EQUAL_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.matches()) {
-      MatchResult result = matcher.toMatchResult();
-      String value = result.group(1);
-      Criterion criterion = Criterion.createNotEqual(field, value);
-      criteria.add(criterion);
-    }
-  }
-
-  private static void populateGreaterThanEqual(
-      List<Criterion> criteria, String field, String query) {
-
-    Pattern pattern = Pattern.compile(GREATER_THAN_EQUAL_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.matches()) {
-      MatchResult result = matcher.toMatchResult();
-      String value = result.group(1);
-      Criterion criterion = Criterion.createGreaterThanEqual(field, value);
-      criteria.add(criterion);
-    }
-  }
-
-  private static void populateLessThanEqual(
-      List<Criterion> criteria, String field, String query) {
-
-    Pattern pattern = Pattern.compile(LESS_THAN_EQUAL_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.matches()) {
-      MatchResult result = matcher.toMatchResult();
-      String value = result.group(1);
-      Criterion criterion = Criterion.createLessThanEqual(field, value);
-      criteria.add(criterion);
-    }
-  }
-
-  private static void populateLike(
-      List<Criterion> criteria, String field, String query) {
-
-    Pattern pattern = Pattern.compile(LIKE_PATTERN);
-    Matcher matcher = pattern.matcher(query);
-
-    if (matcher.matches()) {
-      MatchResult result = matcher.toMatchResult();
-      String value = result.group(1);
-      Criterion criterion = Criterion.createLike(field, value);
-      criteria.add(criterion);
-    }
-  }
-
-  private static void populateSortKeys(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "sort");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    while (matcher.find()) {
-      String value = matcher.group(1);
-      List<SortKey> sortKeys = getSortKeys(value);
-      query.addSortKey(sortKeys.toArray(new SortKey[0]));
-    }
-  }
-
-  private static List<SortKey> getSortKeys(String query) {
-    List<SortKey> sortKeys = new ArrayList<>();
-    String[] params = query.split(",");
-    Pattern pattern = Pattern.compile(SORT_PATTERN);
-
-    for (String param : params) {
-      Matcher matcher = pattern.matcher(param);
-
-      if (matcher.matches()) {
-        MatchResult result = matcher.toMatchResult();
-        String field = result.group(1);
-        String direction = result.group(2);
-
-        SortOrder sortOrder = "desc".equals(direction)
-            ? SortOrder.DESCENDING : SortOrder.ASCENDING;
-        sortKeys.add(new SortKey(field, sortOrder));
-      }
-    }
-
-    return sortKeys;
-  }
-
-  private static void populateOffset(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "offset");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    if (matcher.find()) {
-      String value = matcher.group(1);
-      query.offset = Integer.valueOf(value);
-    }
-  }
-
-  private static void populateLimit(Query query, String queryString) {
-    String regex = String.format(PARAM_PATTERN, "limit");
-    Pattern pattern = Pattern.compile(regex);
-    Matcher matcher = pattern.matcher(queryString);
-
-    if (matcher.find()) {
-      String value = matcher.group(1);
-      query.limit = Integer.valueOf(value);
-    }
+    this.fields = fields;
+    this.criteria = criteria;
+    this.sortKeys = sortKeys;
+    this.offset = offset;
+    this.limit = limit;
   }
 
   public List<String> getFields() {

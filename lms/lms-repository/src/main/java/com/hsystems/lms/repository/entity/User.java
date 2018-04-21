@@ -5,7 +5,6 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,10 +16,9 @@ import java.util.List;
  * Created by naungsoe on 8/8/16.
  */
 @IndexDocument(namespace = "lms", collection = "users")
-public final class User
-    implements Entity, SchoolScoped, Auditable, Serializable {
+public final class User implements Entity, SchoolScoped, Auditable {
 
-  private static final long serialVersionUID = 7115174222259162095L;
+  private static final long serialVersionUID = 7656785679804190660L;
 
   @IndexField
   private String id;

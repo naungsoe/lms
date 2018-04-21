@@ -6,17 +6,14 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.service.ComponentService;
+import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.QuizService;
-import com.hsystems.lms.service.model.ComponentModel;
 import com.hsystems.lms.service.model.quiz.QuizResourceModel;
-import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
-import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.GET;
@@ -39,29 +36,27 @@ public class QuizController extends AbstractController {
 
   private final QuizService quizService;
 
-  private final ComponentService componentService;
-
   @Inject
   QuizController(
       Provider<Principal> principalProvider,
-      QuizService quizService,
-      ComponentService componentService) {
+      QuizService quizService) {
 
     this.principalProvider = principalProvider;
     this.quizService = quizService;
-    this.componentService = componentService;
   }
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUIZ)
+  @Requires(AppPermission.VIEW_QUIZ)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
     URI requestUri = uriInfo.getRequestUri();
-    Query query = Query.create(requestUri.getQuery());
+    String queryString = requestUri.getQuery();
+    QueryMapper queryMapper = new QueryMapper();
+    Query query = queryMapper.map(queryString);
     QueryResult<QuizResourceModel> queryResult
         = quizService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
@@ -70,7 +65,7 @@ public class QuizController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @Requires(Permission.VIEW_QUIZ)
+  @Requires(AppPermission.VIEW_QUIZ)
   public Response findBy(@PathParam("id") String id)
       throws IOException {
 
@@ -79,20 +74,10 @@ public class QuizController extends AbstractController {
         = quizService.findBy(id, principal);
 
     if (!resourceModelOptional.isPresent()) {
-      throw new WebApplicationException(
-          Response.Status.NOT_FOUND);
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     QuizResourceModel resourceModel = resourceModelOptional.get();
-    Query query = Query.create();
-    QueryResult<ComponentModel> queryResult
-        = componentService.findAllBy(query, principal);
-    List<ComponentModel> componentModels = queryResult.getItems();
-
-    if (CollectionUtils.isNotEmpty(componentModels)) {
-      resourceModel.getQuiz().setComponents(componentModels);
-    }
-
     return Response.ok(resourceModel).build();
   }
 }

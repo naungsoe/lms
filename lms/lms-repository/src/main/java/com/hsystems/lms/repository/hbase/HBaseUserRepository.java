@@ -37,6 +37,22 @@ public class HBaseUserRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<User> findAllBy(
+      String schoolId, String lastId, int limit)
+      throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(lastId);
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
+
+    TableName tableName = getTableName(User.class);
+    List<Result> results = client.scan(scan, tableName);
+    return userMapper.getEntities(results);
+  }
+
+  @Override
   public Optional<User> findBy(String id)
       throws IOException {
 
@@ -55,23 +71,13 @@ public class HBaseUserRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<User> findAllBy(
-      String schoolId, String lastId, int limit)
+  public void create(User entity)
       throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(lastId);
-    Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-    scan.setCaching(limit);
-
-    TableName tableName = getTableName(User.class);
-    List<Result> results = client.scan(scan, tableName);
-    return userMapper.getEntities(results);
   }
 
   @Override
-  public void save(User entity)
+  public void update(User entity)
       throws IOException {
 
   }

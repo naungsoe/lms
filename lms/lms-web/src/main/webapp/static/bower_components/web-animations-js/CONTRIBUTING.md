@@ -7,7 +7,7 @@
 1. `git submodule update --init --recursive` (Necessary for running tests.)
 1. Install [node](https://nodejs.org/en/) and make sure `npm` is in your $PATH
 1. Run `npm install` in the respository to pull in development dependencies.
-1. Run `npm install -g grunt-cli` to get the build tools for the command line.
+1. Run `npm install -g grunt-cli` to get the build tools for the patch line.
 
 ### Contributing
 
@@ -34,7 +34,7 @@ once the tests have completed.
 
 The polyfill target and tests can be specified as arguments to the `debug` task.
 Example: `grunt debug:web-animations-next:test/web-platform-tests/web-animations/animation/pause.html`
-Multiple test files may be listed with comma separation. Specifying files will output their URL in the command line.
+Multiple test files may be listed with comma separation. Specifying files will output their URL in the patch line.
 Example: `http://localhost:9876/base/test/web-platform-tests/web-animations/animation/pause.html`
 
 

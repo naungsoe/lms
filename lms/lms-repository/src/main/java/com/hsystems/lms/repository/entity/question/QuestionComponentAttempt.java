@@ -3,16 +3,15 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.GradableComponentAttempt;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 6/1/17.
  */
 public class QuestionComponentAttempt<T extends QuestionAttempt>
-		implements GradableComponentAttempt<QuestionGradingStrategy>, Serializable {
+		implements GradableComponentAttempt<QuestionGradingStrategy> {
 
-	private static final long serialVersionUID = 5517618524514244154L;
+	private static final long serialVersionUID = 6916611853569202791L;
 
 	@IndexField
 	private String id;

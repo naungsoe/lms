@@ -37,6 +37,22 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<Component> findAllBy(String parentId)
+      throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(parentId);
+    Scan scan = getRowKeyFilterScan(parentId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(Component.class);
+    List<Result> results = client.scan(scan, tableName);
+    List<Component> components = componentMapper.getEntities(results);
+
+    return components;
+  }
+
+  @Override
   public Optional<Component> findBy(String id)
       throws IOException {
 
@@ -55,23 +71,13 @@ public class HBaseComponentRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Component> findAllBy(String parentId)
+  public void create(Component entity)
       throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(parentId);
-    Scan scan = getRowKeyFilterScan(parentId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(Component.class);
-    List<Result> results = client.scan(scan, tableName);
-    List<Component> components = componentMapper.getEntities(results);
-
-    return components;
   }
 
   @Override
-  public void save(Component entity)
+  public void update(Component entity)
       throws IOException {
 
   }

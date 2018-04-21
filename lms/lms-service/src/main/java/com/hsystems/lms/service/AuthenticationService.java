@@ -71,7 +71,7 @@ public class AuthenticationService extends AbstractService {
   private Optional<User> findUserBy(String account)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("account", account));
     QueryResult<User> queryResult
         = indexRepository.findAllBy(query, User.class);
@@ -104,7 +104,7 @@ public class AuthenticationService extends AbstractService {
         LocalDateTime.now(),
         0
     );
-    signInLogRepository.save(signInLog);
+    signInLogRepository.create(signInLog);
   }
 
   private UserModel getUserModel(User user) {
@@ -128,6 +128,8 @@ public class AuthenticationService extends AbstractService {
           LocalDateTime.now(),
           (signInLogOptional.get().getFails() + 1)
       );
+      signInLogRepository.update(signInLog);
+
     } else {
       signInLog = new SignInLog(
           user.getId(),
@@ -137,9 +139,8 @@ public class AuthenticationService extends AbstractService {
           LocalDateTime.now(),
           0
       );
+      signInLogRepository.create(signInLog);
     }
-
-    signInLogRepository.save(signInLog);
   }
 
   @Log(LoggerType.SIGNIN)
@@ -214,7 +215,7 @@ public class AuthenticationService extends AbstractService {
   private Optional<SignInLog> findSignInLogBy(String account)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("account", account));
     QueryResult<SignInLog> queryResult
         = indexRepository.findAllBy(query, SignInLog.class);
@@ -239,7 +240,7 @@ public class AuthenticationService extends AbstractService {
         LocalDateTime.now(),
         0
     );
-    signInLogRepository.save(signInLog);
+    signInLogRepository.create(signInLog);
     indexRepository.save(signInLog);
   }
 }

@@ -55,7 +55,13 @@ public class HBaseSchoolRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(School entity)
+  public void create(School entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(School entity)
       throws IOException {
 
   }

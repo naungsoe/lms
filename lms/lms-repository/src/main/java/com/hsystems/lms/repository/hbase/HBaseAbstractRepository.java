@@ -2,11 +2,12 @@ package com.hsystems.lms.repository.hbase;
 
 import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.util.StringUtils;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Resource;
-import com.hsystems.lms.repository.entity.ResourcePermission;
 import com.hsystems.lms.repository.entity.ShareLog;
 
 import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Delete;
 import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
@@ -147,29 +148,57 @@ public abstract class HBaseAbstractRepository {
     return scan;
   }
 
-  protected List<String> getResultRowKeys(List<Result> results) {
+  protected List<String> getUnusedRowKeys(
+      List<Result> results, List<Put> puts) {
+
+    List<String> rowKeys = getResultRowKeys(results);
+    List<String> savedRowKeys = getPutRowKeys(puts);
+    List<String> unusedRowKeys = new ArrayList<>();
+    rowKeys.forEach(rowKey -> {
+      if (!savedRowKeys.contains(rowKey)) {
+        unusedRowKeys.add(rowKey);
+      }
+    });
+
+    return unusedRowKeys;
+  }
+
+  private List<String> getResultRowKeys(List<Result> results) {
     List<String> rowKeys = new ArrayList<>();
     results.forEach(result -> {
       String rowKey = Bytes.toString(result.getRow());
       rowKeys.add(rowKey);
     });
+
     return rowKeys;
   }
 
-  protected List<String> getPutRowKeys(List<Put> puts) {
+  private List<String> getPutRowKeys(List<Put> puts) {
     List<String> rowKeys = new ArrayList<>();
     puts.forEach(put -> {
       String rowKey = Bytes.toString(put.getRow());
       rowKeys.add(rowKey);
     });
+
     return rowKeys;
   }
 
+  protected List<Delete> getDeletes(List<String> rowKeys) {
+    List<Delete> deletes = new ArrayList<>();
+    rowKeys.forEach(rowKey -> {
+      byte[] deleteRowKey = Bytes.toBytes(rowKey);
+      Delete delete = new Delete(deleteRowKey);
+      deletes.add(delete);
+    });
+
+    return deletes;
+  }
+
   protected void populatePermissions(Resource resource, ShareLog shareLog) {
-    Enumeration<ResourcePermission> enumeration = shareLog.getPermissions();
+    Enumeration<Permission> enumeration = shareLog.getPermissions();
 
     while (enumeration.hasMoreElements()) {
-      ResourcePermission element = enumeration.nextElement();
+      Permission element = enumeration.nextElement();
       resource.addPermission(element);
     }
   }

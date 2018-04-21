@@ -4,15 +4,13 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.lesson.Lesson;
 import com.hsystems.lms.repository.entity.lesson.LessonComponent;
 
-import java.io.Serializable;
-
 /**
  * Created by naungsoe on 19/12/16.
  */
 public final class LessonComponentBean
-    implements ComponentBean<LessonComponent>, Serializable {
+    implements ComponentBean<LessonComponent> {
 
-  private static final long serialVersionUID = -4120183072754254647L;
+  private static final long serialVersionUID = 5277987203474226701L;
 
   @IndexField
   private String id;

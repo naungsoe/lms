@@ -6,10 +6,11 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.DriveService;
 import com.hsystems.lms.service.model.file.FileResourceModel;
-import com.hsystems.lms.service.Permission;
+import com.hsystems.lms.service.AppPermission;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,14 +48,16 @@ public class DriveController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_FILE)
+  @Requires(AppPermission.VIEW_FILE)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
     URI requestUri = uriInfo.getRequestUri();
-    Query query = Query.create(requestUri.getQuery());
+    String queryString = requestUri.getQuery();
+    QueryMapper queryMapper = new QueryMapper();
+    Query query = queryMapper.map(queryString);
     QueryResult<FileResourceModel> queryResult
         = driveService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
@@ -63,7 +66,7 @@ public class DriveController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_FILE)
+  @Requires(AppPermission.VIEW_FILE)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {
@@ -83,7 +86,7 @@ public class DriveController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces({MediaType.APPLICATION_OCTET_STREAM})
-  @Requires(Permission.VIEW_FILE)
+  @Requires(AppPermission.VIEW_FILE)
   public Response downloadBy(
       @PathParam("id") String id)
       throws IOException {

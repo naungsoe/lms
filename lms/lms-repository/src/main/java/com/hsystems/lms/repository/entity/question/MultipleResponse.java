@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,9 +12,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public final class MultipleResponse implements Question, Serializable {
+public final class MultipleResponse implements Question {
 
-  private static final long serialVersionUID = -1138463617202472009L;
+  private static final long serialVersionUID = -698060050020152942L;
 
   @IndexField
   protected String body;

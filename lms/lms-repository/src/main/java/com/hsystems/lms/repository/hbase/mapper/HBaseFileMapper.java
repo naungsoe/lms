@@ -20,7 +20,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseFileMapper extends HBaseAbstractMapper<FileResource> {
+public class HBaseFileMapper extends HBaseEntityMapper<FileResource> {
 
   public List<FileResource> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {

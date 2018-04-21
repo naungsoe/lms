@@ -3,6 +3,7 @@ package com.hsystems.lms.common.query;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -11,7 +12,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 10/8/16.
  */
-public final class Criterion {
+public final class Criterion implements Serializable {
+
+  private static final long serialVersionUID = -8140341386355648533L;
 
   private Operator operator;
 

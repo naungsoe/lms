@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
  * Created by naungsoe on 2/11/16.
  */
 @IndexDocument(namespace = "lms", collection = "signinlogs")
-public final class SignInLog implements Entity, Serializable {
+public final class SignInLog implements Entity {
 
-  private static final long serialVersionUID = 5151641476549637651L;
+  private static final long serialVersionUID = 8078103229259222444L;
 
   private String id;
 

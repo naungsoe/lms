@@ -11,12 +11,10 @@ import com.hsystems.lms.repository.entity.question.Question;
 import com.hsystems.lms.repository.entity.question.QuestionComponent;
 import com.hsystems.lms.repository.entity.question.special.UnknownQuestionComponent;
 
-import java.io.Serializable;
-
 public class QuestionComponentBean<T extends Question>
-    implements ComponentBean<QuestionComponent>, Serializable {
+    implements ComponentBean<QuestionComponent> {
 
-  private static final long serialVersionUID = 4288303796440108384L;
+  private static final long serialVersionUID = -5019701850864627482L;
 
   @IndexField
   private String id;

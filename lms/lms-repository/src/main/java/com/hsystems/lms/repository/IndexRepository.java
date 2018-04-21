@@ -11,20 +11,20 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 10/8/16.
  */
-public interface IndexRepository {
+public interface IndexRepository<T extends Entity> {
 
-  <T extends Entity> Optional<T> findBy(String id, Class<T> type)
+  Optional<T> findBy(String id, Class<T> type)
       throws IOException;
 
-  <T extends Entity> QueryResult<T> findAllBy(Query query, Class<T> type)
+  QueryResult<T> findAllBy(Query query, Class<T> type)
       throws IOException;
 
-  <T extends Entity> void save(T entity)
+  void save(List<T> entities)
       throws IOException;
 
-  <T extends Entity> void save(List<T> entities)
+  void save(T entity)
       throws IOException;
 
-  <T extends Entity> void delete(T entity)
+  void delete(T entity)
       throws IOException;
 }

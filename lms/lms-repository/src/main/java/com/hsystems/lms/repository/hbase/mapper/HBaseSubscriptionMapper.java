@@ -18,8 +18,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSubscriptionMapper
-    extends HBaseAbstractMapper<Subscription> {
+public class HBaseSubscriptionMapper extends HBaseEntityMapper<Subscription> {
 
   @Override
   public List<Subscription> getEntities(List<Result> results) {

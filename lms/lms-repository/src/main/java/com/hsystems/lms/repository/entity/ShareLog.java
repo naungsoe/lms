@@ -4,7 +4,6 @@ import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.StringUtils;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -14,13 +13,13 @@ import java.util.List;
  * Created by naungsoe on 2/11/16.
  */
 @IndexDocument(namespace = "lms", collection = "sharelogs")
-public final class ShareLog implements Entity, Serializable {
+public final class ShareLog implements Entity {
 
-  private static final long serialVersionUID = 7872836504845254592L;
+  private static final long serialVersionUID = 2121862475782957399L;
 
   private String id;
 
-  private List<ResourcePermission> permissions;
+  private List<Permission> permissions;
 
   private User sharedBy;
 
@@ -32,7 +31,7 @@ public final class ShareLog implements Entity, Serializable {
 
   public ShareLog(
       String id,
-      List<ResourcePermission> permissions,
+      List<Permission> permissions,
       User sharedBy,
       LocalDateTime sharedDateTime) {
 
@@ -55,7 +54,7 @@ public final class ShareLog implements Entity, Serializable {
     return sharedDateTime;
   }
 
-  public Enumeration<ResourcePermission> getPermissions() {
+  public Enumeration<Permission> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(permissions);

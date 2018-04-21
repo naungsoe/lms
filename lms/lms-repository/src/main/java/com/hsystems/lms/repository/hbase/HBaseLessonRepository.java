@@ -37,24 +37,6 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public Optional<LessonResource> findBy(String id)
-      throws IOException {
-
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(LessonResource.class);
-    List<Result> results = client.scan(scan, tableName);
-
-    if (CollectionUtils.isEmpty(results)) {
-      return Optional.empty();
-    }
-
-    return lessonMapper.getEntity(results);
-  }
-
-  @Override
   public List<LessonResource> findAllBy(
       String schoolId, String lastId, int limit)
       throws IOException {
@@ -73,7 +55,31 @@ public class HBaseLessonRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(LessonResource entity)
+  public Optional<LessonResource> findBy(String id)
+      throws IOException {
+
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setStartRow(Bytes.toBytes(id));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(LessonResource.class);
+    List<Result> results = client.scan(scan, tableName);
+
+    if (CollectionUtils.isEmpty(results)) {
+      return Optional.empty();
+    }
+
+    return lessonMapper.getEntity(results);
+  }
+
+  @Override
+  public void create(LessonResource entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(LessonResource entity)
       throws IOException {
 
   }

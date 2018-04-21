@@ -6,12 +6,14 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.LessonService;
 import com.hsystems.lms.service.model.lesson.LessonResourceModel;
-import com.hsystems.lms.service.Permission;
+import com.hsystems.lms.service.AppPermission;
 
 import java.io.IOException;
+import java.net.URI;
 import java.util.Optional;
 
 import javax.ws.rs.GET;
@@ -45,12 +47,15 @@ public class LessonController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_LESSON)
+  @Requires(AppPermission.VIEW_LESSON)
   public Response findAllBy(@Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
-    Query query = Query.create(uriInfo.getRequestUri().getQuery());
+    URI requestUri = uriInfo.getRequestUri();
+    String queryString = requestUri.getQuery();
+    QueryMapper queryMapper = new QueryMapper();
+    Query query = queryMapper.map(queryString);
     QueryResult<LessonResourceModel> queryResult
         = resourceService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
@@ -59,7 +64,7 @@ public class LessonController extends AbstractController {
   @GET
   @Produces(MediaType.APPLICATION_JSON)
   @Path("/{id}")
-  @Requires(Permission.VIEW_LESSON)
+  @Requires(AppPermission.VIEW_LESSON)
   public Response findBy(@PathParam("id") String id)
       throws IOException {
 
@@ -68,8 +73,7 @@ public class LessonController extends AbstractController {
         = resourceService.findBy(id, principal);
 
     if (!lessonModelOptional.isPresent()) {
-      throw new WebApplicationException(
-          Response.Status.NOT_FOUND);
+      throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
     LessonResourceModel resourceModel = lessonModelOptional.get();

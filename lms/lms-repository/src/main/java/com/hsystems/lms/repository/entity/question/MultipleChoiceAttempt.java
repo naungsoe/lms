@@ -2,15 +2,12 @@ package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.annotation.IndexField;
 
-import java.io.Serializable;
-
 /**
  * Created by naungsoe on 5/11/16.
  */
-public final class MultipleChoiceAttempt
-    implements QuestionAttempt, Serializable {
+public final class MultipleChoiceAttempt implements QuestionAttempt {
 
-  private static final long serialVersionUID = 3345284303319605541L;
+  private static final long serialVersionUID = 1665971725030339278L;
 
   @IndexField
   private ChoiceOptionAttempt optionAttempt;

@@ -4,14 +4,12 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.lesson.ActivityComponent;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class ActivityComponentBean
-    implements ComponentBean<ActivityComponent>, Serializable {
+public class ActivityComponentBean implements ComponentBean<ActivityComponent> {
 
-  private static final long serialVersionUID = -4873013093631706469L;
+  private static final long serialVersionUID = 7949163128898414434L;
 
   @IndexField
   private String id;

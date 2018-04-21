@@ -25,8 +25,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseQuestionMapper
-    extends HBaseAbstractMapper<QuestionResource> {
+public class HBaseQuestionMapper extends HBaseEntityMapper<QuestionResource> {
 
   @Override
   public List<QuestionResource> getEntities(List<Result> results) {
@@ -99,10 +98,7 @@ public class HBaseQuestionMapper
     Question question = entity.getQuestion();
     addQuestionPut(puts, question, id);
 
-    if (question instanceof CompositeQuestion) {
-      addCompositeQuestionPut(puts, question, id);
-
-    } if (question instanceof MultipleChoice) {
+    if (question instanceof MultipleChoice) {
       addChoiceOptionsPut(puts, question, id);
 
     } else if (question instanceof MultipleResponse) {

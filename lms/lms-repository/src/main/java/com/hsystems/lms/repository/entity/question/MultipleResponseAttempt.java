@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -11,10 +10,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-public final class MultipleResponseAttempt
-    implements QuestionAttempt, Serializable {
+public final class MultipleResponseAttempt implements QuestionAttempt {
 
-  private static final long serialVersionUID = 245974893854136436L;
+  private static final long serialVersionUID = 640727137672558835L;
 
   @IndexField
   private List<ChoiceOptionAttempt> attempts;

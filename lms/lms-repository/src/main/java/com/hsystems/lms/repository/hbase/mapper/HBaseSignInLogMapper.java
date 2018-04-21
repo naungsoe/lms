@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSignInLogMapper extends HBaseAbstractMapper<SignInLog> {
+public class HBaseSignInLogMapper extends HBaseEntityMapper<SignInLog> {
 
   @Override
   public List<SignInLog> getEntities(List<Result> results) {

@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseLessonMapper extends HBaseAbstractMapper<LessonResource> {
+public class HBaseLessonMapper extends HBaseEntityMapper<LessonResource> {
 
   @Override
   public List<LessonResource> getEntities(List<Result> results) {

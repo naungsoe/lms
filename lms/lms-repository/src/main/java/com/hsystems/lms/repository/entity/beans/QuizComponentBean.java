@@ -9,10 +9,9 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public final class QuizComponentBean
-    implements ComponentBean<QuizComponent>, Serializable {
+public final class QuizComponentBean implements ComponentBean<QuizComponent> {
 
-  private static final long serialVersionUID = 6600720460264971922L;
+  private static final long serialVersionUID = -1902364835889721439L;
 
   @IndexField
   private String id;

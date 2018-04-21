@@ -21,7 +21,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseQuizMapper extends HBaseAbstractMapper<QuizResource> {
+public class HBaseQuizMapper extends HBaseEntityMapper<QuizResource> {
 
   @Override
   public List<QuizResource> getEntities(List<Result> results) {

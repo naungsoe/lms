@@ -13,7 +13,10 @@ public interface Repository<T extends Entity> {
   Optional<T> findBy(String id)
       throws IOException;
 
-  void save(T entity)
+  void create(T entity)
+      throws IOException;
+
+  void update(T entity)
       throws IOException;
 
   void delete(T entity)

@@ -3,7 +3,7 @@ package com.hsystems.lms.service;
 /**
  * Created by naungsoe on 17/9/16.
  */
-public class Permission {
+public class AppPermission {
 
   public static final String ADMINISTRATION = "ADMINISTRATION";
   public static final String VIEW_HOME = "VIEW_HOME";
@@ -16,6 +16,7 @@ public class Permission {
   public static final String VIEW_QUIZ = "VIEW_QUIZ";
   public static final String EDIT_QUIZ = "EDIT_QUIZ";
   public static final String ATTEMPT_QUIZ = "ATTEMPT_LESSON";
+  public static final String CREATE_QUESTION = "CREATE_QUESTION";
   public static final String VIEW_QUESTION = "VIEW_QUESTION";
   public static final String EDIT_QUESTION = "EDIT_QUESTION";
   public static final String VIEW_FILE = "VIEW_FILE";

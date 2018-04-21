@@ -7,10 +7,19 @@ import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.core.UriBuilder;
+import javax.ws.rs.core.UriInfo;
 
 public abstract class AbstractController {
+
+  protected URI getResourceUri(UriInfo uriInfo, String resourceId) {
+    URI baseUri = uriInfo.getBaseUri();
+    return UriBuilder.fromUri(baseUri)
+        .path(resourceId).build();
+  }
 
   protected JsonNode findLocaleNode(HttpServletRequest request)
       throws IOException {

@@ -7,9 +7,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 public class QuizComponentAttempt
-    implements GradableComponentAttempt<QuizGradingStrategy>, Serializable {
+    implements GradableComponentAttempt<QuizGradingStrategy> {
 
-  private static final long serialVersionUID = -2773908334045867221L;
+  private static final long serialVersionUID = -9029616225981114976L;
 
   @IndexField
   private String id;

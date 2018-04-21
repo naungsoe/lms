@@ -7,6 +7,8 @@ import com.hsystems.lms.repository.entity.question.Question;
  */
 public final class UnknownQuestion implements Question {
 
+  private static final long serialVersionUID = -4480430497819510167L;
+
   public UnknownQuestion() {
 
   }

@@ -2,12 +2,16 @@ package com.hsystems.lms.common.query;
 
 import com.hsystems.lms.common.util.StringUtils;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by naungsoe on 3/11/16.
  */
-public final class QueryResult<T> {
+public final class QueryResult<T extends Serializable>
+    implements Serializable {
+
+  private static final long serialVersionUID = 5833977058963194159L;
 
   private long elapsedTime;
 

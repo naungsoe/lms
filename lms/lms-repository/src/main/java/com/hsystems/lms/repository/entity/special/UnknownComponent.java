@@ -7,6 +7,8 @@ import com.hsystems.lms.repository.entity.Component;
  */
 public final class UnknownComponent implements Component {
 
+  private static final long serialVersionUID = 2737431988270498522L;
+
   public UnknownComponent() {
 
   }

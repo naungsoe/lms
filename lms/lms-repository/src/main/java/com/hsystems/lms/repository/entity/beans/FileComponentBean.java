@@ -4,12 +4,9 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.file.FileComponent;
 import com.hsystems.lms.repository.entity.file.FileObject;
 
-import java.io.Serializable;
+public class FileComponentBean implements ComponentBean<FileComponent> {
 
-public class FileComponentBean
-    implements ComponentBean<FileComponent>, Serializable {
-
-  private static final long serialVersionUID = -5605744166144233421L;
+  private static final long serialVersionUID = -5340775270955542074L;
 
   @IndexField
   private String id;

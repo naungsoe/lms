@@ -37,6 +37,22 @@ public class HBaseGroupRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<Group> findAllBy(
+      String schoolId, String lastId, int limit)
+      throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(lastId);
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
+
+    TableName tableName = getTableName(Group.class);
+    List<Result> results = client.scan(scan, tableName);
+    return groupMapper.getEntities(results);
+  }
+
+  @Override
   public Optional<Group> findBy(String id)
       throws IOException {
 
@@ -55,23 +71,13 @@ public class HBaseGroupRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Group> findAllBy(
-      String schoolId, String lastId, int limit)
+  public void create(Group entity)
       throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(lastId);
-    Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-    scan.setCaching(limit);
-
-    TableName tableName = getTableName(Group.class);
-    List<Result> results = client.scan(scan, tableName);
-    return groupMapper.getEntities(results);
   }
 
   @Override
-  public void save(Group entity)
+  public void update(Group entity)
       throws IOException {
 
   }

@@ -6,10 +6,11 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.service.GroupService;
+import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.model.GroupModel;
-import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -46,14 +47,16 @@ public class GroupController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_GROUP)
+  @Requires(AppPermission.VIEW_GROUP)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
     URI requestUri = uriInfo.getRequestUri();
-    Query query = Query.create(requestUri.getQuery());
+    String queryString = requestUri.getQuery();
+    QueryMapper queryMapper = new QueryMapper();
+    Query query = queryMapper.map(queryString);
     QueryResult<GroupModel> queryResult
         = groupService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
@@ -62,7 +65,7 @@ public class GroupController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_GROUP)
+  @Requires(AppPermission.VIEW_GROUP)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {

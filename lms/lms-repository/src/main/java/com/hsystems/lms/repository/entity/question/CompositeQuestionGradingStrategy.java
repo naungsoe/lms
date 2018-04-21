@@ -1,5 +1,7 @@
 package com.hsystems.lms.repository.entity.question;
 
+import com.hsystems.lms.repository.entity.Component;
+
 import java.util.Enumeration;
 
 public class CompositeQuestionGradingStrategy
@@ -34,11 +36,13 @@ public class CompositeQuestionGradingStrategy
       QuestionComponentAttempt componentAttempt) {
 
     CompositeQuestion question = component.getQuestion();
-    Enumeration<QuestionComponent> enumeration = question.getComponents();
+    Enumeration<Component> enumeration = question.getComponents();
 
     while (enumeration.hasMoreElements()) {
-      QuestionComponent component = enumeration.nextElement();
-      QuestionGradingStrategy gradingStrategy = component.getGradingStrategy();
+      Component component = enumeration.nextElement();
+      QuestionComponent questionComponent = (QuestionComponent) component;
+      QuestionGradingStrategy gradingStrategy
+          = questionComponent.getGradingStrategy();
       componentAttempt.gradeAttempt(gradingStrategy);
     }
   }

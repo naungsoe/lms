@@ -54,7 +54,13 @@ public class HBaseShareLogRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(ShareLog entity)
+  public void create(ShareLog entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(ShareLog entity)
       throws IOException {
 
   }

@@ -17,7 +17,8 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 10/8/16.
  */
-public class SolrIndexRepository implements IndexRepository {
+public class SolrIndexRepository<T extends Entity>
+    implements IndexRepository<T> {
 
   private final SolrClient client;
 
@@ -27,10 +28,10 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T extends Entity> Optional<T> findBy(String id, Class<T> type)
+  public Optional<T> findBy(String id, Class<T> type)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("id", id));
     QueryResult<T> queryResult = client.query(query, type);
 
@@ -43,14 +44,14 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T extends Entity> QueryResult<T> findAllBy(Query query, Class<T> type)
+  public QueryResult<T> findAllBy(Query query, Class<T> type)
       throws IOException {
 
     return client.query(query, type);
   }
 
   @Override
-  public <T extends Entity> void save(List<T> entities)
+  public void save(List<T> entities)
       throws IOException {
 
     if (CollectionUtils.isNotEmpty(entities)) {
@@ -59,14 +60,14 @@ public class SolrIndexRepository implements IndexRepository {
   }
 
   @Override
-  public <T extends Entity> void save(T entity)
+  public void save(T entity)
       throws IOException {
 
     client.index(entity);
   }
 
   @Override
-  public <T extends Entity> void delete(T entity)
+  public void delete(T entity)
       throws IOException {
 
     client.delete(entity);

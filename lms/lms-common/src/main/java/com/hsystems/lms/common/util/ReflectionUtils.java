@@ -138,6 +138,17 @@ public final class ReflectionUtils {
     }
   }
 
+  public static <T, S> void setValue(T instance, Field field, S value) {
+    try {
+      field.setAccessible(true);
+      field.set(instance, value);
+
+    } catch (IllegalAccessException e) {
+      throw new IllegalArgumentException(
+          "error setting field value", e);
+    }
+  }
+
   public static <T> Optional<Field> getField(Class<T> type, String name) {
     List<Field> fields = getFields(type);
     return fields.stream().filter(isField(name)).findFirst();

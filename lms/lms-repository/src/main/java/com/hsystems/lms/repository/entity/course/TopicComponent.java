@@ -5,7 +5,6 @@ import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.CompositeComponent;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,9 +14,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public final class TopicComponent implements CompositeComponent, Serializable {
+public final class TopicComponent implements CompositeComponent {
 
-  private static final long serialVersionUID = -694803395384458196L;
+  private static final long serialVersionUID = -5251110818954815629L;
 
   @IndexField
   protected String id;

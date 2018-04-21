@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSubjectMapper extends HBaseAbstractMapper<Subject> {
+public class HBaseSubjectMapper extends HBaseEntityMapper<Subject> {
 
   public List<Subject> getEntities(List<Result> results) {
     if (CollectionUtils.isEmpty(results)) {

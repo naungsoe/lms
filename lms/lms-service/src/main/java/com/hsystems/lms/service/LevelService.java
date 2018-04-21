@@ -40,7 +40,7 @@ public class LevelService extends AbstractService {
   public List<LevelModel> findAllBy(Principal principal)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     addSchoolFilter(query, principal);
 
     QueryResult<Level> queryResult
@@ -74,7 +74,7 @@ public class LevelService extends AbstractService {
     levelModel.setSchool(userModel.getSchool());
 
     Level level = getEntity(levelModel, Level.class);
-    levelRepository.save(level);
+    levelRepository.create(level);
     indexRepository.save(level);
   }
 }

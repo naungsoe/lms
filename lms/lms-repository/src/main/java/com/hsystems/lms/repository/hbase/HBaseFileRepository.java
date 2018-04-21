@@ -39,24 +39,6 @@ public class HBaseFileRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public Optional<FileResource> findBy(String id)
-      throws IOException {
-
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(FileResource.class);
-    List<Result> results = client.scan(scan, tableName);
-
-    if (CollectionUtils.isEmpty(results)) {
-      return Optional.empty();
-    }
-
-    return fileMapper.getEntity(results);
-  }
-
-  @Override
   public List<FileResource> findAllBy(
       String schoolId, String lastId, int limit)
     throws IOException {
@@ -97,7 +79,31 @@ public class HBaseFileRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(FileResource entity)
+  public Optional<FileResource> findBy(String id)
+      throws IOException {
+
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setStartRow(Bytes.toBytes(id));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(FileResource.class);
+    List<Result> results = client.scan(scan, tableName);
+
+    if (CollectionUtils.isEmpty(results)) {
+      return Optional.empty();
+    }
+
+    return fileMapper.getEntity(results);
+  }
+
+  @Override
+  public void create(FileResource entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(FileResource entity)
       throws IOException {
 
   }

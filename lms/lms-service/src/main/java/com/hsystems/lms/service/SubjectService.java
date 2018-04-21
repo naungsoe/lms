@@ -40,7 +40,7 @@ public class SubjectService extends AbstractService {
   public List<SubjectModel> findAllBy(Principal principal)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     addSchoolFilter(query, principal);
 
     QueryResult<Subject> queryResult
@@ -74,7 +74,7 @@ public class SubjectService extends AbstractService {
     subjectModel.setSchool(userModel.getSchool());
 
     Subject subject = getEntity(subjectModel, Subject.class);
-    subjectRepository.save(subject);
+    subjectRepository.create(subject);
     indexRepository.save(subject);
   }
 }

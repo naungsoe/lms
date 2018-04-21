@@ -43,6 +43,40 @@ public class HBaseQuizRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<QuizResource> findAllBy(
+      String schoolId, String lastId, int limit)
+      throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(lastId);
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
+
+    TableName tableName = getTableName(QuizResource.class);
+    List<Result> results = client.scan(scan, tableName);
+    List<QuizResource> resources = quizMapper.getEntities(results);
+
+    for (QuizResource resource : resources) {
+      populateShareLog(resource);
+    }
+
+    return resources;
+  }
+
+  private void populateShareLog(QuizResource resource)
+      throws IOException {
+
+    Optional<ShareLog> logOptional
+        = shareLogRepository.findBy(resource.getId());
+
+    if (logOptional.isPresent()) {
+      ShareLog shareLog = logOptional.get();
+      populatePermissions(resource, shareLog);
+    }
+  }
+
+  @Override
   public Optional<QuizResource> findBy(String id)
       throws IOException {
 
@@ -68,42 +102,14 @@ public class HBaseQuizRepository extends HBaseAbstractRepository
     return resourceOptional;
   }
 
-  private void populateShareLog(QuizResource resource)
+  @Override
+  public void create(QuizResource entity)
       throws IOException {
 
-    Optional<ShareLog> logOptional
-        = shareLogRepository.findBy(resource.getId());
-
-    if (logOptional.isPresent()) {
-      ShareLog shareLog = logOptional.get();
-      populatePermissions(resource, shareLog);
-    }
   }
 
   @Override
-  public List<QuizResource> findAllBy(
-      String schoolId, String lastId, int limit)
-      throws IOException {
-
-    String startRowKey = getExclusiveStartRowKey(lastId);
-    Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-    scan.setCaching(limit);
-
-    TableName tableName = getTableName(QuizResource.class);
-    List<Result> results = client.scan(scan, tableName);
-    List<QuizResource> resources = quizMapper.getEntities(results);
-
-    for (QuizResource resource : resources) {
-      populateShareLog(resource);
-    }
-
-    return resources;
-  }
-
-  @Override
-  public void save(QuizResource entity)
+  public void update(QuizResource entity)
       throws IOException {
 
   }

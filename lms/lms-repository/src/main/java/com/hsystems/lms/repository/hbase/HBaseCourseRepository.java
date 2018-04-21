@@ -9,7 +9,6 @@ import com.hsystems.lms.repository.hbase.mapper.HBaseCourseMapper;
 import com.hsystems.lms.repository.hbase.provider.HBaseClient;
 
 import org.apache.hadoop.hbase.TableName;
-import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -38,24 +37,6 @@ public class HBaseCourseRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public Optional<CourseResource> findBy(String id)
-      throws IOException {
-
-    Scan scan = getRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(CourseResource.class);
-    List<Result> results = client.scan(scan, tableName);
-
-    if (CollectionUtils.isEmpty(results)) {
-      return Optional.empty();
-    }
-
-    return courseMapper.getEntity(results);
-  }
-
-  @Override
   public List<CourseResource> findAllBy(
       String schoolId, String lastId, int limit)
       throws IOException {
@@ -74,7 +55,31 @@ public class HBaseCourseRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(CourseResource entity)
+  public Optional<CourseResource> findBy(String id)
+      throws IOException {
+
+    Scan scan = getRowKeyFilterScan(id);
+    scan.setStartRow(Bytes.toBytes(id));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(CourseResource.class);
+    List<Result> results = client.scan(scan, tableName);
+
+    if (CollectionUtils.isEmpty(results)) {
+      return Optional.empty();
+    }
+
+    return courseMapper.getEntity(results);
+  }
+
+  @Override
+  public void create(CourseResource entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(CourseResource entity)
       throws IOException {
 
   }

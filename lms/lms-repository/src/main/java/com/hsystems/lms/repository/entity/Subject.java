@@ -3,17 +3,15 @@ package com.hsystems.lms.repository.entity;
 import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 1/11/16.
  */
 @IndexDocument(namespace = "lms", collection = "subjects")
-public final class Subject
-    implements Entity, SchoolScoped, Auditable, Serializable {
+public final class Subject implements Entity, SchoolScoped, Auditable {
 
-  private static final long serialVersionUID = -5066522744355816517L;
+  private static final long serialVersionUID = 7171159112804915595L;
 
   @IndexField
   private String id;

@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseGroupMapper extends HBaseAbstractMapper<Group> {
+public class HBaseGroupMapper extends HBaseEntityMapper<Group> {
 
   @Override
   public List<Group> getEntities (List<Result> results) {

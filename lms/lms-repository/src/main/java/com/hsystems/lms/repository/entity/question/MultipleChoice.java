@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,9 +12,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public final class MultipleChoice implements Question, Serializable {
+public final class MultipleChoice implements Question {
 
-  private static final long serialVersionUID = -4644811427953563911L;
+  private static final long serialVersionUID = -8888865790161486958L;
 
   @IndexField
   protected String body;

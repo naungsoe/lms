@@ -3,7 +3,6 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -11,10 +10,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-public final class CompositeQuestionAttempt
-    implements QuestionAttempt, Serializable {
+public final class CompositeQuestionAttempt implements QuestionAttempt {
 
-  private static final long serialVersionUID = 5626683191998896150L;
+  private static final long serialVersionUID = 5365281305612328449L;
 
   @IndexField
   private List<QuestionComponentAttempt> attempts;

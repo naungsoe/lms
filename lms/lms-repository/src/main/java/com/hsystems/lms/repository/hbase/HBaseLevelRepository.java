@@ -37,6 +37,20 @@ public class HBaseLevelRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<Level> findAllBy(String schoolId)
+    throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(schoolId);
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(Level.class);
+    List<Result> results = client.scan(scan, tableName);
+    return levelMapper.getEntities(results);
+  }
+
+  @Override
   public Optional<Level> findBy(String id)
       throws IOException {
 
@@ -55,21 +69,13 @@ public class HBaseLevelRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Level> findAllBy(String schoolId)
-    throws IOException {
+  public void create(Level entity)
+      throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(schoolId);
-    Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(Level.class);
-    List<Result> results = client.scan(scan, tableName);
-    return levelMapper.getEntities(results);
   }
 
   @Override
-  public void save(Level entity)
+  public void update(Level entity)
       throws IOException {
 
   }

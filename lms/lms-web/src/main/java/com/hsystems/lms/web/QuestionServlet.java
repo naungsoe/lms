@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.Permission;
+import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class QuestionServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(Permission.VIEW_QUESTION)
+  @Requires(AppPermission.VIEW_QUESTION)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -44,7 +44,7 @@ public class QuestionServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(Permission.EDIT_QUESTION)
+  @Requires(AppPermission.EDIT_QUESTION)
   protected void doPost(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

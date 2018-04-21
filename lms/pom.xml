@@ -15,6 +15,7 @@
     <module>lms-service</module>
     <module>lms-batch</module>
     <module>lms-web</module>
+    <module>lms-question</module>
   </modules>
 
   <profiles>

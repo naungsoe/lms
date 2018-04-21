@@ -44,7 +44,7 @@ public class SubscriptionService extends AbstractService {
   public List<SubscriptionModel> findAllBy(String id, Principal principal)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("subscribedBy.id", id));
     QueryResult<Subscription> queryResult
         = indexRepository.findAllBy(query, Subscription.class);

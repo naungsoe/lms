@@ -32,7 +32,7 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class LessonService extends AbstractService {
+public class LessonService extends ResourceService {
 
   private final Provider<Properties> propertiesProvider;
 
@@ -56,7 +56,7 @@ public class LessonService extends AbstractService {
   }
 
   @Log
-  @Requires(Permission.VIEW_LESSON)
+  @Requires(AppPermission.VIEW_LESSON)
   public QueryResult<LessonResourceModel> findAllBy(
       Query query, Principal principal)
       throws IOException {
@@ -116,7 +116,7 @@ public class LessonService extends AbstractService {
   }
 
   @Log
-  @Requires({Permission.VIEW_LESSON, Permission.ATTEMPT_LESSON})
+  @Requires({AppPermission.VIEW_LESSON, AppPermission.ATTEMPT_LESSON})
   public Optional<LessonResourceModel> findBy(String id, Principal principal)
       throws IOException {
 
@@ -141,7 +141,7 @@ public class LessonService extends AbstractService {
   private List<Component> getComponents(String id)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("resourceId", id));
     QueryResult<ComponentBean> queryResult
         = indexRepository.findAllBy(query, ComponentBean.class);
@@ -156,7 +156,7 @@ public class LessonService extends AbstractService {
   }
 
   @Log
-  @Requires(Permission.VIEW_LESSON)
+  @Requires(AppPermission.VIEW_LESSON)
   public List<String> findAllComponentTypes() {
     Properties properties = propertiesProvider.get();
     String questionTypes = properties.getProperty("lesson.component.types");

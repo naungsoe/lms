@@ -31,7 +31,7 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class CourseService extends AbstractService {
+public class CourseService extends ResourceService {
 
   private final Provider<Properties> propertiesProvider;
 
@@ -138,7 +138,7 @@ public class CourseService extends AbstractService {
   private List<Component> getComponents(String id)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("resourceId", id));
     QueryResult<ComponentBean> queryResult
         = indexRepository.findAllBy(query, ComponentBean.class);

@@ -1,13 +1,13 @@
-package com.hsystems.lms.web.webapi;
+package com.hsystems.lms.web.webapi.indexing;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.IndexService;
+import com.hsystems.lms.service.AppPermission;
+import com.hsystems.lms.service.indexing.SubjectIndexService;
 import com.hsystems.lms.service.model.UserModel;
-import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 
@@ -19,43 +19,40 @@ import javax.ws.rs.core.Response;
 /**
  * Created by naungsoe on 10/9/16.
  */
-@Path("/index")
-public class IndexController extends AbstractController {
+@Path("/index/levels")
+public class SubjectIndexController {
 
   private final Provider<Principal> principalProvider;
 
-  private final IndexService indexService;
+  private final SubjectIndexService subjectIndexService;
 
   @Inject
-  IndexController(
+  SubjectIndexController(
       Provider<Principal> principalProvider,
-      IndexService indexService) {
+      SubjectIndexService subjectIndexService) {
 
     this.principalProvider = principalProvider;
-    this.indexService = indexService;
+    this.subjectIndexService = subjectIndexService;
   }
 
   @POST
-  @Path("/{collection}")
-  @Requires(Permission.ADMINISTRATION)
-  public Response indexAll(
-      @PathParam("collection") String collection)
+  @Requires(AppPermission.ADMINISTRATION)
+  public Response indexAll()
       throws IOException {
 
     UserModel userModel = (UserModel) principalProvider.get();
-    indexService.indexAll(collection, userModel.getSchool().getId());
+    String schoolId = userModel.getSchool().getId();
+    subjectIndexService.indexAllBy(schoolId);
     return Response.ok().build();
   }
 
   @POST
-  @Path("/{collection}/{id}")
-  //@Requires(Permission.ADMINISTRATION)
-  public Response index(
-      @PathParam("collection") String collection,
-      @PathParam("id") String id)
+  @Path("/{id}")
+  @Requires(AppPermission.ADMINISTRATION)
+  public Response index(@PathParam("id") String id)
       throws IOException {
 
-    indexService.index(collection, id);
+    subjectIndexService.indexBy(id);
     return Response.ok().build();
   }
 }

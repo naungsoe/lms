@@ -37,6 +37,23 @@ public class HBaseSubscriptionRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<Subscription> findAllBy(String userId)
+      throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(userId);
+    Scan scan = getRowKeyFilterScan(userId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(Subscription.class);
+    List<Result> results = client.scan(scan, tableName);
+    List<Subscription> subscriptions
+        = subscriptionMapper.getEntities(results);
+
+    return subscriptions;
+  }
+
+  @Override
   public Optional<Subscription> findBy(String id)
       throws IOException {
 
@@ -55,24 +72,13 @@ public class HBaseSubscriptionRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Subscription> findAllBy(String userId)
+  public void create(Subscription entity)
       throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(userId);
-    Scan scan = getRowKeyFilterScan(userId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(Subscription.class);
-    List<Result> results = client.scan(scan, tableName);
-    List<Subscription> subscriptions
-        = subscriptionMapper.getEntities(results);
-
-    return subscriptions;
   }
 
   @Override
-  public void save(Subscription entity)
+  public void update(Subscription entity)
       throws IOException {
 
   }

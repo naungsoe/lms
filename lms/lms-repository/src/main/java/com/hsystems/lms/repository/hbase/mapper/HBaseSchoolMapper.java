@@ -16,7 +16,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseSchoolMapper extends HBaseAbstractMapper<School> {
+public class HBaseSchoolMapper extends HBaseEntityMapper<School> {
 
   @Override
   public List<School> getEntities(List<Result> results) {

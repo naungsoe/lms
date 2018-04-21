@@ -9,7 +9,6 @@ import com.hsystems.lms.repository.entity.Group;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.User;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,10 +19,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 5/11/16.
  */
-public final class QuizAssignment
-    implements Assignment, Auditable, Serializable {
+public final class QuizAssignment implements Assignment, Auditable {
 
-  private static final long serialVersionUID = -8159207257395135690L;
+  private static final long serialVersionUID = -1068889784231587969L;
 
   @IndexField
   private String id;

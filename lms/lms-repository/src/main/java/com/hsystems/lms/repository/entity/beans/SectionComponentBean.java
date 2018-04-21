@@ -4,14 +4,12 @@ import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.Component;
 import com.hsystems.lms.repository.entity.quiz.SectionComponent;
 
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 
-public class SectionComponentBean
-    implements ComponentBean<SectionComponent>, Serializable {
+public class SectionComponentBean implements ComponentBean<SectionComponent> {
 
-  private static final long serialVersionUID = 8907954145143379391L;
+  private static final long serialVersionUID = -4829743356871444813L;
 
   @IndexField
   protected String id;

@@ -5,19 +5,19 @@ import java.io.Serializable;
 /**
  * Created by naungsoe on 2/11/16.
  */
-public final class ResourcePermission implements Serializable {
+public final class Permission implements Serializable {
 
-  private static final long serialVersionUID = 153860840208808248L;
+  private static final long serialVersionUID = 4415009143741247258L;
 
   private User user;
 
   private Privilege privilege;
 
-  ResourcePermission() {
+  Permission() {
 
   }
 
-  public ResourcePermission(
+  public Permission(
       User user,
       Privilege privilege) {
 
@@ -29,19 +29,14 @@ public final class ResourcePermission implements Serializable {
     return user;
   }
 
-  public boolean isViewable() {
-    return (privilege == Privilege.VIEW)
-        || (privilege == Privilege.EDIT);
-  }
-
-  public boolean isEditable() {
-    return (privilege == Privilege.EDIT);
+  public Privilege getPrivilege() {
+    return privilege;
   }
 
   @Override
   public String toString() {
     return String.format(
-        "ResourcePermission{user=%s, privilege=%s}",
+        "Permission{user=%s, privilege=%s}",
         user, privilege);
   }
 }

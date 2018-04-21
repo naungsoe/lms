@@ -17,7 +17,7 @@ import java.util.Optional;
 /**
  * Created by naungsoe on 14/12/16.
  */
-public class HBaseUserMapper extends HBaseAbstractMapper<User> {
+public class HBaseUserMapper extends HBaseEntityMapper<User> {
 
   @Override
   public List<User> getEntities(List<Result> results) {

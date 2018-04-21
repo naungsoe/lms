@@ -3,15 +3,13 @@ package com.hsystems.lms.repository.entity.quiz;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.GradableComponent;
 
-import java.io.Serializable;
-
 /**
  * Created by naungsoe on 19/12/16.
  */
 public final class QuizComponent
-    implements GradableComponent<QuizGradingStrategy>, Serializable {
+    implements GradableComponent<QuizGradingStrategy> {
 
-  private static final long serialVersionUID = 8011199044130249100L;
+  private static final long serialVersionUID = 1878171008056318412L;
 
   @IndexField
   private String id;

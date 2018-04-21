@@ -2,15 +2,13 @@ package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.annotation.IndexField;
 
-import java.io.Serializable;
-
 /**
  * Created by naungsoe on 19/12/16.
  */
 public class MultipleResponseComponent
-    implements QuestionComponent<MultipleResponse>, Serializable {
+    implements QuestionComponent<MultipleResponse> {
 
-  private static final long serialVersionUID = 8801021552600205315L;
+  private static final long serialVersionUID = 6210978311903631428L;
 
   @IndexField
   private String id;

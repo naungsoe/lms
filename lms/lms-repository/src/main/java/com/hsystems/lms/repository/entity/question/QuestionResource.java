@@ -3,17 +3,15 @@ package com.hsystems.lms.repository.entity.question;
 import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.repository.entity.Auditable;
 import com.hsystems.lms.repository.entity.Entity;
 import com.hsystems.lms.repository.entity.Level;
-import com.hsystems.lms.repository.entity.ResourcePermission;
+import com.hsystems.lms.repository.entity.Permission;
 import com.hsystems.lms.repository.entity.Resource;
-import com.hsystems.lms.repository.entity.ResourceStatus;
+import com.hsystems.lms.repository.entity.Status;
 import com.hsystems.lms.repository.entity.School;
 import com.hsystems.lms.repository.entity.Subject;
 import com.hsystems.lms.repository.entity.User;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,10 +23,9 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 @IndexDocument(namespace = "lms", collection = "questions")
-public class QuestionResource<T extends Question>
-    implements Entity, Resource, Auditable, Serializable {
+public class QuestionResource<T extends Question> implements Entity, Resource {
 
-  private static final long serialVersionUID = -1649719473724766045L;
+  private static final long serialVersionUID = 1815336404263389767L;
 
   @IndexField
   private String id;
@@ -49,9 +46,9 @@ public class QuestionResource<T extends Question>
   private List<String> keywords;
 
   @IndexField
-  private List<ResourcePermission> permissions;
+  private List<Permission> permissions;
 
-  private ResourceStatus status;
+  private Status status;
 
   @IndexField
   private User createdBy;
@@ -76,8 +73,8 @@ public class QuestionResource<T extends Question>
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<ResourcePermission> permissions,
-      ResourceStatus status,
+      List<Permission> permissions,
+      Status status,
       User createdBy,
       LocalDateTime createdDateTime,
       User modifiedBy,
@@ -106,8 +103,8 @@ public class QuestionResource<T extends Question>
     private List<Level> levels;
     private List<Subject> subjects;
     private List<String> keywords;
-    private List<ResourcePermission> permissions;
-    private ResourceStatus status;
+    private List<Permission> permissions;
+    private Status status;
     private User createdBy;
     private LocalDateTime createdDateTime;
     private User modifiedBy;
@@ -138,12 +135,12 @@ public class QuestionResource<T extends Question>
       return this;
     }
 
-    public Builder permissions(List<ResourcePermission> permissions) {
+    public Builder permissions(List<Permission> permissions) {
       this.permissions = permissions;
       return this;
     }
 
-    public Builder status(ResourceStatus status) {
+    public Builder status(Status status) {
       this.status = status;
       return this;
     }
@@ -249,14 +246,14 @@ public class QuestionResource<T extends Question>
   }
 
   @Override
-  public Enumeration<ResourcePermission> getPermissions() {
+  public Enumeration<Permission> getPermissions() {
     return CollectionUtils.isEmpty(permissions)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(permissions);
   }
 
   @Override
-  public void addPermission(ResourcePermission... permissions) {
+  public void addPermission(Permission... permissions) {
     if (CollectionUtils.isEmpty(this.permissions)) {
       this.permissions = new ArrayList<>();
     }
@@ -265,7 +262,7 @@ public class QuestionResource<T extends Question>
   }
 
   @Override
-  public ResourceStatus getStatus() {
+  public Status getStatus() {
     return status;
   }
 

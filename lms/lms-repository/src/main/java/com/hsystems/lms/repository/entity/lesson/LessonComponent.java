@@ -3,14 +3,12 @@ package com.hsystems.lms.repository.entity.lesson;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.Component;
 
-import java.io.Serializable;
-
 /**
  * Created by naungsoe on 19/12/16.
  */
-public final class LessonComponent implements Component, Serializable {
+public final class LessonComponent implements Component {
 
-  private static final long serialVersionUID = -3388828775620300853L;
+  private static final long serialVersionUID = -6620572054837097973L;
 
   @IndexField
   private String id;

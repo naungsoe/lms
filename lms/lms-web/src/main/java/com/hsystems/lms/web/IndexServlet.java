@@ -1,7 +1,7 @@
 package com.hsystems.lms.web;
 
 import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.service.Permission;
+import com.hsystems.lms.service.AppPermission;
 
 import java.io.IOException;
 
@@ -19,7 +19,7 @@ public class IndexServlet extends AbstractServlet {
   private static final String INDEX_PATH = "/jsp/index/index.jsp";
 
   @Override
-  @Requires(Permission.VIEW_HOME)
+  @Requires(AppPermission.VIEW_HOME)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

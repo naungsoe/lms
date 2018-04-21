@@ -4,23 +4,28 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.patch.Operation;
+import com.hsystems.lms.common.patch.Patch;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.util.CommonUtils;
+import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.QuestionService;
 import com.hsystems.lms.service.model.question.MultipleChoiceResourceModel;
 import com.hsystems.lms.service.model.question.QuestionResourceModel;
-import com.hsystems.lms.service.Permission;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.List;
 import java.util.Optional;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -51,14 +56,16 @@ public class QuestionController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUESTION)
+  @Requires(AppPermission.VIEW_QUESTION)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {
 
     Principal principal = principalProvider.get();
     URI requestUri = uriInfo.getRequestUri();
-    Query query = Query.create(requestUri.getQuery());
+    String queryString = requestUri.getQuery();
+    QueryMapper queryMapper = new QueryMapper();
+    Query query = queryMapper.map(queryString);
     QueryResult<QuestionResourceModel> queryResult
         = questionService.findAllBy(query, principal);
     return Response.ok(queryResult).build();
@@ -67,7 +74,7 @@ public class QuestionController extends AbstractController {
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.VIEW_QUESTION)
+  @Requires(AppPermission.VIEW_QUESTION)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {
@@ -84,35 +91,42 @@ public class QuestionController extends AbstractController {
     return Response.ok(resourceModel).build();
   }
 
-  @PUT
+  @POST
   @Consumes(MediaType.APPLICATION_JSON)
-  @Requires(Permission.EDIT_QUESTION)
+  @Requires(AppPermission.CREATE_QUESTION)
   public Response create(
+      @Context UriInfo uriInfo,
       MultipleChoiceResourceModel resourceModel)
-      throws IOException {
+      throws IOException, URISyntaxException {
 
     Principal principal = principalProvider.get();
-    questionService.createMultipleChoice(resourceModel, principal);
-    return Response.ok(resourceModel).build();
+    String resourceId = CommonUtils.genUniqueKey();
+    resourceModel.setId(resourceId);
+    questionService.create(resourceModel, principal);
+
+    URI resourceUri = getResourceUri(uriInfo, resourceId);
+    return Response.created(resourceUri).build();
   }
 
   @POST
   @Path("/{id}")
   @Consumes(MediaType.APPLICATION_JSON)
-  @Requires(Permission.EDIT_QUESTION)
-  public Response update(
-      MultipleChoiceResourceModel resourceModel)
+  @Requires(AppPermission.EDIT_QUESTION)
+  public Response updatePartial(
+      @PathParam("id") String id,
+      List<Operation> operations)
       throws IOException {
 
     Principal principal = principalProvider.get();
-    questionService.saveMultipleChoice(resourceModel, principal);
-    return Response.ok(resourceModel).build();
+    Patch patch = new Patch(id, operations);
+    questionService.executeUpdate(patch, principal);
+    return Response.ok().build();
   }
 
   @DELETE
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(Permission.EDIT_QUESTION)
+  @Requires(AppPermission.EDIT_QUESTION)
   public Response deleteBy(
       @PathParam("id") String id)
       throws IOException {

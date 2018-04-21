@@ -5,7 +5,7 @@ import com.google.inject.Provider;
 
 import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.Permission;
+import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.model.UserModel;
 
 import java.io.IOException;
@@ -58,7 +58,7 @@ public class LessonServlet extends AbstractServlet {
     }
   }
 
-  @Requires(Permission.ATTEMPT_LESSON)
+  @Requires(AppPermission.ATTEMPT_LESSON)
   protected void handleAttempt(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -67,7 +67,7 @@ public class LessonServlet extends AbstractServlet {
     forwardRequest(request, response, ATTEMPT_PATH);
   }
 
-  @Requires(Permission.VIEW_LESSON)
+  @Requires(AppPermission.VIEW_LESSON)
   protected void handleList(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
@@ -77,7 +77,7 @@ public class LessonServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(Permission.EDIT_LESSON)
+  @Requires(AppPermission.EDIT_LESSON)
   protected void doPost(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

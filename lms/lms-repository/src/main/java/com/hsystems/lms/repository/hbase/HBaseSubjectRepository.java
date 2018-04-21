@@ -37,6 +37,20 @@ public class HBaseSubjectRepository extends HBaseAbstractRepository
   }
 
   @Override
+  public List<Subject> findAllBy(String schoolId)
+    throws IOException {
+
+    String startRowKey = getExclusiveStartRowKey(schoolId);
+    Scan scan = getRowKeyFilterScan(schoolId);
+    scan.setStartRow(Bytes.toBytes(startRowKey));
+    scan.setMaxVersions(MAX_VERSIONS);
+
+    TableName tableName = getTableName(Subject.class);
+    List<Result> results = client.scan(scan, tableName);
+    return subjectMapper.getEntities(results);
+  }
+
+  @Override
   public Optional<Subject> findBy(String id)
       throws IOException {
 
@@ -55,21 +69,13 @@ public class HBaseSubjectRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public List<Subject> findAllBy(String schoolId)
-    throws IOException {
+  public void create(Subject entity)
+      throws IOException {
 
-    String startRowKey = getExclusiveStartRowKey(schoolId);
-    Scan scan = getRowKeyFilterScan(schoolId);
-    scan.setStartRow(Bytes.toBytes(startRowKey));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    TableName tableName = getTableName(Subject.class);
-    List<Result> results = client.scan(scan, tableName);
-    return subjectMapper.getEntities(results);
   }
 
   @Override
-  public void save(Subject entity)
+  public void update(Subject entity)
       throws IOException {
 
   }

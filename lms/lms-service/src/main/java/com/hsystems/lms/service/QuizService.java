@@ -30,7 +30,7 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 15/10/16.
  */
-public class QuizService extends AbstractService {
+public class QuizService extends ResourceService {
 
   private final Provider<Properties> propertiesProvider;
 
@@ -133,7 +133,7 @@ public class QuizService extends AbstractService {
   private List<Component> getComponents(String id)
       throws IOException {
 
-    Query query = Query.create();
+    Query query = new Query();
     query.addCriterion(Criterion.createEqual("resourceId", id));
     QueryResult<ComponentBean> queryResult
         = indexRepository.findAllBy(query, ComponentBean.class);

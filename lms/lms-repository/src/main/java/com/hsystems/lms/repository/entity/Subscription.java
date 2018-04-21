@@ -4,16 +4,15 @@ import com.hsystems.lms.common.annotation.IndexDocument;
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.repository.entity.course.CourseResource;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
 @IndexDocument(namespace = "lms", collection = "subscriptions")
-public final class Subscription implements Entity, Serializable {
+public final class Subscription implements Entity {
 
-  private static final long serialVersionUID = 2408494988662970030L;
+  private static final long serialVersionUID = 541298340698714784L;
 
   @IndexField
   private String id;

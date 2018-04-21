@@ -2,8 +2,8 @@ package com.hsystems.lms.repository.entity.question;
 
 import com.hsystems.lms.common.annotation.IndexField;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.repository.entity.Component;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,9 +13,9 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public final class CompositeQuestion implements Question, Serializable {
+public final class CompositeQuestion implements Question {
 
-  private static final long serialVersionUID = -5053523521808585395L;
+  private static final long serialVersionUID = 6296284278339657953L;
 
   @IndexField
   protected String body;
@@ -27,7 +27,7 @@ public final class CompositeQuestion implements Question, Serializable {
   protected String explanation;
 
   @IndexField
-  private List<QuestionComponent> components;
+  private List<Component> components;
 
   CompositeQuestion() {
 
@@ -37,7 +37,7 @@ public final class CompositeQuestion implements Question, Serializable {
       String body,
       String hint,
       String explanation,
-      List<QuestionComponent> components) {
+      List<Component> components) {
 
     this.body = body;
     this.hint = hint;
@@ -60,21 +60,29 @@ public final class CompositeQuestion implements Question, Serializable {
     return explanation;
   }
 
-  public Enumeration<QuestionComponent> getComponents() {
+  public Enumeration<Component> getComponents() {
     return CollectionUtils.isEmpty(components)
         ? Collections.emptyEnumeration()
         : Collections.enumeration(components);
   }
 
-  public void addComponent(QuestionComponent... components) {
+  public void addComponent(Component... components) {
     if (CollectionUtils.isEmpty(this.components)) {
       this.components = new ArrayList<>();
     }
 
-    Arrays.stream(components).forEach(this.components::add);
+    CompositeQuestionCompositionStrategy compositionStrategy
+        = new CompositeQuestionCompositionStrategy();
+    Arrays.stream(components).forEach(component -> {
+      compositionStrategy.validate(component);
+      this.components.add(component);
+    });
   }
 
-  public void removeComponent(QuestionComponent component) {
+  public void removeComponent(Component component) {
+    CompositeQuestionCompositionStrategy compositionStrategy
+        = new CompositeQuestionCompositionStrategy();
+    compositionStrategy.validate(component);
     this.components.remove(component);
   }
 }

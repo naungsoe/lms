@@ -40,6 +40,7 @@ import com.hsystems.lms.repository.solr.provider.SolrClientProvider;
 import com.hsystems.lms.service.AuthenticationService;
 import com.hsystems.lms.service.ComponentService;
 import com.hsystems.lms.service.CourseService;
+import com.hsystems.lms.service.GroupService;
 import com.hsystems.lms.service.LessonService;
 import com.hsystems.lms.service.LevelService;
 import com.hsystems.lms.service.QuestionService;
@@ -48,6 +49,14 @@ import com.hsystems.lms.service.SchoolService;
 import com.hsystems.lms.service.SubjectService;
 import com.hsystems.lms.service.SubscriptionService;
 import com.hsystems.lms.service.UserService;
+import com.hsystems.lms.service.indexing.CourseIndexService;
+import com.hsystems.lms.service.indexing.GroupIndexService;
+import com.hsystems.lms.service.indexing.LessonIndexService;
+import com.hsystems.lms.service.indexing.LevelIndexService;
+import com.hsystems.lms.service.indexing.QuestionIndexService;
+import com.hsystems.lms.service.indexing.QuizIndexService;
+import com.hsystems.lms.service.indexing.SubjectIndexService;
+import com.hsystems.lms.service.indexing.UserIndexService;
 
 /**
  * Created by naungsoe on 21/8/16.
@@ -94,14 +103,23 @@ public class ServiceModule extends AbstractModule {
     bind(AuthenticationService.class).in(Singleton.class);
     bind(SchoolService.class).in(Singleton.class);
     bind(LevelService.class).in(Singleton.class);
+    bind(LevelIndexService.class).in(Singleton.class);
     bind(SubjectService.class).in(Singleton.class);
+    bind(SubjectIndexService.class).in(Singleton.class);
+    bind(GroupService.class).in(Singleton.class);
+    bind(GroupIndexService.class).in(Singleton.class);
     bind(UserService.class).in(Singleton.class);
+    bind(UserIndexService.class).in(Singleton.class);
     bind(SubscriptionService.class).in(Singleton.class);
     bind(CourseService.class).in(Singleton.class);
+    bind(CourseIndexService.class).in(Singleton.class);
     bind(LessonService.class).in(Singleton.class);
+    bind(LessonIndexService.class).in(Singleton.class);
     bind(QuizService.class).in(Singleton.class);
+    bind(QuizIndexService.class).in(Singleton.class);
     bind(ComponentService.class).in(Singleton.class);
     bind(QuestionService.class).in(Singleton.class);
+    bind(QuestionIndexService.class).in(Singleton.class);
     //bind(AttemptService.class).in(Singleton.class);
   }
 }

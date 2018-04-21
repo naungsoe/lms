@@ -56,14 +56,21 @@ public class QueryMapper {
 
     SolrQuery solrQuery = new SolrQuery();
     solrQuery.set("defType", "edismax");
-    addQueryFields(solrQuery, query.getFields(), type);
-    addMainQuery(solrQuery, query.getCriteria(), type);
-    addBlockJoinQuery(solrQuery, query.getCriteria(), type);
-    addMainFilterQuery(solrQuery, query.getCriteria(), type);
-    addBlockJoinFilterQuery(solrQuery, query.getCriteria(), type);
 
-    solrQuery.setStart((int) query.getOffset());
-    solrQuery.setRows((int) query.getLimit());
+    List<String> fields = query.getFields();
+    addQueryFields(solrQuery, fields, type);
+
+    List<Criterion> criteria = query.getCriteria();
+    addMainQuery(solrQuery, criteria, type);
+    addBlockJoinQuery(solrQuery, criteria, type);
+    addMainFilterQuery(solrQuery, criteria, type);
+    addBlockJoinFilterQuery(solrQuery, criteria, type);
+
+    long offset = query.getOffset();
+    solrQuery.setStart((int) offset);
+
+    long limit = query.getLimit();
+    solrQuery.setRows((int) limit);
     return solrQuery;
   }
 

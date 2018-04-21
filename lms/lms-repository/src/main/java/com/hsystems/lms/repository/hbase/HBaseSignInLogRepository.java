@@ -53,7 +53,13 @@ public class HBaseSignInLogRepository extends HBaseAbstractRepository
   }
 
   @Override
-  public void save(SignInLog entity)
+  public void create(SignInLog entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void update(SignInLog entity)
       throws IOException {
 
   }

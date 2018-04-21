@@ -1,9 +1,13 @@
 package com.hsystems.lms.common.query;
 
+import java.io.Serializable;
+
 /**
  * Created by naungsoe on 24/11/16.
  */
-public final class SortKey {
+public final class SortKey implements Serializable {
+
+  private static final long serialVersionUID = 350022961949090712L;
 
   private String field;
 

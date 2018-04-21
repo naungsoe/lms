@@ -103,8 +103,9 @@ public class FilterController extends AbstractController {
       throws IOException {
 
     Principal principal = principalProvider.get();
+    Query query = new Query();
     QueryResult<GroupModel> queryResult
-        = groupService.findAllBy(Query.create(), principal);
+        = groupService.findAllBy(query, principal);
 
     ObjectMapper mapper = new ObjectMapper();
     ObjectNode moduleNode = mapper.createObjectNode();
