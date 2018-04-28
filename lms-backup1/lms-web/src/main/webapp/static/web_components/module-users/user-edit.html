@@ -1,0 +1,145 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="user-edit">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        @apply --layout-horizontal;
+        @apply --layout-wrap;
+      }
+
+      .user-particulars,
+      .user-preferences {
+        min-width: 45%;
+        padding: 0 16px;
+      }
+
+      .user-particulars .section-content,
+      .user-preferences .section-content {
+        @apply --layout-vertical;
+      }
+    </style>
+
+    <section class="user-particulars">
+      <div class="section-content">
+        <paper-input autofocus
+            name="firstName"
+            label="[[localize('inputLabelFirstName')]]"
+            value="[[account.firstName]]">
+        </paper-input>
+
+        <paper-input
+            name="lastName"
+            label="[[localize('inputLabelLastName')]]"
+            value="[[account.lastName]]">
+        </paper-input>
+
+        <paper-input
+            name="birthday"
+            label="[[localize('inputLabelBirthday')]]"
+            value="{{account.birthday}}"
+            pattern="[[datePattern]]">
+        </paper-input>
+
+        <paper-dropdown-menu
+            name="gender"
+            label="[[localize('dropdownLabelGender')]]">
+          <paper-listbox slot="dropdown-content">
+            <paper-item>
+              [[localize('labelGenderFemale')]]
+            </paper-item>
+
+            <paper-item>
+              [[localize('labelGenderMale')]]
+            </paper-item>
+
+            <paper-item>
+              [[localize('labelGenderOther')]]
+            </paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <paper-input
+            name="mobile"
+            label="[[localize('inputLabelMobile')]]"
+            value="[[account.mobile]]">
+        </paper-input>
+
+        <paper-input
+            name="email"
+            label="[[localize('inputLabelEmail')]]"
+            value="[[account.email]]">
+        </paper-input>
+      </div>
+    </section>
+
+    <section class="user-preferences">
+      <div class="section-content">
+        <paper-dropdown-menu
+            name="locale"
+            label="[[localize('dropdownLabelLocale')]]">
+          <paper-listbox slot="dropdown-content">
+            <paper-item>
+              [[localize('labelEnUS')]]
+            </paper-item>
+
+            <paper-item>
+              [[localize('labelMyMM')]]
+            </paper-item>
+          </paper-listbox>
+        </paper-dropdown-menu>
+
+        <paper-input
+            name="dateTimeFormat"
+            label="[[localize('inputLabelDateTimeFormat')]]"
+            value="[[account.dateTimeFormat]]">
+        </paper-input>
+
+        <paper-input
+            name="dateFormat"
+            label="[[localize('inputLabelDateFormat')]]"
+            value="[[account.dateFormat]]">
+        </paper-input>
+
+        <paper-input
+            name="timeFormat"
+            label="[[localize('inputLabelTimeFormat')]]"
+            value="[[account.timeFormat]]">
+        </paper-input>
+      </div>
+    </section>
+  </template>
+
+  <script>
+  	const UserEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class UserEdit extends UserEditBase {
+      static get is() {
+        return 'user-edit';
+      }
+
+      static get properties() {
+        return {
+        	user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          account: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(UserEdit.is, UserEdit);
+  </script>
+</dom-module>

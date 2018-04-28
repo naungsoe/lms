@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="page-lesson-attempt">
+  <template>
+    <style include="app-component-styles">
+      .page-content {
+        padding: 8px 0;
+      }
+
+      .page-content .lesson {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .lesson .lesson-attributes {
+        margin-top: 16px;
+      }
+
+      .page-content .lesson .lesson-content .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+        padding: 0 16px;
+      }
+
+      .page-content .lesson .lesson-content .lesson-title,
+      .page-content .lesson .lesson-content .lesson-description {
+        margin-bottom: 4px;
+        padding: 0 16px;
+      }
+
+      .page-content .lesson .lesson-content .lesson-description {
+        margin-bottom: 12px;
+      }
+    </style>
+
+    <page-header-panel>
+      <div slot="page-header">
+        <page-lesson-edit-toolbar
+            user="[[user]]"
+            lesson="[[lesson]]">
+          <div slot="status">
+            [[status]]
+          </div>
+        </page-lesson-edit-toolbar>
+      </div>
+
+      <div class="page-content">
+
+      </div>
+    </page-header-panel>
+  </template>
+
+  <script>
+    const PageLessonAttemptBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageLessonAttempt extends PageLessonAttemptBase {
+      static get is() {
+        return 'page-lesson-attempt';
+      }
+
+      static get properties() {
+        return {
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(PageLessonAttempt.is, PageLessonAttempt);
+  </script>
+</dom-module>

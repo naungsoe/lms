@@ -1,0 +1,192 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="question-edit-multiple-response">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
+      :host .question-body,
+      :host .question-hint,
+      :host .question-explanation {
+        padding: 0 16px 0 8px;
+      }
+
+      :host .question-options {
+        padding: 0 8px 0 0;
+      }
+
+      :host([standalone]) .question-body,
+      :host([standalone]) .question-hint,
+      :host([standalone]) .question-explanation {
+        padding: 0 16px;
+      }
+
+      :host([standalone]) .question-options {
+        padding: 0 8px;
+      }
+
+      .question-body,
+      .question-hint {
+        margin-bottom: 12px;
+      }
+
+      .question-options .question-option {
+        @apply --layout-horizontal;
+        margin-bottom: 8px;
+      }
+
+      .question-options .question-option paper-checkbox {
+        padding: 12px 4px;
+      }
+
+      .question-options .question-option paper-text-editor {
+        @apply --layout-flex;
+        padding: 0 4px;
+      }
+
+      .question-options .question-option.drop-placeholder {
+        border: 1px dashed var(--border-color);
+      }
+
+      .question-options .question-option.drop-placeholder * {
+        @apply --layout-invisible;
+      }
+
+      .question-options .question-option.drag-item {
+        @apply --shadow-elevation-2dp;
+        background-color: var(--secondary-background-color);
+      }
+
+      .question-options .option-actions {
+        margin: 8px 0;
+      }
+    </style>
+
+    <div class="question-body">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestion')]]"
+          content="[[question.body]]">
+      </paper-text-editor>
+    </div>
+
+    <div class="question-options">
+      <iron-sorter
+          on-order-changed="_handleOrderChanged">
+        <template
+            is="dom-repeat"
+            items="[[question.options]]"
+            as="option">
+          <div
+              class="question-option draggable"
+              data-id$="[[option.id]]">
+            <paper-icon-button
+                icon="editor:drag-handle"
+                class="drag-handle">
+            </paper-icon-button>
+
+            <paper-checkbox
+                checked="{{option.correct}}"
+                on-checked-changed="_handleCheckChanged">
+            </paper-checkbox>
+
+            <paper-text-editor no-label-float
+                content="{{option.body}}">
+            </paper-text-editor>
+
+            <paper-icon-button
+                icon="clear"
+                on-tap="_handleRemoveTap">
+            </paper-icon-button>
+          </div>
+        </template>
+      </iron-sorter>
+
+      <div class="option-actions">
+        <paper-button on-tap="_handleAddTap">
+          <iron-icon icon="add"></iron-icon>
+          [[localize('buttonAddOption')]]
+        </paper-button>
+      </div>
+    </div>
+
+    <div class="question-hint">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionHint')]]"
+          content="[[question.hint]]">
+      </paper-text-editor>
+    </div>
+
+    <div class="question-explanation">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionExplanation')]]"
+          content="[[question.explanation]]">
+      </paper-text-editor>
+    </div>
+  </template>
+
+  <script>
+    const QuestionEditMultipleResponseBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionEditMultipleResponse extends QuestionEditMultipleResponseBase {
+      static get is() {
+        return 'question-edit-multiple-response';
+      }
+
+      static get properties() {
+        return {
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _handleOrderChanged(event) {
+
+      }
+
+      _handleCheckChanged(event) {
+
+      }
+
+      _handleAddTap(event) {
+        let option = {
+          id: (new Date()).getTime(),
+          body: '',
+          feedback: '',
+          correct: false,
+          order: 0
+        };
+        this.push('question.options', option);
+
+        let root = this.shadowRoot;
+        this.async(function() {
+          var container = root.querySelector('[data-id="' + option.id + '"]');
+          container.querySelector('paper-text-editor').focus();
+        });
+        this.notifyPath('question.options');
+      }
+
+      _handleRemoveTap(event) {
+        let root = this.shadowRoot;
+        let template = root.querySelector('dom-repeat');
+        let option = template.itemForElement(event.target);
+        var index = this.question.options.indexOf(option);
+        this.splice('question.options', index, 1);
+      }
+    }
+    customElements.define(QuestionEditMultipleResponse.is, QuestionEditMultipleResponse);
+  </script>
+</dom-module>

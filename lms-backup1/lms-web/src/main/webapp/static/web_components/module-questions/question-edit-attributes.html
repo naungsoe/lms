@@ -1,0 +1,143 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-selector/iron-selector.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../bower_components/paper-chip/paper-chips-input.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="question-edit-attributes">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+        padding: 0 16px;
+      }
+
+      .question-attribute:not(.first) {
+        margin-top: 12px;
+      }
+
+      .question-attribute label {
+        @apply --paper-font-caption;
+        color: var(--secondary-text-color);
+        display: block;
+        padding: 4px 0;
+      }
+
+      .question-attribute paper-checkbox {
+        min-width: 160px;
+        padding: 8px;
+      }
+    </style>
+
+    <div class="question-attribute first">
+      <label>
+        [[localize('labelLevel')]]
+      </label>
+
+      <iron-selector multi
+          attr-for-selected="value"
+          selected-attribute="checked"
+          selected-values="{{selectedLevels}}">
+        <template
+            is="dom-repeat"
+            items="[[filterOptions.levels]]"
+            as="level">
+          <paper-checkbox value="[[level.value]]">
+            [[level.name]]
+          </paper-checkbox>
+        </template>
+      </iron-selector>
+    </div>
+
+    <div class="question-attribute">
+      <label>
+        [[localize('labelSubject')]]
+      </label>
+
+      <iron-selector multi
+          attr-for-selected="value"
+          selected-attribute="checked"
+          selected-values="{{selectedSubjects}}">
+        <template
+            is="dom-repeat"
+            items="[[filterOptions.subjects]]"
+            as="subject">
+          <paper-checkbox value="[[subject.value]]">
+            [[subject.name]]
+          </paper-checkbox>
+        </template>
+      </iron-selector>
+    </div>
+
+    <div class="question-attribute">
+      <label>
+        [[localize('labelKeywords')]]
+      </label>
+
+      <paper-chips-input
+          label="[[localize('labelKeywords')]]"
+          values="[[question.keywords]]">
+      </paper-chips-input>
+    </div>
+  </template>
+
+  <script>
+  	const QuestionEditAttributesBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionEditAttributes extends QuestionEditAttributesBase {
+      static get is() {
+        return 'question-edit-attributes';
+      }
+
+      static get properties() {
+        return {
+        	filterOptions: {
+        		type: Object,
+            readOnly: false,
+            notify: true
+        	},
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          selectedLevels: {
+          	type: Array,
+          	readOnly: false,
+          	notify: true
+          },
+          selectedSubjects: {
+          	type: Array,
+          	readOnly: false,
+          	notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateSelection(question)'
+        ];
+      }
+
+      _updateSelection(question) {
+        let selectedLevels = [];
+        question.levels.forEach(function(level) {
+          selectedLevels.push(level.id);
+        });
+
+        let selectedSubjects = [];
+        question.subjects.forEach(function(subject) {
+          selectedSubjects.push(subject.id);
+        });
+
+        this.selectedLevels = selectedLevels;
+        this.selectedSubjects = selectedSubjects;
+        this.keywords = question.keywords;
+      }
+    }
+    customElements.define(QuestionEditAttributes.is, QuestionEditAttributes);
+  </script>
+</dom-module>

@@ -1,0 +1,77 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="app-component-styles">
+  <template>
+    <style>
+      paper-input {
+        --paper-input-container-input: {
+          padding: 4px 0;
+        };
+        --paper-input-container-label: {
+          top: 4px;
+        }
+        --paper-input-container-label-floating: {
+          top: 0;
+        }
+      }
+
+      paper-button:not([raised]) {
+        @apply --paper-font-body1;
+        color: var(--primary-color);
+      }
+
+      paper-button[primary]:not([raised]) {
+        background-color: var(--primary-color);
+        color: white;
+      }
+
+      paper-icon-button {
+        color: var(--secondary-text-color);
+        margin: 0 0.29em;
+      }
+
+      paper-radio-button {
+        --paper-radio-button-unchecked-color: var(--secondary-text-color);
+      }
+
+      paper-checkbox {
+        --paper-checkbox-unchecked-color: var(--secondary-text-color);
+      }
+
+      paper-menu-button {
+        padding: 0;
+      }
+
+      paper-menu-button paper-icon-button {
+        margin: 0;
+      }
+
+      paper-fab {
+        --paper-fab-background: var(--primary-color);
+        --paper-fab-keyboard-focus-background: var(--primary-color);
+        --paper-fab-disabled-background: var(--primary-color);
+        bottom: 16px;
+        position: fixed;
+        right: 16px;
+      }
+
+      paper-dropdown-menu {
+        --paper-input-container-input: {
+          padding: 4px 0;
+        };
+        --paper-input-container-label: {
+          top: 4px;
+        }
+        --paper-input-container-label-floating: {
+          top: 0;
+        }
+      }
+
+      paper-dropdown-menu[no-label-float] {
+        --paper-input-container-input: {
+          padding: 8px 0 4px 0;
+        };
+      }
+    </style>
+  </template>
+</dom-module>

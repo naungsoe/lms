@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="course-view-topic">
+  <template>
+    <style include="app-component-styles">
+      .topic .topic-title,
+      .topic .topic-instructions {
+        padding: 8px 16px;
+      }
+
+      .topic .topic-title[empty],
+      .topic .topic-instructions[empty] {
+        color: var(--secondary-text-color);
+      }
+    </style>
+
+    <div class="topic">
+      <div
+          class="topic-title"
+          empty$="[[_emptyTitle]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyTitle]]">
+          [[topic.title]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyTitle]]">
+          [[localize('labelTitle')]]
+        </template>
+      </div>
+
+      <div
+          class="topic-instructions"
+          empty$="[[_emptyInstructions]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyInstructions]]">
+          [[topic.instructions]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyInstructions]]">
+          [[localize('labelInstructions')]]
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const CourseViewTopicBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class CourseViewTopic extends CourseViewTopicBase {
+      static get is() {
+        return 'course-view-topic';
+      }
+
+      static get properties() {
+        return {
+          topic: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          _emptyTitle: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          },
+          _emptyInstructions: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateTopic(topic)'
+        ];
+      }
+
+      _updateTopic(topic) {
+        this._emptyTitle = (topic.title === '');
+        this._emptyInstructions = (topic.instructions === '');
+      }
+    }
+    customElements.define(CourseViewTopic.is, CourseViewTopic);
+  </script>
+</dom-module>

@@ -1,0 +1,66 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="lesson-view-content">
+  <template>
+    <style include="app-component-styles">
+      .content {
+        padding: 10px 16px 10px 0;
+      }
+    </style>
+
+    <div
+        class="content"
+        empty$="[[_emptyContent]]">
+      <template
+          is="dom-if"
+          if="[[!_emptyContent]]">
+        [[content.content]]
+      </template>
+
+      <template
+          is="dom-if"
+          if="[[_emptyContent]]">
+        [[localize('labelContent')]]
+      </template>
+    </div>
+  </template>
+
+  <script>
+    const LessonViewContentBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonViewContent extends LessonViewContentBase {
+      static get is() {
+        return 'lesson-view-content';
+      }
+
+      static get properties() {
+        return {
+          content: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          _emptyContent: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateContent(content)'
+        ];
+      }
+
+      _updateContent(content) {
+        this._emptyContent = (content.content === '');
+      }
+    }
+    customElements.define(LessonViewContent.is, LessonViewContent);
+  </script>
+</dom-module>

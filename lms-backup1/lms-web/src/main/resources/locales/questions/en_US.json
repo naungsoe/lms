@@ -1,0 +1,24 @@
+{
+  "en_US": {
+    "titlePage": "Questions",
+    "labelQuestion": "Question",
+    "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
+    "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
+    "labelOwnedByAnyone": "Owned by anyone",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelAllQuestionTypes": "All question types",
+    "labelFetchingQuestions": "Fetching questions",
+    "labelQuestionNumber": "Q{number}:",
+    "labelQuestionFound": "{numFound} question",
+    "labelQuestionsFound": "{numFound} questions",
+    "labelQuestionHint": "Hint",
+    "labelQuestionExplanation": "Explanation",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply",
+    "buttonAddOption": "Add option",
+    "buttonAddQuestion": "Add question"
+  }
+}

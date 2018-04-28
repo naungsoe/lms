@@ -1,0 +1,149 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="../bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="../bower_components/paper-styles/color.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="../bower_components/paper-styles/shadow.html">
+
+<dom-module id="lms-style">
+
+  <template>
+    <style>
+      :host {
+        background-color: var(--paper-grey-50);
+        padding: 0;
+        margin: 0;
+        @apply(--paper-font-body1);
+      }
+
+      app-header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 64px;
+        color: var(--paper-grey-50);
+        background-color: var(--paper-teal-500);
+      }
+
+      app-header[nav] {
+        height: 112px;
+      }
+
+      app-toolbar {
+        margin-bottom: 0px;
+      }
+
+      app-toolbar [main-title] {
+        padding: 0 16px;
+        @apply(--paper-font-headline);
+      }
+
+      app-toolbar paper-button {
+        color: var(--paper-grey-900);
+        background-color: var(--paper-grey-50);
+      }
+
+      paper-tabs {
+        --paper-tabs-selection-bar-color: var(--paper-grey-50);
+        --paper-tabs: {
+          height: 48px;
+        };
+      }
+
+      paper-tabs paper-tab {
+        --paper-tab-ink: var(--paper-grey-50);
+        --paper-tab: {
+          flex: 0 1 auto;
+        }
+      }
+
+      paper-card {
+        --paper-card-header-text: {
+          color: var(--paper-grey-50);
+          background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-card[signin] {
+        --paper-card-header-text: {
+          color: var(--paper-grey-50);
+          background-color: var(--paper-teal-500);
+          @apply(--paper-font-headline);
+        };
+      }
+
+      paper-input {
+        --paper-input-container-label: {
+          @apply(--paper-font-body1);
+        };
+        --paper-input-container-input: {
+          @apply(--paper-font-body1);
+        };
+        --paper-input-container-underline: {
+          background-color: var(--paper-teal-500);
+        };
+        --paper-input-container-underline-focus: {
+          background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-dropdown-menu {
+        --paper-input-container-label: {
+          @apply(--paper-font-body1);
+        };
+        --paper-input-container-input: {
+          @apply(--paper-font-body1);
+        };
+        --paper-input-container-underline: {
+          background-color: var(--paper-teal-500);
+        };
+        --paper-input-container-underline-focus: {
+          background-color: var(--paper-teal-500);
+        };
+      }
+
+      paper-button {
+        @apply(--paper-font-body1);
+      }
+
+      paper-button.link {
+        color: var(--paper-blue-500);
+      }
+
+      form .form-content section {
+        margin: 0;
+      }
+
+      form .form-content section [title] {
+        margin: 0;
+        @apply(--paper-font-subhead);
+      }
+
+      form .form-actions {
+        margin: 24px 0;
+      }
+
+      [flex-horizontal] {
+        @apply(--layout-horizontal);
+        @apply(--layout-wrap);
+      }
+
+      [flex-vertical] {
+        @apply(--layout-vertical);
+      }
+
+      [flex-auto] {
+        @apply(--layout-flex-auto);
+      }
+
+      [main-content] {
+        padding-top: 64px;
+      }
+
+      .error {
+        color: var(--paper-deep-orange-a700);
+      }
+    </style>
+  </template>
+
+</dom-module>

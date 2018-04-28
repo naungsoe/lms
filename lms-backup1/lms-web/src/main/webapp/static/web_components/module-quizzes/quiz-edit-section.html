@@ -1,0 +1,58 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="quiz-edit-section">
+  <template>
+    <style include="app-component-styles">
+      .section .section-title,
+      .section .section-instructions {
+        padding: 0 16px;
+      }
+
+      .section .section-title {
+        margin-bottom: 4px;
+      }
+    </style>
+
+    <div class="section">
+      <div class="section-title">
+        <paper-input no-label-float
+            placeholder="[[localize('labelTitle')]]"
+            value="[[section.title]]">
+        </paper-input>
+      </div>
+
+      <div class="section-instructions">
+        <paper-text-editor no-label-float
+            placeholder="[[localize('labelInstructions')]]"
+            content="[[section.instructions]]">
+        </paper-text-editor>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const QuizEditSectionBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuizEditSection extends QuizEditSectionBase {
+      static get is() {
+        return 'quiz-edit-section';
+      }
+
+      static get properties() {
+        return {
+          section: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(QuizEditSection.is, QuizEditSection);
+  </script>
+</dom-module>

@@ -1,0 +1,28 @@
+{
+  "en_US": {
+    "titlePage": "Courses",
+    "labelCourse": "Course",
+    "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
+    "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
+    "labelOwnedByAnyone": "Owned by anyone",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelFetchingCourses": "Fetching courses",
+    "labelCourseFound": "{numFound} course",
+    "labelCoursesFound": "{numFound} courses",
+    "labelTitle": "Title",
+    "labelDescription": "Description",
+    "labelInstructions": "Instructions",
+    "labelTopic": "Topic {offset} of {length}",
+    "labelTopicMove": "Move topic",
+    "labelTopicDuplicate": "Duplicate topic",
+    "labelTopicDelete": "Delete topic",
+    "labelTopicMerge": "Merge with above",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply",
+    "buttonAddTopic": "Add topic",
+    "buttonAddComponent": "Add component"
+  }
+}

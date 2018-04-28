@@ -1,0 +1,26 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../paper-styles/default-theme.html">
+<link rel="import" href="../paper-styles/typography.html">
+
+<dom-module id="paper-chip">
+  <template>
+    <style>
+      :host {
+        @apply --paper-font-body1;
+				border-radius: 16px;
+				display: inline-block;
+			}
+    </style>
+
+    <slot></slot>
+  </template>
+
+  <script>
+    class PaperChip extends Polymer.Element {
+      static get is() {
+        return 'paper-chip';
+      }
+    }
+    customElements.define(PaperChip.is, PaperChip);
+  </script>
+</dom-module>

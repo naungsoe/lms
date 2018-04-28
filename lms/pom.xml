@@ -11,11 +11,18 @@
 
   <modules>
     <module>lms-common</module>
-    <module>lms-repository</module>
-    <module>lms-service</module>
-    <module>lms-batch</module>
-    <module>lms-web</module>
+    <module>lms-entity</module>
+    <module>lms-school</module>
+    <module>lms-user</module>
+    <module>lms-level</module>
+    <module>lms-subject</module>
+    <module>lms-group</module>
     <module>lms-question</module>
+    <module>lms-quiz</module>
+    <module>lms-authentication</module>
+    <module>lms-web</module>
+    <module>lms-hbase</module>
+    <module>lms-solr</module>
   </modules>
 
   <profiles>

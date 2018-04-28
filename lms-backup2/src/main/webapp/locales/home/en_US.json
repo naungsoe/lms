@@ -1,0 +1,10 @@
+{
+  "en_US": {
+    "titlePage": "Home",
+    "tabAssignments": "Assignments",
+    "tabResults": "Results",
+    "menuItemHome": "Home",
+    "menuItemStorage": "Storage",
+    "menuItemSignOut": "Sign out"
+  }
+}

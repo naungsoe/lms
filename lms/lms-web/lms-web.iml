@@ -13,9 +13,11 @@
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
     <orderEntry type="module" module-name="lms-common" />
     <orderEntry type="library" name="Maven: org.glassfish.hk2.external:javax.inject:2.4.0" level="project" />
-    <orderEntry type="module" module-name="lms-service" />
-    <orderEntry type="module" module-name="lms-repository" />
+    <orderEntry type="module" module-name="lms-school" />
+    <orderEntry type="module" module-name="lms-entity" />
+    <orderEntry type="module" module-name="lms-hbase" />
     <orderEntry type="library" name="Maven: hbase.client.shade:hbase-client-shaded:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="lms-solr" />
     <orderEntry type="library" name="Maven: solr.solrj.shade:solr-solrj-shaded:1.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
     <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />

@@ -5,19 +5,5 @@ package com.hsystems.lms.common.security;
  */
 public interface Principal {
 
-  String getId();
-
-  String getFirstName();
-
-  String getLastName();
-
-  String getLocale();
-
-  String getTimeFormat();
-
-  String getDateFormat();
-
-  String getDateTimeFormat();
-
   boolean hasPermission(String permission);
 }

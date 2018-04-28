@@ -1,0 +1,32 @@
+{
+  "en_US": {
+    "titlePage": "Quizzes",
+    "labelQuiz": "Quiz",
+    "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
+    "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
+    "labelOwnedByAnyone": "Owned by anyone",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelFetchingQuizzes": "Fetching quizzes",
+    "labelQuizFound": "{numFound} quiz",
+    "labelQuizzesFound": "{numFound} quizzes",
+    "labelTitle": "Title",
+    "labelDescription": "Description",
+    "labelInstructions": "Instructions",
+    "labelSection": "Section {offset} of {length}",
+    "labelSectionMove": "Move section",
+    "labelSectionDuplicate": "Duplicate section",
+    "labelSectionDelete": "Delete section",
+    "labelSectionMerge": "Merge with above",
+    "labelQuestion": "Question",
+    "labelQuestionHint": "Hint",
+    "labelQuestionExplanation": "Explanation",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply",
+    "buttonAddSection": "Add section",
+    "buttonAddQuestion": "Add question",
+    "buttonAddOption": "Add option"
+  }
+}

@@ -1,0 +1,44 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="lesson-edit-content">
+  <template>
+    <style include="app-component-styles">
+      .content {
+        padding: 0 8px;
+      }
+    </style>
+
+    <div class="content">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelContent')]]"
+          content="[[content.content]]">
+      </paper-text-editor>
+    </div>
+  </template>
+
+  <script>
+    const LessonEditContentBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonEditContent extends LessonEditContentBase {
+      static get is() {
+        return 'lesson-edit-content';
+      }
+
+      static get properties() {
+        return {
+          content: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(LessonEditContent.is, LessonEditContent);
+  </script>
+</dom-module>

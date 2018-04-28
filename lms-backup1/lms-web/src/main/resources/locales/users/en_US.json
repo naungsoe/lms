@@ -1,0 +1,29 @@
+{
+  "en_US": {
+    "titlePage": "Users",
+    "labelUser": "User",
+    "labelAllGroups": "All groups",
+    "labelUserFound": "{numFound} user",
+    "labelUsersFound": "{numFound} users",
+    "labelGenderFemale": "Female",
+    "labelGenderMale": "Male",
+    "labelGenderOther": "Other",
+    "labelDateTimeFormat": "Datetime format",
+    "labelDateFormat": "Date format",
+    "labelTimeFormat": "Time format",
+    "labelEnUS": "English",
+    "labelMyMM": "Myanmar",
+    "inputLabelFirstName": "First name",
+    "inputLabelLastName": "Last name",
+    "inputLabelBirthday": "Birthday (dd-mm-yyyy)",
+    "inputLabelMobile": "Mobile number",
+    "inputLabelEmail": "Email address",
+    "inputLabelDateTimeFormat": "DateTime format",
+    "inputLabelDateFormat": "Date format",
+    "inputLabelTimeFormat": "Time format",
+    "dropdownLabelGender": "Gender",
+    "dropdownLabelLocale": "Language",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply"
+  }
+}

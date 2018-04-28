@@ -2,7 +2,7 @@ package com.hsystems.lms.common.security;
 
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
+import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CommonUtils;
 
 import org.aopalliance.intercept.MethodInterceptor;
@@ -14,7 +14,7 @@ import java.util.Arrays;
 /**
  * Created by naungsoe on 17/9/16.
  */
-public class RequiresInterceptor implements MethodInterceptor {
+public final class RequiresInterceptor implements MethodInterceptor {
 
   private final Provider<Principal> principalProvider;
 

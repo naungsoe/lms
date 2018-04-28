@@ -1,0 +1,131 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/app-route/app-location.html">
+<link rel="import" href="../../bower_components/app-route/app-route.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-courses/page-courses.html">
+<link rel="import" href="../../web_components/module-courses/page-course-edit.html">
+
+<dom-module id="module-courses">
+  <template>
+    <style include="app-component-styles">
+
+    </style>
+
+    <app-location route="{{route}}">
+    </app-location>
+
+    <app-route
+        route="{{route}}"
+        pattern="[[rootUrl]]/:id"
+        data="{{routeData}}">
+    </app-route>
+
+    <iron-pages
+        selected="[[page]]"
+        attr-for-selected="name">
+      <page-courses
+          name="courses"
+          rest-url="[[restUrl]]"
+          root-url="[[rootUrl]]"
+          user="[[users]]"
+          filter-options="[[filterOptions]]"
+          query="[[query]]"
+          language="[[language]]"
+          resources="[[resources]]">
+      </page-courses>
+
+      <page-course-edit
+          name="course"
+          rest-url="[[restUrl]]"
+          root-url="[[rootUrl]]"
+          user="[[users]]"
+          filter-options="[[filterOptions]]"
+          course-id="[[routeData.id]]"
+          language="[[language]]"
+          resources="[[resources]]">
+      </page-course-edit>
+    </iron-pages>
+  </template>
+
+  <script>
+    const ModuleCoursesBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class ModuleCourses extends ModuleCoursesBase {
+      static get is() {
+        return 'module-courses';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          route: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          routeData: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          query: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          page: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateRoute(route)',
+          '_updatePage(routeData)'
+        ];
+      }
+
+      _updateRoute(route) {
+        if (route.path === this.rootUrl) {
+          this.page = 'courses';
+        }
+      }
+
+      _updatePage(routeData) {
+        if (routeData.id === undefined) {
+          this.page = 'courses';
+
+        } else {
+          this.page = 'course';
+        }
+      }
+    }
+    customElements.define(ModuleCourses.is, ModuleCourses);
+  </script>
+
+</dom-module>

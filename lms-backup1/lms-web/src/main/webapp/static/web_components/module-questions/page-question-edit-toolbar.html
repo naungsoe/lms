@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-question-edit-toolbar">
+  <template>
+    <style include="app-component-styles">
+
+    </style>
+
+    <app-location route="{{route}}">
+    </app-location>
+
+    <page-toolbar>
+      <paper-icon-button
+          icon="arrow-back"
+          on-tap="_handleBackTap">
+      </paper-icon-button>
+
+      <div class="title">
+      </div>
+
+      <slot name="status">
+      </slot>
+
+      <paper-icon-button
+          icon="social:person-add"
+          hidden$="[[!shareable]]"
+          on-tap="_handleShareTap">
+      </paper-icon-button>
+
+      <paper-icon-button
+          icon="content-copy"
+          hidden$="[[!cloneable]]"
+          on-tap="_handleCloneTap">
+      </paper-icon-button>
+
+      <paper-icon-button
+          icon="delete"
+          hidden$="[[!deletable]]"
+          on-tap="_handleDeleteTap">
+      </paper-icon-button>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageQuestionEditToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageQuestionEditToolbar extends PageQuestionEditToolbarBase {
+      static get is() {
+        return 'page-question-edit-toolbar';
+      }
+
+      static get properties() {
+        return {
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          route: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+
+      _handleBackTap(event) {
+        this.set('route.path', this.rootUrl);
+      }
+    }
+    customElements.define(PageQuestionEditToolbar.is, PageQuestionEditToolbar);
+  </script>
+</dom-module>

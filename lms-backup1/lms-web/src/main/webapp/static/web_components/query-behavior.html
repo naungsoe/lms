@@ -1,0 +1,63 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<script>
+  window.App = window.App || {};
+  App.QueryBehavior = {
+    properties: {
+      fields: {
+        type: String,
+        readOnly: false,
+        notify: true
+      },
+      query: {
+        type: String,
+        readOnly: false,
+        notify: true
+      },
+      filters: {
+        type: String,
+        readOnly: false,
+        notify: true
+      },
+      offset: {
+        type: Number,
+        readOnly: false,
+        notify: true
+      },
+      limit: {
+        type: Number,
+        readOnly: false,
+        notify: true
+      },
+      params: {
+        type: Object,
+        readOnly: false,
+        notify: true
+      }
+    },
+
+    observers: [
+      '_updateParams(fields, query, filters, offset, limit)'
+    ],
+
+    _updateParams: function(fields, query,
+        filters, offset, limit) {
+
+      if ((fields === undefined)
+          || (query === undefined)
+          || (filters === undefined)
+          || (offset === undefined)
+          || (limit === undefined)) {
+        return;
+      }
+
+      this.params = {
+        fields: fields,
+        query: query,
+        filters: filters,
+        offset: offset,
+        limit: limit
+      };
+    }
+  };
+</script>

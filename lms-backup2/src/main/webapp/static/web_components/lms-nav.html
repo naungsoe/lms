@@ -1,0 +1,71 @@
+<link rel="import" href="lms-default.html">
+<link rel="import" href="../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../bower_components/paper-menu/paper-menu.html">
+
+<dom-module id="lms-nav">
+
+  <template strip-whitespace>
+    <style>
+      [menu] {
+        height: 100%;
+        overflow: auto;
+      }
+
+      [menu] paper-menu paper-item [text] {
+        margin: 0 16px;
+      }
+    </style>
+
+    <div menu>
+      <paper-menu on-iron-select="handleSelect">
+        <paper-item action="/web/home"><iron-icon icon="home"></iron-icon><div text>{{localize('menuItemHome')}}</div></paper-item>
+        <paper-item action="/web/storage"><iron-icon icon="folder"></iron-icon><div text>{{localize('menuItemStorage')}}</div></paper-item>
+        <paper-item action="/web/signout"><iron-icon icon="exit-to-app"></iron-icon><div text>{{localize('menuItemSignOut')}}</div></paper-item>
+      </paper-menu>
+    </div>
+  </template>
+
+  <script>
+    Polymer({
+      is: 'lms-nav',
+
+      behaviors: [
+        Polymer.AppLocalizeBehavior
+      ],
+
+      properties: {
+        language: {
+          type: String,
+          notify: true
+        },
+        localeUrl: {
+          type: String,
+          notify: true
+        }
+      },
+
+      attached: function() {
+        var url = this.resolveUrl(this.localeUrl);
+        url = url + '?' + (new Date()).getTime();
+        this.loadResources(url);
+
+        var root = Polymer.dom(this.root);
+        var items = root.querySelectorAll('paper-item');
+        var selected = items.filter(function(item) {
+          var url = item.getAttribute('action');
+          location.pathname.indexOf(url);
+        });
+      },
+
+      handleSelect: function(event) {
+        var item = event.target.selectedItem;
+        var url = item.getAttribute('action');
+
+        if (location.pathname.indexOf(url) === -1) {
+          window.location = url;
+        }
+      }
+    });
+  </script>
+  
+</dom-module>

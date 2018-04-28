@@ -1,0 +1,48 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="course-view-quiz">
+  <template>
+    <style include="app-component-styles">
+      .quiz .quiz-title {
+        padding: 10px 16px 10px 0;
+      }
+      .quiz .quiz-description {
+        padding: 8px 16px 8px 0;
+      }
+    </style>
+
+    <div class="quiz">
+      <div class="quiz-title">
+        [[quiz.title]]
+      </div>
+
+      <div class="quiz-description">
+        [[quiz.description]]
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const CourseViewQuizBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class CourseViewQuiz extends CourseViewQuizBase {
+      static get is() {
+        return 'course-view-quiz';
+      }
+
+      static get properties() {
+        return {
+          quiz: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+    }
+    customElements.define(CourseViewQuiz.is, CourseViewQuiz);
+  </script>
+</dom-module>

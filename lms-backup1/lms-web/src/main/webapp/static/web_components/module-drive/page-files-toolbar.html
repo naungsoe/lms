@@ -1,0 +1,217 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-files-toolbar">
+  <template>
+    <style include="app-component-styles">
+      paper-menu-button .filter-content {
+        @apply --layout-vertical;
+        padding: 8px 16px;
+      }
+
+      paper-menu-button .filter-actions {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        padding: 8px 16px;
+      }
+
+      paper-dropdown-menu {
+        min-width: 240px;
+      }
+    </style>
+
+    <page-toolbar>
+      <div class="title">
+        <slot name="title"></slot>
+      </div>
+
+      <paper-menu-button ignore-select
+          restore-focus-on-close="[[restoreFocusOnClose]]"
+          horizontal-align="right"
+          vertical-align="top">
+        <paper-icon-button
+            slot="dropdown-trigger"
+            icon="filter-list">
+        </paper-icon-button>
+
+        <div slot="dropdown-content">
+          <div class="filter-content">
+            <paper-dropdown-menu no-label-float
+                restore-focus-on-close="[[restoreFocusOnClose]]">
+              <paper-listbox
+                  slot="dropdown-content"
+                  name="levels"
+                  selected="{{selectedLevel}}"
+                  attr-for-selected="value">
+                <paper-item value="ALL">
+                  [[localize('labelAllLevels')]]
+                </paper-item>
+
+                <template
+                    is="dom-repeat"
+                    items="[[levels]]"
+                    as="level">
+                  <paper-item value="[[level.value]]">
+                    [[level.name]]
+                  </paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-dropdown-menu no-label-float
+                restore-focus-on-close="[[restoreFocusOnClose]]">
+              <paper-listbox
+                  slot="dropdown-content"
+                  name="subjects"
+                  selected="{{selectedSubject}}"
+                  attr-for-selected="value">
+                <paper-item value="ALL">
+                  [[localize('labelAllSubjects')]]
+                </paper-item>
+
+                <template
+                    is="dom-repeat"
+                    items="[[subjects]]"
+                    as="subject">
+                  <paper-item value="[[subject.value]]">
+                    [[subject.name]]
+                  </paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+
+            <paper-dropdown-menu no-label-float
+                restore-focus-on-close="[[restoreFocusOnClose]]">
+              <paper-listbox
+                  slot="dropdown-content"
+                  name="owners"
+                  selected="{{selectedOwner}}"
+                  attr-for-selected="value">
+                <paper-item value="ANYONE">
+                  [[localize('labelOwnedByAnyone')]]
+                </paper-item>
+
+                <paper-item value="ME">
+                  [[localize('labelOwnedByMe')]]
+                </paper-item>
+
+                <paper-item value="NOT_ME">
+                  [[localize('labelNotOwnerByMe')]]
+                </paper-item>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+
+          <div class="filter-actions">
+            <paper-button on-tap="_handleResetTap">
+              [[localize('buttonResetFilter')]]
+            </paper-button>
+
+            <paper-button on-tap="_handleApplyTap">
+              [[localize('buttonApplyFilter')]]
+            </paper-button>
+          </div>
+        </div>
+      </paper-menu-button>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageFilesToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageFilesToolbar extends PageFilesToolbarBase {
+      static get is() {
+        return 'page-files-toolbar';
+      }
+
+      static get properties() {
+        return {
+          restoreFocusOnClose: {
+            type: Boolean,
+            value: false
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          levels: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          subjects: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          selectedLevel: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          selectedSubject: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          selectedOwner: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          filters: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+
+      _handleResetTap(event) {
+        this.selectedLevel = 'ALL';
+        this.selectedSubject = 'ALL';
+        this.selectedOwner = 'ANYONE';
+        this.filters = '';
+
+        let root = this.shadowRoot;
+        root.querySelector('paper-menu-button').close();
+      }
+
+      _handleApplyTap(event) {
+        let filters = [];
+
+        if (this.selectedLevel !== 'ALL') {
+          filters.push('levels.id:MUST ' + this.selectedLevel);
+        }
+
+        if (this.selectedSubject !== 'ALL') {
+          filters.push('subjects.id:MUST ' + this.selectedSubject);
+        }
+
+        if (this.selectedOwner === "ME") {
+          filters.push('createdBy.id:MUST ' + this.user.id);
+
+        } else if (this.selectedOwner === "NOT_ME") {
+          filters.push('createdBy.id:NOT ' + this.user.id);
+        }
+
+        this.filters = filters.join(' ');
+
+        let root = this.shadowRoot;
+        root.querySelector('paper-menu-button').close();
+      }
+    }
+    customElements.define(PageFilesToolbar.is, PageFilesToolbar);
+  </script>
+</dom-module>

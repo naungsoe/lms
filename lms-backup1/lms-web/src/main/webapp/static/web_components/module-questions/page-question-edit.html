@@ -1,0 +1,242 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-header-panel.html">
+<link rel="import" href="../../web_components/module-questions/page-question-edit-toolbar.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-composite-question.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-response.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-attributes.html">
+
+<dom-module id="page-question-edit">
+  <template>
+    <style include="app-component-styles">
+      .page-content {
+        padding: 8px 0;
+      }
+
+      .page-content .question {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .question .question-content .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+        padding: 0 16px;
+      }
+
+      .page-content .question .question-attributes {
+        margin-top: 16px;
+      }
+    </style>
+
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[questionId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{question}}">
+    </iron-ajax>
+
+    <iron-ajax
+        name="post"
+        body="[[question]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <page-header-panel>
+      <div slot="page-header">
+        <page-question-edit-toolbar
+            root-url="[[rootUrl]]"
+            user="[[user]]"
+            question="[[question]]">
+          <div slot="status">
+            [[status]]
+          </div>
+        </page-question-edit-toolbar>
+      </div>
+
+      <div class="page-content">
+        <div class="question">
+          <section class="question-content">
+            <template
+                is="dom-if"
+                if="[[_isMultipleChoice(question)]]">
+              <div class="title">
+                [[localize('labelMultipleChoice')]]
+              </div>
+
+              <question-edit-multiple-choice standalone
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-multiple-choice>
+            </template>
+
+            <template
+                is="dom-if"
+                if="[[_isMultipleResponse(question)]]">
+              <div class="title">
+                [[localize('labelMultipleResponse')]]
+              </div>
+
+              <question-edit-multiple-response standalone
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-multiple-response>
+            </template>
+
+            <template
+                is="dom-if"
+                if="[[_isCompositeQuestion(question)]]">
+              <div class="title">
+                [[localize('labelCompositeQuestion')]]
+              </div>
+
+              <question-edit-composite-question standalone
+                  types="[[filterOptions.types]]"
+                  question="{{question.question}}"
+                  language="[[language]]"
+                  resources="[[resources]]">
+              </question-edit-composite-question>
+            </template>
+          </section>
+
+          <section class="question-attributes">
+            <question-edit-attributes
+                filter-options="[[filterOptions]]"
+                question="{{question}}"
+                language="[[language]]"
+                resources="[[resources]]">
+            </question-edit-attributes>
+          </section>
+        </div>
+      </div>
+    </page-header-panel>
+  </template>
+
+  <script>
+    const PageQuestionEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageQuestionEdit extends PageQuestionEditBase {
+      static get is() {
+        return 'page-question-edit';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          questionId: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          response: {
+            type: Object,
+            readOnly: false
+          },
+          status: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          delay: {
+            type: Number,
+            readOnly: false,
+            notify: true,
+            value: 3000
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, questionId)',
+          '_updateQuestion(question.*)'
+        ];
+      }
+
+      _isMultipleChoice(question) {
+        return question.question.type === 'MultipleChoice';
+      }
+
+      _isMultipleResponse(question) {
+        return question.question.type === 'MultipleResponse';
+      }
+
+      _isCompositeQuestion(question) {
+        return question.question.type === 'CompositeQuestion';
+      }
+
+      _generateRequest(restUrl, questionId) {
+        if ((restUrl === undefined)
+            || (questionId === undefined)) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=get]');
+        request.generateRequest();
+      }
+
+      _updateQuestion(changeRecord) {
+        if (changeRecord.path === 'question') {
+          return;
+        }
+
+        if (this.timeout !== 0) {
+          clearTimeout(this.timeout);
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=post]');
+        this.debounce('click', function() {
+          let questionType = this.question.question.type.toLowerCase();
+          request.url = this.restUrl + '/' + questionType;
+          request.generateRequest();
+          this.status = 'Saving';
+        }, this.delay);
+      }
+
+      _handleSaveResponse(event) {
+        let response = event.detail.response;
+        this.status = 'Saved';
+      }
+    }
+    customElements.define(PageQuestionEdit.is, PageQuestionEdit);
+  </script>
+</dom-module>

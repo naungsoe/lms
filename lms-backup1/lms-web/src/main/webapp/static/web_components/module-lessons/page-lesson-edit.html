@@ -1,0 +1,232 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-text-editor/paper-text-editor.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-header-panel.html">
+<link rel="import" href="../../web_components/module-lessons/page-lesson-edit-toolbar.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-edit-components.html">
+<link rel="import" href="../../web_components/module-lessons/lesson-edit-attributes.html">
+
+<dom-module id="page-lesson-edit">
+  <template>
+    <style include="app-component-styles">
+      .page-content {
+        padding: 8px 0;
+      }
+
+      .page-content .lesson {
+        border: 1px solid var(--border-color);
+        padding: 16px 0;
+      }
+
+      .page-content .lesson .lesson-attributes {
+        margin-top: 16px;
+      }
+
+      .page-content .lesson .lesson-content .title {
+        @apply --paper-font-subhead;
+        margin-bottom: 8px;
+        padding: 0 16px;
+      }
+
+      .page-content .lesson .lesson-content .lesson-title,
+      .page-content .lesson .lesson-content .lesson-description {
+        margin-bottom: 4px;
+        padding: 0 16px;
+      }
+
+      .page-content .lesson .lesson-content .lesson-description {
+        margin-bottom: 12px;
+      }
+    </style>
+
+    <iron-ajax
+        name="get"
+        url="[[restUrl]]/[[lessonId]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="{{lesson}}">
+    </iron-ajax>
+
+    <iron-ajax
+        name="post"
+        body="[[lesson]]"
+        method="POST"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        last-response="_handleSaveResponse">
+    </iron-ajax>
+
+    <page-header-panel>
+      <div slot="page-header">
+        <page-lesson-edit-toolbar
+            user="[[user]]"
+            lesson="[[lesson]]">
+          <div slot="status">
+            [[status]]
+          </div>
+        </page-lesson-edit-toolbar>
+      </div>
+
+      <div class="page-content">
+        <div class="lesson">
+          <section class="lesson-content">
+            <div class="title">
+              [[localize('labelLesson')]]
+            </div>
+
+            <div class="lesson-title">
+              <paper-input
+                  label="[[localize('labelTitle')]]"
+                  value="[[lesson.lesson.title]]">
+              </paper-input>
+            </div>
+
+            <div class="lesson-description">
+              <paper-text-editor
+                  label="[[localize('labelDescription')]]"
+                  content="[[lesson.lesson.description]]">
+              </paper-text-editor>
+            </div>
+          </section>
+
+          <section class="lesson-attributes">
+            <div class="title">
+              [[localize('labelAttributes')]]
+            </div>
+
+            <lesson-edit-attributes
+                filter-options="[[filterOptions]]"
+                lesson="{{lesson}}"
+                language="[[language]]"
+                resources="[[resources]]">
+            </lesson-edit-attributes>
+          </section>
+        </div>
+
+        <div class="components">
+          <lesson-edit-components
+              types="[[filterOptions.types]]"
+              lesson="{{lesson.lesson}}"
+              language="[[language]]"
+              resources="[[resources]]">
+          </lesson-edit-components>
+        </div>
+      </div>
+    </page-header-panel>
+  </template>
+
+  <script>
+    const PageLessonEditBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageLessonEdit extends PageLessonEditBase {
+      static get is() {
+        return 'page-lesson-edit';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          rootUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          filterOptions: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          lessonId: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          response: {
+            type: Object,
+            readOnly: false
+          },
+          status: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          delay: {
+            type: Number,
+            readOnly: false,
+            notify: true,
+            value: 3000
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, lessonId)',
+          '_updateLesson(lesson.*)'
+        ];
+      }
+
+      _generateRequest(restUrl, lessonId) {
+        if ((restUrl === undefined)
+            || (lessonId === undefined)) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=get]');
+        request.generateRequest();
+      }
+
+      _updateLesson(changeRecord) {
+        if (changeRecord.path === 'lesson') {
+          return;
+        }
+
+        if (this.timeout !== 0) {
+          clearTimeout(this.timeout);
+        }
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax[name=post]');
+        this.debounce('click', function() {
+          request.url = this.restUrl;
+          request.generateRequest();
+          this.status = 'Saving';
+        }, this.delay);
+      }
+
+      _handleSaveResponse(event) {
+        let response = event.detail.response;
+        this.status = 'Saved';
+      }
+    }
+    customElements.define(PageLessonEdit.is, PageLessonEdit);
+  </script>
+</dom-module>

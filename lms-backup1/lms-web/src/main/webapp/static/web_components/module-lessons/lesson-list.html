@@ -1,0 +1,171 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-scroll-threshold/iron-scroll-threshold.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/iron-list/iron-list.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="lesson-list">
+  <template>
+    <style include="app-component-styles">
+      .list-item .lesson {
+        @apply --layout-vertical;
+        background-color: var(--primary-background-color);
+        border: 1px solid var(--border-color);
+        margin: 8px 0;
+        padding: 16px;
+      }
+
+      .list-item .lesson .lesson-title {
+        margin-bottom: 4px;
+      }
+
+      .list-item .lesson .lesson-description {
+        color: var(--secondary-text-color);
+      }
+    </style>
+
+    <iron-ajax
+        url="[[restUrl]]"
+        params="[[restParams]]"
+        method="GET"
+        handle-as="json"
+        content-type="application/json"
+        loading="{{loading}}"
+        on-response="_handleAjaxResponse">
+    </iron-ajax>
+
+    <iron-list selection-enabled
+        items="[[lessons]]"
+        as="lesson"
+        scroll-target="document"
+        on-selected-item-changed="_handleLessonSelect">
+      <template>
+        <div class="list-item">
+          <div class="lesson">
+            <div class="lesson-title">
+              [[lesson.lesson.title]]
+            </div>
+
+            <div class="lesson-description">
+              [[lesson.lesson.description]]
+            </div>
+          </div>
+        </div>
+      </template>
+    </iron-list>
+
+    <template
+        is="dom-if"
+        if="[[loading]]">
+      <div class="loading-status">
+        [[localize('labelFetchingLessons')]]
+      </div>
+    </template>
+
+    <iron-scroll-threshold
+        scroll-target="document"
+        lower-threshold="100"
+        on-lower-threshold="_handleLowerThreshold">
+    </iron-scroll-threshold>
+  </template>
+
+  <script>
+    const LessonListBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonList extends LessonListBase {
+      static get is() {
+        return 'lesson-list';
+      }
+
+      static get properties() {
+        return {
+          restUrl: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          restParams: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          lessons: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          numFound: {
+            type: Number,
+            readOnly: false,
+            notify: true
+          },
+          loading: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_generateRequest(restUrl, restParams)'
+        ];
+      }
+
+      _generateRequest(restUrl, restParams) {
+        if ((restUrl === undefined)
+            || (restParams === undefined)) {
+          return;
+        }
+
+        this.set('lessons', []);
+
+        let root = this.shadowRoot;
+        let request = root.querySelector('iron-ajax');
+        request.generateRequest();
+      }
+
+      _handleAjaxResponse(event) {
+        let root = this.shadowRoot;
+        let response = event.detail.response;
+        response.items.forEach(function(item) {
+          this.push('lessons', item);
+        }, this);
+
+        this.numFound = response.numFound;
+        root.querySelector('iron-scroll-threshold').clearTriggers();
+      }
+
+      _handleLowerThreshold(event) {
+        let count = (this.offset + 1) * this.limit;
+
+        if ((this.numFound > 0) && (count < 1000)) {
+          this.offset = this.offset + 1;
+
+        } else {
+          let root = this.shadowRoot;
+          root.querySelector('iron-scroll-threshold').clearTriggers();
+        }
+      }
+
+      _handleLessonSelect(event) {
+        if (event.detail.value === null) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        root.querySelector('iron-list').clearSelection();
+
+        let data = {bubbles: true, composed: true,
+          detail: {lesson: event.detail.value}
+        };
+        let lessonEvent = new CustomEvent('lesson-selected', data);
+        this.dispatchEvent(lessonEvent);
+      }
+    }
+    customElements.define(LessonList.is, LessonList);
+  </script>
+</dom-module>

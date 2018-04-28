@@ -1,7 +1,6 @@
 package com.hsystems.lms.common.logging;
 
-import com.hsystems.lms.common.LoggerType;
-import com.hsystems.lms.common.annotation.Log;
+import com.hsystems.lms.common.logging.annotation.Log;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
@@ -13,7 +12,7 @@ import java.util.Arrays;
 /**
  * Created by naungsoe on 14/9/16.
  */
-public class LogInterceptor implements MethodInterceptor {
+public final class LogInterceptor implements MethodInterceptor {
 
   private final static String MESSAGE_FORMAT
       = "Invocation of %s.%s with parameters %s";

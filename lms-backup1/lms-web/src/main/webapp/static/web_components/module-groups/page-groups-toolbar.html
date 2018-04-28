@@ -1,0 +1,51 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-groups-toolbar">
+  <template>
+    <style include="app-component-styles">
+
+    </style>
+
+    <page-toolbar>
+      <div class="title">
+        <slot name="title"></slot>
+      </div>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageGroupsToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageGroupsToolbar extends PageGroupsToolbarBase {
+      static get is() {
+        return 'page-groups-toolbar';
+      }
+
+      static get properties() {
+        return {
+          restoreFocusOnClose: {
+            type: Boolean,
+            value: false
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+    }
+    customElements.define(PageGroupsToolbar.is, PageGroupsToolbar);
+  </script>
+</dom-module>

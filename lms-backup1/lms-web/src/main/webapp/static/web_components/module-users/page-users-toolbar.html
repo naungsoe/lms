@@ -1,0 +1,146 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/neon-animation/web-animations.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../bower_components/paper-dropdown-menu/paper-dropdown-menu.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-users-toolbar">
+  <template>
+    <style include="app-component-styles">
+      paper-menu-button .filter-content {
+        @apply --layout-vertical;
+        padding: 8px 16px;
+      }
+
+      paper-menu-button .filter-actions {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        padding: 8px 16px;
+      }
+
+      paper-dropdown-menu {
+        min-width: 240px;
+      }
+    </style>
+
+    <page-toolbar>
+      <div class="title">
+        <slot name="title"></slot>
+      </div>
+
+      <paper-menu-button ignore-select
+          restore-focus-on-close="[[restoreFocusOnClose]]"
+          horizontal-align="right"
+          vertical-align="top">
+        <paper-icon-button
+            slot="dropdown-trigger"
+            icon="filter-list">
+        </paper-icon-button>
+
+        <div slot="dropdown-content">
+          <div class="filter-content">
+            <paper-dropdown-menu no-label-float
+                restore-focus-on-close="[[restoreFocusOnClose]]">
+              <paper-listbox
+                  slot="dropdown-content"
+                  name="levels"
+                  selected="{{selectedGroup}}"
+                  attr-for-selected="value">
+                <paper-item value="ALL">
+                  [[localize('labelAllGroups')]]
+                </paper-item>
+
+                <template
+                    is="dom-repeat"
+                    items="[[groups]]"
+                    as="group">
+                  <paper-item value="[[group.value]]">
+                    [[group.name]]
+                  </paper-item>
+                </template>
+              </paper-listbox>
+            </paper-dropdown-menu>
+          </div>
+
+          <div class="filter-actions">
+            <paper-button on-tap="_handleResetTap">
+              [[localize('buttonResetFilter')]]
+            </paper-button>
+
+            <paper-button on-tap="_handleApplyTap">
+              [[localize('buttonApplyFilter')]]
+            </paper-button>
+          </div>
+        </div>
+      </paper-menu-button>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageUsersToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageUsersToolbar extends PageUsersToolbarBase {
+      static get is() {
+        return 'page-users-toolbar';
+      }
+
+      static get properties() {
+        return {
+          restoreFocusOnClose: {
+            type: Boolean,
+            value: false
+          },
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          groups: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          selectedGroup: {
+            type: String,
+            readOnly: false,
+            notify: true
+          },
+          filters: {
+            type: String,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+
+      _handleResetTap(event) {
+        this.selectedGroup = 'ALL';
+        this.filters = '';
+
+        let root = this.shadowRoot;
+        root.querySelector('paper-menu-button').close();
+      }
+
+      _handleApplyTap(event) {
+        let filters = [];
+
+        if (this.selectedGroup !== 'ALL') {
+          filters.push('groups.id:MUST ' + this.selectedGroup);
+        }
+
+        this.filters = filters.join(' ');
+
+        let root = this.shadowRoot;
+        root.querySelector('paper-menu-button').close();
+      }
+    }
+    customElements.define(PageUsersToolbar.is, PageUsersToolbar);
+  </script>
+</dom-module>

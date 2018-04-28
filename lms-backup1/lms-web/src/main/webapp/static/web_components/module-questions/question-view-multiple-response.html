@@ -1,0 +1,90 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/paper-checkbox/paper-checkbox.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="question-view-multiple-response">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
+      .question-body {
+        padding: 10px 16px 10px 0;
+      }
+
+      .question-body[empty] {
+        color: var(--secondary-text-color);
+      }
+
+      .question-options {
+        padding: 0 16px 0 0;
+      }
+
+      .question-options .question-option {
+        @apply --layout-horizontal;
+        padding: 4px 0;
+      }
+
+      .question-options .question-option paper-checkbox {
+        padding: 8px 4px;
+      }
+
+      .question-options .question-option .option-body {
+        padding: 6px 0 10px 0;
+      }
+    </style>
+
+    <div class="question-body">
+      [[question.body]]
+    </div>
+
+    <div class="question-options">
+      <template
+          is="dom-repeat"
+          items="[[question.options]]"
+          as="option">
+        <div class="question-option">
+          <paper-checkbox disabled
+              checked="[[option.correct]]">
+          </paper-checkbox>
+
+          <div class="option-body">
+            [[option.body]]
+          </div>
+        </div>
+      </template>
+    </div>
+  </template>
+
+  <script>
+    const QuestionViewMultipleResponseBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionViewMultipleResponse extends QuestionViewMultipleResponseBase {
+      static get is() {
+        return 'question-view-multiple-response';
+      }
+
+      static get properties() {
+        return {
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          standalone: {
+            type: Boolean,
+            readOnly: false,
+            notify: true,
+            value: false
+          }
+        };
+      }
+    }
+    customElements.define(QuestionViewMultipleResponse.is, QuestionViewMultipleResponse);
+  </script>
+</dom-module>

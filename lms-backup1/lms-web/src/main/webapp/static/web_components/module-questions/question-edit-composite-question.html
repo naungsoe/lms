@@ -1,0 +1,333 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/editor-icons.html">
+<link rel="import" href="../../bower_components/iron-sorter/iron-sorter.html">
+<link rel="import" href="../../bower_components/paper-listbox/paper-listbox.html">
+<link rel="import" href="../../bower_components/paper-item/paper-item.html">
+<link rel="import" href="../../bower_components/paper-button/paper-button.html">
+<link rel="import" href="../../bower_components/paper-menu-button/paper-menu-button.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-view-multiple-response.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-choice.html">
+<link rel="import" href="../../web_components/module-questions/question-edit-multiple-response.html">
+
+<dom-module id="question-edit-composite-question">
+  <template>
+    <style include="app-component-styles">
+      :host {
+        display: block;
+      }
+
+      :host .question-body,
+      :host .question-hint,
+      :host .question-explanation {
+        padding: 0 16px 0 8px;
+      }
+
+      :host([standalone]) .question-body,
+      :host([standalone]) .question-hint,
+      :host([standalone]) .question-explanation {
+        padding: 0 16px;
+      }
+
+      .question-body,
+      .question-components,
+      .question-hint {
+        margin-bottom: 12px;
+      }
+
+      .question-body {
+        margin: 0 0 16px 0;
+      }
+
+      .question-components .question-component {
+        @apply --layout-vertical;
+      }
+
+      .question-components .question-component .content {
+        @apply --layout-horizontal;
+      }
+
+      .question-components .question-component .content .component {
+        @apply --layout-flex;
+      }
+
+      .question-components .question-component[active] {
+        @apply --shadow-elevation-4dp;
+      }
+
+      .question-components .question-component[active] .content {
+        padding: 16px 0;
+      }
+
+      .question-components .question-component[active] .footer {
+        @apply --layout-horizontal;
+        @apply --layout-end-justified;
+        border-top: 1px solid var(--border-color);
+        padding: 8px;
+      }
+
+      .question-components .question-component.drop-placeholder {
+        border: 1px dashed var(--border-color);
+      }
+
+      .question-components .question-component.drop-placeholder * {
+        @apply --layout-invisible;
+      }
+
+      .question-components .question-component.drag-item {
+        @apply --shadow-elevation-2dp;
+        background-color: var(--secondary-background-color);
+      }
+
+      .question-components .component-actions {
+        margin: 8px 0;
+        padding: 0 16px;
+      }
+    </style>
+
+    <div class="question-body">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestion')]]"
+          content="[[question.body]]">
+      </paper-text-editor>
+    </div>
+
+    <div class="question-components">
+      <iron-sorter
+          handle="component-handle"
+          draggable="question-component"
+          on-order-changed="_handleOrderChange">
+        <template
+            is="dom-repeat"
+            items="[[question.components]]"
+            as="component">
+          <div
+              class="question-component"
+              active$="[[_isEditingComponent(component, editingComponent)]]"
+              on-tap="_handleComponentTap">
+            <div class="content">
+              <paper-icon-button
+                  icon="editor:drag-handle"
+                  class="component-handle">
+              </paper-icon-button>
+
+              <div class="component">
+                <template
+                    is="dom-if"
+                    if="[[!_isEditingComponent(component, editingComponent)]]">
+                  <template
+                      is="dom-if"
+                      if="[[_isMultipleChoice(component)]]">
+                    <question-view-multiple-choice
+                        question="{{component.question}}"
+                        language="[[language]]"
+                        resources="[[resources]]">
+                    </question-view-multiple-choice>
+                  </template>
+
+                  <template
+                      is="dom-if"
+                      if="[[_isMultipleResponse(component)]]">
+                    <question-view-multiple-response
+                        question="{{component.question}}"
+                        language="[[language]]"
+                        resources="[[resources]]">
+                    </question-view-multiple-response>
+                  </template>
+                </template>
+
+                <template
+                    is="dom-if"
+                    if="[[_isEditingComponent(component, editingComponent)]]">
+                  <template
+                      is="dom-if"
+                      if="[[_isMultipleChoice(component)]]">
+                    <question-edit-multiple-choice
+                        question="{{component.question}}"
+                        language="[[language]]"
+                        resources="[[resources]]">
+                    </question-edit-multiple-choice>
+                  </template>
+
+                  <template
+                      is="dom-if"
+                      if="[[_isMultipleResponse(component)]]">
+                    <question-view-multiple-response
+                        question="{{component.question}}"
+                        language="[[language]]"
+                        resources="[[resources]]">
+                    </question-view-multiple-response>
+                  </template>
+                </template>
+              </div>
+            </div>
+
+            <template
+                is="dom-if"
+                if="[[_isEditingComponent(component, editingComponent)]]">
+              <div class="footer">
+                <paper-icon-button
+                    icon="content-copy"
+                    on-tap="_handleCloneTap">
+                </paper-icon-button>
+
+                <paper-icon-button
+                    icon="delete"
+                    on-tap="_handleDeleteTap">
+                </paper-icon-button>
+              </div>
+            </template>
+          </div>
+        </template>
+      </iron-sorter>
+
+      <div class="component-actions">
+        <paper-menu-button>
+          <paper-button slot="dropdown-trigger">
+            <iron-icon icon="add"></iron-icon>
+            [[localize('buttonAddQuestion')]]
+          </paper-button>
+
+          <paper-listbox
+              slot="dropdown-content"
+              attr-for-selected="value"
+              on-selected-item-changed="_handleMenuSelect">
+            <template
+                is="dom-repeat"
+                items="[[types]]"
+                as="type">
+              <template
+                  is="dom-if"
+                  if="[[!_isCompositeType(type)]]">
+                <paper-item value="[[type.value]]">
+                  [[type.name]]
+                </paper-item>
+              </template>
+            </template>
+          </paper-listbox>
+        </paper-menu-button>
+      </div>
+    </div>
+
+    <div class="question-hint">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionHint')]]"
+          content="[[question.hint]]">
+      </paper-text-editor>
+    </div>
+
+    <div class="question-explanation">
+      <paper-text-editor no-label-float
+          placeholder="[[localize('labelQuestionExplanation')]]"
+          content="[[question.explanation]]">
+      </paper-text-editor>
+    </div>
+  </template>
+
+  <script>
+    const QuestionEditCompositeQuestionBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class QuestionEditCompositeQuestion extends QuestionEditCompositeQuestionBase {
+      static get is() {
+        return 'question-edit-composite-question';
+      }
+
+      static get properties() {
+        return {
+          types: {
+            type: Array,
+            readOnly: false,
+            notify: true
+          },
+          question: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          editingComponent: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      _isEditingComponent(component, editingComponent) {
+        return component === editingComponent;
+      }
+
+      _isCompositeType(type) {
+        return type.value === 'CompositeQuestion';
+      }
+
+      _isMultipleChoice(component) {
+        return component.question.type === 'MultipleChoice';
+      }
+
+      _isMultipleResponse(component) {
+        return component.question.type === 'MultipleResponse';
+      }
+
+      _handleOrderChange(event) {
+
+      }
+
+      _handleComponentTap(event) {
+        this.editingComponent = event.model.component;
+      }
+
+      _handleCloneTap(event) {
+
+      }
+
+      _handleDeleteTap(event) {
+
+      }
+
+      _handleMenuSelect(event) {
+        if (event.detail.value === null) {
+          return;
+        }
+
+        let root = this.shadowRoot;
+        let order = this.question.components.length + 1;
+        let component = {
+          id: '',
+          question: {
+            type: 'MultipleChoice',
+            body: '',
+            hint: '',
+            explanation: '',
+            options: [
+              {
+                id: '',
+                body: 'Option 1',
+                feedback: '',
+                correct: false,
+                order: 1
+              },
+              {
+                id: '',
+                body: 'Option 2',
+                feedback: '',
+                correct: false,
+                order: 2
+              }
+            ]
+          },
+          score: 0,
+          order: order
+        };
+        this.editingComponent = component;
+        this.question.components.push(component);
+        this.notifySplices('question.components');
+      }
+    }
+    customElements.define(QuestionEditCompositeQuestion.is, QuestionEditCompositeQuestion);
+  </script>
+</dom-module>

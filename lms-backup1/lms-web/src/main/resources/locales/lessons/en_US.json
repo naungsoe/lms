@@ -1,0 +1,33 @@
+{
+  "en_US": {
+    "titlePage": "Lessons",
+    "labelLesson": "Lesson",
+    "labelAllLevels": "All grades",
+    "labelLevel": "Grade",
+    "labelAllSubjects": "All subjects",
+    "labelSubject": "Subject",
+    "labelOwnedByAnyone": "Owned by anyone",
+    "labelOwnedByMe": "Owned by me",
+    "labelNotOwnerByMe": "Owned by others",
+    "labelFetchingLessons": "Fetching lessons",
+    "labelLessonFound": "{numFound} lesson",
+    "labelLessonsFound": "{numFound} lessons",
+    "labelTitle": "Title",
+    "labelDescription": "Description",
+    "labelInstructions": "Instructions",
+    "labelActivity": "Activity {offset} of {length}",
+    "labelActivityMove": "Move activity",
+    "labelActivityDuplicate": "Duplicate activity",
+    "labelActivityDelete": "Delete activity",
+    "labelActivityMerge": "Merge with above",
+    "labelQuestion": "Question",
+    "labelQuestionHint": "Hint",
+    "labelQuestionExplanation": "Explanation",
+    "buttonResetFilter": "Reset",
+    "buttonApplyFilter": "Apply",
+    "buttonAddActivity": "Add activity",
+    "buttonAddComponent": "Add component",
+    "buttonAddQuestion": "Add question",
+    "buttonAddOption": "Add option"
+  }
+}

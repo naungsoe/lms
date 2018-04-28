@@ -1,0 +1,86 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/social-icons.html">
+<link rel="import" href="../../bower_components/paper-icon-button/paper-icon-button.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+<link rel="import" href="../../web_components/page-toolbar.html">
+
+<dom-module id="page-lesson-edit-toolbar">
+  <template>
+    <style include="app-component-styles">
+
+    </style>
+
+    <page-toolbar>
+      <paper-icon-button
+          icon="arrow-back"
+          on-tap="_handleBackTap">
+      </paper-icon-button>
+
+      <div class="title">
+      </div>
+
+      <slot name="status">
+      </slot>
+
+      <paper-icon-button
+          icon="visibility"
+          on-tap="_handlePreviewTap">
+      </paper-icon-button>
+
+      <paper-icon-button
+          icon="social:person-add"
+          hidden$="[[!shareable]]"
+          on-tap="_handleShareTap">
+      </paper-icon-button>
+
+      <paper-icon-button
+          icon="content-copy"
+          hidden$="[[!cloneable]]"
+          on-tap="_handleCloneTap">
+      </paper-icon-button>
+
+      <paper-icon-button
+          icon="delete"
+          hidden$="[[!deletable]]"
+          on-tap="_handleDeleteTap">
+      </paper-icon-button>
+    </page-toolbar>
+  </template>
+
+  <script>
+    const PageLessonEditToolbarBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class PageLessonEditToolbar extends PageLessonEditToolbarBase {
+      static get is() {
+        return 'page-lesson-edit-toolbar';
+      }
+
+      static get properties() {
+        return {
+          user: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          lesson: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          }
+        }
+      }
+
+      _handleBackTap(event) {
+        window.history.back();
+      }
+
+      _handlePreviewTap(event) {
+
+      }
+    }
+    customElements.define(PageLessonEditToolbar.is, PageLessonEditToolbar);
+  </script>
+</dom-module>

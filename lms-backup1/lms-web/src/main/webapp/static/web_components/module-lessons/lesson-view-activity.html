@@ -1,0 +1,96 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/app-localize-behavior/app-localize-behavior.html">
+<link rel="import" href="../../web_components/app-component-styles.html">
+
+<dom-module id="lesson-view-activity">
+  <template>
+    <style include="app-component-styles">
+      .activity .activity-title,
+      .activity .activity-instructions {
+        padding: 8px 16px;
+      }
+
+      .activity .activity-title[empty],
+      .activity .activity-instructions[empty] {
+        color: var(--secondary-text-color);
+      }
+    </style>
+
+    <div class="activity">
+      <div
+          class="activity-title"
+          empty$="[[_emptyTitle]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyTitle]]">
+          [[activity.title]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyTitle]]">
+          [[localize('labelTitle')]]
+        </template>
+      </div>
+
+      <div
+          class="activity-instructions"
+          empty$="[[_emptyInstructions]]">
+        <template
+            is="dom-if"
+            if="[[!_emptyInstructions]]">
+          [[activity.instructions]]
+        </template>
+
+        <template
+            is="dom-if"
+            if="[[_emptyInstructions]]">
+          [[localize('labelInstructions')]]
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const LessonViewActivityBase = Polymer.mixinBehaviors(
+      [Polymer.AppLocalizeBehavior], Polymer.Element);
+
+    class LessonViewActivity extends LessonViewActivityBase {
+      static get is() {
+        return 'lesson-view-activity';
+      }
+
+      static get properties() {
+        return {
+          activity: {
+            type: Object,
+            readOnly: false,
+            notify: true
+          },
+          _emptyTitle: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          },
+          _emptyInstructions: {
+            type: Boolean,
+            readOnly: false,
+            notify: true
+          }
+        };
+      }
+
+      static get observers() {
+        return [
+          '_updateActivity(activity)'
+        ];
+      }
+
+      _updateActivity(activity) {
+        this._emptyTitle = (activity.title === '');
+        this._emptyInstructions = (activity.instructions === '');
+      }
+    }
+    customElements.define(LessonViewActivity.is, LessonViewActivity);
+  </script>
+</dom-module>
