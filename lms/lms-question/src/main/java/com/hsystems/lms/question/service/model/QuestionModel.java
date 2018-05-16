@@ -12,6 +12,10 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class QuestionModel implements Serializable {
 
+  private static final long serialVersionUID = -804509278071046830L;
+
+  private QuestionType type;
+
   private String body;
 
   private String hint;
@@ -20,6 +24,14 @@ public abstract class QuestionModel implements Serializable {
 
   public QuestionModel() {
 
+  }
+
+  public QuestionType getType() {
+    return type;
+  }
+
+  public void setType(QuestionType type) {
+    this.type = type;
   }
 
   public String getBody() {

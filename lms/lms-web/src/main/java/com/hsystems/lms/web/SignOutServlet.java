@@ -2,9 +2,7 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.model.SignOutModel;
-import com.hsystems.lms.web.util.ServletUtils;
+import com.hsystems.lms.authentication.service.AuthenticationService;
 
 import java.io.IOException;
 
@@ -20,7 +18,7 @@ import javax.servlet.http.HttpSession;
  */
 public class SignOutServlet extends AbstractServlet {
 
-  private static final long serialVersionUID = 758849204180820238L;
+  private static final long serialVersionUID = -3263220373959144688L;
 
   private final AuthenticationService authService;
 
@@ -49,13 +47,10 @@ public class SignOutServlet extends AbstractServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignOutModel signOutModel = ServletUtils.getModel(
-        request, SignOutModel.class);
-    authService.signOut(signOutModel);
+    clearUserSession(request, response);
 
     ServletContext servletContext = request.getServletContext();
     String signInUrl = servletContext.getInitParameter("signInUrl");
-    clearUserSession(request, response);
     redirectRequest(request, response, signInUrl);
   }
 
@@ -71,7 +66,7 @@ public class SignOutServlet extends AbstractServlet {
 
     if (cookies != null && cookies.length > 0) {
       for (Cookie cookie : cookies) {
-        cookie.setValue("-");
+        cookie.setValue("");
         cookie.setMaxAge(0);
         response.addCookie(cookie);
       }

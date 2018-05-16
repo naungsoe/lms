@@ -1,4 +1,4 @@
-package com.hsystems.lms.service.model.question;
+package com.hsystems.lms.question.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -17,7 +17,7 @@ import java.util.List;
 public final class MultipleChoiceModel extends QuestionModel
     implements Serializable {
 
-  private static final long serialVersionUID = -5922530446134498440L;
+  private static final long serialVersionUID = -2139131431299189547L;
 
   private List<ChoiceOptionModel> options;
 

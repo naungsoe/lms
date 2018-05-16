@@ -11,11 +11,9 @@ import java.util.List;
  * Created by naungsoe on 5/11/16.
  */
 public final class CompositeQuestionAttempt
-    implements QuestionAttempt<CompositeQuestion>, Serializable {
+    extends QuestionAttempt<CompositeQuestion> implements Serializable {
 
-  private static final long serialVersionUID = 7462327592007948282L;
-
-  private CompositeQuestion compositeQuestion;
+  private static final long serialVersionUID = 5961743909865439323L;
 
   private List<QuestionComponentAttempt> componentAttempts;
 
@@ -24,16 +22,11 @@ public final class CompositeQuestionAttempt
   }
 
   public CompositeQuestionAttempt(
-      CompositeQuestion compositeQuestion,
+      CompositeQuestion question,
       List<QuestionComponentAttempt> componentAttempts) {
 
-    this.compositeQuestion = compositeQuestion;
+    this.question = question;
     this.componentAttempts = componentAttempts;
-  }
-
-  @Override
-  public CompositeQuestion getQuestion() {
-    return compositeQuestion;
   }
 
   public Enumeration<QuestionComponentAttempt> getComponentAttempts() {

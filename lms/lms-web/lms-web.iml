@@ -15,6 +15,15 @@
     <orderEntry type="library" name="Maven: org.glassfish.hk2.external:javax.inject:2.4.0" level="project" />
     <orderEntry type="module" module-name="lms-school" />
     <orderEntry type="module" module-name="lms-entity" />
+    <orderEntry type="module" module-name="lms-user" />
+    <orderEntry type="module" module-name="lms-group" />
+    <orderEntry type="module" module-name="lms-question" />
+    <orderEntry type="module" module-name="lms-component" />
+    <orderEntry type="module" module-name="lms-resource" />
+    <orderEntry type="module" module-name="lms-level" />
+    <orderEntry type="module" module-name="lms-subject" />
+    <orderEntry type="module" module-name="lms-quiz" />
+    <orderEntry type="module" module-name="lms-authentication" />
     <orderEntry type="module" module-name="lms-hbase" />
     <orderEntry type="library" name="Maven: hbase.client.shade:hbase-client-shaded:1.0-SNAPSHOT" level="project" />
     <orderEntry type="module" module-name="lms-solr" />

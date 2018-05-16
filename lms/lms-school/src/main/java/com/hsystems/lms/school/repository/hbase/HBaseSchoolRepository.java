@@ -4,13 +4,11 @@ import com.google.inject.Inject;
 
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.entity.repository.query.Query;
-import com.hsystems.lms.entity.repository.query.QueryResult;
+import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
-import com.hsystems.lms.hbase.HBaseScanner;
-import com.hsystems.lms.school.repository.SchoolRepository;
+import com.hsystems.lms.hbase.HBaseScanFactory;
+import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.school.repository.entity.School;
-import com.hsystems.lms.solr.SolrClient;
 
 import org.apache.hadoop.hbase.TableName;
 import org.apache.hadoop.hbase.client.Result;
@@ -18,53 +16,55 @@ import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 /**
  * Created by naungsoe on 12/10/16.
  */
-public final class HBaseSchoolRepository implements SchoolRepository {
+public final class HBaseSchoolRepository
+    implements Repository<Auditable<School>> {
 
   private static final TableName SCHOOL_TABLE
       = TableName.valueOf("lms:schools");
 
+  private static final int MAX_VERSIONS = 1;
+
   private final HBaseClient hbaseClient;
 
-  private final SolrClient solrClient;
+  private final HBaseSchoolMapper schoolMapper;
 
   @Inject
-  HBaseSchoolRepository(
-      HBaseClient hbaseClient,
-      SolrClient solrClient) {
-
+  HBaseSchoolRepository(HBaseClient hbaseClient) {
     this.hbaseClient = hbaseClient;
-    this.solrClient = solrClient;
+    this.schoolMapper = new HBaseSchoolMapper();
   }
 
-  @Override
-  public QueryResult<Auditable<School>> findAllBy(Query query)
+  public List<Auditable<School>> findAllBy(String lastId, int limit)
       throws IOException {
 
-    return null;
-  }
+    Scan scan = HBaseScanFactory.createExclStartRowKeyScan(lastId);
+    scan.setMaxVersions(MAX_VERSIONS);
+    scan.setCaching(limit);
 
-  @Override
-  public List<Auditable<School>> findAllBy(
-      String schoolId, String lastId, int limit)
-      throws IOException {
+    List<Result> results = hbaseClient.scan(scan, SCHOOL_TABLE);
+    List<Auditable<School>> schools = new ArrayList<>();
+    HBaseUtils.forEachRowSetResults(results, rowSetResults -> {
+      Auditable<School> school = schoolMapper.from(rowSetResults);
+      schools.add(school);
+    });
 
-
-    return null;
+    return schools;
   }
 
   @Override
   public Optional<Auditable<School>> findBy(String id)
       throws IOException {
 
-    Scan scan = HBaseScanner.createRowKeyFilter(id);
+    Scan scan = HBaseScanFactory.createRowKeyFilterScan(id);
     scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(HBaseScanner.MAX_VERSIONS);
+    scan.setMaxVersions(MAX_VERSIONS);
 
     List<Result> results = hbaseClient.scan(scan, SCHOOL_TABLE);
 
@@ -72,26 +72,25 @@ public final class HBaseSchoolRepository implements SchoolRepository {
       return Optional.empty();
     }
 
-    return schoolMapper.getEntity(results);
+    Auditable<School> school = schoolMapper.from(results);
+    return Optional.of(school);
   }
 
   @Override
-  public void add(List<Auditable<School>> entity) throws IOException {
-
-  }
-
-  @Override
-  public void add(Auditable<School> entity) throws IOException {
-
-  }
-
-  @Override
-  public void update(Auditable<School> entity) throws IOException {
+  public void add(Auditable<School> entity)
+      throws IOException {
 
   }
 
   @Override
-  public void remove(Auditable<School> entity) throws IOException {
+  public void update(Auditable<School> entity)
+      throws IOException {
+
+  }
+
+  @Override
+  public void remove(Auditable<School> entity)
+      throws IOException {
 
   }
 }

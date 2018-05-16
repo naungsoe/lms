@@ -1,13 +1,15 @@
 package com.hsystems.lms.question.repository.entity;
 
+import com.hsystems.lms.component.Component;
+
 import java.io.Serializable;
 
 /**
  * Created by naungsoe on 1/11/16.
  */
-public final class ChoiceOption implements Serializable {
+public final class ChoiceOption implements Component, Serializable {
 
-  private static final long serialVersionUID = -5470055582376205598L;
+  private static final long serialVersionUID = 2655018708468090646L;
 
   private String id;
 
@@ -53,6 +55,7 @@ public final class ChoiceOption implements Serializable {
     return correct;
   }
 
+  @Override
   public int getOrder() {
     return order;
   }

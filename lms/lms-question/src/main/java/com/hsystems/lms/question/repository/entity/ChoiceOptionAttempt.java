@@ -7,11 +7,11 @@ import java.io.Serializable;
  */
 public final class ChoiceOptionAttempt implements Serializable {
 
-  private static final long serialVersionUID = -2491936150632473939L;
+  private static final long serialVersionUID = 2979521756188967210L;
 
   private String id;
 
-  private boolean correct;
+  private ChoiceOption option;
 
   ChoiceOptionAttempt() {
 
@@ -19,21 +19,22 @@ public final class ChoiceOptionAttempt implements Serializable {
 
   public ChoiceOptionAttempt(
       String id,
-      boolean correct) {
+      ChoiceOption option) {
 
     this.id = id;
-    this.correct = correct;
+    this.option = option;
   }
 
   public String getId() {
     return id;
   }
 
-  public boolean isCorrect() {
-    return correct;
+  public ChoiceOption getOption() {
+    return option;
   }
 
-  public void setCorrect(boolean correct) {
-    this.correct = correct;
+  public boolean isCorrect() {
+    return id.equals(option.getId())
+        && option.isCorrect();
   }
 }

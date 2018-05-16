@@ -11,11 +11,9 @@ import java.util.List;
  * Created by naungsoe on 5/11/16.
  */
 public final class MultipleResponseAttempt
-    implements QuestionAttempt<MultipleResponse>, Serializable {
+    extends QuestionAttempt<MultipleResponse> implements Serializable {
 
-  private static final long serialVersionUID = 1871384672813771672L;
-
-  private MultipleResponse multipleResponse;
+  private static final long serialVersionUID = 6449065661561560430L;
 
   private List<ChoiceOptionAttempt> optionAttempts;
 
@@ -24,16 +22,11 @@ public final class MultipleResponseAttempt
   }
 
   public MultipleResponseAttempt(
-      MultipleResponse multipleResponse,
+      MultipleResponse question,
       List<ChoiceOptionAttempt> optionAttempts) {
 
-    this.multipleResponse = multipleResponse;
+    this.question = question;
     this.optionAttempts = optionAttempts;
-  }
-
-  @Override
-  public MultipleResponse getQuestion() {
-    return multipleResponse;
   }
 
   public Enumeration<ChoiceOptionAttempt> getOptionAttempts() {

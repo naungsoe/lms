@@ -52,7 +52,7 @@
     <location>/web/error</location>
   </error-page>
   <error-page>
-    <exception-type>java.lang.Exception</exception-type>
+    <exception-type>java.lang.Throwable</exception-type>
     <location>/web/error</location>
   </error-page>
   <session-config>

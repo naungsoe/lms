@@ -1,16 +1,14 @@
 package com.hsystems.lms.question.repository.entity;
 
-import com.hsystems.lms.entity.resource.Permission;
-import com.hsystems.lms.entity.resource.Resource;
-import com.hsystems.lms.entity.resource.Status;
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.entity.Entity;
+import com.hsystems.lms.resource.Permission;
+import com.hsystems.lms.resource.Resource;
 import com.hsystems.lms.level.repository.entity.Level;
 import com.hsystems.lms.school.repository.entity.School;
-import com.hsystems.lms.school.repository.entity.User;
 import com.hsystems.lms.subject.repository.entity.Subject;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,9 +19,9 @@ import java.util.List;
  * Created by naungsoe on 7/10/16.
  */
 public final class QuestionResource<T extends Question>
-    implements Resource, Serializable {
+    implements Resource, Entity, Serializable {
 
-  private static final long serialVersionUID = -7350094020858784927L;
+  private static final long serialVersionUID = 4960526735477583614L;
 
   private String id;
 
@@ -39,16 +37,6 @@ public final class QuestionResource<T extends Question>
 
   private List<Permission> permissions;
 
-  private Status status;
-
-  private User createdBy;
-
-  private LocalDateTime createdDateTime;
-
-  private User modifiedBy;
-
-  private LocalDateTime modifiedDateTime;
-
   QuestionResource() {
 
   }
@@ -60,12 +48,7 @@ public final class QuestionResource<T extends Question>
       List<Level> levels,
       List<Subject> subjects,
       List<String> keywords,
-      List<Permission> permissions,
-      Status status,
-      User createdBy,
-      LocalDateTime createdDateTime,
-      User modifiedBy,
-      LocalDateTime modifiedDateTime) {
+      List<Permission> permissions) {
 
     this.id = id;
     this.question = question;
@@ -74,11 +57,6 @@ public final class QuestionResource<T extends Question>
     this.subjects = subjects;
     this.keywords = keywords;
     this.permissions = permissions;
-    this.status = status;
-    this.createdBy = createdBy;
-    this.createdDateTime = createdDateTime;
-    this.modifiedBy = modifiedBy;
-    this.modifiedDateTime = modifiedDateTime;
   }
 
   public static class Builder<T extends Question> {
@@ -91,11 +69,6 @@ public final class QuestionResource<T extends Question>
     private List<Subject> subjects;
     private List<String> keywords;
     private List<Permission> permissions;
-    private Status status;
-    private User createdBy;
-    private LocalDateTime createdDateTime;
-    private User modifiedBy;
-    private LocalDateTime modifiedDateTime;
 
     public Builder(String id, T question) {
       this.id = id;
@@ -127,31 +100,6 @@ public final class QuestionResource<T extends Question>
       return this;
     }
 
-    public Builder status(Status status) {
-      this.status = status;
-      return this;
-    }
-
-    public Builder createdBy(User createdBy) {
-      this.createdBy = createdBy;
-      return this;
-    }
-
-    public Builder createdDateTime(LocalDateTime createdDateTime) {
-      this.createdDateTime = createdDateTime;
-      return this;
-    }
-
-    public Builder modifiedBy(User modifiedBy) {
-      this.modifiedBy = modifiedBy;
-      return this;
-    }
-
-    public Builder modifiedDateTime(LocalDateTime modifiedDateTime) {
-      this.modifiedDateTime = modifiedDateTime;
-      return this;
-    }
-
     public QuestionResource build() {
       return new QuestionResource(
           this.id,
@@ -160,16 +108,12 @@ public final class QuestionResource<T extends Question>
           this.levels,
           this.subjects,
           this.keywords,
-          this.permissions,
-          this.status,
-          this.createdBy,
-          this.createdDateTime,
-          this.modifiedBy,
-          this.modifiedDateTime
+          this.permissions
       );
     }
   }
 
+  @Override
   public String getId() {
     return id;
   }
@@ -238,26 +182,5 @@ public final class QuestionResource<T extends Question>
     }
 
     Arrays.stream(permissions).forEach(this.permissions::add);
-  }
-
-  @Override
-  public Status getStatus() {
-    return status;
-  }
-
-  public User getCreatedBy() {
-    return createdBy;
-  }
-
-  public LocalDateTime getCreatedDateTime() {
-    return createdDateTime;
-  }
-
-  public User getModifiedBy() {
-    return modifiedBy;
-  }
-
-  public LocalDateTime getModifiedDateTime() {
-    return modifiedDateTime;
   }
 }

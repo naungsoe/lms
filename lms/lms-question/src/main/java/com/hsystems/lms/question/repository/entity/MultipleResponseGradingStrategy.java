@@ -1,101 +1,50 @@
 package com.hsystems.lms.question.repository.entity;
 
+import java.util.Collections;
 import java.util.Enumeration;
 
 /**
  * Created by naungsoe on 6/1/17.
  */
 public final class MultipleResponseGradingStrategy
-    implements QuestionGradingStrategy<QuestionComponentAttempt> {
+    implements QuestionGradingStrategy<MultipleResponse> {
 
-  private MultipleResponseComponent component;
+  public MultipleResponseGradingStrategy() {
 
-  MultipleResponseGradingStrategy() {
-
-  }
-
-  public MultipleResponseGradingStrategy(MultipleResponseComponent component) {
-    this.component = component;
   }
 
   @Override
-  public void gradeAttempt(QuestionComponentAttempt componentAttempt) {
-    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
-    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
-    Enumeration<ChoiceOptionAttempt> enumeration = attempt.getOptionAttempts();
+  public void gradeAttempt(
+      QuestionComponentAttempt<MultipleResponse> componentAttempt) {
 
-    while (enumeration.hasMoreElements()) {
-      ChoiceOptionAttempt element = enumeration.nextElement();
-      gradeOptionAttempt(element);
+    QuestionComponent<MultipleResponse> questionComponent
+        = componentAttempt.getComponent();
+    long correctOptionCount = getCorrectOptionCount(questionComponent);
+    long correctOptionAttemptCount = getCorrectOptionAttempt(componentAttempt);
+
+    if (correctOptionAttemptCount == correctOptionCount) {
+      long score = questionComponent.getScore();
+      componentAttempt.setScore(score);
     }
   }
 
-  private void gradeOptionAttempt(ChoiceOptionAttempt optionAttempt) {
-    MultipleResponse question = component.getQuestion();
+  private long getCorrectOptionCount(
+      QuestionComponent<MultipleResponse> questionComponent) {
+
+    MultipleResponse question = questionComponent.getQuestion();
     Enumeration<ChoiceOption> enumeration = question.getOptions();
-
-    while (enumeration.hasMoreElements()) {
-      ChoiceOption element = enumeration.nextElement();
-
-      if (element.getId().equals(optionAttempt.getId())) {
-        optionAttempt.setCorrect(element.isCorrect());
-      }
-    }
+    return Collections.list(enumeration).stream()
+        .filter(element -> element.isCorrect()).count();
   }
 
-  @Override
-  public long calculateScore(QuestionComponentAttempt componentAttempt) {
-    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
-    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
-    Enumeration<ChoiceOptionAttempt> enumeration = attempt.getOptionAttempts();
+  private long getCorrectOptionAttempt(
+      QuestionComponentAttempt<MultipleResponse> componentAttempt) {
 
-    while (enumeration.hasMoreElements()) {
-      ChoiceOptionAttempt element = enumeration.nextElement();
-
-      if (!element.isCorrect()) {
-        return 0;
-      }
-    }
-
-    int correctOptionCount = getCorrectOptionCount();
-    int correctOptionAttemptCount
-        = getCorrectOptionAttemptCount(componentAttempt);
-    return (correctOptionCount == correctOptionAttemptCount)
-        ? component.getScore() : 0;
-  }
-
-  private int getCorrectOptionCount() {
-    MultipleResponse question = component.getQuestion();
-    Enumeration<ChoiceOption> enumeration = question.getOptions();
-    int correctOptionCount = 0;
-
-    while (enumeration.hasMoreElements()) {
-      ChoiceOption element = enumeration.nextElement();
-
-      if (element.isCorrect()) {
-        correctOptionCount++;
-      }
-    }
-
-    return correctOptionCount;
-  }
-
-  private int getCorrectOptionAttemptCount(
-      QuestionComponentAttempt componentAttempt) {
-
-    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
-    MultipleResponseAttempt attempt = (MultipleResponseAttempt) questionAttempt;
-    Enumeration<ChoiceOptionAttempt> enumeration = attempt.getOptionAttempts();
-    int correctOptionCount = 0;
-
-    while (enumeration.hasMoreElements()) {
-      ChoiceOptionAttempt element = enumeration.nextElement();
-
-      if (element.isCorrect()) {
-        correctOptionCount++;
-      }
-    }
-
-    return correctOptionCount;
+    MultipleResponseAttempt questionAttempt
+        = (MultipleResponseAttempt) componentAttempt.getAttempt();
+    Enumeration<ChoiceOptionAttempt> enumeration
+        = questionAttempt.getOptionAttempts();
+    return Collections.list(enumeration).stream()
+        .filter(element -> element.isCorrect()).count();
   }
 }

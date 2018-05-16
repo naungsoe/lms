@@ -19,6 +19,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.hsystems.lms.common</groupId>
+      <artifactId>lms-common</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>solr.solrj.shade</groupId>
       <artifactId>solr-solrj-shaded</artifactId>
     </dependency>

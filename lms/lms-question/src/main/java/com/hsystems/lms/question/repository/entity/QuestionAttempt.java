@@ -1,9 +1,18 @@
 package com.hsystems.lms.question.repository.entity;
 
-/**
- * Created by naungsoe on 7/10/16.
- */
-public interface QuestionAttempt<T extends Question> {
+import java.io.Serializable;
 
-  T getQuestion();
+/**
+ * Created by naungsoe on 6/1/17.
+ */
+public abstract class QuestionAttempt<T extends Question>
+		implements Serializable {
+
+	private static final long serialVersionUID = 783495004730708912L;
+
+	protected T question;
+
+	public T getQuestion() {
+		return question;
+	}
 }

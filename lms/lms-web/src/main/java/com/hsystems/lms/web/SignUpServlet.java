@@ -2,10 +2,6 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.model.SignUpModel;
-import com.hsystems.lms.web.util.ServletUtils;
-
 import java.io.IOException;
 
 import javax.servlet.ServletException;
@@ -17,16 +13,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SignUpServlet extends AbstractServlet {
 
-  private static final long serialVersionUID = -528977780154917729L;
+  private static final long serialVersionUID = 3942408310900796952L;
 
   private static final String INDEX_PATH = "/jsp/signup/index.jsp";
-  private static final String SIGNIN_PATH = "/web/signin";
-
-  private final UserService userService;
 
   @Inject
-  SignUpServlet(UserService userService) {
-    this.userService = userService;
+  SignUpServlet() {
+
   }
 
   @Override
@@ -43,9 +36,5 @@ public class SignUpServlet extends AbstractServlet {
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    SignUpModel signUpModel = ServletUtils.getModel(request, SignUpModel.class);
-    userService.signUp(signUpModel);
-
-    redirectRequest(request, response, SIGNIN_PATH);
   }
 }

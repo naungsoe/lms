@@ -18,10 +18,5 @@
   <url>http://www.example.com</url>
 
   <dependencies>
-    <dependency>
-      <groupId>com.hsystems.lms.common</groupId>
-      <artifactId>lms-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 </project>

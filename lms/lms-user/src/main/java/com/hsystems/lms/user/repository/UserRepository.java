@@ -1,16 +1,18 @@
 package com.hsystems.lms.user.repository;
 
-import com.hsystems.lms.entity.repository.Repository;
-import com.hsystems.lms.school.repository.entity.User;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.entity.Auditable;
+import com.hsystems.lms.entity.Repository;
+import com.hsystems.lms.user.repository.entity.AppUser;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
-public interface UserRepository extends Repository<User> {
+public interface UserRepository extends Repository<Auditable<AppUser>> {
 
-  List<User> findAllBy(String schoolId, String lastId, int limit)
+  QueryResult<Auditable<AppUser>> findAllBy(Query query)
       throws IOException;
 }

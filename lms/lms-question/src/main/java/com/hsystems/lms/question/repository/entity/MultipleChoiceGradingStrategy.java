@@ -1,46 +1,29 @@
 package com.hsystems.lms.question.repository.entity;
 
-import java.util.Enumeration;
-
 /**
  * Created by naungsoe on 6/1/17.
  */
 public final class MultipleChoiceGradingStrategy
-    implements QuestionGradingStrategy<QuestionComponentAttempt> {
+    implements QuestionGradingStrategy<MultipleChoice> {
 
-  private MultipleChoiceComponent component;
+  public MultipleChoiceGradingStrategy() {
 
-  MultipleChoiceGradingStrategy() {
-
-  }
-
-  public MultipleChoiceGradingStrategy(MultipleChoiceComponent component) {
-    this.component = component;
   }
 
   @Override
-  public void gradeAttempt(QuestionComponentAttempt componentAttempt) {
-    MultipleChoice question = component.getQuestion();
-    Enumeration<ChoiceOption> enumeration = question.getOptions();
-    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
-    MultipleChoiceAttempt attempt =  (MultipleChoiceAttempt) questionAttempt;
-    ChoiceOptionAttempt optionAttempt = attempt.getOptionAttempt();
+  public void gradeAttempt(
+      QuestionComponentAttempt<MultipleChoice> componentAttempt) {
 
-    while (enumeration.hasMoreElements()) {
-      ChoiceOption element = enumeration.nextElement();
+    QuestionComponent<MultipleChoice> questionComponent
+        = componentAttempt.getComponent();
+    MultipleChoiceAttempt questionAttempt
+        = (MultipleChoiceAttempt) componentAttempt.getAttempt();
+    ChoiceOptionAttempt optionAttempt
+        = questionAttempt.getOptionAttempt();
 
-      if (optionAttempt.getId().equals(element.getId())) {
-        optionAttempt.setCorrect(element.isCorrect());
-        break;
-      }
+    if (optionAttempt.isCorrect()) {
+      long score = questionComponent.getScore();
+      componentAttempt.setScore(score);
     }
-  }
-
-  @Override
-  public long calculateScore(QuestionComponentAttempt componentAttempt) {
-    QuestionAttempt questionAttempt = componentAttempt.getAttempt();
-    MultipleChoiceAttempt attempt = (MultipleChoiceAttempt) questionAttempt;
-    ChoiceOptionAttempt optionAttempt = attempt.getOptionAttempt();
-    return optionAttempt.isCorrect() ? component.getScore() : 0;
   }
 }

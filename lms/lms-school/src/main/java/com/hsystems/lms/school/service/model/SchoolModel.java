@@ -16,7 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class SchoolModel implements Serializable {
 
-  private static final long serialVersionUID = 11677610017568455L;
+  private static final long serialVersionUID = 4489734629795856418L;
 
   private String id;
 
@@ -28,11 +28,11 @@ public final class SchoolModel implements Serializable {
 
   private UserModel createdBy;
 
-  private String createdDateTime;
+  private String createdOn;
 
   private UserModel modifiedBy;
 
-  private String modifiedDateTime;
+  private String modifiedOn;
 
   public SchoolModel() {
 
@@ -80,12 +80,12 @@ public final class SchoolModel implements Serializable {
     this.createdBy = createdBy;
   }
 
-  public String getCreatedDateTime() {
-    return createdDateTime;
+  public String getCreatedOn() {
+    return createdOn;
   }
 
-  public void setCreatedDateTime(String createdDateTime) {
-    this.createdDateTime = createdDateTime;
+  public void setCreatedOn(String createdOn) {
+    this.createdOn = createdOn;
   }
 
   public UserModel getModifiedBy() {
@@ -96,11 +96,11 @@ public final class SchoolModel implements Serializable {
     this.modifiedBy = modifiedBy;
   }
 
-  public String getModifiedDateTime() {
-    return modifiedDateTime;
+  public String getModifiedOn() {
+    return modifiedOn;
   }
 
-  public void setModifiedDateTime(String modifiedDateTime) {
-    this.modifiedDateTime = modifiedDateTime;
+  public void setModifiedOn(String modifiedOn) {
+    this.modifiedOn = modifiedOn;
   }
 }

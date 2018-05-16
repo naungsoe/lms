@@ -12,17 +12,12 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public final class MultipleResponse implements Question, Serializable {
+public final class MultipleResponse
+    extends Question implements Serializable {
 
-  private static final long serialVersionUID = -5823755153842885641L;
+  private static final long serialVersionUID = -8713736815501698044L;
 
-  protected String body;
-
-  protected String hint;
-
-  protected String explanation;
-
-  protected List<ChoiceOption> options;
+  private List<ChoiceOption> options;
 
   MultipleResponse() {
 
@@ -38,21 +33,6 @@ public final class MultipleResponse implements Question, Serializable {
     this.hint = hint;
     this.explanation = explanation;
     this.options = options;
-  }
-
-  @Override
-  public String getBody() {
-    return body;
-  }
-
-  @Override
-  public String getHint() {
-    return hint;
-  }
-
-  @Override
-  public String getExplanation() {
-    return explanation;
   }
 
   public Enumeration<ChoiceOption> getOptions() {

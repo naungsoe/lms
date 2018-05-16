@@ -1,6 +1,7 @@
 package com.hsystems.lms.school.repository.entity;
 
 import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.entity.Entity;
 
 import java.io.Serializable;
 import java.util.Collections;
@@ -10,7 +11,7 @@ import java.util.List;
 /**
  * Created by naungsoe on 7/10/16.
  */
-public final class School implements Serializable {
+public final class School implements Entity, Serializable {
 
   private static final long serialVersionUID = 2898160674045833416L;
 
@@ -72,6 +73,7 @@ public final class School implements Serializable {
     }
   }
 
+  @Override
   public String getId() {
     return id;
   }

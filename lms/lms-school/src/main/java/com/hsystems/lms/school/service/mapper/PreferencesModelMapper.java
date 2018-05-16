@@ -1,11 +1,11 @@
 package com.hsystems.lms.school.service.mapper;
 
-import com.hsystems.lms.entity.mapper.Mapper;
+import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.school.repository.entity.Preferences;
 import com.hsystems.lms.school.service.model.PreferencesModel;
 
 public final class PreferencesModelMapper
-    implements Mapper<PreferencesModel, Preferences> {
+    implements Mapper<Preferences, PreferencesModel> {
 
   public PreferencesModelMapper() {
 

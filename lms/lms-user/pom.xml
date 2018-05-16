@@ -38,5 +38,35 @@
       <artifactId>lms-group</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.hbase</groupId>
+      <artifactId>lms-hbase</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.solr</groupId>
+      <artifactId>lms-solr</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.hk2.external</groupId>
+      <artifactId>javax.inject</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.inject</groupId>
+      <artifactId>guice</artifactId>
+    </dependency>
   </dependencies>
 </project>

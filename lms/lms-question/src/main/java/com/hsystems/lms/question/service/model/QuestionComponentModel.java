@@ -1,8 +1,7 @@
-package com.hsystems.lms.service.model.question;
+package com.hsystems.lms.question.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hsystems.lms.service.model.ComponentModel;
 
 import java.io.Serializable;
 
@@ -11,8 +10,12 @@ import java.io.Serializable;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public abstract class QuestionComponentModel<T extends QuestionModel>
+public final class QuestionComponentModel<T extends QuestionModel>
     extends ComponentModel implements Serializable {
+
+  private static final long serialVersionUID = -1240118758104113204L;
+
+  private String id;
 
   private T question;
 
@@ -20,6 +23,14 @@ public abstract class QuestionComponentModel<T extends QuestionModel>
 
   public QuestionComponentModel() {
 
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public T getQuestion() {

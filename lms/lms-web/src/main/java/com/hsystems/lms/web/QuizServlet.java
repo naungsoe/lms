@@ -3,10 +3,10 @@ package com.hsystems.lms.web;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.AppPermission;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.annotation.Requires;
+import com.hsystems.lms.quiz.service.QuizPermission;
+import com.hsystems.lms.user.service.model.AppUserModel;
 
 import java.io.IOException;
 
@@ -31,12 +31,12 @@ public class QuizServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(AppPermission.VIEW_QUIZ)
+  @Requires(QuizPermission.VIEW_QUIZ)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
+    AppUserModel userModel = (AppUserModel) principalProvider.get();
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "quizzes");
@@ -44,7 +44,7 @@ public class QuizServlet extends AbstractServlet {
   }
 
   @Override
-  @Requires(AppPermission.EDIT_QUIZ)
+  @Requires(QuizPermission.EDIT_QUIZ)
   protected void doPost(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

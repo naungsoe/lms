@@ -3,138 +3,103 @@ package com.hsystems.lms.authentication.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import com.hsystems.lms.authentication.repository.SignInLogRepository;
+import com.hsystems.lms.authentication.repository.entity.SignInLog;
+import com.hsystems.lms.authentication.service.model.SignInModel;
 import com.hsystems.lms.common.logging.annotation.Log;
+import com.hsystems.lms.common.query.Criterion;
+import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
+import com.hsystems.lms.user.service.UserService;
+import com.hsystems.lms.user.service.model.AppUserModel;
+import com.hsystems.lms.user.service.model.CredentialsModel;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Properties;
 
 public final class AuthenticationService {
 
+  private final Provider<Properties> propertiesProvider;
+
+  private final SignInLogRepository signInLogRepository;
+
+  private final UserService userService;
+
   @Inject
   AuthenticationService(
       Provider<Properties> propertiesProvider,
       SignInLogRepository signInLogRepository,
-      IndexRepository indexRepository) {
+      UserService userService) {
 
     this.propertiesProvider = propertiesProvider;
     this.signInLogRepository = signInLogRepository;
-    this.indexRepository = indexRepository;
+    this.userService = userService;
   }
 
-  @Log(LoggerType.SIGNIN)
-  public Optional<UserModel> signIn(SignInModel signInModel)
+  @Log
+  public Optional<AppUserModel> signIn(SignInModel signInModel)
       throws IOException {
 
-    Optional<User> userOptional = findUserBy(signInModel.getAccount());
+    Optional<AppUserModel> userModelOptional
+        = findUserBy(signInModel.getAccount());
 
-    if (!userOptional.isPresent()) {
+    if (!userModelOptional.isPresent()) {
       return Optional.empty();
     }
 
-    User user = userOptional.get();
+    AppUserModel userModel = userModelOptional.get();
 
-    if (areCredentialsCorrect(user, signInModel)) {
-      //saveSuccessSignIn(user, signInModel);
-      return Optional.of(getUserModel(user));
+    if (areCredentialsCorrect(userModel, signInModel)) {
+      return Optional.of(userModel);
 
     } else {
-      //saveFailSignIn(user, signInModel);
       return Optional.empty();
     }
   }
 
-  private Optional<User> findUserBy(String account)
+  private Optional<AppUserModel> findUserBy(String account)
       throws IOException {
 
-    Query query = new Query();
+    Query query = Query.create();
     query.addCriterion(Criterion.createEqual("account", account));
-    QueryResult<User> queryResult
-        = indexRepository.findAllBy(query, User.class);
+    QueryResult<AppUserModel> queryResult
+        = userService.findAllBy(query);
 
     if (CollectionUtils.isEmpty(queryResult.getItems())) {
       return Optional.empty();
     }
 
-    User user = queryResult.getItems().get(0);
-    return Optional.of(user);
+    AppUserModel userModel = queryResult.getItems().get(0);
+    return Optional.of(userModel);
   }
 
   private boolean areCredentialsCorrect(
-      User user, SignInModel signInModel) {
+      AppUserModel userModel, SignInModel signInModel) {
 
+    CredentialsModel credentialsModel = userModel.getCredentials();
     String hashedPassword = SecurityUtils.getPassword(
-        signInModel.getPassword(), user.getSalt());
-    return user.getAccount().equals(signInModel.getAccount())
-        && user.getPassword().equals(hashedPassword);
+        signInModel.getPassword(), credentialsModel.getSalt());
+    return credentialsModel.getAccount().equals(signInModel.getAccount())
+        && credentialsModel.getPassword().equals(hashedPassword);
   }
 
-  private void saveSuccessSignIn(User user, SignInModel signInModel)
-      throws IOException {
-
-    SignInLog signInLog = new SignInLog(
-        user.getId(),
-        signInModel.getAccount(),
-        signInModel.getSessionId(),
-        signInModel.getIpAddress(),
-        LocalDateTime.now(),
-        0
-    );
-    signInLogRepository.create(signInLog);
-  }
-
-  private UserModel getUserModel(User user) {
-    Configuration configuration = Configuration.create(user);
-    return getModel(user, UserModel.class, configuration);
-  }
-
-  private void saveFailSignIn(User user, SignInModel signInModel)
-      throws IOException {
-
-    Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(user.getId());
-    SignInLog signInLog;
-
-    if (signInLogOptional.isPresent()) {
-      signInLog = new SignInLog(
-          user.getId(),
-          signInModel.getAccount(),
-          signInModel.getSessionId(),
-          signInModel.getIpAddress(),
-          LocalDateTime.now(),
-          (signInLogOptional.get().getFails() + 1)
-      );
-      signInLogRepository.update(signInLog);
-
-    } else {
-      signInLog = new SignInLog(
-          user.getId(),
-          signInModel.getAccount(),
-          signInModel.getSessionId(),
-          signInModel.getIpAddress(),
-          LocalDateTime.now(),
-          0
-      );
-      signInLogRepository.create(signInLog);
-    }
-  }
-
-  @Log(LoggerType.SIGNIN)
+  @Log
   public boolean isCaptchaRequired(SignInModel signInModel)
       throws IOException {
 
-    Optional<User> userOptional = findUserBy(signInModel.getAccount());
+    Optional<AppUserModel> userModelOptional
+        = findUserBy(signInModel.getAccount());
 
-    if (!userOptional.isPresent()) {
+    if (!userModelOptional.isPresent()) {
       return false;
     }
 
-    User user = userOptional.get();
+    AppUserModel userModel = userModelOptional.get();
     Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(user.getId());
+        = signInLogRepository.findBy(userModel.getId());
 
     if (signInLogOptional.isPresent()) {
       Properties properties = propertiesProvider.get();
@@ -147,17 +112,20 @@ public final class AuthenticationService {
     return false;
   }
 
-  @Log(LoggerType.SIGNIN)
-  public void signOut(SignOutModel signOutModel) {
-    // clear sign in
-  }
-
-  @Log(LoggerType.SIGNIN)
-  public Optional<UserModel> findSignedInUserBy(SignInModel signInModel)
+  @Log
+  public Optional<AppUserModel> findSignedInUserBy(SignInModel signInModel)
       throws IOException {
 
     String account = signInModel.getAccount();
-    Optional<SignInLog> signInLogOptional = findSignInLogBy(account);
+    Optional<AppUserModel> userModelOptional = findUserBy(account);
+
+    if (!userModelOptional.isPresent()) {
+      return Optional.empty();
+    }
+
+    AppUserModel userModel = userModelOptional.get();
+    Optional<SignInLog> signInLogOptional
+        = signInLogRepository.findBy(userModel.getId());
 
     if (!signInLogOptional.isPresent()) {
       return Optional.empty();
@@ -173,53 +141,6 @@ public final class AuthenticationService {
       return Optional.empty();
     }
 
-    Optional<User> userOptional = findUserBy(account);
-    User user = userOptional.get();
-    return Optional.of(getUserModel(user));
-    /*User user = userOptional.get();
-    Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(user.getId());
-
-    if (signInLogOptional.isPresent()) {
-      SignInLog signInLog = signInLogOptional.get();
-
-      if (signInLog.getSessionId().equals(signInModel.getSessionId())) {
-        return Optional.of(getUserModel(user));
-      }
-    }
-
-    return Optional.empty();*/
-  }
-
-  private Optional<SignInLog> findSignInLogBy(String account)
-      throws IOException {
-
-    Query query = new Query();
-    query.addCriterion(Criterion.createEqual("account", account));
-    QueryResult<SignInLog> queryResult
-        = indexRepository.findAllBy(query, SignInLog.class);
-
-    if (CollectionUtils.isEmpty(queryResult.getItems())) {
-      return Optional.empty();
-    }
-
-    SignInLog signInLog = queryResult.getItems().get(0);
-    return Optional.of(signInLog);
-  }
-
-  @Log(LoggerType.SIGNIN)
-  public void saveSignIn(SignInModel signInModel, UserModel userModel)
-      throws IOException {
-
-    SignInLog signInLog = new SignInLog(
-        userModel.getId(),
-        signInModel.getAccount(),
-        signInModel.getSessionId(),
-        signInModel.getIpAddress(),
-        LocalDateTime.now(),
-        0
-    );
-    signInLogRepository.create(signInLog);
-    indexRepository.save(signInLog);
+    return Optional.of(userModel);
   }
 }

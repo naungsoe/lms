@@ -1,31 +1,22 @@
 package com.hsystems.lms.level.repository.entity;
 
+import com.hsystems.lms.entity.Entity;
 import com.hsystems.lms.school.repository.entity.School;
-import com.hsystems.lms.school.repository.entity.User;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
 /**
  * Created by naungsoe on 1/11/16.
  */
-public final class Level implements Serializable {
+public final class Level implements Entity, Serializable {
 
-  private static final long serialVersionUID = 3375937479070805887L;
+  private static final long serialVersionUID = -7476573671954520841L;
 
   private String id;
 
   private String name;
 
   private School school;
-
-  private User createdBy;
-
-  private LocalDateTime createdDateTime;
-
-  private User modifiedBy;
-
-  private LocalDateTime modifiedDateTime;
 
   Level() {
 
@@ -34,19 +25,11 @@ public final class Level implements Serializable {
   Level(
       String id,
       String name,
-      School school,
-      User createdBy,
-      LocalDateTime createdDateTime,
-      User modifiedBy,
-      LocalDateTime modifiedDateTime) {
+      School school) {
 
     this.id = id;
     this.name = name;
     this.school = school;
-    this.createdBy = createdBy;
-    this.createdDateTime = createdDateTime;
-    this.modifiedBy = modifiedBy;
-    this.modifiedDateTime = modifiedDateTime;
   }
 
   public static class Builder {
@@ -55,10 +38,6 @@ public final class Level implements Serializable {
     private String name;
 
     private School school;
-    private User createdBy;
-    private LocalDateTime createdDateTime;
-    private User modifiedBy;
-    private LocalDateTime modifiedDateTime;
 
     public Builder(String id, String name) {
       this.id = id;
@@ -70,39 +49,16 @@ public final class Level implements Serializable {
       return this;
     }
 
-    public Builder createdBy(User createdBy) {
-      this.createdBy = createdBy;
-      return this;
-    }
-
-    public Builder createdDateTime(LocalDateTime createdDateTime) {
-      this.createdDateTime = createdDateTime;
-      return this;
-    }
-
-    public Builder modifiedBy(User modifiedBy) {
-      this.modifiedBy = modifiedBy;
-      return this;
-    }
-
-    public Builder modifiedDateTime(LocalDateTime modifiedDateTime) {
-      this.modifiedDateTime = modifiedDateTime;
-      return this;
-    }
-
     public Level build() {
       return new Level(
           this.id,
           this.name,
-          this.school,
-          this.createdBy,
-          this.createdDateTime,
-          this.modifiedBy,
-          this.modifiedDateTime
+          this.school
       );
     }
   }
 
+  @Override
   public String getId() {
     return id;
   }
@@ -113,21 +69,5 @@ public final class Level implements Serializable {
 
   public School getSchool() {
     return school;
-  }
-
-  public User getCreatedBy() {
-    return createdBy;
-  }
-
-  public LocalDateTime getCreatedDateTime() {
-    return createdDateTime;
-  }
-
-  public User getModifiedBy() {
-    return modifiedBy;
-  }
-
-  public LocalDateTime getModifiedDateTime() {
-    return modifiedDateTime;
   }
 }

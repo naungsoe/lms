@@ -28,7 +28,7 @@ import com.hsystems.lms.web.webapi.indexing.UserIndexController;
 /**
  * Created by naungsoe on 21/8/16.
  */
-public class WebAPIModule extends AbstractModule {
+public final class WebAPIModule extends AbstractModule {
 
   @Override
   protected void configure() {

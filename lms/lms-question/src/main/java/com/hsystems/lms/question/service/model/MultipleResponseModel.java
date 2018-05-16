@@ -1,4 +1,4 @@
-package com.hsystems.lms.service.model.question;
+package com.hsystems.lms.question.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -14,10 +14,10 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class MultipleResponseModel extends QuestionModel
-    implements Serializable {
+public final class MultipleResponseModel
+    extends QuestionModel implements Serializable {
 
-  private static final long serialVersionUID = 218667583267941725L;
+  private static final long serialVersionUID = -3665697059272165503L;
 
   private List<ChoiceOptionModel> options;
 

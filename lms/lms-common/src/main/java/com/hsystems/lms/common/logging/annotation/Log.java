@@ -1,6 +1,6 @@
 package com.hsystems.lms.common.logging.annotation;
 
-import com.hsystems.lms.common.logging.LoggerType;
+import com.hsystems.lms.common.logging.LogContext;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -14,5 +14,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface Log {
 
-  LoggerType value() default LoggerType.ROOT;
+  LogContext value() default LogContext.APPLICATION;
 }

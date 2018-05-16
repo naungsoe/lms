@@ -15,54 +15,33 @@ import java.util.Arrays;
 public final class LogInterceptor implements MethodInterceptor {
 
   private final static String MESSAGE_FORMAT
-      = "Invocation of %s.%s with parameters %s";
+      = "%s invocation of %s.%s with parameters %s";
 
-  private final static Logger rootLogger = LogManager.getRootLogger();
-
-  private final static Logger signInLogger = LogManager.getLogger("SignInLog");
+  private final static Logger appLogger = LogManager.getRootLogger();
 
   public Object invoke(MethodInvocation invocation)
       throws Throwable {
 
+    String message = getMessage(invocation);
+
     try {
       Object result = invocation.proceed();
-      logInfo(invocation);
+      appLogger.info(message);
       return result;
 
-    } catch(Exception e) {
-      logError(invocation, e);
+    } catch(Throwable e) {
+      appLogger.error(message, e);
       throw e;
     }
   }
 
-  private void logInfo(MethodInvocation invocation) {
+  private String getMessage(MethodInvocation invocation) {
     Log annotation = invocation.getMethod()
         .getDeclaredAnnotation(Log.class);
-    String message = getMessage(invocation);
-
-    if (annotation.value() == LoggerType.SIGNIN) {
-      signInLogger.info(message);
-    }
-
-    rootLogger.info(message);
-  }
-
-  private String getMessage(MethodInvocation invocation) {
     String type = invocation.getThis().getClass().getName();
     String method = invocation.getMethod().getName();
     String arguments = Arrays.toString(invocation.getArguments());
-    return String.format(MESSAGE_FORMAT, type, method, arguments);
-  }
-
-  private void logError(MethodInvocation invocation, Exception e) {
-    Log annotation = invocation.getMethod()
-        .getDeclaredAnnotation(Log.class);
-    String message = getMessage(invocation);
-
-    if (annotation.value() == LoggerType.SIGNIN) {
-      signInLogger.error(message, e);
-    }
-
-    rootLogger.error(message, e);
+    return String.format(MESSAGE_FORMAT,
+        annotation.value(), type, method, arguments);
   }
 }

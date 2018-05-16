@@ -1,62 +1,65 @@
 package com.hsystems.lms.question.repository.entity;
 
-import com.hsystems.lms.entity.component.GradableComponentAttempt;
+import com.hsystems.lms.component.GradableComponentAttempt;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 
-/**
- * Created by naungsoe on 6/1/17.
- */
-public final class QuestionComponentAttempt<T extends QuestionAttempt>
-		implements GradableComponentAttempt<QuestionGradingStrategy>, Serializable {
+public final class QuestionComponentAttempt<T extends Question>
+    implements GradableComponentAttempt<QuestionComponent<T>>, Serializable {
 
-	private static final long serialVersionUID = 668565871430745293L;
+  private static final long serialVersionUID = -1186752398185395475L;
 
-	private String id;
+  private String id;
 
-	private T attempt;
+  private QuestionComponent<T> component;
 
-	private long score;
+  private QuestionAttempt<T> attempt;
 
-	private LocalDateTime attemptedDateTime;
+  private QuestionGradingStrategy<T> strategy;
 
-	QuestionComponentAttempt() {
+  private long score;
 
-	}
+  QuestionComponentAttempt() {
 
-	public QuestionComponentAttempt(
-			String id,
-			T attempt,
-			long score,
-			LocalDateTime attemptedDateTime) {
+  }
 
-		this.id = id;
-		this.attempt = attempt;
-		this.score = score;
-		this.attemptedDateTime = attemptedDateTime;
-	}
+  public QuestionComponentAttempt(
+      String id,
+      QuestionComponent<T> component,
+      QuestionAttempt<T> attempt,
+      QuestionGradingStrategy<T> strategy,
+      long score) {
 
-	public String getId() {
-		return id;
-	}
+    this.id = id;
+    this.component = component;
+    this.attempt = attempt;
+    this.strategy = strategy;
+    this.score = score;
+  }
 
-	public T getAttempt() {
-		return attempt;
-	}
+  public String getId() {
+    return id;
+  }
 
-	public long getScore() {
-		return score;
-	}
+  @Override
+  public QuestionComponent<T> getComponent() {
+    return component;
+  }
 
-	@Override
-	public LocalDateTime getAttemptedDateTime() {
-		return attemptedDateTime;
-	}
+  public QuestionAttempt<T> getAttempt() {
+    return attempt;
+  }
 
-	@Override
-	public void gradeAttempt(QuestionGradingStrategy gradingStrategy) {
-		gradingStrategy.gradeAttempt(this);
-		score = gradingStrategy.calculateScore(this);
-	}
+  public long getScore() {
+    return score;
+  }
+
+  void setScore(long score) {
+    this.score = score;
+  }
+
+  @Override
+  public void gradeAttempt() {
+    strategy.gradeAttempt(this);
+  }
 }

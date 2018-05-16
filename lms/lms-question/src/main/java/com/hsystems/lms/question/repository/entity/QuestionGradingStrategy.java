@@ -1,12 +1,8 @@
 package com.hsystems.lms.question.repository.entity;
 
-import com.hsystems.lms.entity.component.GradingStrategy;
+import com.hsystems.lms.component.GradingStrategy;
 
-/**
- * Created by naungsoe on 19/12/16.
- */
-public interface QuestionGradingStrategy<T extends QuestionComponentAttempt>
-    extends GradingStrategy<T> {
+public interface QuestionGradingStrategy<T extends Question>
+    extends GradingStrategy<QuestionComponentAttempt<T>> {
 
-  long calculateScore(T componentAttempt);
 }

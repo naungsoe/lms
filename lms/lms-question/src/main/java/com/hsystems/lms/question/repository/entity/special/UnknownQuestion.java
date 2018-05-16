@@ -7,9 +7,10 @@ import java.io.Serializable;
 /**
  * Created by administrator on 24/5/17.
  */
-public final class UnknownQuestion implements Question, Serializable {
+public final class UnknownQuestion
+    extends Question implements Serializable {
 
-  private static final long serialVersionUID = 7525692319964623224L;
+  private static final long serialVersionUID = 7582630608161451349L;
 
   public UnknownQuestion() {
 

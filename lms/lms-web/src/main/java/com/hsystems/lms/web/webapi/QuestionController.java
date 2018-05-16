@@ -8,7 +8,7 @@ import com.hsystems.lms.common.patch.Operation;
 import com.hsystems.lms.common.patch.Patch;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
-import com.hsystems.lms.common.query.mapper.QueryMapper;
+import com.hsystems.lms.common.query.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.service.AppPermission;

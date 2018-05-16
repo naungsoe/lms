@@ -2,11 +2,12 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
+import com.hsystems.lms.authentication.service.AuthenticationService;
+import com.hsystems.lms.authentication.service.model.SignInModel;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.model.SignInModel;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.user.service.model.AppUserModel;
+import com.hsystems.lms.user.service.model.CredentialsModel;
 import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import javax.servlet.http.HttpSession;
  */
 public class SignInServlet extends AbstractServlet {
 
-  private static final long serialVersionUID = -8924763326103812045L;
+  private static final long serialVersionUID = -4668257962295100799L;
 
   private static final String INDEX_PATH = "/jsp/signin/index.jsp";
 
@@ -50,10 +51,10 @@ public class SignInServlet extends AbstractServlet {
       signInModel.setSessionId(sessionId);
       signInModel.setIpAddress(ipAddress);
 
-//      if (authService.isCaptchaRequired(signInModel)) {
-//        loadCaptchaAttributes(request);
-//        request.setAttribute("error", "errorCredential");
-//      }
+      if (authService.isCaptchaRequired(signInModel)) {
+        loadCaptchaAttributes(request);
+        request.setAttribute("error", "errorCredential");
+      }
     }
 
     request.setAttribute("account", account);
@@ -95,11 +96,12 @@ public class SignInServlet extends AbstractServlet {
     signInModel.setSessionId(session.getId());
     signInModel.setIpAddress(ServletUtils.getRemoteAddress(request));
 
-    Optional<UserModel> userModelOptional = authService.signIn(signInModel);
+    Optional<AppUserModel> userModelOptional
+        = authService.signIn(signInModel);
 
     if (userModelOptional.isPresent()) {
       String refererPath = getRefererPath(request);
-      UserModel userModel = userModelOptional.get();
+      AppUserModel userModel = userModelOptional.get();
       updateUserSession(request, response, userModel);
 
       ServletContext servletContext = request.getServletContext();
@@ -141,12 +143,13 @@ public class SignInServlet extends AbstractServlet {
 
   private void updateUserSession(
       HttpServletRequest request, HttpServletResponse response,
-      UserModel userModel) {
+      AppUserModel userModel) {
 
     HttpSession session = request.getSession(false);
     session.setAttribute("principal", userModel);
 
-    Cookie cookie = new Cookie("account", userModel.getAccount());
+    CredentialsModel credentialsModel = userModel.getCredentials();
+    Cookie cookie = new Cookie("account", credentialsModel.getAccount());
     cookie.setMaxAge(30 * 60);
     response.addCookie(cookie);
   }

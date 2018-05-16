@@ -7,6 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/lms-subject/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lms-entity/src/main/java" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/lms-entity/src/test/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lms-component/src/test/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/lms-component/src/main/java" isTestSource="false" />
       <excludeFolder url="file://$MODULE_DIR$/target" />
     </content>
     <orderEntry type="inheritedJdk" />

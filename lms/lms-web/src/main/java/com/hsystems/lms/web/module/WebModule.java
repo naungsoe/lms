@@ -5,12 +5,12 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.RequestScoped;
 import com.google.inject.servlet.ServletModule;
 
-import com.hsystems.lms.common.annotation.Log;
-import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.logging.LogInterceptor;
-import com.hsystems.lms.common.provider.PropertiesProvider;
+import com.hsystems.lms.common.logging.annotation.Log;
+import com.hsystems.lms.common.properties.PropertiesProvider;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.security.RequiresInterceptor;
+import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.web.AccountServlet;
 import com.hsystems.lms.web.CourseServlet;
 import com.hsystems.lms.web.DriveServlet;
@@ -36,7 +36,7 @@ import java.util.Properties;
 /**
  * Created by naungsoe on 29/8/16.
  */
-public class WebModule extends ServletModule {
+public final class WebModule extends ServletModule {
 
   @Override
   protected void configureServlets() {

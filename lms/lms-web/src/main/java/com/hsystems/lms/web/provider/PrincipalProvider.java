@@ -3,11 +3,11 @@ package com.hsystems.lms.web.provider;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import com.hsystems.lms.authentication.service.AuthenticationService;
+import com.hsystems.lms.authentication.service.model.SignInModel;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.model.SignInModel;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.user.service.model.AppUserModel;
 import com.hsystems.lms.web.util.ServletUtils;
 
 import java.io.IOException;
@@ -51,7 +51,6 @@ public class PrincipalProvider implements Provider<Principal> {
   }
 
   private Optional<Principal> getPrincipal() {
-
     String account = ServletUtils.getAccessToken(servletRequest);
     String sessionId = ServletUtils.getSessionToken(servletRequest);
     String remoteAddress = ServletUtils.getRemoteAddress(servletRequest);
@@ -69,15 +68,15 @@ public class PrincipalProvider implements Provider<Principal> {
       signInModel.setSessionId(sessionId);
       signInModel.setIpAddress(remoteAddress);
 
-      Optional<UserModel> userModelOptional
+      Optional<AppUserModel> userModelOptional
           = authService.findSignedInUserBy(signInModel);
 
       if (userModelOptional.isPresent()) {
         return Optional.of(userModelOptional.get());
       }
-    } catch (IOException ex) {
+    } catch (IOException e) {
       throw new IllegalArgumentException(
-          "error retrieving signed-in user", ex);
+          "error retrieving signed-in user", e);
     }
 
     return Optional.empty();

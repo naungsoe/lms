@@ -3,10 +3,10 @@ package com.hsystems.lms.web.filter;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import com.hsystems.lms.authentication.service.AuthenticationService;
+import com.hsystems.lms.authentication.service.model.SignInModel;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.service.AuthenticationService;
-import com.hsystems.lms.service.model.SignInModel;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.user.service.model.AppUserModel;
 import com.hsystems.lms.web.provider.PrincipalProvider;
 import com.hsystems.lms.web.util.ServletUtils;
 
@@ -27,8 +27,8 @@ import javax.servlet.http.HttpSession;
 /**
  * Created by naungsoe on 11/8/16.
  */
-public class AuthenticationFilter extends AbstractFilter
-    implements Filter {
+public class AuthenticationFilter
+    extends AbstractFilter implements Filter {
 
   private final Injector injector;
 
@@ -107,18 +107,17 @@ public class AuthenticationFilter extends AbstractFilter
     signInModel.setSessionId(sessionId);
     signInModel.setIpAddress(remoteAddr);
 
-    Optional<UserModel> userModelOptional
+    Optional<AppUserModel> userModelOptional
         = authService.findSignedInUserBy(signInModel);
 
     if (userModelOptional.isPresent()) {
       HttpSession session = httpRequest.getSession(false);
       session.invalidate();
+
       session = httpRequest.getSession(true);
-
       signInModel.setSessionId(session.getId());
-      //authService.saveSignIn(signInModel, userModel);
 
-      UserModel userModel = userModelOptional.get();
+      AppUserModel userModel = userModelOptional.get();
       updateUserSession(httpRequest, userModel);
     }
   }
@@ -134,7 +133,7 @@ public class AuthenticationFilter extends AbstractFilter
   }
 
   private void updateUserSession(
-      HttpServletRequest httpRequest, UserModel userModel) {
+      HttpServletRequest httpRequest, AppUserModel userModel) {
 
     HttpSession session = httpRequest.getSession(false);
     session.setAttribute("principal", userModel);

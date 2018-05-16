@@ -1,8 +1,6 @@
 package com.hsystems.lms.entity;
 
-public interface User {
-
-  String getId();
+public interface User extends Entity {
 
   String getFirstName();
 

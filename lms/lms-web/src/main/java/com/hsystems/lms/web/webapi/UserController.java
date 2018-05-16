@@ -3,14 +3,15 @@ package com.hsystems.lms.web.webapi;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
 import com.hsystems.lms.common.query.Query;
+import com.hsystems.lms.common.query.QueryMapper;
 import com.hsystems.lms.common.query.QueryResult;
-import com.hsystems.lms.common.query.mapper.QueryMapper;
 import com.hsystems.lms.common.security.Principal;
+import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.service.AppPermission;
 import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.user.service.UserPermission;
 
 import java.io.IOException;
 import java.net.URI;
@@ -47,7 +48,7 @@ public class UserController extends AbstractController {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(AppPermission.VIEW_USER)
+  @Requires(UserPermission.VIEW_USER)
   public Response findAllBy(
       @Context UriInfo uriInfo)
       throws IOException {

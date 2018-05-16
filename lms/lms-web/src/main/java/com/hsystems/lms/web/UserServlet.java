@@ -4,7 +4,9 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.annotation.Requires;
+import com.hsystems.lms.user.service.UserPermission;
+import com.hsystems.lms.user.service.model.AppUserModel;
 
 import java.io.IOException;
 
@@ -29,11 +31,12 @@ public class UserServlet extends AbstractServlet {
   }
 
   @Override
+  @Requires(UserPermission.VIEW_USER)
   protected void doGet(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
+    AppUserModel userModel = (AppUserModel) principalProvider.get();
     request.setAttribute("userId", userModel.getId());
 
     loadLocale(request, "users");
@@ -41,6 +44,7 @@ public class UserServlet extends AbstractServlet {
   }
 
   @Override
+  @Requires(UserPermission.EDIT_USER)
   protected void doPost(
       HttpServletRequest request, HttpServletResponse response)
       throws ServletException, IOException {

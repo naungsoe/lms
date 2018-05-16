@@ -1,13 +1,29 @@
 package com.hsystems.lms.question.repository.entity;
 
+import java.io.Serializable;
+
 /**
  * Created by naungsoe on 7/10/16.
  */
-public interface Question {
+public abstract class Question implements Serializable {
 
-  String getBody();
+  private static final long serialVersionUID = 1837143759213684149L;
 
-  String getHint();
+  protected String body;
 
-  String getExplanation();
+  protected String hint;
+
+  protected String explanation;
+
+  public String getBody() {
+    return body;
+  }
+
+  public String getHint() {
+    return hint;
+  }
+
+  public String getExplanation() {
+    return explanation;
+  }
 }

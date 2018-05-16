@@ -49,6 +49,12 @@ create 'lms:schools', {NAME => 'd', VERSIONS => 3, BLOOMFILTER => 'ROW', DATA_BL
 put 'lms:schools', 'c784ae9', 'd:name', 'Default School'
 put 'lms:schools', 'c784ae9', 'd:locale', 'en_US'
 put 'lms:schools', 'c784ae9', 'd:permissions', 'VIEW_HOME,VIEW_COURSE,EDIT_COURSE,VIEW_QUESTION,EDIT_QUESTION,VIEW_USER,EDIT_USER,VIEW_GROUP,EDIT_GROUP'
+
+put 'lms:schools', 'c784ae9', 'd:cre', '4ed235b781c696af36fee50e805569a8'
+put 'lms:schools', 'c784ae9', 'd:cre_fname', 'LMS'
+put 'lms:schools', 'c784ae9', 'd:cre_lname', 'System'
+put 'lms:schools', 'c784ae9', 'd:cre_datetime', '2016-11-28T05:16:31.893'
+
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS'
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:lname', 'System'
 put 'lms:schools', 'c784ae9_cre_4ed235b781c696af36fee50e805569a8', 'd:datetime', '2016-11-28T05:16:31.893'
@@ -228,7 +234,12 @@ put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:tformat', 'HH:mm:
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dformat', 'yyyy-MM-dd'
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS'
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:permissions', 'ADMINISTRATION,VIEW_HOME,VIEW_COURSE,EDIT_COURSE,VIEW_LESSON,EDIT_LESSON,VIEW_QUIZ,EDIT_QUIZ,VIEW_QUESTION,EDIT_QUESTION,VIEW_FILE,EDIT_FILE,VIEW_GROUP,EDIT_GROUP,VIEW_USER,EDIT_USER'
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:mfa', 'true'
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_sch_c784ae9', 'd:name', 'Default School'
+
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'Administrators'
+put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed', 'd:grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'Teachers'
+
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae91b5e598c08870bc6bc5f8b4a8f84fcc9', 'd:name', 'Administrators'
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers'
 put 'lms:users', 'c784ae925e575b83b9bf8d50768d4e486c32bed_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS'
@@ -249,6 +260,7 @@ put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:tformat', 'HH:mm:
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dformat', 'yyyy-MM-dd'
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:dtformat', 'yyyy-MM-dd\'T\'HH:mm:ss.SSS'
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:permissions', 'VIEW_HOME,VIEW_COURSE,EDIT_COURSE,VIEW_LESSON,EDIT_LESSON,VIEW_QUIZ,EDIT_QUIZ,VIEW_QUESTION,EDIT_QUESTION,VIEW_FILE,EDIT_FILE'
+put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c', 'd:mfa', 'false'
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_sch_c784ae9', 'd:name', 'Default School'
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_grp_c784ae9d95422d3337b0ebf5b00e01fe252939b', 'd:name', 'Teachers'
 put 'lms:users', 'c784ae995d158c2969411e781c70800279a327c_cre_4ed235b781c696af36fee50e805569a8', 'd:fname', 'LMS'
@@ -458,12 +470,18 @@ put 'lms:components', 'c784ae9ecfe05faf70bebe91a0b42bd424eae781480299712410_opt_
 
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a', 'd:name', 'Resource Components'
 
-put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:type', 'QuestionComponent'
-put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:quetype', 'MultipleChoice'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:comtype', 'QuestionComponent'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:type', 'MultipleChoice'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:order', '1'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:body', '2 + 3 = ?'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:hint', 'Addition within 10.'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:explanation', '2 + 3 = 5'
+
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:opt_1480299712291_body', '2'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:opt_1480299712291_feedback', 'Incorrect.'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:opt_1480299712291_correct', 'false'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150', 'd:opt_1480299712291_order', '1'
+
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_1480299712291', 'd:body', '2'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_1480299712291', 'd:feedback', 'Incorrect.'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_1480299712291', 'd:correct', 'false'
@@ -481,8 +499,8 @@ put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_1480299712294', 'd:correct', 'true'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712150_opt_1480299712294', 'd:order', '4'
 
-put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:type', 'QuestionComponent'
-put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:quetype', 'MultipleChoice'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:comtype', 'QuestionComponent'
+put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:type', 'MultipleChoice'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:order', '2'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:body', '4 + 5 = ?'
 put 'lms:components', 'c784ae9603233f623f202ee3a136ee2478ed46a1480299712290', 'd:hint', 'Addition within 10.'

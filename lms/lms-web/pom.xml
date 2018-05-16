@@ -39,6 +39,36 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.hsystems.lms.user</groupId>
+      <artifactId>lms-user</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.question</groupId>
+      <artifactId>lms-question</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.quiz</groupId>
+      <artifactId>lms-quiz</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.authentication</groupId>
+      <artifactId>lms-authentication</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.hbase</groupId>
+      <artifactId>lms-hbase</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.solr</groupId>
+      <artifactId>lms-solr</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>
