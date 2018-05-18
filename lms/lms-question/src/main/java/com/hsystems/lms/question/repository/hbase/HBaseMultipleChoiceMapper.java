@@ -1,48 +1,34 @@
 package com.hsystems.lms.question.repository.hbase;
 
-import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.hbase.HBaseUtils;
+import com.hsystems.lms.component.Component;
 import com.hsystems.lms.question.repository.entity.ChoiceOption;
 import com.hsystems.lms.question.repository.entity.MultipleChoice;
-import com.hsystems.lms.question.repository.entity.Question;
 
 import org.apache.hadoop.hbase.client.Result;
-import org.apache.hadoop.hbase.util.Bytes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by naungsoe on 12/10/16.
  */
 public final class HBaseMultipleChoiceMapper
-    implements Mapper<List<Result>, Question> {
+    extends HBaseQuestionMapper<MultipleChoice> {
 
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
+  private final List<Component> components;
 
-  private static final byte[] BODY_QUALIFIER = Bytes.toBytes("body");
-  private static final byte[] HINT_QUALIFIER = Bytes.toBytes("hint");
-  private static final byte[] EXPLANATION_QUALIFIER
-      = Bytes.toBytes("explanation");
-
-  private final Result result;
-
-  public HBaseMultipleChoiceMapper(Result result) {
-    this.result = result;
+  public HBaseMultipleChoiceMapper(List<Component> components) {
+    this.components = components;
   }
 
   @Override
-  public Question from(List<Result> source) {
-    String body = HBaseUtils.getString(
-        result, DATA_FAMILY, BODY_QUALIFIER);
-    String hint = HBaseUtils.getString(
-        result, DATA_FAMILY, HINT_QUALIFIER);
-    String explanation = HBaseUtils.getString(
-        result, DATA_FAMILY, EXPLANATION_QUALIFIER);
+  public MultipleChoice from(Result source) {
+    String body = getBody(source);
+    String hint = getHint(source);
+    String explanation = getExplanation(source);
 
-    String parentId = Bytes.toString(result.getRow());
-    HBaseChoiceOptionsMapper optionsMapper
-        = new HBaseChoiceOptionsMapper(parentId);
-    List<ChoiceOption> options = optionsMapper.from(source);
+    List<ChoiceOption> options = new ArrayList<>();
+    components.forEach(component -> options.add((ChoiceOption) component));
     return new MultipleChoice(body, hint, explanation, options);
   }
 }

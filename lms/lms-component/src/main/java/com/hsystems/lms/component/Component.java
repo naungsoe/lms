@@ -7,5 +7,4 @@ package com.hsystems.lms.component;
  */
 public interface Component extends Entity {
 
-  int getOrder();
 }

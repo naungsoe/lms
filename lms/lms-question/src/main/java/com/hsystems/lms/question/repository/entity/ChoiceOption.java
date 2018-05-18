@@ -9,7 +9,7 @@ import java.io.Serializable;
  */
 public final class ChoiceOption implements Component, Serializable {
 
-  private static final long serialVersionUID = 2655018708468090646L;
+  private static final long serialVersionUID = -8743458636490918190L;
 
   private String id;
 
@@ -19,8 +19,6 @@ public final class ChoiceOption implements Component, Serializable {
 
   private boolean correct;
 
-  private int order;
-
   ChoiceOption() {
 
   }
@@ -29,14 +27,12 @@ public final class ChoiceOption implements Component, Serializable {
       String id,
       String body,
       String feedback,
-      boolean correct,
-      int order) {
+      boolean correct) {
 
     this.id = id;
     this.body = body;
     this.feedback = feedback;
     this.correct = correct;
-    this.order = order;
   }
 
   public String getId() {
@@ -53,10 +49,5 @@ public final class ChoiceOption implements Component, Serializable {
 
   public boolean isCorrect() {
     return correct;
-  }
-
-  @Override
-  public int getOrder() {
-    return order;
   }
 }

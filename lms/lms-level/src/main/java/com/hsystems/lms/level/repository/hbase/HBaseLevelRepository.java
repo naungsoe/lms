@@ -2,15 +2,13 @@ package com.hsystems.lms.level.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.hbase.HBaseScanFactory;
-import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.level.repository.entity.Level;
 
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -26,8 +24,7 @@ import java.util.Optional;
 public final class HBaseLevelRepository
     implements Repository<Auditable<Level>> {
 
-  private static final TableName LEVEL_TABLE
-      = TableName.valueOf("lms:levels");
+  private static final String LEVEL_TABLE = "lms:levels";
 
   private static final int MAX_VERSIONS = 1;
 
@@ -50,10 +47,10 @@ public final class HBaseLevelRepository
 
     List<Result> results = hbaseClient.scan(scan, LEVEL_TABLE);
     List<Auditable<Level>> groups = new ArrayList<>();
-    HBaseUtils.forEachRowSetResults(results, rowSetResults -> {
-      Auditable<Level> group = levelMapper.from(rowSetResults);
-      groups.add(group);
-    });
+
+    for (Result result : results) {
+      groups.add(levelMapper.from(result));
+    }
 
     return groups;
   }
@@ -62,18 +59,16 @@ public final class HBaseLevelRepository
   public Optional<Auditable<Level>> findBy(String id)
       throws IOException {
 
-    Scan scan = HBaseScanFactory.createRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
+    Get get = new Get(Bytes.toBytes(id));
+    get.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = hbaseClient.scan(scan, LEVEL_TABLE);
+    Result result = hbaseClient.get(get, LEVEL_TABLE);
 
-    if (CollectionUtils.isEmpty(results)) {
+    if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    Auditable<Level> group = levelMapper.from(results);
-    return Optional.of(group);
+    return Optional.of(levelMapper.from(result));
   }
 
   @Override

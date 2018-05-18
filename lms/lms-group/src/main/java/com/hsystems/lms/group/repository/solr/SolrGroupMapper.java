@@ -1,9 +1,7 @@
 package com.hsystems.lms.group.repository.solr;
 
 import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.entity.User;
 import com.hsystems.lms.group.repository.entity.Group;
 import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableMapper;
@@ -12,7 +10,6 @@ import com.hsystems.lms.solr.SolrUtils;
 
 import org.apache.solr.common.SolrDocument;
 
-import java.util.List;
 import java.util.Optional;
 
 public final class SolrGroupMapper
@@ -31,19 +28,11 @@ public final class SolrGroupMapper
     String name = SolrUtils.getString(source, NAME_FIELD);
     Group.Builder builder = new Group.Builder(id, name);
 
-    SolrMembersMapper membersMapper = new SolrMembersMapper(id);
-    List<User> members = membersMapper.from(source);
-
-    if (CollectionUtils.isNotEmpty(members)) {
-      builder.members(members);
-    }
-
     SolrSchoolRefMapper schoolRefMapper = new SolrSchoolRefMapper(id);
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
     Group group = builder.build();

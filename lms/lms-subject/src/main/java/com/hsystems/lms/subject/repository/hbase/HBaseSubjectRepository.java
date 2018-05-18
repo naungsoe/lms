@@ -2,15 +2,13 @@ package com.hsystems.lms.subject.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.hbase.HBaseScanFactory;
-import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.subject.repository.entity.Subject;
 
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -26,8 +24,7 @@ import java.util.Optional;
 public final class HBaseSubjectRepository
     implements Repository<Auditable<Subject>> {
 
-  private static final TableName GROUP_TABLE
-      = TableName.valueOf("lms:groups");
+  private static final String GROUP_TABLE = "lms:groups";
 
   private static final int MAX_VERSIONS = 1;
 
@@ -50,10 +47,10 @@ public final class HBaseSubjectRepository
 
     List<Result> results = hbaseClient.scan(scan, GROUP_TABLE);
     List<Auditable<Subject>> subjects = new ArrayList<>();
-    HBaseUtils.forEachRowSetResults(results, rowSetResults -> {
-      Auditable<Subject> subject = subjectMapper.from(rowSetResults);
-      subjects.add(subject);
-    });
+
+    for (Result result : results) {
+      subjects.add(subjectMapper.from(result));
+    }
 
     return subjects;
   }
@@ -62,18 +59,16 @@ public final class HBaseSubjectRepository
   public Optional<Auditable<Subject>> findBy(String id)
       throws IOException {
 
-    Scan scan = HBaseScanFactory.createRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
+    Get get = new Get(Bytes.toBytes(id));
+    get.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = hbaseClient.scan(scan, GROUP_TABLE);
+    Result result = hbaseClient.get(get, GROUP_TABLE);
 
-    if (CollectionUtils.isEmpty(results)) {
+    if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    Auditable<Subject> subject = subjectMapper.from(results);
-    return Optional.of(subject);
+    return Optional.of(subjectMapper.from(result));
   }
 
   @Override

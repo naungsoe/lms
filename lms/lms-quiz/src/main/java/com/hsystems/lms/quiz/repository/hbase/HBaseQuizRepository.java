@@ -8,8 +8,6 @@ import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.quiz.repository.entity.QuizResource;
 
-import org.apache.hadoop.hbase.TableName;
-
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -21,8 +19,7 @@ import java.util.Optional;
 public final class HBaseQuizRepository
     implements Repository<Auditable<QuizResource>> {
 
-  private static final TableName QUIZ_TABLE
-      = TableName.valueOf("lms:quizzes");
+  private static final String QUIZ_TABLE = "lms:quizzes";
 
   private static final int MAX_VERSIONS = 1;
 

@@ -6,12 +6,10 @@ import com.hsystems.lms.component.Nested;
 
 import org.apache.hadoop.hbase.client.Result;
 
-import java.util.List;
-
 /**
  * Created by naungsoe on 12/10/16.
  */
-public interface HBaseComponentMapper
-    extends Mapper<List<Result>, Nested<Component>> {
+public interface HBaseComponentMapper<T extends Component>
+    extends Mapper<Result, Nested<T>> {
 
 }

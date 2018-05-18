@@ -38,7 +38,7 @@ public final class NoSqlSchoolRepository implements SchoolRepository {
   public Optional<Auditable<School>> findBy(String id)
       throws IOException {
 
-    return solrSchoolRepository.findBy(id);
+    return hbaseSchoolRepository.findBy(id);
   }
 
   @Override

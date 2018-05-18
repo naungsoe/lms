@@ -2,15 +2,13 @@ package com.hsystems.lms.component.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.component.Component;
 import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.hbase.HBaseScanFactory;
-import com.hsystems.lms.hbase.HBaseUtils;
 
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -26,22 +24,21 @@ import java.util.Optional;
 public final class HBaseComponentRepository
     implements Repository<Nested<Component>> {
 
-  private static final TableName COMPONENT_TABLE
-      = TableName.valueOf("lms:components");
+  private static final String COMPONENT_TABLE = "lms:components";
 
   private static final int MAX_VERSIONS = 1;
 
   private final HBaseClient hbaseClient;
 
-  private HBaseComponentMapper componentMapper;
+  private HBaseComponentMapperFactory mapperFactory;
 
   @Inject
   HBaseComponentRepository(HBaseClient hbaseClient) {
     this.hbaseClient = hbaseClient;
   }
 
-  public void setComponentMapper(HBaseComponentMapper componentMapper) {
-    this.componentMapper = componentMapper;
+  public void setMapperFactory(HBaseComponentMapperFactory mapperFactory) {
+    this.mapperFactory = mapperFactory;
   }
 
   public List<Nested<Component>> findAllBy(String resourceId)
@@ -52,10 +49,12 @@ public final class HBaseComponentRepository
 
     List<Result> results = hbaseClient.scan(scan, COMPONENT_TABLE);
     List<Nested<Component>> components = new ArrayList<>();
-    HBaseUtils.forEachRowSetResults(results, rowSetResults -> {
-      Nested<Component> component = componentMapper.from(results);
-      components.add(component);
-    });
+
+    for (Result result : results) {
+      HBaseComponentMapper<Component> componentMapper
+          = mapperFactory.create(result);
+      components.add(componentMapper.from(result));
+    }
 
     return components;
   }
@@ -64,22 +63,18 @@ public final class HBaseComponentRepository
   public Optional<Nested<Component>> findBy(String id)
       throws IOException {
 
-    Scan scan = HBaseScanFactory.createRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
+    Get get = new Get(Bytes.toBytes(id));
+    get.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = hbaseClient.scan(scan, COMPONENT_TABLE);
+    Result result = hbaseClient.get(get, COMPONENT_TABLE);
 
-    if (CollectionUtils.isEmpty(results)) {
+    if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    scan = HBaseScanFactory.createRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
-
-    Nested<Component> component = componentMapper.from(results);
-    return Optional.of(component);
+    HBaseComponentMapper<Component> componentMapper
+        = mapperFactory.create(result);
+    return Optional.of(componentMapper.from(result));
   }
 
   @Override

@@ -1,9 +1,7 @@
 package com.hsystems.lms.user.repository.hbase;
 
-import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.group.repository.entity.Group;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.group.repository.hbase.HBaseGroupRefsMapper;
 import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.school.repository.entity.Preferences;
@@ -26,9 +24,7 @@ import java.util.Optional;
  * Created by naungsoe on 12/10/16.
  */
 public final class HBaseUserMapper
-    implements Mapper<List<Result>, Auditable<AppUser>> {
-
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
+    implements Mapper<Result, Auditable<AppUser>> {
 
   private static final byte[] FIRST_NAME_QUALIFIER = Bytes.toBytes("fname");
   private static final byte[] LAST_NAME_QUALIFIER = Bytes.toBytes("lname");
@@ -38,7 +34,7 @@ public final class HBaseUserMapper
   private static final byte[] EMAIL_QUALIFIER = Bytes.toBytes("email");
   private static final byte[] PERMISSIONS_QUALIFIER
       = Bytes.toBytes("permissions");
-  private static final byte[] OTP_ENABLED_QUALIFIER = Bytes.toBytes("otp");
+  private static final byte[] MFA_ENABLED_QUALIFIER = Bytes.toBytes("mfa");
 
   private final HBasePreferencesMapper preferencesMapper;
 
@@ -50,35 +46,20 @@ public final class HBaseUserMapper
   }
 
   @Override
-  public Auditable<AppUser> from(List<Result> source) {
-    Optional<Result> mainResultOptional = source.stream()
-        .filter(HBaseUtils.isMainResult()).findFirst();
-
-    if (!mainResultOptional.isPresent()) {
-      throw new IllegalArgumentException(
-          "there is no main result found");
-    }
-
-    Result mainResult = mainResultOptional.get();
-    String id = Bytes.toString(mainResult.getRow());
-    String firstName = HBaseUtils.getString(
-        mainResult, DATA_FAMILY, FIRST_NAME_QUALIFIER);
-    String lastName = HBaseUtils.getString(
-        mainResult, DATA_FAMILY, LAST_NAME_QUALIFIER);
+  public Auditable<AppUser> from(Result source) {
+    String id = Bytes.toString(source.getRow());
+    String firstName = HBaseUtils.getString(source, FIRST_NAME_QUALIFIER);
+    String lastName = HBaseUtils.getString(source, LAST_NAME_QUALIFIER);
     LocalDateTime dateOfBirth = HBaseUtils.getDateTime(
-        mainResult, DATA_FAMILY, DATE_OF_BIRTH_QUALIFIER);
-    String gender = HBaseUtils.getString(
-        mainResult, DATA_FAMILY, GENDER_QUALIFIER);
-    String mobile = HBaseUtils.getString(
-        mainResult, DATA_FAMILY, MOBILE_QUALIFIER);
-    String email = HBaseUtils.getString(
-        mainResult, DATA_FAMILY, EMAIL_QUALIFIER);
+        source, DATE_OF_BIRTH_QUALIFIER);
+    String gender = HBaseUtils.getString(source, GENDER_QUALIFIER);
+    String mobile = HBaseUtils.getString(source, MOBILE_QUALIFIER);
+    String email = HBaseUtils.getString(source, EMAIL_QUALIFIER);
     List<String> permissions = HBaseUtils.getStrings(
-        mainResult, DATA_FAMILY, PERMISSIONS_QUALIFIER);
-    Preferences preferences = preferencesMapper.from(mainResult);
-    Credentials credentials = credentialsMapper.from(mainResult);
-    boolean otpEnabled = HBaseUtils.getBoolean(
-        mainResult, DATA_FAMILY, OTP_ENABLED_QUALIFIER);
+        source, PERMISSIONS_QUALIFIER);
+    Preferences preferences = preferencesMapper.from(source);
+    Credentials credentials = credentialsMapper.from(source);
+    boolean mfaEnabled = HBaseUtils.getBoolean(source, MFA_ENABLED_QUALIFIER);
     SchoolUser.Builder builder
         = new SchoolUser.Builder(id, firstName, lastName)
         .dateOfBirth(dateOfBirth)
@@ -88,26 +69,21 @@ public final class HBaseUserMapper
         .permissions(permissions)
         .preferences(preferences)
         .credentials(credentials)
-        .mfaEnabled(otpEnabled);
+        .mfaEnabled(mfaEnabled);
 
-    HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper(id);
+    HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper();
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
-    HBaseGroupRefsMapper groupRefsMapper = new HBaseGroupRefsMapper(id);
-    List<Group> groups = groupRefsMapper.from(source);
-
-    if (CollectionUtils.isNotEmpty(groups)) {
-      builder.groups(groups);
-    }
+    HBaseGroupRefsMapper groupRefsMapper = new HBaseGroupRefsMapper();
+    builder.groups(groupRefsMapper.from(source));
 
     SchoolUser user = builder.build();
     HBaseAuditableMapper<AppUser> auditableMapper
-        = new HBaseAuditableMapper<>(user, id);
+        = new HBaseAuditableMapper<>(user);
     return auditableMapper.from(source);
   }
 }

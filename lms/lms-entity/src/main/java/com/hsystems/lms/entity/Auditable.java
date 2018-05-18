@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 public final class Auditable<T extends Entity>
     implements Entity, Serializable {
 
-  private static final long serialVersionUID = -6057658341145482605L;
+  private static final long serialVersionUID = 7241801282546664287L;
 
   private T entity;
 

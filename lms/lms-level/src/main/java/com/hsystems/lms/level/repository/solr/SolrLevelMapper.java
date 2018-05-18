@@ -1,7 +1,7 @@
 package com.hsystems.lms.level.repository.solr;
 
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.level.repository.entity.Level;
 import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableMapper;
@@ -32,8 +32,7 @@ public final class SolrLevelMapper
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
     Level level = builder.build();

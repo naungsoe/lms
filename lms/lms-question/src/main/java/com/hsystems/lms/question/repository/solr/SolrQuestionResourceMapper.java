@@ -1,7 +1,7 @@
 package com.hsystems.lms.question.repository.solr;
 
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.question.repository.entity.Question;
 import com.hsystems.lms.question.repository.entity.QuestionResource;
 import com.hsystems.lms.school.repository.entity.School;
@@ -36,8 +36,7 @@ public final class SolrQuestionResourceMapper
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
     QuestionResource resource = builder.build();

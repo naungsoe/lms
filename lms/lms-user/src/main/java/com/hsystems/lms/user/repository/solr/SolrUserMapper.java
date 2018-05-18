@@ -1,9 +1,7 @@
 package com.hsystems.lms.user.repository.solr;
 
-import com.hsystems.lms.common.util.CollectionUtils;
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.group.repository.entity.Group;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.group.repository.solr.SolrGroupRefsMapper;
 import com.hsystems.lms.school.repository.entity.Preferences;
 import com.hsystems.lms.school.repository.entity.School;
@@ -73,16 +71,11 @@ public final class SolrUserMapper
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
     SolrGroupRefsMapper groupRefsMapper = new SolrGroupRefsMapper(id);
-    List<Group> groups = groupRefsMapper.from(source);
-
-    if (CollectionUtils.isNotEmpty(groups)) {
-      builder.groups(groups);
-    }
+    builder.groups(groupRefsMapper.from(source));
 
     SchoolUser user = builder.build();
     SolrAuditableMapper<AppUser> auditableMapper

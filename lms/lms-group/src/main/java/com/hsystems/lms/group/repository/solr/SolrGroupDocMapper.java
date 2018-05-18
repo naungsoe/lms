@@ -1,18 +1,13 @@
 package com.hsystems.lms.group.repository.solr;
 
 import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.entity.User;
 import com.hsystems.lms.group.repository.entity.Group;
 import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableDocMapper;
 import com.hsystems.lms.school.repository.solr.SolrSchoolRefDocMapper;
 
 import org.apache.solr.common.SolrInputDocument;
-
-import java.util.Collections;
-import java.util.List;
 
 public final class SolrGroupDocMapper
     implements Mapper<Auditable<Group>, SolrInputDocument> {
@@ -36,16 +31,6 @@ public final class SolrGroupDocMapper
     document.addField(NAME_FIELD, group.getName());
 
     String parentId = group.getId();
-    List<User> members = Collections.list(group.getMembers());
-
-    if (CollectionUtils.isNotEmpty(members)) {
-      SolrMemberDocsMapper memberDocsMapper
-          = new SolrMemberDocsMapper(parentId);
-      List<SolrInputDocument> memberDocuments
-          = memberDocsMapper.from(members);
-      document.addChildDocuments(memberDocuments);
-    }
-
     School school = group.getSchool();
 
     if (school != null) {

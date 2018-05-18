@@ -13,8 +13,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 public final class HBasePreferencesMapper
     implements Mapper<Result, Preferences> {
 
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
-
   private static final byte[] LOCALE_QUALIFIER = Bytes.toBytes("locale");
   private static final byte[] TIME_FORMAT_QUALIFIER = Bytes.toBytes("tformat");
   private static final byte[] DATE_FORMAT_QUALIFIER = Bytes.toBytes("dformat");
@@ -27,15 +25,11 @@ public final class HBasePreferencesMapper
 
   @Override
   public Preferences from(Result source) {
-    String locale = HBaseUtils.getString(
-        source, DATA_FAMILY, LOCALE_QUALIFIER);
-    String timeFormat = HBaseUtils.getString(
-        source, DATA_FAMILY, TIME_FORMAT_QUALIFIER);
-    String dateFormat = HBaseUtils.getString(
-        source, DATA_FAMILY, DATE_FORMAT_QUALIFIER);
+    String locale = HBaseUtils.getString(source, LOCALE_QUALIFIER);
+    String timeFormat = HBaseUtils.getString(source, TIME_FORMAT_QUALIFIER);
+    String dateFormat = HBaseUtils.getString(source, DATE_FORMAT_QUALIFIER);
     String dateTimeFormat = HBaseUtils.getString(
-        source, DATA_FAMILY, DATE_TIME_FORMAT_QUALIFIER);
-    return new Preferences(locale, timeFormat,
-        dateFormat, dateTimeFormat);
+        source, DATE_TIME_FORMAT_QUALIFIER);
+    return new Preferences(locale, timeFormat, dateFormat, dateTimeFormat);
   }
 }

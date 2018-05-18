@@ -1,7 +1,7 @@
 package com.hsystems.lms.subject.repository.solr;
 
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableMapper;
 import com.hsystems.lms.school.repository.solr.SolrSchoolRefMapper;
@@ -32,8 +32,7 @@ public final class SolrSubjectMapper
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
     Subject subject = builder.build();

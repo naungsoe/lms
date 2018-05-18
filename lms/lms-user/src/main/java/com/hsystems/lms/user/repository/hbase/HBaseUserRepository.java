@@ -2,15 +2,13 @@ package com.hsystems.lms.user.repository.hbase;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.hbase.HBaseScanFactory;
-import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.user.repository.entity.AppUser;
 
-import org.apache.hadoop.hbase.TableName;
+import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Scan;
 import org.apache.hadoop.hbase.util.Bytes;
@@ -26,8 +24,7 @@ import java.util.Optional;
 public final class HBaseUserRepository
     implements Repository<Auditable<AppUser>> {
 
-  private static final TableName USER_TABLE
-      = TableName.valueOf("lms:users");
+  private static final String USER_TABLE = "lms:users";
 
   private static final int MAX_VERSIONS = 1;
 
@@ -50,10 +47,10 @@ public final class HBaseUserRepository
 
     List<Result> results = hbaseClient.scan(scan, USER_TABLE);
     List<Auditable<AppUser>> users = new ArrayList<>();
-    HBaseUtils.forEachRowSetResults(results, rowSetResults -> {
-      Auditable<AppUser> user = userMapper.from(rowSetResults);
-      users.add(user);
-    });
+
+    for (Result result : results) {
+      users.add(userMapper.from(result));
+    }
 
     return users;
   }
@@ -62,18 +59,16 @@ public final class HBaseUserRepository
   public Optional<Auditable<AppUser>> findBy(String id)
       throws IOException {
 
-    Scan scan = HBaseScanFactory.createRowKeyFilterScan(id);
-    scan.setStartRow(Bytes.toBytes(id));
-    scan.setMaxVersions(MAX_VERSIONS);
+    Get get = new Get(Bytes.toBytes(id));
+    get.setMaxVersions(MAX_VERSIONS);
 
-    List<Result> results = hbaseClient.scan(scan, USER_TABLE);
+    Result result = hbaseClient.get(get, USER_TABLE);
 
-    if (CollectionUtils.isEmpty(results)) {
+    if (result.isEmpty()) {
       return Optional.empty();
     }
 
-    Auditable<AppUser> user = userMapper.from(results);
-    return Optional.of(user);
+    return Optional.of(userMapper.from(result));
   }
 
   @Override

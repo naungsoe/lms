@@ -33,7 +33,7 @@ public final class HBaseClient {
     configuration = HBaseConfiguration.create();
   }
 
-  public List<Result> scan(Scan scan, TableName tableName)
+  public List<Result> scan(Scan scan, String tableName)
       throws IOException {
 
     Table table = getTable(tableName);
@@ -55,11 +55,11 @@ public final class HBaseClient {
     return results;
   }
 
-  private Table getTable(TableName tableName)
+  private Table getTable(String tableName)
       throws IOException {
 
     Connection connection = getConnection();
-    return connection.getTable(tableName);
+    return connection.getTable(TableName.valueOf(tableName));
   }
 
   private Connection getConnection()
@@ -81,7 +81,7 @@ public final class HBaseClient {
     return instance;
   }
 
-  public List<Result> get(List<Get> gets, TableName tableName)
+  public List<Result> get(List<Get> gets, String tableName)
       throws IOException {
 
     Table table = getTable(tableName);
@@ -90,7 +90,7 @@ public final class HBaseClient {
     return Arrays.asList(results);
   }
 
-  public Result get(Get get, TableName tableName)
+  public Result get(Get get, String tableName)
       throws IOException {
 
     Table table = getTable(tableName);
@@ -99,13 +99,13 @@ public final class HBaseClient {
     return result;
   }
 
-  public void put(Put put, TableName tableNam)
+  public void put(Put put, String tableNam)
       throws IOException {
 
     put(Arrays.asList(put), tableNam);
   }
 
-  public void put(List<Put> puts, TableName tableName)
+  public void put(List<Put> puts, String tableName)
       throws IOException {
 
     Table table = getTable(tableName);
@@ -113,13 +113,13 @@ public final class HBaseClient {
     table.close();
   }
 
-  public void delete(Delete delete, TableName tableName)
+  public void delete(Delete delete, String tableName)
       throws IOException {
 
     delete(Arrays.asList(delete), tableName);
   }
 
-  public void delete(List<Delete> deletes, TableName tableName)
+  public void delete(List<Delete> deletes, String tableName)
       throws IOException {
 
     Table table = getTable(tableName);

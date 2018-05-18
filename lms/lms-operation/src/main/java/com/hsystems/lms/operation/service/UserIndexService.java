@@ -3,7 +3,7 @@ package com.hsystems.lms.operation.service;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.user.repository.entity.SchoolUser;
+import com.hsystems.lms.user.repository.entity.AppUser;
 import com.hsystems.lms.user.repository.hbase.HBaseUserRepository;
 import com.hsystems.lms.user.repository.solr.SolrUserRepository;
 
@@ -35,13 +35,13 @@ public final class UserIndexService {
     int numFound;
 
     do {
-      List<Auditable<SchoolUser>> users
+      List<Auditable<AppUser>> users
           = hbaseUserRepository.findAllBy(lastId, INDEX_LIMIT);
       solrUserRepository.addAll(users);
 
       numFound = users.size();
 
-      Auditable<SchoolUser> user = users.get(numFound - 1);
+      Auditable<AppUser> user = users.get(numFound - 1);
       lastId = user.getEntity().getId();
 
     } while (!isLastPage(numFound));
@@ -54,11 +54,11 @@ public final class UserIndexService {
   public void index(String id)
       throws IOException {
 
-    Optional<Auditable<SchoolUser>> userOptional
+    Optional<Auditable<AppUser>> userOptional
         = hbaseUserRepository.findBy(id);
 
     if (userOptional.isPresent()) {
-      Auditable<SchoolUser> user = userOptional.get();
+      Auditable<AppUser> user = userOptional.get();
       solrUserRepository.add(user);
     }
   }

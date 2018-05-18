@@ -1,7 +1,8 @@
 package com.hsystems.lms.question.repository.hbase;
 
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
+import com.hsystems.lms.component.Component;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.level.repository.hbase.HBaseLevelRefsMapper;
 import com.hsystems.lms.question.repository.entity.Question;
@@ -17,59 +18,48 @@ import org.apache.hadoop.hbase.util.Bytes;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Created by naungsoe on 12/10/16.
- */
-public final class HBaseQuestionResponseMapper
-    implements Mapper<List<Result>, Auditable<QuestionResource>> {
-
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
+public final class HBaseQuestionResourceMapper
+    implements Mapper<Result, Auditable<QuestionResource>> {
 
   private static final byte[] KEYWORDS_QUALIFIER = Bytes.toBytes("keywords");
 
-  public HBaseQuestionResponseMapper() {
+  private final List<Component> components;
 
+  private final HBaseQuestionMapperFactory mapperFactory;
+
+  public HBaseQuestionResourceMapper(List<Component> components) {
+    this.components = components;
+    this.mapperFactory = new HBaseQuestionMapperFactory();
   }
 
   @Override
-  public Auditable<QuestionResource> from(List<Result> source) {
-    Optional<Result> mainResultOptional = source.stream()
-        .filter(HBaseUtils.isMainResult()).findFirst();
-
-    if (!mainResultOptional.isPresent()) {
-      throw new IllegalArgumentException(
-          "there is no main result found");
-    }
-
-    Result mainResult = mainResultOptional.get();
-    String id = Bytes.toString(mainResult.getRow());
-    HBaseQuestionMapper questionMapper
-        = new HBaseQuestionMapper(mainResult);
+  public Auditable<QuestionResource> from(Result source) {
+    String id = Bytes.toString(source.getRow());
+    HBaseQuestionMapper<Question> questionMapper
+        = mapperFactory.create(source, components);
     Question question = questionMapper.from(source);
     QuestionResource.Builder builder
         = new QuestionResource.Builder(id, question);
 
-    HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper(id);
+    List<String> keywords = HBaseUtils.getStrings(source, KEYWORDS_QUALIFIER);
+    builder.keywords(keywords);
+
+    HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper();
     Optional<School> schoolOptional = schoolRefMapper.from(source);
 
     if (schoolOptional.isPresent()) {
-      School school = schoolOptional.get();
-      builder.school(school);
+      builder.school(schoolOptional.get());
     }
 
-    HBaseLevelRefsMapper levelRefsMapper = new HBaseLevelRefsMapper(id);
+    HBaseLevelRefsMapper levelRefsMapper = new HBaseLevelRefsMapper();
     builder.levels(levelRefsMapper.from(source));
 
-    HBaseSubjectRefsMapper subjectRefsMapper = new HBaseSubjectRefsMapper(id);
+    HBaseSubjectRefsMapper subjectRefsMapper = new HBaseSubjectRefsMapper();
     builder.subjects(subjectRefsMapper.from(source));
-
-    List<String> keywords = HBaseUtils.getStrings(
-        mainResult, DATA_FAMILY, KEYWORDS_QUALIFIER);
-    builder.keywords(keywords);
 
     QuestionResource resource = builder.build();
     HBaseAuditableMapper<QuestionResource> auditableMapper
-        = new HBaseAuditableMapper<>(resource, id);
+        = new HBaseAuditableMapper<>(resource);
     return auditableMapper.from(source);
   }
 }

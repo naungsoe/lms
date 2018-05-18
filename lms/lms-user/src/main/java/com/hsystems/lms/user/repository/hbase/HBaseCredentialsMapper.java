@@ -13,8 +13,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 public final class HBaseCredentialsMapper
     implements Mapper<Result, Credentials> {
 
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
-
   private static final byte[] ACCOUNT_QUALIFIER = Bytes.toBytes("account");
   private static final byte[] PASSWORD_QUALIFIER = Bytes.toBytes("password");
   private static final byte[] SALT_QUALIFIER = Bytes.toBytes("salt");
@@ -25,12 +23,9 @@ public final class HBaseCredentialsMapper
 
   @Override
   public Credentials from(Result source) {
-    String account = HBaseUtils.getString(
-        source, DATA_FAMILY, ACCOUNT_QUALIFIER);
-    String password = HBaseUtils.getString(
-        source, DATA_FAMILY, PASSWORD_QUALIFIER);
-    String salt = HBaseUtils.getString(
-        source, DATA_FAMILY, SALT_QUALIFIER);
+    String account = HBaseUtils.getString(source, ACCOUNT_QUALIFIER);
+    String password = HBaseUtils.getString(source, PASSWORD_QUALIFIER);
+    String salt = HBaseUtils.getString(source, SALT_QUALIFIER);
     return new Credentials(account, password, salt);
   }
 }

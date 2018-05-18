@@ -10,15 +10,13 @@ import java.io.Serializable;
 public final class QuestionComponent<T extends Question>
     implements Component, Serializable {
 
-  private static final long serialVersionUID = 738827399526400272L;
+  private static final long serialVersionUID = 3062414733689254238L;
 
   private String id;
 
   private T question;
 
   private long score;
-
-  private int order;
 
   QuestionComponent() {
 
@@ -27,13 +25,11 @@ public final class QuestionComponent<T extends Question>
   public QuestionComponent(
       String id,
       T question,
-      long score,
-      int order) {
+      long score) {
 
     this.id = id;
     this.question = question;
     this.score = score;
-    this.order = order;
   }
 
   @Override
@@ -47,10 +43,5 @@ public final class QuestionComponent<T extends Question>
 
   public long getScore() {
     return score;
-  }
-
-  @Override
-  public int getOrder() {
-    return order;
   }
 }
