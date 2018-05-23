@@ -2,11 +2,7 @@ package com.hsystems.lms.school.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.hsystems.lms.common.util.CollectionUtils;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -14,9 +10,9 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public final class SchoolModel implements Serializable {
+public final class SchoolModel extends AuditableModel {
 
-  private static final long serialVersionUID = 4489734629795856418L;
+  private static final long serialVersionUID = -2187226140470382617L;
 
   private String id;
 
@@ -25,14 +21,6 @@ public final class SchoolModel implements Serializable {
   private List<String> permissions;
 
   private PreferencesModel preferences;
-
-  private UserModel createdBy;
-
-  private String createdOn;
-
-  private UserModel modifiedBy;
-
-  private String modifiedOn;
 
   public SchoolModel() {
 
@@ -55,13 +43,11 @@ public final class SchoolModel implements Serializable {
   }
 
   public List<String> getPermissions() {
-    return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyList() : permissions;
+    return permissions;
   }
 
   public void setPermissions(List<String> permissions) {
-    this.permissions = new ArrayList<>();
-    this.permissions.addAll(permissions);
+    this.permissions = permissions;
   }
 
   public PreferencesModel getPreferences() {
@@ -70,37 +56,5 @@ public final class SchoolModel implements Serializable {
 
   public void setPreferences(PreferencesModel preferences) {
     this.preferences = preferences;
-  }
-
-  public UserModel getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(UserModel createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getCreatedOn() {
-    return createdOn;
-  }
-
-  public void setCreatedOn(String createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public UserModel getModifiedBy() {
-    return modifiedBy;
-  }
-
-  public void setModifiedBy(UserModel modifiedBy) {
-    this.modifiedBy = modifiedBy;
-  }
-
-  public String getModifiedOn() {
-    return modifiedOn;
-  }
-
-  public void setModifiedOn(String modifiedOn) {
-    this.modifiedOn = modifiedOn;
   }
 }

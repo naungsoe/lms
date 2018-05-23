@@ -11,12 +11,14 @@ import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.component.repository.solr.SolrComponentRepository;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
+import com.hsystems.lms.question.repository.QuestionComponentUtils;
 import com.hsystems.lms.question.repository.entity.CompositeQuestion;
 import com.hsystems.lms.question.repository.entity.Question;
 import com.hsystems.lms.question.repository.entity.QuestionComponent;
 import com.hsystems.lms.question.repository.entity.QuestionResource;
 import com.hsystems.lms.solr.SolrClient;
 import com.hsystems.lms.solr.SolrQueryMapper;
+import com.hsystems.lms.solr.SolrUtils;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -26,6 +28,7 @@ import org.apache.solr.common.SolrInputDocument;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,19 +40,13 @@ public final class SolrQuestionRepository
 
   private static final String QUESTION_COLLECTION = "lms.questions";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
-  private static final String COMPONENTS_FIELD = "question.components";
+  private static final String ID_FIELD = "id";
 
   private final SolrClient solrClient;
 
-  private final SolrQueryMapper queryMapper;
-
-  private final SolrQuestionResourceMapper questionMapper;
-
-  private final SolrQuestionResourceDocMapper questionDocMapper;
-
   private final SolrComponentRepository componentRepository;
+
+  private final SolrQueryMapper queryMapper;
 
   @Inject
   SolrQuestionRepository(
@@ -58,11 +55,7 @@ public final class SolrQuestionRepository
 
     this.solrClient = solrClient;
     this.componentRepository = componentRepository;
-
-    String typeName = QuestionResource.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
-    this.questionMapper = new SolrQuestionResourceMapper();
-    this.questionDocMapper = new SolrQuestionResourceDocMapper();
+    this.queryMapper = new SolrQueryMapper();
   }
 
   public QueryResult<Auditable<QuestionResource>> findAllBy(Query query)
@@ -74,11 +67,10 @@ public final class SolrQuestionRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<QuestionResource>> resources = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<QuestionResource> resource = questionMapper.from(document);
-      populateComponents(resource);
-      resources.add(resource);
-    });
+
+    for (SolrDocument document : documentList) {
+      resources.add(process(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, resources);
   }
@@ -86,36 +78,26 @@ public final class SolrQuestionRepository
   private QueryResponse executeQuery(Query query)
       throws IOException {
 
-    String typeName = QuestionResource.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
-
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, QUESTION_COLLECTION);
   }
 
-  private void populateComponents(Auditable<QuestionResource> resource) {
-    Question question = resource.getEntity().getQuestion();
+  private Auditable<QuestionResource> process(SolrDocument document)
+      throws IOException {
 
-    if (question instanceof CompositeQuestion) {
-      CompositeQuestion compositeQuestion = (CompositeQuestion) question;
-      String resourceId = resource.getId();
-      SolrQuestionComponentMapper componentMapper
-          = new SolrQuestionComponentMapper(resourceId);
-      componentRepository.setComponentMapper(componentMapper);
+    String id = SolrUtils.getString(document, ID_FIELD);
+    SolrQuestionComponentMapperFactory mapperFactory
+        = new SolrQuestionComponentMapperFactory();
+    componentRepository.setMapperFactory(mapperFactory);
 
-      try {
-        List<Nested<Component>> components
-            = componentRepository.findAllBy(resourceId);
-        components.forEach(component -> {
-          QuestionComponent questionComponent
-              = (QuestionComponent) component.getComponent();
-          compositeQuestion.addComponent(questionComponent);
-        });
-      } catch (IOException e) {
-        throw new IllegalArgumentException(
-            "error retrieving components", e);
-      }
-    }
+    List<Nested<Component>> components
+        = componentRepository.findAllBy(id);
+    List<Component> organizedComponents
+        = QuestionComponentUtils.organize(id, components);
+
+    SolrQuestionResourceMapper resourceMapper
+        = new SolrQuestionResourceMapper(organizedComponents);
+    return resourceMapper.from(document);
   }
 
   @Override
@@ -133,9 +115,7 @@ public final class SolrQuestionRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<QuestionResource> resource = questionMapper.from(document);
-    populateComponents(resource);
-    return Optional.of(resource);
+    return Optional.of(process(document));
   }
 
   public void addAll(List<Auditable<QuestionResource>> entities)
@@ -144,57 +124,60 @@ public final class SolrQuestionRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<QuestionResource> entity : entities) {
-      SolrInputDocument document = questionDocMapper.from(entity);
-      documents.add(document);
-      addComponents(entity);
+      documents.addAll(process(entity));
     }
 
     solrClient.saveAll(documents, QUESTION_COLLECTION);
   }
 
-  private void addComponents(Auditable<QuestionResource> resource) {
-    Question question = resource.getEntity().getQuestion();
+  private List<SolrInputDocument> process(Auditable<QuestionResource> resource)
+      throws IOException {
+
+    List<SolrInputDocument> documents = new ArrayList<>();
+    SolrQuestionResourceDocMapper resourceDocMapper
+        = new SolrQuestionResourceDocMapper();
+    documents.add(resourceDocMapper.from(resource));
+
+    QuestionResource entity = resource.getEntity();
+    documents.addAll(process(entity));
+    return documents;
+  }
+
+  private List<SolrInputDocument> process(QuestionResource resource) {
+    List<SolrInputDocument> documents = new ArrayList<>();
+    Question question = resource.getQuestion();
 
     if (question instanceof CompositeQuestion) {
-      CompositeQuestion compositeQuestion = (CompositeQuestion) question;
       String resourceId = resource.getId();
       SolrQuestionComponentDocMapper componentDocMapper
-          = new SolrQuestionComponentDocMapper(
-              resourceId, resourceId, COMPONENTS_FIELD);
-      componentRepository.setComponentDocMapper(componentDocMapper);
+          = new SolrQuestionComponentDocMapper(resourceId, resourceId);
+      CompositeQuestion compositeQuestion = (CompositeQuestion) question;
+      Enumeration<QuestionComponent> enumeration
+          = compositeQuestion.getComponents();
 
-      try {
-        List<Nested<Component>> components
-            = componentRepository.findAllBy(resourceId);
-        components.forEach(component -> {
-          QuestionComponent questionComponent
-              = (QuestionComponent) component.getComponent();
-          compositeQuestion.addComponent(questionComponent);
-        });
-      } catch (IOException e) {
-        throw new IllegalArgumentException(
-            "error retrieving components", e);
+      while (enumeration.hasMoreElements()) {
+        QuestionComponent element = enumeration.nextElement();
+        documents.add(componentDocMapper.from(element));
       }
     }
+
+    return documents;
   }
 
   @Override
   public void add(Auditable<QuestionResource> entity)
       throws IOException {
 
-    SolrInputDocument document = questionDocMapper.from(entity);
-    solrClient.save(document, QUESTION_COLLECTION);
-    addComponents(entity);
-
+    List<SolrInputDocument> documents = process(entity);
+    solrClient.saveAll(documents, QUESTION_COLLECTION);
   }
 
   @Override
   public void update(Auditable<QuestionResource> entity)
       throws IOException {
 
-    SolrInputDocument document = questionDocMapper.from(entity);
-    solrClient.save(document, QUESTION_COLLECTION);
-    addComponents(entity);
+    List<SolrInputDocument> documents = process(entity);
+    solrClient.saveAll(documents, QUESTION_COLLECTION);
   }
 
   @Override

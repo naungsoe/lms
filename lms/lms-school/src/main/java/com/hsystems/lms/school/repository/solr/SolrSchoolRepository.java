@@ -31,8 +31,6 @@ public final class SolrSchoolRepository
 
   private static final String SCHOOL_COLLECTION = "lms.schools";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
   private final SolrClient solrClient;
 
   private final SolrQueryMapper queryMapper;
@@ -44,9 +42,7 @@ public final class SolrSchoolRepository
   @Inject
   SolrSchoolRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = School.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
     this.schoolMapper = new SolrSchoolMapper();
     this.schoolDocMapper = new SolrSchoolDocMapper();
   }
@@ -60,19 +56,16 @@ public final class SolrSchoolRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<School>> schools = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<School> school = schoolMapper.from(document);
-      schools.add(school);
-    });
+
+    for (SolrDocument document : documentList) {
+      schools.add(schoolMapper.from(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, schools);
   }
 
   private QueryResponse executeQuery(Query query)
       throws IOException {
-
-    String typeName = School.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
 
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, SCHOOL_COLLECTION);
@@ -93,8 +86,7 @@ public final class SolrSchoolRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<School> school = schoolMapper.from(document);
-    return Optional.of(school);
+    return Optional.of(schoolMapper.from(document));
   }
 
   public void addAll(List<Auditable<School>> entities)
@@ -103,8 +95,7 @@ public final class SolrSchoolRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<School> entity : entities) {
-      SolrInputDocument document = schoolDocMapper.from(entity);
-      documents.add(document);
+      documents.add(schoolDocMapper.from(entity));
     }
 
     solrClient.saveAll(documents, SCHOOL_COLLECTION);

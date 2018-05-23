@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="module" module-name="lms-common" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.8.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.8.4" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.8.4" level="project" />
+    <orderEntry type="module" module-name="lms-entity" />
+    <orderEntry type="module" module-name="lms-component" />
+    <orderEntry type="module" module-name="lms-resource" />
+    <orderEntry type="module" module-name="lms-school" />
+    <orderEntry type="module" module-name="lms-level" />
+    <orderEntry type="module" module-name="lms-subject" />
+    <orderEntry type="module" module-name="lms-user" />
+    <orderEntry type="module" module-name="lms-group" />
+    <orderEntry type="module" module-name="lms-question" />
+    <orderEntry type="module" module-name="lms-quiz" />
+    <orderEntry type="module" module-name="lms-hbase" />
+    <orderEntry type="library" name="Maven: hbase.client.shade:hbase-client-shaded:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="module" module-name="lms-solr" />
+    <orderEntry type="library" name="Maven: solr.solrj.shade:solr-solrj-shaded:1.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-core:2.6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.5" level="project" />
+    <orderEntry type="library" name="Maven: org.glassfish.hk2.external:javax.inject:2.4.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.inject:guice:4.1.0" level="project" />
+    <orderEntry type="library" name="Maven: javax.inject:javax.inject:1" level="project" />
+    <orderEntry type="library" name="Maven: aopalliance:aopalliance:1.0" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:19.0" level="project" />
+  </component>
+</module>

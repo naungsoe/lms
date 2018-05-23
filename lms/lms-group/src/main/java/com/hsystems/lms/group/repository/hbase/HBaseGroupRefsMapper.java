@@ -17,8 +17,6 @@ import java.util.List;
 public final class HBaseGroupRefsMapper
     implements Mapper<Result, List<Group>> {
 
-  private static final byte[] DATA_FAMILY = Bytes.toBytes("d");
-
   private static final byte[] GROUPS_QUALIFIER = Bytes.toBytes("groups");
 
   public HBaseGroupRefsMapper() {
@@ -33,11 +31,13 @@ public final class HBaseGroupRefsMapper
 
     List<Group> groups = new ArrayList<>();
     List<String> groupIds = HBaseUtils.getStrings(source, GROUPS_QUALIFIER);
-    groupIds.forEach(groupId -> {
-      String name = HBaseUtils.getString(source, Bytes.toBytes(groupId));
+
+    for (String groupId : groupIds) {
+      byte[] columnQualifier = Bytes.toBytes(groupId);
+      String name = HBaseUtils.getString(source, columnQualifier);
       Group group = new Group.Builder(groupId, name).build();
       groups.add(group);
-    });
+    }
 
     return groups;
   }

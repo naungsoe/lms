@@ -21,10 +21,14 @@
     <module>lms-group</module>
     <module>lms-component</module>
     <module>lms-resource</module>
+    <module>lms-drive</module>
     <module>lms-question</module>
+    <module>lms-rubric</module>
     <module>lms-quiz</module>
-    <module>lms-operation</module>
+    <module>lms-lesson</module>
+    <module>lms-course</module>
     <module>lms-authentication</module>
+    <module>lms-operation</module>
     <module>lms-web</module>
   </modules>
 

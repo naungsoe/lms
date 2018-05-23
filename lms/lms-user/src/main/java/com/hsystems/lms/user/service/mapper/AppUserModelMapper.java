@@ -1,50 +1,34 @@
 package com.hsystems.lms.user.service.mapper;
 
+import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.common.util.DateTimeUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.entity.User;
-import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.group.repository.entity.Group;
-import com.hsystems.lms.group.service.mapper.GroupRefModelsMapper;
-import com.hsystems.lms.school.repository.entity.Preferences;
-import com.hsystems.lms.school.repository.entity.School;
+import com.hsystems.lms.school.service.mapper.AuditableModelMapper;
 import com.hsystems.lms.school.service.mapper.PreferencesModelMapper;
-import com.hsystems.lms.school.service.mapper.SchoolRefModelMapper;
-import com.hsystems.lms.school.service.mapper.UserRefModelMapper;
+import com.hsystems.lms.school.service.model.PreferencesModel;
 import com.hsystems.lms.user.repository.entity.AppUser;
-import com.hsystems.lms.user.repository.entity.Credentials;
-import com.hsystems.lms.user.repository.entity.SchoolUser;
-import com.hsystems.lms.user.service.model.SchoolUserModel;
+import com.hsystems.lms.user.service.model.AppUserModel;
+import com.hsystems.lms.user.service.model.CredentialsModel;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 public final class AppUserModelMapper
-    implements Mapper<Auditable<AppUser>, SchoolUserModel> {
+    implements Mapper<Auditable<AppUser>, AppUserModel> {
 
   private final PreferencesModelMapper preferencesMapper;
 
   private final CredentialsModelMapper credentialsMapper;
 
-  private final SchoolRefModelMapper schoolRefMapper;
-
-  private final GroupRefModelsMapper groupRefsMapper;
-
-  private final UserRefModelMapper userRefMapper;
-
   public AppUserModelMapper() {
     this.preferencesMapper = new PreferencesModelMapper();
     this.credentialsMapper = new CredentialsModelMapper();
-    this.schoolRefMapper = new SchoolRefModelMapper();
-    this.groupRefsMapper = new GroupRefModelsMapper();
-    this.userRefMapper = new UserRefModelMapper();
   }
 
   @Override
-  public SchoolUserModel from(Auditable<AppUser> source) {
-    SchoolUserModel userModel = new SchoolUserModel();
+  public AppUserModel from(Auditable<AppUser> source) {
+    AppUserModel userModel = new AppUserModel();
     AppUser user = source.getEntity();
     userModel.setId(user.getId());
     userModel.setFirstName(user.getFirstName());
@@ -56,36 +40,19 @@ public final class AppUserModelMapper
     userModel.setMobile(user.getMobile());
     userModel.setEmail(user.getEmail());
 
-    Enumeration<String> enumeration = user.getPermissions();
-    List<String> permissions = Collections.list(enumeration);
+    List<String> permissions = Collections.list(user.getPermissions());
     userModel.setPermissions(permissions);
 
-    Preferences preferences = user.getPreferences();
-    userModel.setPreferences(preferencesMapper.from(preferences));
+    PreferencesModel preferences
+        = preferencesMapper.from(user.getPreferences());
+    userModel.setPreferences(preferences);
 
-    Credentials credentials = user.getCredentials();
-    userModel.setCredentials(credentialsMapper.from(credentials));
+    CredentialsModel credentials
+        = credentialsMapper.from(user.getCredentials());
+    userModel.setCredentials(credentials);
 
-    if (user instanceof SchoolUser) {
-      SchoolUser schoolUser = (SchoolUser) user;
-      School school = schoolUser.getSchool();
-      userModel.setSchool(schoolRefMapper.from(school));
-
-      List<Group> groups = Collections.list(schoolUser.getGroups());
-      userModel.setGroups(groupRefsMapper.from(groups));
-    }
-
-    User createdBy = source.getCreatedBy();
-    userModel.setCreatedBy(userRefMapper.from(createdBy));
-
-    LocalDateTime createdOn = source.getCreatedOn();
-    userModel.setCreatedOn(DateTimeUtils.toString(createdOn));
-
-    User modifiedBy = source.getCreatedBy();
-    userModel.setModifiedBy(userRefMapper.from(modifiedBy));
-
-    LocalDateTime modifiedOn = source.getModifiedOn();
-    userModel.setModifiedOn(DateTimeUtils.toString(modifiedOn));
-    return userModel;
+    AuditableModelMapper<AppUserModel> auditableMapper
+        = new AuditableModelMapper<>(userModel);
+    return auditableMapper.from(source);
   }
 }

@@ -6,8 +6,8 @@ import com.google.inject.Provider;
 import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.common.util.SecurityUtils;
 import com.hsystems.lms.common.util.StringUtils;
-import com.hsystems.lms.service.UserService;
 import com.hsystems.lms.service.model.SignUpModel;
+import com.hsystems.lms.user.service.UserService;
 
 import java.io.IOException;
 import java.util.Properties;

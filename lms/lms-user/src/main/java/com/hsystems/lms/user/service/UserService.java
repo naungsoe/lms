@@ -1,7 +1,6 @@
 package com.hsystems.lms.user.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.logging.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -9,8 +8,9 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.user.repository.UserRepository;
 import com.hsystems.lms.user.repository.entity.AppUser;
+import com.hsystems.lms.user.repository.hbase.HBaseUserRepository;
+import com.hsystems.lms.user.repository.solr.SolrUserRepository;
 import com.hsystems.lms.user.service.mapper.AppUserModelMapper;
 import com.hsystems.lms.user.service.model.AppUserModel;
 
@@ -19,26 +19,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by naungsoe on 8/8/16.
  */
 public final class UserService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final HBaseUserRepository hbaseUserRepository;
 
-  private final UserRepository userRepository;
+  private final SolrUserRepository solrUserRepository;
 
   private final AppUserModelMapper userMapper;
 
   @Inject
   UserService(
-      Provider<Properties> propertiesProvider,
-      UserRepository userRepository) {
+      HBaseUserRepository hbaseUserRepository,
+      SolrUserRepository solrUserRepository) {
 
-    this.propertiesProvider = propertiesProvider;
-    this.userRepository = userRepository;
+    this.hbaseUserRepository = hbaseUserRepository;
+    this.solrUserRepository = solrUserRepository;
     this.userMapper = new AppUserModelMapper();
   }
 
@@ -48,7 +47,7 @@ public final class UserService {
       throws IOException {
 
     QueryResult<Auditable<AppUser>> queryResult
-        = userRepository.findAllBy(query);
+        = solrUserRepository.findAllBy(query);
     long elapsedTime = queryResult.getElapsedTime();
     long start = queryResult.getStart();
     long numFound = queryResult.getNumFound();
@@ -76,7 +75,7 @@ public final class UserService {
       throws IOException {
 
     Optional<Auditable<AppUser>> userOptional
-        = userRepository.findBy(id);
+        = hbaseUserRepository.findBy(id);
 
     if (userOptional.isPresent()) {
       Auditable<AppUser> user = userOptional.get();

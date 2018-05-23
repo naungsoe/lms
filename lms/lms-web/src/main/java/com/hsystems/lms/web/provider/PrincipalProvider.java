@@ -68,11 +68,11 @@ public class PrincipalProvider implements Provider<Principal> {
       signInModel.setSessionId(sessionId);
       signInModel.setIpAddress(remoteAddress);
 
-      Optional<AppUserModel> userModelOptional
+      Optional<AppUserModel> userOptional
           = authService.findSignedInUserBy(signInModel);
 
-      if (userModelOptional.isPresent()) {
-        return Optional.of(userModelOptional.get());
+      if (userOptional.isPresent()) {
+        return Optional.of(userOptional.get());
       }
     } catch (IOException e) {
       throw new IllegalArgumentException(

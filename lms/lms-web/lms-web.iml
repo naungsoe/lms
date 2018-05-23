@@ -22,7 +22,11 @@
     <orderEntry type="module" module-name="lms-resource" />
     <orderEntry type="module" module-name="lms-level" />
     <orderEntry type="module" module-name="lms-subject" />
+    <orderEntry type="module" module-name="lms-rubric" />
     <orderEntry type="module" module-name="lms-quiz" />
+    <orderEntry type="module" module-name="lms-lesson" />
+    <orderEntry type="module" module-name="lms-course" />
+    <orderEntry type="module" module-name="lms-operation" />
     <orderEntry type="module" module-name="lms-authentication" />
     <orderEntry type="module" module-name="lms-hbase" />
     <orderEntry type="library" name="Maven: hbase.client.shade:hbase-client-shaded:1.0-SNAPSHOT" level="project" />

@@ -49,8 +49,28 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.hsystems.lms.rubric</groupId>
+      <artifactId>lms-rubric</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>com.hsystems.lms.quiz</groupId>
       <artifactId>lms-quiz</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.lesson</groupId>
+      <artifactId>lms-lesson</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.course</groupId>
+      <artifactId>lms-course</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.operation</groupId>
+      <artifactId>lms-operation</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

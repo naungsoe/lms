@@ -4,14 +4,11 @@ import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.group.repository.entity.Group;
 import com.hsystems.lms.hbase.HBaseUtils;
-import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.hbase.HBaseAuditableMapper;
 import com.hsystems.lms.school.repository.hbase.HBaseSchoolRefMapper;
 
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-
-import java.util.Optional;
 
 /**
  * Created by naungsoe on 12/10/16.
@@ -32,15 +29,10 @@ public final class HBaseGroupMapper
     Group.Builder builder = new Group.Builder(id, name);
 
     HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper();
-    Optional<School> schoolOptional = schoolRefMapper.from(source);
+    builder.school(schoolRefMapper.from(source));
 
-    if (schoolOptional.isPresent()) {
-      builder.school(schoolOptional.get());
-    }
-
-    Group group = builder.build();
     HBaseAuditableMapper<Group> auditableMapper
-        = new HBaseAuditableMapper<>(group);
+        = new HBaseAuditableMapper<>(builder.build());
     return auditableMapper.from(source);
   }
 }

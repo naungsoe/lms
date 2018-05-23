@@ -10,11 +10,9 @@ import java.time.LocalDateTime;
  */
 public final class SignInLog implements Entity, Serializable {
 
-  private static final long serialVersionUID = 7505511327973434042L;
+  private static final long serialVersionUID = -5612365617779627522L;
 
   private String id;
-
-  private String account;
 
   private int fails;
 
@@ -30,14 +28,12 @@ public final class SignInLog implements Entity, Serializable {
 
   public SignInLog(
       String id,
-      String account,
       int fails,
       String sessionId,
       String ipAddress,
       LocalDateTime dateTime) {
 
     this.id = id;
-    this.account = account;
     this.fails = fails;
     this.sessionId = sessionId;
     this.ipAddress = ipAddress;
@@ -47,10 +43,6 @@ public final class SignInLog implements Entity, Serializable {
   @Override
   public String getId() {
     return id;
-  }
-
-  public String getAccount() {
-    return account;
   }
 
   public int getFails() {

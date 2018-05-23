@@ -8,7 +8,6 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
-import com.hsystems.lms.entity.User;
 import com.hsystems.lms.solr.SolrClient;
 import com.hsystems.lms.solr.SolrQueryMapper;
 import com.hsystems.lms.user.repository.entity.AppUser;
@@ -32,8 +31,6 @@ public final class SolrUserRepository
 
   private static final String USER_COLLECTION = "lms.users";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
   private final SolrClient solrClient;
 
   private final SolrQueryMapper queryMapper;
@@ -45,9 +42,7 @@ public final class SolrUserRepository
   @Inject
   SolrUserRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = User.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
     this.userMapper = new SolrUserMapper();
     this.userDocMapper = new SolrUserDocMapper();
   }
@@ -61,19 +56,16 @@ public final class SolrUserRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<AppUser>> users = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<AppUser> user = userMapper.from(document);
-      users.add(user);
-    });
+
+    for (SolrDocument document : documentList) {
+      users.add(userMapper.from(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, users);
   }
 
   private QueryResponse executeQuery(Query query)
       throws IOException {
-
-    String typeName = User.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
 
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, USER_COLLECTION);
@@ -94,8 +86,7 @@ public final class SolrUserRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<AppUser> user = userMapper.from(document);
-    return Optional.of(user);
+    return Optional.of(userMapper.from(document));
   }
 
   public void addAll(List<Auditable<AppUser>> entities)
@@ -104,8 +95,7 @@ public final class SolrUserRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<AppUser> entity : entities) {
-      SolrInputDocument document = userDocMapper.from(entity);
-      documents.add(document);
+      documents.add(userDocMapper.from(entity));
     }
 
     solrClient.saveAll(documents, USER_COLLECTION);

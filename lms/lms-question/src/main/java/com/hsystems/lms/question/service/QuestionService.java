@@ -9,8 +9,9 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.question.repository.QuestionRepository;
 import com.hsystems.lms.question.repository.entity.QuestionResource;
+import com.hsystems.lms.question.repository.hbase.HBaseQuestionRepository;
+import com.hsystems.lms.question.repository.solr.SolrQuestionRepository;
 import com.hsystems.lms.question.service.mapper.QuestionResourceModelMapper;
 import com.hsystems.lms.question.service.model.QuestionResourceModel;
 
@@ -29,17 +30,21 @@ public final class QuestionService {
 
   private final Provider<Properties> propertiesProvider;
 
-  private final QuestionRepository questionRepository;
+  private final HBaseQuestionRepository hbaseQuestionRepository;
+
+  private final SolrQuestionRepository solrQuestionRepository;
 
   private final QuestionResourceModelMapper questionMapper;
 
   @Inject
   QuestionService(
       Provider<Properties> propertiesProvider,
-      QuestionRepository questionRepository) {
+      HBaseQuestionRepository hbaseQuestionRepository,
+      SolrQuestionRepository solrQuestionRepository) {
 
     this.propertiesProvider = propertiesProvider;
-    this.questionRepository = questionRepository;
+    this.hbaseQuestionRepository = hbaseQuestionRepository;
+    this.solrQuestionRepository = solrQuestionRepository;
     this.questionMapper = new QuestionResourceModelMapper();
   }
 
@@ -49,7 +54,7 @@ public final class QuestionService {
       throws IOException {
 
     QueryResult<Auditable<QuestionResource>> queryResult
-        = questionRepository.findAllBy(query);
+        = solrQuestionRepository.findAllBy(query);
     long elapsedTime = queryResult.getElapsedTime();
     long start = queryResult.getStart();
     long numFound = queryResult.getNumFound();
@@ -77,7 +82,7 @@ public final class QuestionService {
       throws IOException {
 
     Optional<Auditable<QuestionResource>> questionOptional
-        = questionRepository.findBy(id);
+        = hbaseQuestionRepository.findBy(id);
 
     if (questionOptional.isPresent()) {
       Auditable<QuestionResource>  question = questionOptional.get();
@@ -108,7 +113,6 @@ public final class QuestionService {
   public void update(QuestionResourceModel questionModel)
       throws IOException {
 
-
   }
 
   @Log
@@ -117,13 +121,13 @@ public final class QuestionService {
       throws IOException {
 
     Optional<Auditable<QuestionResource>> questionOptional
-        = questionRepository.findBy(id);
+        = solrQuestionRepository.findBy(id);
 
     if (questionOptional.isPresent()) {
       Auditable<QuestionResource> question = questionOptional.get();
       //checkDeletePrivilege(questionResource, principal,
       //    "current user is not owner of the resource");
-      questionRepository.remove(question);
+      solrQuestionRepository.remove(question);
     }
   }
 }

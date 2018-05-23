@@ -1,7 +1,7 @@
 package com.hsystems.lms.subject.repository.solr;
 
-import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.common.mapper.Mapper;
+import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableDocMapper;
 import com.hsystems.lms.school.repository.solr.SolrSchoolRefDocMapper;
@@ -30,19 +30,13 @@ public final class SolrSubjectDocMapper
     document.addField(TYPE_NAME_FIELD, typeName);
     document.addField(NAME_FIELD, subject.getName());
 
-    String parentId = subject.getId();
     School school = subject.getSchool();
-
-    if (school != null) {
-      SolrSchoolRefDocMapper schoolRefDocMapper
-          = new SolrSchoolRefDocMapper(parentId);
-      SolrInputDocument schoolDocument
-          = schoolRefDocMapper.from(school);
-      document.addChildDocument(schoolDocument);
-    }
+    SolrSchoolRefDocMapper schoolRefDocMapper
+        = new SolrSchoolRefDocMapper(document);
+    document = schoolRefDocMapper.from(school);
 
     SolrAuditableDocMapper<Subject> auditableDocMapper
-        = new SolrAuditableDocMapper<>(document, parentId);
+        = new SolrAuditableDocMapper<>(document);
     return auditableDocMapper.from(source);
   }
 }

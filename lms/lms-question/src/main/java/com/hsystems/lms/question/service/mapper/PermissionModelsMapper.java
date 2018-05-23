@@ -4,7 +4,7 @@ import com.hsystems.lms.entity.User;
 import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.resource.Permission;
 import com.hsystems.lms.question.service.model.PermissionModel;
-import com.hsystems.lms.school.service.mapper.UserRefModelMapper;
+import com.hsystems.lms.school.service.mapper.UserModelMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,11 +12,11 @@ import java.util.List;
 public final class PermissionModelsMapper
     implements Mapper<List<Permission>, List<PermissionModel>> {
 
-  private final UserRefModelMapper userRefMapper;
+  private final UserModelMapper userRefMapper;
 
 
   public PermissionModelsMapper() {
-    this.userRefMapper = new UserRefModelMapper();
+    this.userRefMapper = new UserModelMapper();
   }
 
   @Override

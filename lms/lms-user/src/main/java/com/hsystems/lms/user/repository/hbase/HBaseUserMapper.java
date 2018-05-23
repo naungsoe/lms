@@ -5,7 +5,6 @@ import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.group.repository.hbase.HBaseGroupRefsMapper;
 import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.school.repository.entity.Preferences;
-import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.hbase.HBaseAuditableMapper;
 import com.hsystems.lms.school.repository.hbase.HBasePreferencesMapper;
 import com.hsystems.lms.school.repository.hbase.HBaseSchoolRefMapper;
@@ -18,7 +17,6 @@ import org.apache.hadoop.hbase.util.Bytes;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Created by naungsoe on 12/10/16.
@@ -72,18 +70,13 @@ public final class HBaseUserMapper
         .mfaEnabled(mfaEnabled);
 
     HBaseSchoolRefMapper schoolRefMapper = new HBaseSchoolRefMapper();
-    Optional<School> schoolOptional = schoolRefMapper.from(source);
-
-    if (schoolOptional.isPresent()) {
-      builder.school(schoolOptional.get());
-    }
+    builder.school(schoolRefMapper.from(source));
 
     HBaseGroupRefsMapper groupRefsMapper = new HBaseGroupRefsMapper();
     builder.groups(groupRefsMapper.from(source));
 
-    SchoolUser user = builder.build();
     HBaseAuditableMapper<AppUser> auditableMapper
-        = new HBaseAuditableMapper<>(user);
+        = new HBaseAuditableMapper<>(builder.build());
     return auditableMapper.from(source);
   }
 }

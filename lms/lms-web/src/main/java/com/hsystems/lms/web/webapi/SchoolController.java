@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.SchoolService;
-import com.hsystems.lms.service.model.SchoolModel;
+import com.hsystems.lms.school.service.SchoolService;
+import com.hsystems.lms.school.service.model.SchoolModel;
 
 import java.io.IOException;
 import java.util.Optional;

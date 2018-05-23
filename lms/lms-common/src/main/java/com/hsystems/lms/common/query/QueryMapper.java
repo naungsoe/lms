@@ -96,8 +96,9 @@ public final class QueryMapper {
       String[] fields = matcher.group(1).split(",");
       String value = matcher.group(2);
 
-      Arrays.asList(fields).forEach(
-          field -> addLikeCriterion(criteria, field, value));
+      for (String field : fields) {
+        addLikeCriterion(criteria, field, value);
+      }
     }
   }
 

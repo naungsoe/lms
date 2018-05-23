@@ -1,13 +1,10 @@
 package com.hsystems.lms.web.webapi.indexing;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.AppPermission;
-import com.hsystems.lms.service.indexing.LevelIndexService;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.annotation.Requires;
+import com.hsystems.lms.operation.service.LevelIndexService;
+import com.hsystems.lms.operation.service.OperationPermission;
 
 import java.io.IOException;
 
@@ -22,37 +19,30 @@ import javax.ws.rs.core.Response;
 @Path("/index/levels")
 public class LevelIndexController {
 
-  private final Provider<Principal> principalProvider;
-
   private final LevelIndexService levelIndexService;
 
   @Inject
-  LevelIndexController(
-      Provider<Principal> principalProvider,
-      LevelIndexService levelIndexService) {
-
-    this.principalProvider = principalProvider;
+  LevelIndexController(LevelIndexService levelIndexService) {
     this.levelIndexService = levelIndexService;
   }
 
   @POST
-  @Requires(AppPermission.ADMINISTRATION)
+  @Requires(OperationPermission.INDEX_LEVEL)
   public Response indexAll()
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
-    String schoolId = userModel.getSchool().getId();
-    levelIndexService.indexAllBy(schoolId);
+    levelIndexService.indexAll();
     return Response.ok().build();
   }
 
   @POST
   @Path("/{id}")
-  @Requires(AppPermission.ADMINISTRATION)
-  public Response index(@PathParam("id") String id)
+  @Requires(OperationPermission.INDEX_LEVEL)
+  public Response index(
+      @PathParam("id") String id)
       throws IOException {
 
-    levelIndexService.indexBy(id);
+    levelIndexService.index(id);
     return Response.ok().build();
   }
 }

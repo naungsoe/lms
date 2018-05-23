@@ -14,12 +14,11 @@ public final class SolrQuestionResourceDocMapper
     implements Mapper<Auditable<QuestionResource>, SolrInputDocument> {
 
   private static final String ID_FIELD = "id";
-  private static final String TYPE_NAME_FIELD = "typeName";
-  private static final String NAME_FIELD = "name";
-  private static final String PERMISSIONS_FIELD = "permissions";
+
+  private final SolrQuestionDocMapperFactory mapperFactory;
 
   public SolrQuestionResourceDocMapper() {
-
+    this.mapperFactory = new SolrQuestionDocMapperFactory();
   }
 
   @Override
@@ -28,29 +27,18 @@ public final class SolrQuestionResourceDocMapper
     QuestionResource resource = source.getEntity();
     document.addField(ID_FIELD, resource.getId());
 
-    String typeName = QuestionResource.class.getSimpleName();
-    document.addField(TYPE_NAME_FIELD, typeName);
-
-    String parentId = resource.getId();
     Question question = resource.getQuestion();
-    SolrQuestionDocMapper questionDocMapper
-        = new SolrQuestionDocMapper(parentId);
-    SolrInputDocument questionDocument
-        = questionDocMapper.from(question);
-    document.addChildDocument(questionDocument);
+    SolrQuestionDocMapper<Question> questionDocMapper
+        = mapperFactory.create(question, document);
+    document = questionDocMapper.from(question);
 
     School school = resource.getSchool();
-
-    if (school != null) {
-      SolrSchoolRefDocMapper schoolRefDocMapper
-          = new SolrSchoolRefDocMapper(parentId);
-      SolrInputDocument schoolDocument
-          = schoolRefDocMapper.from(school);
-      document.addChildDocument(schoolDocument);
-    }
+    SolrSchoolRefDocMapper schoolRefDocMapper
+        = new SolrSchoolRefDocMapper(document);
+    document = schoolRefDocMapper.from(school);
 
     SolrAuditableDocMapper<QuestionResource> auditableDocMapper
-        = new SolrAuditableDocMapper<>(document, parentId);
+        = new SolrAuditableDocMapper<>(document);
     return auditableDocMapper.from(source);
   }
 }

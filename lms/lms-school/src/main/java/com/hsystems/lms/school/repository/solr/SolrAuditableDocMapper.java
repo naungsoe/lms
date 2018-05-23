@@ -1,59 +1,47 @@
 package com.hsystems.lms.school.repository.solr;
 
+import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Entity;
 import com.hsystems.lms.entity.User;
-import com.hsystems.lms.common.mapper.Mapper;
 
 import org.apache.solr.common.SolrInputDocument;
-
-import java.time.LocalDateTime;
 
 public final class SolrAuditableDocMapper<T extends Entity>
     implements Mapper<Auditable<T>, SolrInputDocument> {
 
-  private static final String CREATED_BY_FIELD = "createdBy";
+  private static final String CREATED_BY_ID_FIELD = "createdBy.id";
+  private static final String CREATED_BY_FIRST_NAME_FIELD = "createdBy.firstName";
+  private static final String CREATED_BY_LAST_NAME_FIELD = "createdBy.lastName";
   private static final String CREATED_ON_FIELD = "createdOn";
-  private static final String MODIFIED_BY_FIELD = "modifiedBy";
+  private static final String MODIFIED_BY_ID_FIELD = "modifiedBy.id";
+  private static final String MODIFIED_BY_FIRST_NAME_FIELD = "modifiedBy.firstName";
+  private static final String MODIFIED_BY_LAST_NAME_FIELD = "modifiedBy.lastName";
   private static final String MODIFIED_ON_FIELD = "modifiedOn";
 
-  private final SolrInputDocument entityDocument;
+  private final SolrInputDocument document;
 
-  private final String parentId;
-
-  public SolrAuditableDocMapper(
-      SolrInputDocument entityDocument,
-      String parentId) {
-
-    this.entityDocument = entityDocument;
-    this.parentId = parentId;
+  public SolrAuditableDocMapper(SolrInputDocument document) {
+    this.document = document;
   }
 
   @Override
   public SolrInputDocument from(Auditable<T> source) {
-    String parentId = source.getEntity().getId();
     User createdBy = source.getCreatedBy();
-    LocalDateTime createdOn = source.getCreatedOn();
-
-    if ((createdBy != null) && (createdOn != null)) {
-      SolrUserRefDocMapper userRefDocMapper
-          = new SolrUserRefDocMapper(parentId, CREATED_BY_FIELD);
-      SolrInputDocument createdByDocument = userRefDocMapper.from(createdBy);
-      entityDocument.addChildDocument(createdByDocument);
-      entityDocument.addField(CREATED_ON_FIELD, createdOn);
-    }
+    document.addField(CREATED_BY_ID_FIELD, createdBy.getId());
+    document.addField(CREATED_BY_FIRST_NAME_FIELD, createdBy.getFirstName());
+    document.addField(CREATED_BY_LAST_NAME_FIELD, createdBy.getLastName());
+    document.addField(CREATED_ON_FIELD, source.getCreatedOn());
 
     User modifiedBy = source.getModifiedBy();
-    LocalDateTime modifiedOn = source.getModifiedOn();
 
     if (modifiedBy != null) {
-      SolrUserRefDocMapper userRefDocMapper
-          = new SolrUserRefDocMapper(parentId, MODIFIED_BY_FIELD);
-      SolrInputDocument modifiedByDocument = userRefDocMapper.from(modifiedBy);
-      entityDocument.addChildDocument(modifiedByDocument);
-      entityDocument.addField(MODIFIED_ON_FIELD, modifiedOn);
+      document.addField(MODIFIED_BY_ID_FIELD, createdBy.getId());
+      document.addField(MODIFIED_BY_FIRST_NAME_FIELD, createdBy.getFirstName());
+      document.addField(MODIFIED_BY_LAST_NAME_FIELD, createdBy.getLastName());
+      document.addField(MODIFIED_ON_FIELD, source.getCreatedOn());
     }
 
-    return entityDocument;
+    return document;
   }
 }

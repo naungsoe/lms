@@ -29,9 +29,7 @@ import java.util.Optional;
 public final class SolrGroupRepository
     implements Repository<Auditable<Group>> {
 
-  private static final String USER_COLLECTION = "lms.users";
-
-  private static final String TYPE_NAME_FIELD = "typeName";
+  private static final String GROUP_COLLECTION = "lms.groups";
 
   private final SolrClient solrClient;
 
@@ -44,9 +42,7 @@ public final class SolrGroupRepository
   @Inject
   SolrGroupRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = Group.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
     this.groupMapper = new SolrGroupMapper();
     this.groupDocMapper = new SolrGroupDocMapper();
   }
@@ -60,10 +56,10 @@ public final class SolrGroupRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<Group>> users = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<Group> user = groupMapper.from(document);
-      users.add(user);
-    });
+
+    for (SolrDocument document : documentList) {
+      users.add(groupMapper.from(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, users);
   }
@@ -71,11 +67,8 @@ public final class SolrGroupRepository
   private QueryResponse executeQuery(Query query)
       throws IOException {
 
-    String typeName = Group.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
-
     SolrQuery solrQuery = queryMapper.from(query);
-    return solrClient.query(solrQuery, USER_COLLECTION);
+    return solrClient.query(solrQuery, GROUP_COLLECTION);
   }
 
   @Override
@@ -93,8 +86,7 @@ public final class SolrGroupRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<Group> user = groupMapper.from(document);
-    return Optional.of(user);
+    return Optional.of(groupMapper.from(document));
   }
 
   public void addAll(List<Auditable<Group>> entities)
@@ -103,11 +95,10 @@ public final class SolrGroupRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<Group> entity : entities) {
-      SolrInputDocument document = groupDocMapper.from(entity);
-      documents.add(document);
+      documents.add(groupDocMapper.from(entity));
     }
 
-    solrClient.saveAll(documents, USER_COLLECTION);
+    solrClient.saveAll(documents, GROUP_COLLECTION);
   }
 
   @Override
@@ -115,7 +106,7 @@ public final class SolrGroupRepository
       throws IOException {
 
     SolrInputDocument document = groupDocMapper.from(entity);
-    solrClient.save(document, USER_COLLECTION);
+    solrClient.save(document, GROUP_COLLECTION);
   }
 
   @Override
@@ -123,7 +114,7 @@ public final class SolrGroupRepository
       throws IOException {
 
     SolrInputDocument document = groupDocMapper.from(entity);
-    solrClient.save(document, USER_COLLECTION);
+    solrClient.save(document, GROUP_COLLECTION);
   }
 
   @Override
@@ -131,6 +122,6 @@ public final class SolrGroupRepository
       throws IOException {
 
     String id = entity.getEntity().getId();
-    solrClient.deleteBy(id, USER_COLLECTION);
+    solrClient.deleteBy(id, GROUP_COLLECTION);
   }
 }

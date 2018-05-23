@@ -1,6 +1,6 @@
 package com.hsystems.lms.component;
 
-    import com.hsystems.lms.entity.Entity;
+import com.hsystems.lms.entity.Entity;
 
 /**
  * Created by naungsoe on 6/1/17.

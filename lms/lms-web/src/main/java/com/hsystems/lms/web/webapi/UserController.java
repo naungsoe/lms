@@ -8,10 +8,9 @@ import com.hsystems.lms.common.query.QueryMapper;
 import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.Principal;
 import com.hsystems.lms.common.security.annotation.Requires;
-import com.hsystems.lms.service.AppPermission;
-import com.hsystems.lms.service.UserService;
-import com.hsystems.lms.service.model.UserModel;
 import com.hsystems.lms.user.service.UserPermission;
+import com.hsystems.lms.user.service.UserService;
+import com.hsystems.lms.user.service.model.AppUserModel;
 
 import java.io.IOException;
 import java.net.URI;
@@ -53,33 +52,30 @@ public class UserController extends AbstractController {
       @Context UriInfo uriInfo)
       throws IOException {
 
-    Principal principal = principalProvider.get();
     URI requestUri = uriInfo.getRequestUri();
     String queryString = requestUri.getQuery();
     QueryMapper queryMapper = new QueryMapper();
-    Query query = queryMapper.map(queryString);
-    QueryResult<UserModel> queryResult
-        = userService.findAllBy(query, principal);
+    Query query = queryMapper.from(queryString);
+    QueryResult<AppUserModel> queryResult
+        = userService.findAllBy(query);
     return Response.ok(queryResult).build();
   }
 
   @GET
   @Path("/{id}")
   @Produces(MediaType.APPLICATION_JSON)
-  @Requires(AppPermission.VIEW_QUESTION)
+  @Requires(UserPermission.VIEW_USER)
   public Response findBy(
       @PathParam("id") String id)
       throws IOException {
 
-    Principal principal = principalProvider.get();
-    Optional<UserModel> userModelOptional
-        = userService.findBy(id, principal);
+    Optional<AppUserModel> userOptional = userService.findBy(id);
 
-    if (!userModelOptional.isPresent()) {
+    if (!userOptional.isPresent()) {
       throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    UserModel userModel = userModelOptional.get();
+    AppUserModel userModel = userOptional.get();
     return Response.ok(userModel).build();
   }
 }

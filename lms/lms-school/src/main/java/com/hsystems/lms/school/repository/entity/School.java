@@ -13,7 +13,7 @@ import java.util.List;
  */
 public final class School implements Entity, Serializable {
 
-  private static final long serialVersionUID = 2898160674045833416L;
+  private static final long serialVersionUID = -2374952687893081235L;
 
   private String id;
 

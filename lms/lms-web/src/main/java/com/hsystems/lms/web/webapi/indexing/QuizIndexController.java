@@ -1,13 +1,10 @@
 package com.hsystems.lms.web.webapi.indexing;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.AppPermission;
-import com.hsystems.lms.service.indexing.QuizIndexService;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.annotation.Requires;
+import com.hsystems.lms.operation.service.OperationPermission;
+import com.hsystems.lms.operation.service.QuizIndexService;
 
 import java.io.IOException;
 
@@ -22,37 +19,30 @@ import javax.ws.rs.core.Response;
 @Path("/index/quizzes")
 public class QuizIndexController {
 
-  private final Provider<Principal> principalProvider;
-
   private final QuizIndexService quizIndexService;
 
   @Inject
-  QuizIndexController(
-      Provider<Principal> principalProvider,
-      QuizIndexService quizIndexService) {
-
-    this.principalProvider = principalProvider;
+  QuizIndexController(QuizIndexService quizIndexService) {
     this.quizIndexService = quizIndexService;
   }
 
   @POST
-  @Requires(AppPermission.ADMINISTRATION)
+  @Requires(OperationPermission.INDEX_QUIZ)
   public Response indexAll()
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
-    String schoolId = userModel.getSchool().getId();
-    quizIndexService.indexAllBy(schoolId);
+    quizIndexService.indexAll();
     return Response.ok().build();
   }
 
   @POST
   @Path("/{id}")
-  @Requires(AppPermission.ADMINISTRATION)
-  public Response index(@PathParam("id") String id)
+  @Requires(OperationPermission.INDEX_QUIZ)
+  public Response index(
+      @PathParam("id") String id)
       throws IOException {
 
-    quizIndexService.indexBy(id);
+    quizIndexService.index(id);
     return Response.ok().build();
   }
 }

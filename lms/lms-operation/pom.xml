@@ -69,6 +69,16 @@
       <version>${project.version}</version>
     </dependency>
     <dependency>
+      <groupId>com.hsystems.lms.lesson</groupId>
+      <artifactId>lms-lesson</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.hsystems.lms.course</groupId>
+      <artifactId>lms-course</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
       <groupId>org.apache.logging.log4j</groupId>
       <artifactId>log4j-api</artifactId>
     </dependency>

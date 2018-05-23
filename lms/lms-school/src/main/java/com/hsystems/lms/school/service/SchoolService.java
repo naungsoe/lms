@@ -1,7 +1,6 @@
 package com.hsystems.lms.school.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.logging.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -9,8 +8,9 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.school.repository.SchoolRepository;
 import com.hsystems.lms.school.repository.entity.School;
+import com.hsystems.lms.school.repository.hbase.HBaseSchoolRepository;
+import com.hsystems.lms.school.repository.solr.SolrSchoolRepository;
 import com.hsystems.lms.school.service.mapper.SchoolModelMapper;
 import com.hsystems.lms.school.service.model.SchoolModel;
 
@@ -19,26 +19,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public final class SchoolService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final HBaseSchoolRepository hbaseSchoolRepository;
 
-  private final SchoolRepository schoolRepository;
+  private final SolrSchoolRepository solrSchoolRepository;
 
   private final SchoolModelMapper schoolMapper;
 
   @Inject
   SchoolService(
-      Provider<Properties> propertiesProvider,
-      SchoolRepository schoolRepository) {
+      HBaseSchoolRepository hbaseSchoolRepository,
+      SolrSchoolRepository solrSchoolRepository) {
 
-    this.propertiesProvider = propertiesProvider;
-    this.schoolRepository = schoolRepository;
+    this.hbaseSchoolRepository = hbaseSchoolRepository;
+    this.solrSchoolRepository = solrSchoolRepository;
     this.schoolMapper = new SchoolModelMapper();
   }
 
@@ -48,7 +47,7 @@ public final class SchoolService {
       throws IOException {
 
     QueryResult<Auditable<School>> queryResult
-        = schoolRepository.findAllBy(query);
+        = solrSchoolRepository.findAllBy(query);
     long elapsedTime = queryResult.getElapsedTime();
     long start = queryResult.getStart();
     long numFound = queryResult.getNumFound();
@@ -76,7 +75,7 @@ public final class SchoolService {
       throws IOException {
 
     Optional<Auditable<School>> schoolOptional
-        = schoolRepository.findBy(id);
+        = hbaseSchoolRepository.findBy(id);
 
     if (schoolOptional.isPresent()) {
       Auditable<School> school = schoolOptional.get();

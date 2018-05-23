@@ -1,55 +1,39 @@
 package com.hsystems.lms.question.repository.solr;
 
 import com.hsystems.lms.common.mapper.Mapper;
-import com.hsystems.lms.common.util.CommonUtils;
 import com.hsystems.lms.question.repository.entity.ChoiceOption;
 
 import org.apache.solr.common.SolrInputDocument;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public final class SolrChoiceOptionDocsMapper
-    implements Mapper<List<ChoiceOption>, List<SolrInputDocument>> {
+    implements Mapper<List<ChoiceOption>, SolrInputDocument> {
 
-  private static final String ID_FIELD = "id";
-  private static final String ENTITY_ID_FIELD = "entityId";
-  private static final String PARENT_ID_FIELD = "parentId";
-  private static final String FIELD_NAME_FIELD = "fieldName";
-  private static final String BODY_FIELD = "body";
-  private static final String FEEDBACK_FIELD = "feedback";
-  private static final String CORRECT_FIELD = "correct";
-  private static final String ORDER_FIELD = "order";
+  private static final String ID_FIELD_FORMAT = "options.%s.id";
+  private static final String BODY_FIELD_FORMAT = "options.%s.body";
+  private static final String CORRECT_FIELD_FORMAT = "options.%s.correct";
 
-  private static final String OPTIONS_FIELD_FORMAT = "%s.options";
+  private final SolrInputDocument document;
 
-  private final String parentId;
-
-  private final String fieldName;
-
-  public SolrChoiceOptionDocsMapper(String parentId, String fieldName) {
-    this.parentId = parentId;
-    this.fieldName = fieldName;
+  public SolrChoiceOptionDocsMapper(SolrInputDocument document) {
+    this.document = document;
   }
 
   @Override
-  public List<SolrInputDocument> from(List<ChoiceOption> source) {
-    List<SolrInputDocument> documents = new ArrayList<>();
-    String optionFieldName = String.format(OPTIONS_FIELD_FORMAT, fieldName);
+  public SolrInputDocument from(List<ChoiceOption> source) {
+    for (int index = 0; index < source.size(); index++) {
+      ChoiceOption option = source.get(0);
+      String idField = String.format(ID_FIELD_FORMAT, index);
+      document.addField(idField, option.getId());
 
-    for (ChoiceOption option : source) {
-      SolrInputDocument document = new SolrInputDocument();
-      document.addField(ID_FIELD, CommonUtils.genUniqueKey());
-      document.addField(ENTITY_ID_FIELD, option.getId());
-      document.addField(PARENT_ID_FIELD, parentId);
-      document.addField(FIELD_NAME_FIELD, optionFieldName);
-      document.addField(BODY_FIELD, option.getBody());
-      document.addField(FEEDBACK_FIELD, option.getFeedback());
-      document.addField(CORRECT_FIELD, option.isCorrect());
-      document.addField(ORDER_FIELD, option.getOrder());
-      documents.add(document);
+      String nameField = String.format(BODY_FIELD_FORMAT, index);
+      document.addField(nameField, option.getBody());
+
+      String correctField = String.format(CORRECT_FIELD_FORMAT, index);
+      document.addField(correctField, option.isCorrect());
     }
 
-    return documents;
+    return document;
   }
 }

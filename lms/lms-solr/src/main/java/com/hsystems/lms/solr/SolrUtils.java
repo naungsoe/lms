@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.function.Predicate;
 
 public final class SolrUtils {
 
@@ -17,15 +16,10 @@ public final class SolrUtils {
 
   private static final String VALUE_SEPARATOR = ",";
 
-  public static Predicate<SolrDocument> isChildDocument(
-      String parentId, String fieldName) {
+  public static boolean containsField(
+      SolrDocument document, String fieldName) {
 
-    return document  -> {
-      Object parentIdValue = document.getFieldValue(PARENT_ID_FIELD);
-      Object fieldNameValue = document.getFieldValue(FIELD_NAME_FIELD);
-      return parentId.equals(parentIdValue.toString())
-          && fieldName.equals(fieldNameValue.toString());
-    };
+    return document.containsKey(fieldName);
   }
 
   public static boolean getBoolean(

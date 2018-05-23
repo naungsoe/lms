@@ -13,6 +13,7 @@
   <groupId>com.hsystems.lms.quiz</groupId>
   <artifactId>lms-quiz</artifactId>
   <version>1.0-SNAPSHOT</version>
+  <packaging>jar</packaging>
   <name>lms-quiz</name>
   <url>http://www.example.com</url>
 

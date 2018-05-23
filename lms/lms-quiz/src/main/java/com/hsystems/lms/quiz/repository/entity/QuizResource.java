@@ -10,7 +10,6 @@ import com.hsystems.lms.subject.repository.entity.Subject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -136,7 +135,9 @@ public final class QuizResource implements Resource, Entity, Serializable {
       this.levels = new ArrayList<>();
     }
 
-    Arrays.stream(levels).forEach(this.levels::add);
+    for (Level level : levels) {
+      this.levels.add(level);
+    }
   }
 
   public Enumeration<Subject> getSubjects() {
@@ -150,7 +151,9 @@ public final class QuizResource implements Resource, Entity, Serializable {
       this.subjects = new ArrayList<>();
     }
 
-    Arrays.stream(subjects).forEach(this.subjects::add);
+    for (Subject subject : subjects) {
+      this.subjects.add(subject);
+    }
   }
 
   public Enumeration<String> getKeywords() {
@@ -164,7 +167,9 @@ public final class QuizResource implements Resource, Entity, Serializable {
       this.keywords = new ArrayList<>();
     }
 
-    Arrays.stream(keywords).forEach(this.keywords::add);
+    for (String keyword : keywords) {
+      this.keywords.add(keyword);
+    }
   }
 
   @Override
@@ -180,6 +185,8 @@ public final class QuizResource implements Resource, Entity, Serializable {
       this.permissions = new ArrayList<>();
     }
 
-    Arrays.stream(permissions).forEach(this.permissions::add);
+    for (Permission permission : permissions) {
+      this.permissions.add(permission);
+    }
   }
 }

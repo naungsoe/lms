@@ -3,13 +3,13 @@ package com.hsystems.lms.question.repository.hbase;
 import com.google.inject.Inject;
 
 import com.hsystems.lms.component.Component;
-import com.hsystems.lms.component.ComponentUtils;
 import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.component.repository.hbase.HBaseComponentRepository;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
 import com.hsystems.lms.hbase.HBaseClient;
 import com.hsystems.lms.hbase.HBaseScanFactory;
+import com.hsystems.lms.question.repository.QuestionComponentUtils;
 import com.hsystems.lms.question.repository.entity.QuestionResource;
 
 import org.apache.hadoop.hbase.client.Get;
@@ -73,7 +73,7 @@ public final class HBaseQuestionRepository
     List<Nested<Component>> components
         = componentRepository.findAllBy(id);
     List<Component> organizedComponents
-        = ComponentUtils.organize(id, components);
+        = QuestionComponentUtils.organize(id, components);
 
     HBaseQuestionResourceMapper resourceMapper
         = new HBaseQuestionResourceMapper(organizedComponents);

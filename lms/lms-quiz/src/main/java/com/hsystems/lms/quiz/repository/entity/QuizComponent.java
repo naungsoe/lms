@@ -9,13 +9,11 @@ import java.io.Serializable;
  */
 public final class QuizComponent implements Component, Serializable {
 
-  private static final long serialVersionUID = -2897687764632967500L;
+  private static final long serialVersionUID = 3939443224016526155L;
 
   private String id;
 
   private Quiz quiz;
-
-  private int order;
 
   QuizComponent() {
 
@@ -23,12 +21,10 @@ public final class QuizComponent implements Component, Serializable {
 
   public QuizComponent(
       String id,
-      Quiz quiz,
-      int order) {
+      Quiz quiz) {
 
     this.id = id;
     this.quiz = quiz;
-    this.order = order;
   }
 
   @Override
@@ -38,10 +34,5 @@ public final class QuizComponent implements Component, Serializable {
 
   public Quiz getQuiz() {
     return quiz;
-  }
-
-  @Override
-  public int getOrder() {
-    return order;
   }
 }

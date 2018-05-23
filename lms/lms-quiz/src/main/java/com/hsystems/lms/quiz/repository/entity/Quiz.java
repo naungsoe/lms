@@ -5,7 +5,6 @@ import com.hsystems.lms.component.Component;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -58,11 +57,12 @@ public final class Quiz implements Serializable {
 
     QuizCompositionSpecification compositionSpecification
         = new QuizCompositionSpecification();
-    Arrays.stream(components).forEach(component -> {
+
+    for (Component component : components) {
       if (compositionSpecification.isSatisfiedBy(component)) {
         this.components.add(component);
       }
-    });
+    }
   }
 
   public void removeComponent(Component component) {

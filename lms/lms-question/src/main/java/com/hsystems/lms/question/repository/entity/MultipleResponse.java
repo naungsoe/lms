@@ -4,7 +4,6 @@ import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -46,7 +45,9 @@ public final class MultipleResponse
       this.options = new ArrayList<>();
     }
 
-    Arrays.stream(options).forEach(this.options::add);
+    for (ChoiceOption option : options) {
+      this.options.add(option);
+    }
   }
 
   public void removeOption(ChoiceOption option) {

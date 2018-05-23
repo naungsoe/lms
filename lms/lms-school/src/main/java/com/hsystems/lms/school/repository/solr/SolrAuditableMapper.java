@@ -9,60 +9,88 @@ import com.hsystems.lms.solr.SolrUtils;
 import org.apache.solr.common.SolrDocument;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.function.Predicate;
 
 public final class SolrAuditableMapper<T extends Entity>
     implements Mapper<SolrDocument, Auditable<T>> {
 
-  private static final String CREATED_BY_FIELD = "createdBy";
   private static final String CREATED_ON_FIELD = "createdOn";
-  private static final String MODIFIED_BY_FIELD = "modifiedBy";
   private static final String MODIFIED_ON_FIELD = "modifiedOn";
 
   private final T entity;
 
-  private final String parentId;
+  private final SolrCreatedByMapper createdByMapper;
 
-  private final SolrUserRefMapper userRefMapper;
+  private final SolrModifiedByMapper modifiedByMapper;
 
-  public SolrAuditableMapper(T entity, String parentId) {
+  public SolrAuditableMapper(T entity) {
     this.entity = entity;
-    this.parentId = parentId;
-    this.userRefMapper = new SolrUserRefMapper();
+    this.createdByMapper = new SolrCreatedByMapper();
+    this.modifiedByMapper = new SolrModifiedByMapper();
   }
 
   @Override
   public Auditable<T> from(SolrDocument source) {
     Auditable.Builder<T> builder = new Auditable.Builder<>(entity);
-    List<SolrDocument> childDocuments = source.getChildDocuments();
-    Predicate<SolrDocument> createdByDocument
-        = SolrUtils.isChildDocument(parentId, CREATED_BY_FIELD);
-    Optional<SolrDocument> documentOptional = childDocuments.stream()
-        .filter(createdByDocument).findFirst();
+    User createdBy = createdByMapper.from(source);
+    LocalDateTime createdOn = SolrUtils.getDateTime(source, CREATED_ON_FIELD);
+    builder.createdBy(createdBy).createdOn(createdOn);
 
-    if (documentOptional.isPresent()) {
-      SolrDocument document = documentOptional.get();
-      User createdBy = userRefMapper.from(document);
-      LocalDateTime createdOn
-          = SolrUtils.getDateTime(source, CREATED_ON_FIELD);
-      builder.createdBy(createdBy).createdOn(createdOn);
-    }
-
-    Predicate<SolrDocument> modifiedByDocument
-        = SolrUtils.isChildDocument(parentId, MODIFIED_BY_FIELD);
-    documentOptional = childDocuments.stream()
-        .filter(modifiedByDocument).findFirst();
-
-    if (documentOptional.isPresent()) {
-      SolrDocument document = documentOptional.get();
-      User modifiedBy = userRefMapper.from(document);
+    if (SolrUtils.containsField(source, MODIFIED_ON_FIELD)) {
+      User modifiedBy = modifiedByMapper.from(source);
       LocalDateTime modifiedOn
           = SolrUtils.getDateTime(source, MODIFIED_ON_FIELD);
       builder.modifiedBy(modifiedBy).modifiedOn(modifiedOn);
     }
 
     return builder.build();
+  }
+
+  public User createUser(String id, String firstName, String lastName) {
+    return new User() {
+      @Override
+      public String getId() {
+        return id;
+      }
+
+      @Override
+      public String getFirstName() {
+        return firstName;
+      }
+
+      @Override
+      public String getLastName() {
+        return lastName;
+      }
+    };
+  }
+
+  class SolrCreatedByMapper implements Mapper<SolrDocument, User> {
+
+    private static final String ID_FIELD = "createdBy.id";
+    private static final String FIRST_NAME_FIELD = "createdBy.firstName";
+    private static final String LAST_NAME_FIELD = "createdBy.lastName";
+
+    @Override
+    public User from(SolrDocument source) {
+      String id = SolrUtils.getString(source, ID_FIELD);
+      String firstName = SolrUtils.getString(source, FIRST_NAME_FIELD);
+      String lastName = SolrUtils.getString(source, LAST_NAME_FIELD);
+      return createUser(id, firstName, lastName);
+    }
+  }
+
+  class SolrModifiedByMapper implements Mapper<SolrDocument, User> {
+
+    static final String ID_FIELD = "modifiedBy.id";
+    static final String FIRST_NAME_FIELD = "modifiedBy.firstName";
+    static final String LAST_NAME_FIELD = "modifiedBy.lastName";
+
+    @Override
+    public User from(SolrDocument source) {
+      String id = SolrUtils.getString(source, ID_FIELD);
+      String firstName = SolrUtils.getString(source, FIRST_NAME_FIELD);
+      String lastName = SolrUtils.getString(source, LAST_NAME_FIELD);
+      return createUser(id, firstName, lastName);
+    }
   }
 }

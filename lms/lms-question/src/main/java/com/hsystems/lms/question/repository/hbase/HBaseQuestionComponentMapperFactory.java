@@ -16,6 +16,10 @@ public final class HBaseQuestionComponentMapperFactory
   private static final byte[] COMPONENT_TYPE_QUALIFIER
       = Bytes.toBytes("component_type");
 
+  public HBaseQuestionComponentMapperFactory() {
+
+  }
+
   @Override
   public HBaseComponentMapper create(Result result) {
     switch (HBaseUtils.getString(result, COMPONENT_TYPE_QUALIFIER)) {

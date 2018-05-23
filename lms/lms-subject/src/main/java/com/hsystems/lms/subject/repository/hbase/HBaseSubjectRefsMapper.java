@@ -31,11 +31,13 @@ public final class HBaseSubjectRefsMapper
 
     List<Subject> subjects = new ArrayList<>();
     List<String> subjectIds = HBaseUtils.getStrings(source, SUBJECTS_QUALIFIER);
-    subjectIds.forEach(subjectId -> {
-      String name = HBaseUtils.getString(source, Bytes.toBytes(subjectId));
+
+    for (String subjectId : subjectIds) {
+      byte[] columnQualifier = Bytes.toBytes(subjectId);
+      String name = HBaseUtils.getString(source, columnQualifier);
       Subject subject = new Subject.Builder(subjectId, name).build();
       subjects.add(subject);
-    });
+    }
 
     return subjects;
   }

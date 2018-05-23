@@ -3,10 +3,7 @@ package com.hsystems.lms.user.repository.solr;
 import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.group.repository.solr.SolrGroupRefsMapper;
-import com.hsystems.lms.school.repository.entity.Preferences;
-import com.hsystems.lms.school.repository.entity.School;
 import com.hsystems.lms.school.repository.solr.SolrAuditableMapper;
-import com.hsystems.lms.school.repository.solr.SolrPreferencesMapper;
 import com.hsystems.lms.school.repository.solr.SolrSchoolRefMapper;
 import com.hsystems.lms.solr.SolrUtils;
 import com.hsystems.lms.user.repository.entity.AppUser;
@@ -16,8 +13,6 @@ import com.hsystems.lms.user.repository.entity.SchoolUser;
 import org.apache.solr.common.SolrDocument;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 public final class SolrUserMapper
     implements Mapper<SolrDocument, Auditable<AppUser>> {
@@ -29,16 +24,10 @@ public final class SolrUserMapper
   private static final String GENDER_FIELD = "gender";
   private static final String MOBILE_FIELD = "mobile";
   private static final String EMAIL_FIELD = "email";
-  private static final String PERMISSIONS_FIELD = "permissions";
-  private static final String MFA_ENABLED_FIELD = "mfaEnabled";
-
-  private final SolrPreferencesMapper preferencesMapper;
-
-  private final SolrCredentialsMapper credentialsMapper;
+  private static final String ACCOUNT_FIELD = "account";
 
   public SolrUserMapper() {
-    this.preferencesMapper = new SolrPreferencesMapper();
-    this.credentialsMapper = new SolrCredentialsMapper();
+
   }
 
   @Override
@@ -51,35 +40,24 @@ public final class SolrUserMapper
     String gender = SolrUtils.getString(source, GENDER_FIELD);
     String mobile = SolrUtils.getString(source, MOBILE_FIELD);
     String email = SolrUtils.getString(source, EMAIL_FIELD);
-    List<String> permissions
-        = SolrUtils.getStrings(source, PERMISSIONS_FIELD);
-    Preferences preferences = preferencesMapper.from(source);
-    Credentials credentials = credentialsMapper.from(source);
-    boolean mfaEnabled = SolrUtils.getBoolean(source, MFA_ENABLED_FIELD);
+    String account = SolrUtils.getString(source, ACCOUNT_FIELD);
+    Credentials credentials = new Credentials(account, "", "");
     SchoolUser.Builder builder
         = new SchoolUser.Builder(id, firstName, lastName)
         .dateOfBirth(dateOfBirth)
         .gender(gender)
         .mobile(mobile)
         .email(email)
-        .permissions(permissions)
-        .preferences(preferences)
-        .credentials(credentials)
-        .mfaEnabled(mfaEnabled);
+        .credentials(credentials);
 
-    SolrSchoolRefMapper schoolRefMapper = new SolrSchoolRefMapper(id);
-    Optional<School> schoolOptional = schoolRefMapper.from(source);
+    SolrSchoolRefMapper schoolRefMapper = new SolrSchoolRefMapper();
+    builder.school(schoolRefMapper.from(source));
 
-    if (schoolOptional.isPresent()) {
-      builder.school(schoolOptional.get());
-    }
-
-    SolrGroupRefsMapper groupRefsMapper = new SolrGroupRefsMapper(id);
+    SolrGroupRefsMapper groupRefsMapper = new SolrGroupRefsMapper();
     builder.groups(groupRefsMapper.from(source));
 
-    SchoolUser user = builder.build();
     SolrAuditableMapper<AppUser> auditableMapper
-        = new SolrAuditableMapper<>(user, id);
+        = new SolrAuditableMapper<>(builder.build());
     return auditableMapper.from(source);
   }
 }

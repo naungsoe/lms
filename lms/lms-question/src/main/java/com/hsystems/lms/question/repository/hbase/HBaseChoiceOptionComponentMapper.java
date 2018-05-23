@@ -2,6 +2,7 @@ package com.hsystems.lms.question.repository.hbase;
 
 import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.component.repository.hbase.HBaseComponentMapper;
+import com.hsystems.lms.component.repository.hbase.HBaseNestedComponentMapper;
 import com.hsystems.lms.question.repository.entity.ChoiceOption;
 
 import org.apache.hadoop.hbase.client.Result;
@@ -21,6 +22,9 @@ public final class HBaseChoiceOptionComponentMapper
   @Override
   public Nested<ChoiceOption> from(Result source) {
     ChoiceOption option = optionMapper.from(source);
-    return new Nested.Builder(option).build();
+
+    HBaseNestedComponentMapper componentMapper
+        = new HBaseNestedComponentMapper(option);
+    return componentMapper.from(source);
   }
 }

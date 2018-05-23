@@ -1,13 +1,10 @@
 package com.hsystems.lms.web.webapi.indexing;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
-import com.hsystems.lms.common.annotation.Requires;
-import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.service.AppPermission;
-import com.hsystems.lms.service.indexing.GroupIndexService;
-import com.hsystems.lms.service.model.UserModel;
+import com.hsystems.lms.common.security.annotation.Requires;
+import com.hsystems.lms.operation.service.GroupIndexService;
+import com.hsystems.lms.operation.service.OperationPermission;
 
 import java.io.IOException;
 
@@ -22,37 +19,30 @@ import javax.ws.rs.core.Response;
 @Path("/index/groups")
 public class GroupIndexController {
 
-  private final Provider<Principal> principalProvider;
-
   private final GroupIndexService groupIndexService;
 
   @Inject
-  GroupIndexController(
-      Provider<Principal> principalProvider,
-      GroupIndexService groupIndexService) {
-
-    this.principalProvider = principalProvider;
+  GroupIndexController(GroupIndexService groupIndexService) {
     this.groupIndexService = groupIndexService;
   }
 
   @POST
-  @Requires(AppPermission.ADMINISTRATION)
+  @Requires(OperationPermission.INDEX_GROUP)
   public Response indexAll()
       throws IOException {
 
-    UserModel userModel = (UserModel) principalProvider.get();
-    String schoolId = userModel.getSchool().getId();
-    groupIndexService.indexAllBy(schoolId);
+    groupIndexService.indexAll();
     return Response.ok().build();
   }
 
   @POST
   @Path("/{id}")
-  @Requires(AppPermission.ADMINISTRATION)
-  public Response index(@PathParam("id") String id)
+  @Requires(OperationPermission.INDEX_GROUP)
+  public Response index(
+      @PathParam("id") String id)
       throws IOException {
 
-    groupIndexService.indexBy(id);
+    groupIndexService.index(id);
     return Response.ok().build();
   }
 }

@@ -2,7 +2,7 @@ package com.hsystems.lms.web;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.service.AuthenticationService;
+import com.hsystems.lms.authentication.service.AuthenticationService;
 
 import java.io.IOException;
 

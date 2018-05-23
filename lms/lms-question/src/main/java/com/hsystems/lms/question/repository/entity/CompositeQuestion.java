@@ -4,7 +4,6 @@ import com.hsystems.lms.common.util.CollectionUtils;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -48,11 +47,12 @@ public final class CompositeQuestion
 
     CompositeQuestionCompositionSpecification compositionSpecification
         = new CompositeQuestionCompositionSpecification();
-    Arrays.stream(components).forEach(component -> {
+
+    for (QuestionComponent component : components) {
       if (compositionSpecification.isSatisfiedBy(component)) {
         this.components.add(component);
       }
-    });
+    }
   }
 
   public void removeComponent(QuestionComponent component) {

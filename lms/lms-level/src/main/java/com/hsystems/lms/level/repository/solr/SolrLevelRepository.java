@@ -31,8 +31,6 @@ public final class SolrLevelRepository
 
   private static final String LEVEL_COLLECTION = "lms.levels";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
   private final SolrClient solrClient;
 
   private final SolrQueryMapper queryMapper;
@@ -44,9 +42,7 @@ public final class SolrLevelRepository
   @Inject
   SolrLevelRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = Level.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
     this.levelMapper = new SolrLevelMapper();
     this.levelDocMapper = new SolrLevelDocMapper();
   }
@@ -60,19 +56,16 @@ public final class SolrLevelRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<Level>> levels = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<Level> level = levelMapper.from(document);
-      levels.add(level);
-    });
+
+    for (SolrDocument document : documentList) {
+      levels.add(levelMapper.from(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, levels);
   }
 
   private QueryResponse executeQuery(Query query)
       throws IOException {
-
-    String typeName = Level.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
 
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, LEVEL_COLLECTION);
@@ -93,8 +86,7 @@ public final class SolrLevelRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<Level> level = levelMapper.from(document);
-    return Optional.of(level);
+    return Optional.of(levelMapper.from(document));
   }
 
   public void addAll(List<Auditable<Level>> entities)
@@ -103,8 +95,7 @@ public final class SolrLevelRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<Level> entity : entities) {
-      SolrInputDocument document = levelDocMapper.from(entity);
-      documents.add(document);
+      documents.add(levelDocMapper.from(entity));
     }
 
     solrClient.saveAll(documents, LEVEL_COLLECTION);

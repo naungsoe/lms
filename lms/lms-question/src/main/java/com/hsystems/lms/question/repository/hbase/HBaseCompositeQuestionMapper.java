@@ -28,8 +28,11 @@ public final class HBaseCompositeQuestionMapper
     String explanation = getExplanation(source);
 
     List<QuestionComponent> questions = new ArrayList<>();
-    components.forEach(component ->
-        questions.add((QuestionComponent) component));
+
+    for (Component component : components) {
+      questions.add((QuestionComponent) component);
+    }
+
     return new CompositeQuestion(body, hint, explanation, questions);
   }
 }

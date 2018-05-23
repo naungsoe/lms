@@ -15,7 +15,6 @@ import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrDocumentList;
-import org.apache.solr.common.SolrInputDocument;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,24 +35,16 @@ public final class SolrComponentRepository
 
   private SolrQueryMapper queryMapper;
 
-  private SolrComponentMapper componentMapper;
-
-  private SolrComponentDocMapper componentDocMapper;
+  private SolrComponentMapperFactory mapperFactory;
 
   @Inject
   SolrComponentRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = Component.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(String.format("*%s", typeName));
+    this.queryMapper = new SolrQueryMapper();
   }
 
-  public void setComponentMapper(SolrComponentMapper componentMapper) {
-    this.componentMapper = componentMapper;
-  }
-
-  public void setComponentDocMapper(SolrComponentDocMapper componentDocMapper) {
-    this.componentDocMapper = componentDocMapper;
+  public void setMapperFactory(SolrComponentMapperFactory mapperFactory) {
+    this.mapperFactory = mapperFactory;
   }
 
   public List<Nested<Component>> findAllBy(String resourceId)
@@ -65,10 +56,12 @@ public final class SolrComponentRepository
     QueryResponse queryResponse = executeQuery(query);
     SolrDocumentList documentList = queryResponse.getResults();
     List<Nested<Component>> components = new ArrayList<>();
-    documentList.forEach(document -> {
-      Nested<Component> component = componentMapper.from(document);
-      components.add(component);
-    });
+
+    for (SolrDocument document : documentList) {
+      SolrComponentMapper<Component> componentMapper
+          = mapperFactory.create(document);
+      components.add(componentMapper.from(document));
+    }
 
     return components;
   }
@@ -95,24 +88,25 @@ public final class SolrComponentRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Nested<Component> component = componentMapper.from(document);
-    return Optional.of(component);
+    SolrComponentMapper<Component> componentMapper
+        = mapperFactory.create(document);
+    return Optional.of(componentMapper.from(document));
   }
 
   @Override
   public void add(Nested<Component> entity)
       throws IOException {
 
-    SolrInputDocument document = componentDocMapper.from(entity);
-    solrClient.save(document, COMPONENT_COLLECTION);
+    //SolrInputDocument document = componentDocMapper.from(entity);
+    //solrClient.save(document, COMPONENT_COLLECTION);
   }
 
   @Override
   public void update(Nested<Component> entity)
       throws IOException {
 
-    SolrInputDocument document = componentDocMapper.from(entity);
-    solrClient.save(document, COMPONENT_COLLECTION);
+    //SolrInputDocument document = componentDocMapper.from(entity);
+    //solrClient.save(document, COMPONENT_COLLECTION);
   }
 
   @Override

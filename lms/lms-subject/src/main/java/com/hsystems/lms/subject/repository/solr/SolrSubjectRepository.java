@@ -31,8 +31,6 @@ public final class SolrSubjectRepository
 
   private static final String SUBJECT_COLLECTION = "lms.subjects";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
   private final SolrClient solrClient;
 
   private final SolrQueryMapper queryMapper;
@@ -44,9 +42,7 @@ public final class SolrSubjectRepository
   @Inject
   SolrSubjectRepository(SolrClient solrClient) {
     this.solrClient = solrClient;
-
-    String typeName = Subject.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
     this.subjectMapper = new SolrSubjectMapper();
     this.subjectDocMapper = new SolrSubjectDocMapper();
   }
@@ -60,19 +56,16 @@ public final class SolrSubjectRepository
     long start = documentList.getStart();
     long numFound = documentList.getNumFound();
     List<Auditable<Subject>> subjects = new ArrayList<>();
-    documentList.forEach(document -> {
-      Auditable<Subject> subject = subjectMapper.from(document);
-      subjects.add(subject);
-    });
+
+    for (SolrDocument document : documentList) {
+      subjects.add(subjectMapper.from(document));
+    }
 
     return new QueryResult<>(elapsedTime, start, numFound, subjects);
   }
 
   private QueryResponse executeQuery(Query query)
       throws IOException {
-
-    String typeName = Subject.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
 
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, SUBJECT_COLLECTION);
@@ -93,8 +86,7 @@ public final class SolrSubjectRepository
     }
 
     SolrDocument document = documentList.get(0);
-    Auditable<Subject> subject = subjectMapper.from(document);
-    return Optional.of(subject);
+    return Optional.of(subjectMapper.from(document));
   }
 
   public void addAll(List<Auditable<Subject>> entities)
@@ -103,8 +95,7 @@ public final class SolrSubjectRepository
     List<SolrInputDocument> documents = new ArrayList<>();
 
     for (Auditable<Subject> entity : entities) {
-      SolrInputDocument document = subjectDocMapper.from(entity);
-      documents.add(document);
+      documents.add(subjectDocMapper.from(entity));
     }
 
     solrClient.saveAll(documents, SUBJECT_COLLECTION);

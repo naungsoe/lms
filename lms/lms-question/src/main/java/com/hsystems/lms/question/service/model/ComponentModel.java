@@ -12,15 +12,5 @@ import java.io.Serializable;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class ComponentModel implements Serializable {
 
-  private static final long serialVersionUID = -3390633991000147158L;
-
-  private int order;
-
-  public int getOrder() {
-    return order;
-  }
-
-  public void setOrder(int order) {
-    this.order = order;
-  }
+  private static final long serialVersionUID = 8613216943200254472L;
 }

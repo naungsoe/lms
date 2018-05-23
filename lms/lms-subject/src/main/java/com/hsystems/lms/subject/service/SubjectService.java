@@ -1,7 +1,6 @@
 package com.hsystems.lms.subject.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.logging.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -9,8 +8,9 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.subject.repository.SubjectRepository;
 import com.hsystems.lms.subject.repository.entity.Subject;
+import com.hsystems.lms.subject.repository.hbase.HBaseSubjectRepository;
+import com.hsystems.lms.subject.repository.solr.SolrSubjectRepository;
 import com.hsystems.lms.subject.service.mapper.SubjectModelMapper;
 import com.hsystems.lms.subject.service.model.SubjectModel;
 
@@ -19,26 +19,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public final class SubjectService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final HBaseSubjectRepository hbaseSubjectRepository;
 
-  private final SubjectRepository subjectRepository;
+  private final SolrSubjectRepository solrSubjectRepository;
 
   private final SubjectModelMapper subjectMapper;
 
   @Inject
   SubjectService(
-      Provider<Properties> propertiesProvider,
-      SubjectRepository subjectRepository) {
+      HBaseSubjectRepository hbaseSubjectRepository,
+      SolrSubjectRepository solrSubjectRepository) {
 
-    this.propertiesProvider = propertiesProvider;
-    this.subjectRepository = subjectRepository;
+    this.hbaseSubjectRepository = hbaseSubjectRepository;
+    this.solrSubjectRepository = solrSubjectRepository;
     this.subjectMapper = new SubjectModelMapper();
   }
 
@@ -48,7 +47,7 @@ public final class SubjectService {
       throws IOException {
 
     QueryResult<Auditable<Subject>> queryResult
-        = subjectRepository.findAllBy(query);
+        = solrSubjectRepository.findAllBy(query);
     long elapsedTime = queryResult.getElapsedTime();
     long start = queryResult.getStart();
     long numFound = queryResult.getNumFound();
@@ -76,7 +75,7 @@ public final class SubjectService {
       throws IOException {
 
     Optional<Auditable<Subject>> subjectOptional
-        = subjectRepository.findBy(id);
+        = hbaseSubjectRepository.findBy(id);
 
     if (subjectOptional.isPresent()) {
       Auditable<Subject> subject = subjectOptional.get();

@@ -2,6 +2,7 @@ package com.hsystems.lms.question.repository.hbase;
 
 import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.component.repository.hbase.HBaseComponentMapper;
+import com.hsystems.lms.component.repository.hbase.HBaseNestedComponentMapper;
 import com.hsystems.lms.hbase.HBaseUtils;
 import com.hsystems.lms.question.repository.entity.Question;
 import com.hsystems.lms.question.repository.entity.QuestionComponent;
@@ -30,6 +31,9 @@ public final class HBaseQuestionComponentMapper
     HBaseQuestionMapper<Question> questionMapper = mapperFactory.create(source);
     Question question = questionMapper.from(source);
     QuestionComponent component = new QuestionComponent(id, question, score);
-    return new Nested.Builder(component).build();
+
+    HBaseNestedComponentMapper componentMapper
+        = new HBaseNestedComponentMapper(component);
+    return componentMapper.from(source);
   }
 }

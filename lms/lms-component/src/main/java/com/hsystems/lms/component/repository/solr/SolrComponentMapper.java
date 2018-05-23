@@ -9,7 +9,7 @@ import org.apache.solr.common.SolrDocument;
 /**
  * Created by naungsoe on 12/10/16.
  */
-public interface SolrComponentMapper
-    extends Mapper<SolrDocument, Nested<Component>> {
+public interface SolrComponentMapper<T extends Component>
+    extends Mapper<SolrDocument, Nested<T>> {
 
 }

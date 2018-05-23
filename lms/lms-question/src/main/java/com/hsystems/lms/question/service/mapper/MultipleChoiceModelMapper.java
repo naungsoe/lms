@@ -1,6 +1,5 @@
 package com.hsystems.lms.question.service.mapper;
 
-import com.hsystems.lms.common.mapper.Mapper;
 import com.hsystems.lms.question.repository.entity.ChoiceOption;
 import com.hsystems.lms.question.repository.entity.MultipleChoice;
 import com.hsystems.lms.question.service.model.MultipleChoiceModel;
@@ -10,7 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 public final class MultipleChoiceModelMapper
-    implements Mapper<MultipleChoice, MultipleChoiceModel> {
+    extends QuestionModelMapper<MultipleChoice> {
 
   private final ChoiceOptionModelsMapper optionsMapper;
 

@@ -3,8 +3,8 @@ package com.hsystems.lms.authentication.service;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import com.hsystems.lms.authentication.repository.SignInLogRepository;
 import com.hsystems.lms.authentication.repository.entity.SignInLog;
+import com.hsystems.lms.authentication.repository.hbase.HBaseSignInLogRepository;
 import com.hsystems.lms.authentication.service.model.SignInModel;
 import com.hsystems.lms.common.logging.annotation.Log;
 import com.hsystems.lms.common.query.Criterion;
@@ -24,18 +24,18 @@ public final class AuthenticationService {
 
   private final Provider<Properties> propertiesProvider;
 
-  private final SignInLogRepository signInLogRepository;
+  private final HBaseSignInLogRepository hbaseSignInLogRepository;
 
   private final UserService userService;
 
   @Inject
   AuthenticationService(
       Provider<Properties> propertiesProvider,
-      SignInLogRepository signInLogRepository,
+      HBaseSignInLogRepository hbaseSignInLogRepository,
       UserService userService) {
 
     this.propertiesProvider = propertiesProvider;
-    this.signInLogRepository = signInLogRepository;
+    this.hbaseSignInLogRepository = hbaseSignInLogRepository;
     this.userService = userService;
   }
 
@@ -99,7 +99,7 @@ public final class AuthenticationService {
 
     AppUserModel userModel = userModelOptional.get();
     Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(userModel.getId());
+        = hbaseSignInLogRepository.findBy(userModel.getId());
 
     if (signInLogOptional.isPresent()) {
       Properties properties = propertiesProvider.get();
@@ -125,7 +125,7 @@ public final class AuthenticationService {
 
     AppUserModel userModel = userModelOptional.get();
     Optional<SignInLog> signInLogOptional
-        = signInLogRepository.findBy(userModel.getId());
+        = hbaseSignInLogRepository.findBy(userModel.getId());
 
     if (!signInLogOptional.isPresent()) {
       return Optional.empty();

@@ -31,16 +31,17 @@ public final class HBaseSchoolMapper
   public Auditable<School> from(Result source) {
     String id = Bytes.toString(source.getRow());
     String name = HBaseUtils.getString(source, NAME_QUALIFIER);
+    School.Builder builder = new School.Builder(id, name);
+
     List<String> permissions = HBaseUtils.getStrings(
         source, PERMISSIONS_QUALIFIER);
+    builder.permissions(permissions);
+
     Preferences preferences = preferencesMapper.from(source);
-    School school = new School.Builder(id, name)
-        .permissions(permissions)
-        .preferences(preferences)
-        .build();
+    builder.preferences(preferences);
 
     HBaseAuditableMapper<School> auditableMapper
-        = new HBaseAuditableMapper<>(school);
+        = new HBaseAuditableMapper<>(builder.build());
     return auditableMapper.from(source);
   }
 }

@@ -31,11 +31,13 @@ public final class HBaseLevelRefsMapper
 
     List<Level> levels = new ArrayList<>();
     List<String> levelIds = HBaseUtils.getStrings(source, LEVELS_QUALIFIER);
-    levelIds.forEach(levelId -> {
-      String name = HBaseUtils.getString(source, Bytes.toBytes(levelId));
+
+    for (String levelId : levelIds) {
+      byte[] columnQualifier = Bytes.toBytes(levelId);
+      String name = HBaseUtils.getString(source, columnQualifier);
       Level level = new Level.Builder(levelId, name).build();
       levels.add(level);
-    });
+    }
 
     return levels;
   }

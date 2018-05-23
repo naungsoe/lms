@@ -100,7 +100,7 @@ public class SignInServlet extends AbstractServlet {
         = authService.signIn(signInModel);
 
     if (userModelOptional.isPresent()) {
-      String refererPath = getRefererPath(request);
+      String refererPath = getReferrerPath(request);
       AppUserModel userModel = userModelOptional.get();
       updateUserSession(request, response, userModel);
 

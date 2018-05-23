@@ -62,10 +62,10 @@ public abstract class AbstractServlet extends HttpServlet {
     });
   }
 
-  protected String getRefererPath(HttpServletRequest request) {
-    String referer = request.getHeader(REFERER_HEADER);
+  protected String getReferrerPath(HttpServletRequest request) {
+    String referrer = request.getHeader(REFERER_HEADER);
     Pattern pattern = Pattern.compile(REFERER_PATTERN);
-    Matcher matcher = pattern.matcher(referer);
+    Matcher matcher = pattern.matcher(referrer);
     return matcher.find() ? matcher.group(1) : "";
   }
 }

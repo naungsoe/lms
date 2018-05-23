@@ -28,7 +28,11 @@ public final class HBaseMultipleResponseMapper
     String explanation = getExplanation(source);
 
     List<ChoiceOption> options = new ArrayList<>();
-    components.forEach(component -> options.add((ChoiceOption) component));
+
+    for (Component component : components) {
+      options.add((ChoiceOption) component);
+    }
+
     return new MultipleResponse(body, hint, explanation, options);
   }
 }

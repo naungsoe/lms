@@ -1,7 +1,6 @@
 package com.hsystems.lms.level.service;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 
 import com.hsystems.lms.common.logging.annotation.Log;
 import com.hsystems.lms.common.query.Query;
@@ -9,8 +8,9 @@ import com.hsystems.lms.common.query.QueryResult;
 import com.hsystems.lms.common.security.annotation.Requires;
 import com.hsystems.lms.common.util.CollectionUtils;
 import com.hsystems.lms.entity.Auditable;
-import com.hsystems.lms.level.repository.LevelRepository;
 import com.hsystems.lms.level.repository.entity.Level;
+import com.hsystems.lms.level.repository.hbase.HBaseLevelRepository;
+import com.hsystems.lms.level.repository.solr.SolrLevelRepository;
 import com.hsystems.lms.level.service.mapper.LevelModelMapper;
 import com.hsystems.lms.level.service.model.LevelModel;
 
@@ -19,26 +19,25 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Properties;
 
 /**
  * Created by naungsoe on 15/10/16.
  */
 public final class LevelService {
 
-  private final Provider<Properties> propertiesProvider;
+  private final HBaseLevelRepository hbaseLevelRepository;
 
-  private final LevelRepository levelRepository;
+  private final SolrLevelRepository solrLevelRepository;
 
   private final LevelModelMapper levelMapper;
 
   @Inject
   LevelService(
-      Provider<Properties> propertiesProvider,
-      LevelRepository levelRepository) {
+      HBaseLevelRepository hbaseLevelRepository,
+      SolrLevelRepository solrLevelRepository) {
 
-    this.propertiesProvider = propertiesProvider;
-    this.levelRepository = levelRepository;
+    this.hbaseLevelRepository = hbaseLevelRepository;
+    this.solrLevelRepository = solrLevelRepository;
     this.levelMapper = new LevelModelMapper();
   }
 
@@ -48,7 +47,7 @@ public final class LevelService {
       throws IOException {
 
     QueryResult<Auditable<Level>> queryResult
-        = levelRepository.findAllBy(query);
+        = solrLevelRepository.findAllBy(query);
     long elapsedTime = queryResult.getElapsedTime();
     long start = queryResult.getStart();
     long numFound = queryResult.getNumFound();
@@ -76,7 +75,7 @@ public final class LevelService {
       throws IOException {
 
     Optional<Auditable<Level>> levelOptional
-        = levelRepository.findBy(id);
+        = hbaseLevelRepository.findBy(id);
 
     if (levelOptional.isPresent()) {
       Auditable<Level> level = levelOptional.get();

@@ -6,7 +6,6 @@ import com.hsystems.lms.component.CompositeComponent;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
@@ -14,19 +13,18 @@ import java.util.List;
 /**
  * Created by naungsoe on 19/12/16.
  */
-public class SectionComponent implements CompositeComponent, Serializable {
+public final class SectionComponent
+    implements CompositeComponent, Serializable {
 
-  private static final long serialVersionUID = 5493270573603027469L;
+  private static final long serialVersionUID = 4286502504214585885L;
 
-  protected String id;
+  private String id;
 
-  protected String title;
+  private String title;
 
-  protected String instructions;
+  private String instructions;
 
-  protected int order;
-
-  protected List<Component> components;
+  private List<Component> components;
 
   SectionComponent() {
 
@@ -36,13 +34,11 @@ public class SectionComponent implements CompositeComponent, Serializable {
       String id,
       String title,
       String instructions,
-      int order,
       List<Component> components) {
 
     this.id = id;
     this.title = title;
     this.instructions = instructions;
-    this.order = order;
     this.components = components;
   }
 
@@ -60,11 +56,6 @@ public class SectionComponent implements CompositeComponent, Serializable {
   }
 
   @Override
-  public int getOrder() {
-    return order;
-  }
-
-  @Override
   public Enumeration<Component> getComponents() {
     return CollectionUtils.isEmpty(components)
         ? Collections.emptyEnumeration()
@@ -79,11 +70,12 @@ public class SectionComponent implements CompositeComponent, Serializable {
 
     SectionCompositionSpecification compositionSpecification
         = new SectionCompositionSpecification();
-    Arrays.stream(components).forEach(component -> {
+
+    for (Component component : components) {
       if (compositionSpecification.isSatisfiedBy(component)) {
         this.components.add(component);
       }
-    });
+    }
   }
 
   @Override

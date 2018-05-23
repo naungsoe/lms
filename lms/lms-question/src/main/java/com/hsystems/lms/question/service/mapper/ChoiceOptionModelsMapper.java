@@ -24,7 +24,6 @@ public final class ChoiceOptionModelsMapper
       optionModel.setBody(option.getBody());
       optionModel.setFeedback(option.getFeedback());
       optionModel.setCorrect(option.isCorrect());
-      optionModel.setOrder(option.getOrder());
       optionModels.add(optionModel);
     }
 

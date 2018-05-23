@@ -3,13 +3,9 @@ package com.hsystems.lms.user.service.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.hsystems.lms.common.security.Principal;
-import com.hsystems.lms.common.util.CollectionUtils;
+import com.hsystems.lms.school.service.model.AuditableModel;
 import com.hsystems.lms.school.service.model.PreferencesModel;
-import com.hsystems.lms.school.service.model.UserModel;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -17,9 +13,9 @@ import java.util.List;
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class AppUserModel implements Principal, Serializable {
+public class AppUserModel extends AuditableModel implements Principal {
 
-  private static final long serialVersionUID = 312595600953409866L;
+  private static final long serialVersionUID = -2714661138072896059L;
 
   private String id;
 
@@ -40,16 +36,6 @@ public class AppUserModel implements Principal, Serializable {
   private PreferencesModel preferences;
 
   private CredentialsModel credentials;
-
-  private boolean mfaEnabled;
-
-  private UserModel createdBy;
-
-  private String createdOn;
-
-  private UserModel modifiedBy;
-
-  private String modifiedOn;
 
   public AppUserModel() {
 
@@ -112,20 +98,19 @@ public class AppUserModel implements Principal, Serializable {
   }
 
   public List<String> getPermissions() {
-    return CollectionUtils.isEmpty(permissions)
-        ? Collections.emptyList() : permissions;
+    return permissions;
   }
 
   public void setPermissions(List<String> permissions) {
-    this.permissions = new ArrayList<>();
-    this.permissions.addAll(permissions);
+    this.permissions = permissions;
   }
 
   public PreferencesModel getPreferences() {
     return preferences;
   }
 
-  public void setPreferences(PreferencesModel preferences) {
+  public void setPreferences(
+      PreferencesModel preferences) {
     this.preferences = preferences;
   }
 
@@ -135,46 +120,6 @@ public class AppUserModel implements Principal, Serializable {
 
   public void setCredentials(CredentialsModel credentials) {
     this.credentials = credentials;
-  }
-
-  public boolean isMfaEnabled() {
-    return mfaEnabled;
-  }
-
-  public void setMfaEnabled(boolean mfaEnabled) {
-    this.mfaEnabled = mfaEnabled;
-  }
-
-  public UserModel getCreatedBy() {
-    return createdBy;
-  }
-
-  public void setCreatedBy(UserModel createdBy) {
-    this.createdBy = createdBy;
-  }
-
-  public String getCreatedOn() {
-    return createdOn;
-  }
-
-  public void setCreatedOn(String createdOn) {
-    this.createdOn = createdOn;
-  }
-
-  public UserModel getModifiedBy() {
-    return modifiedBy;
-  }
-
-  public void setModifiedBy(UserModel modifiedBy) {
-    this.modifiedBy = modifiedBy;
-  }
-
-  public String getModifiedOn() {
-    return modifiedOn;
-  }
-
-  public void setModifiedOn(String modifiedOn) {
-    this.modifiedOn = modifiedOn;
   }
 
   @Override

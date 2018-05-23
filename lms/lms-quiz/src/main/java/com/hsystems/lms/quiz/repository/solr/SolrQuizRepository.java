@@ -2,21 +2,26 @@ package com.hsystems.lms.quiz.repository.solr;
 
 import com.google.inject.Inject;
 
-import com.hsystems.lms.common.query.Criterion;
 import com.hsystems.lms.common.query.Query;
 import com.hsystems.lms.common.query.QueryResult;
+import com.hsystems.lms.component.Component;
+import com.hsystems.lms.component.Nested;
 import com.hsystems.lms.component.repository.solr.SolrComponentRepository;
 import com.hsystems.lms.entity.Auditable;
 import com.hsystems.lms.entity.Repository;
-import com.hsystems.lms.question.repository.entity.QuestionResource;
+import com.hsystems.lms.quiz.repository.QuizComponentUtils;
 import com.hsystems.lms.quiz.repository.entity.QuizResource;
 import com.hsystems.lms.solr.SolrClient;
 import com.hsystems.lms.solr.SolrQueryMapper;
+import com.hsystems.lms.solr.SolrUtils;
 
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,15 +33,13 @@ public final class SolrQuizRepository
 
   private static final String QUIZ_COLLECTION = "lms.quizzes";
 
-  private static final String TYPE_NAME_FIELD = "typeName";
-
-  private static final String COMPONENTS_FIELD = "question.components";
+  private static final String ID_FIELD = "id";
 
   private final SolrClient solrClient;
 
-  private final SolrQueryMapper queryMapper;
-
   private final SolrComponentRepository componentRepository;
+
+  private final SolrQueryMapper queryMapper;
 
   @Inject
   SolrQuizRepository(
@@ -45,25 +48,49 @@ public final class SolrQuizRepository
 
     this.solrClient = solrClient;
     this.componentRepository = componentRepository;
-
-    String typeName = QuizResource.class.getSimpleName();
-    this.queryMapper = new SolrQueryMapper(typeName);
+    this.queryMapper = new SolrQueryMapper();
   }
 
   public QueryResult<Auditable<QuizResource>> findAllBy(Query query)
       throws IOException {
 
-    return null;
+    QueryResponse queryResponse = executeQuery(query);
+    SolrDocumentList documentList = queryResponse.getResults();
+    long elapsedTime = queryResponse.getElapsedTime();
+    long start = documentList.getStart();
+    long numFound = documentList.getNumFound();
+    List<Auditable<QuizResource>> resources = new ArrayList<>();
+
+    for (SolrDocument document : documentList) {
+      resources.add(process(document));
+    }
+
+    return new QueryResult<>(elapsedTime, start, numFound, resources);
   }
 
   private QueryResponse executeQuery(Query query)
       throws IOException {
 
-    String typeName = QuestionResource.class.getSimpleName();
-    query.addCriterion(Criterion.createEqual(TYPE_NAME_FIELD, typeName));
-
     SolrQuery solrQuery = queryMapper.from(query);
     return solrClient.query(solrQuery, QUIZ_COLLECTION);
+  }
+
+  private Auditable<QuizResource> process(SolrDocument document)
+      throws IOException {
+
+    String id = SolrUtils.getString(document, ID_FIELD);
+    SolrQuizComponentMapperFactory mapperFactory
+        = new SolrQuizComponentMapperFactory();
+    componentRepository.setMapperFactory(mapperFactory);
+
+    List<Nested<Component>> components
+        = componentRepository.findAllBy(id);
+    List<Component> organizedComponents
+        = QuizComponentUtils.organize(id, components);
+
+    SolrQuizResourceMapper resourceMapper
+        = new SolrQuizResourceMapper(organizedComponents);
+    return resourceMapper.from(document);
   }
 
   @Override

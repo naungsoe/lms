@@ -13,7 +13,6 @@ public final class SolrGroupDocMapper
     implements Mapper<Auditable<Group>, SolrInputDocument> {
 
   private static final String ID_FIELD = "id";
-  private static final String TYPE_NAME_FIELD = "typeName";
   private static final String NAME_FIELD = "name";
 
   public SolrGroupDocMapper() {
@@ -25,24 +24,15 @@ public final class SolrGroupDocMapper
     SolrInputDocument document = new SolrInputDocument();
     Group group = source.getEntity();
     document.addField(ID_FIELD, group.getId());
-
-    String typeName = Group.class.getSimpleName();
-    document.addField(TYPE_NAME_FIELD, typeName);
     document.addField(NAME_FIELD, group.getName());
 
-    String parentId = group.getId();
     School school = group.getSchool();
-
-    if (school != null) {
-      SolrSchoolRefDocMapper schoolRefDocMapper
-          = new SolrSchoolRefDocMapper(parentId);
-      SolrInputDocument schoolDocument
-          = schoolRefDocMapper.from(school);
-      document.addChildDocument(schoolDocument);
-    }
+    SolrSchoolRefDocMapper schoolRefDocMapper
+        = new SolrSchoolRefDocMapper(document);
+    document = schoolRefDocMapper.from(school);
 
     SolrAuditableDocMapper<Group> auditableDocMapper
-        = new SolrAuditableDocMapper<>(document, parentId);
+        = new SolrAuditableDocMapper<>(document);
     return auditableDocMapper.from(source);
   }
 }
